@@ -210,9 +210,10 @@ function generateSceneActions(sceneState) {
     }
   }
 
-  // Fill to 4 if needed with generic scene-appropriate actions
+  // Fill to 4 if needed with scene-specific exploration actions
   while (actions.length < 4) {
-    actions.push({ label: 'Look around carefully', type: 'exploration' });
+    const sceneName = sceneState ? sceneState.sceneName : 'the area';
+    actions.push({ label: `Examine your surroundings in ${sceneName}`, type: 'exploration' });
   }
 
   // Always exactly 4
