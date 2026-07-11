@@ -172,7 +172,7 @@ async function createServer(options = {}) {
 
     // Initialize scene engine with the first scene's manifest
     const sceneManifest = DraculaAdventure.sceneManifests[adventure.startScene || 'scene_00'];
-    const openingNarrationText = `You arrive at the Golden Krone Inn in the village of Bistritz. The evening air is thick with the scent of pine and wood smoke. Inside, the innkeeper — a stout, worried-looking man — glances at you with a mixture of pity and alarm when you mention your destination: Castle Dracula. He says: "Surely you do not mean to go there tonight? The castle is far, and the roads... the roads are not safe after dark." He presses a small crucifix into your hands. "Take this. For protection." Outside, the last light of day fades behind the Carpathian peaks. Your coach will arrive soon.`;
+    const openingNarrationText = sceneManifest ? sceneManifest.description : '';
     if (sceneManifest) {
       game.sceneState = SceneEngine.enterScene(sceneManifest);
       // Initialize continuity validator with the opening narration as established facts
@@ -193,14 +193,12 @@ async function createServer(options = {}) {
       });
 
       recordMessage(session.id, MessageRouter.narration(
-        `You arrive at the Golden Krone Inn in the village of Bistritz. The evening air is thick with the scent of pine and wood smoke. Inside, the innkeeper — a stout, worried-looking man — glances at you with a mixture of pity and alarm when you mention your destination: Castle Dracula.\n\n"Surely you do not mean to go there tonight?" he says, wringing his hands. "The castle is far, and the roads... the roads are not safe after dark."\n\nHe presses a small crucifix into your hands. "Take this. For protection."\n\nOutside, the last light of day fades behind the Carpathian peaks. Your coach will arrive soon.`,
+        sceneManifest.description,
         {}
       ));
 
       // Add opening narration to the context manager so the DM knows what already happened
-      addTurn(game.contextManager, 'assistant',
-        `You arrive at the Golden Krone Inn in the village of Bistritz. The evening air is thick with the scent of pine and wood smoke. Inside, the innkeeper — a stout, worried-looking man — glances at you with a mixture of pity and alarm when you mention your destination: Castle Dracula. He says: "Surely you do not mean to go there tonight? The castle is far, and the roads... the roads are not safe after dark." He presses a small crucifix into your hands. "Take this. For protection." Outside, the last light of day fades behind the Carpathian peaks. Your coach will arrive soon.`
-      );
+      addTurn(game.contextManager, 'assistant', sceneManifest.description);
 
       // Generate suggested actions from the scene engine
       const openingActions = generateSceneActions(game.sceneState);

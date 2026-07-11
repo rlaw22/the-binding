@@ -52,12 +52,23 @@ const DraculaAdventure = {
     scene_00: {
       sceneId: 'scene_00',
       sceneName: 'The Golden Krone Inn',
+      // D&D-style scene description — the DM narrates this BEFORE showing any actions.
+      // Every element mentioned here can become a suggested action.
+      description: `The Golden Krone Inn is warm and dim, lit by a crackling fireplace against the far wall. Wooden benches line the walls around rough-hewn tables. A long bar runs along the back, where a stout innkeeper stands wringing his hands. The air smells of pine smoke and old ale.
+
+In the far corner, partially hidden in shadow, you notice an old woman sitting alone — nursing a cup of something dark. She hasn't looked up.
+
+Near the fireplace, a folded shawl lies discarded on one of the benches. A small brass crucifix sits heavy in your palm — the innkeeper pressed it into your hands the moment you mentioned Castle Dracula.
+
+Through a back window, you can see the stable yard. A coach waits there, its driver sitting unnervingly still on the bench.
+
+The innkeeper watches you with a mixture of pity and alarm. "Surely you do not mean to go there tonight?" he says. "The castle is far, and the roads... the roads are not safe after dark."`,
       content: [
-        { id: 'talk_innkeeper', label: 'Talk to the innkeeper about Castle Dracula', keywords: ['innkeeper', 'ask', 'tell', 'dracula', 'castle', 'speak', 'talk'] },
-        { id: 'examine_crucifix', label: 'Examine the crucifix in your hands', keywords: ['crucifix', 'cross', 'examine', 'inspect', 'hold', 'brass'], },
-        { id: 'find_old_woman', label: 'Look around the inn more carefully', keywords: ['look around', 'carefully', 'explore', 'corner', 'woman'], discovery: 'In the corner of the inn, an old woman sits alone, nursing a cup of something dark. Her eyes catch yours — sharp, knowing, afraid. She whispers something you can\'t hear, then looks away quickly.' },
-        { id: 'check_stables', label: 'Step outside to the stable yard', keywords: ['stable', 'stables', 'outside', 'coach', 'horse', 'yard', 'step outside'] },
-        { id: 'read_letter', label: 'Search the benches near the fire', keywords: ['search', 'bench', 'benches', 'fire', 'letter', 'hidden', 'under'], discovery: 'You find a letter left behind on a bench, half-hidden beneath a folded shawl. The handwriting is hurried, desperate: "To whoever finds this — do NOT travel to the Borgo Pass after dark. The wolves are not natural. The coachman is not what he seems. God have mercy on Jonathan Harker\'s soul." The letter is dated three months ago. The ink is smeared, as if the writer\'s hands were shaking.' }
+        { id: 'talk_innkeeper', label: 'Ask the innkeeper about Castle Dracula', keywords: ['innkeeper', 'ask', 'tell', 'dracula', 'castle', 'speak', 'talk'] },
+        { id: 'examine_crucifix', label: 'Examine the brass crucifix', keywords: ['crucifix', 'cross', 'examine', 'inspect', 'hold', 'brass'] },
+        { id: 'find_old_woman', label: 'Approach the old woman in the corner', keywords: ['approach', 'woman', 'corner', 'old', 'talk', 'speak'], discovery: 'You approach the old woman slowly. Her eyes snap up — sharp, knowing, afraid. She whispers something you can\'t hear, then looks away quickly. Her hands tremble around her cup.' },
+        { id: 'check_stables', label: 'Look out the back window at the stable yard', keywords: ['stable', 'stables', 'window', 'coach', 'horse', 'yard', 'outside', 'back'] },
+        { id: 'read_letter', label: 'Search the bench near the fireplace where the shawl lies', keywords: ['search', 'bench', 'benches', 'fire', 'shawl', 'letter', 'hidden', 'under', 'near'], discovery: 'You lift the folded shawl on the bench near the fire. Beneath it, a letter. The handwriting is hurried, desperate: "To whoever finds this — do NOT travel to the Borgo Pass after dark. The wolves are not natural. The coachman is not what he seems. God have mercy on Jonathan Harker\'s soul." The letter is dated three months ago. The ink is smeared, as if the writer\'s hands were shaking.' }
       ],
       exitAction: 'board_coach',
       exitLabel: 'Board the coach for Castle Dracula',
