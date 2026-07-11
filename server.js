@@ -41,7 +41,7 @@ async function main() {
   try {
     await server.listen({ port: PORT, host: HOST });
     console.log(`  ✅ Server running at http://${HOST}:${PORT}`);
-    console.log(`  📡 WebSocket: ws://${HOST}:${PORT}/ws/game/:sessionId`);
+    console.log(`  📡 Polling: GET /api/sessions/:id/messages?after=N`);
     console.log(`  🎮 REST API: http://${HOST}:${PORT}/api/`);
     console.log('');
     console.log('  Endpoints:');
