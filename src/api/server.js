@@ -1,17 +1,16 @@
 /**
- * API Server — Fastify with SSE + REST for The Binding.
- * 
- * Uses Server-Sent Events (SSE) for server→client and HTTP POST for client→server.
- * Works through any HTTP proxy (localtunnel, nginx, cloudflare, etc.) — no WebSocket upgrade needed.
+ * API Server — Fastify with HTTP Polling + REST for The Binding.
+ *
+ * Uses HTTP polling for server→client and HTTP POST for client→server.
+ * No long-lived connections — works behind any proxy (Render, Cloudflare, nginx, etc.).
  *
  * Supports:
- * - Multi-device: message history replay on reconnect
+ * - Multi-device: message history replay via polling
  * - Rejoin codes: short human-readable codes for reconnecting from another device
  * - Direct link rejoin: ?session=<id> URL parameter
  */
 
 const Fastify = require('fastify');
-const fastifySse = require('fastify-sse-v2');
 const fastifyCors = require('@fastify/cors');
 const fastifyStatic = require('@fastify/static');
 const path = require('path');
@@ -28,9 +27,8 @@ const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline } =
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
 
-// In-memory session store (Phase 1: no persistence)
+// In-memory session store
 const sessions = new Map();
-const sseStreams = new Map();  // sessionId -> Set<res>
 const rejoinCodes = new Map(); // code -> sessionId
 
 /**
@@ -43,73 +41,14 @@ function generateRejoinCode(adventureId) {
 }
 
 /**
- * Broadcast an SSE event to all connected clients for a session.
- * Also records the message in history so reconnecting devices can replay it.
+ * Record a message in the session history and return its index.
  */
-function broadcast(sessionId, data) {
-  const streams = sseStreams.get(sessionId);
+function recordMessage(sessionId, data) {
   const sessionData = sessions.get(sessionId);
+  if (!sessionData) return -1;
   const payload = typeof data === 'string' ? data : JSON.stringify(data);
-
-  // Record in history for replay
-  if (sessionData && sessionData.history) {
-    sessionData.history.push(payload);
-  }
-
-  if (!streams) return;
-  for (const stream of streams) {
-    try {
-      stream.sse({ event: 'message', data: payload });
-    } catch (err) {
-      streams.delete(stream);
-    }
-  }
-}
-
-/**
- * Send to a single SSE stream and optionally record in history.
- */
-function sendToStream(stream, data, sessionId) {
-  const payload = typeof data === 'string' ? data : JSON.stringify(data);
-
-  // Record in history
-  if (sessionId) {
-    const sessionData = sessions.get(sessionId);
-    if (sessionData && sessionData.history) {
-      sessionData.history.push(payload);
-    }
-  }
-
-  try {
-    stream.sse({ event: 'message', data: payload });
-  } catch (err) {
-    // stream closed
-  }
-}
-
-/**
- * Replay full message history to a single SSE stream.
- */
-function replayHistory(stream, sessionData, character) {
-  // Send a rejoin welcome
-  stream.sse({
-    event: 'message',
-    data: JSON.stringify({
-      type: 'connected',
-      sessionId: sessionData.session.id,
-      character: character,
-      rejoin: true
-    })
-  });
-
-  // Replay every historical message
-  for (const msg of sessionData.history) {
-    try {
-      stream.sse({ event: 'message', data: msg });
-    } catch (err) {
-      break;
-    }
-  }
+  sessionData.history.push(payload);
+  return sessionData.history.length - 1;
 }
 
 /**
@@ -118,20 +57,17 @@ function replayHistory(stream, sessionData, character) {
 async function createServer(options = {}) {
   const app = Fastify({ logger: true });
 
-  // CORS for local dev / tunnel access
+  // CORS
   await app.register(fastifyCors, { origin: true });
 
-  // SSE support
-  await app.register(fastifySse);
-
-  // Serve static frontend files (no-cache for dev)
+  // Serve static frontend files
   await app.register(fastifyStatic, {
     root: path.join(__dirname, '..', '..', 'public'),
     prefix: '/',
     cacheControl: false
   });
 
-  // Disable caching for all responses (dev mode)
+  // No-cache header
   app.addHook('onSend', async (request, reply) => {
     reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
   });
@@ -141,12 +77,10 @@ async function createServer(options = {}) {
 
   // --- REST ENDPOINTS ---
 
-  // List available adventures
   app.get('/api/adventures', async () => {
     return { adventures: listAdventures() };
   });
 
-  // Get adventure details
   app.get('/api/adventures/:id', async (request, reply) => {
     const adventure = getAdventure(request.params.id);
     if (!adventure) return reply.status(404).send({ error: 'Adventure not found' });
@@ -161,7 +95,6 @@ async function createServer(options = {}) {
     };
   });
 
-  // Health check
   app.get('/api/health', async () => {
     return { status: 'ok', uptime: process.uptime(), sessions: sessions.size, rejoinCodes: rejoinCodes.size };
   });
@@ -202,14 +135,12 @@ async function createServer(options = {}) {
       return reply.status(404).send({ error: 'Adventure not found' });
     }
 
-    // Create session (future-proof: player array from Day 1)
     const session = createSession({
       mode: 'adventure',
       adventureId,
       sessionName: `${adventure.name} — ${playerName || 'Unknown Hero'}`
     });
 
-    // Add player
     const player = addPlayer(session, {
       name: playerName || 'Unknown Hero',
       class: characterClass || 'fighter',
@@ -218,7 +149,6 @@ async function createServer(options = {}) {
       hp: { current: 10, max: 10 }
     });
 
-    // Create game instance with all services
     const game = createGame({
       adventureId,
       adventureName: adventure.name,
@@ -227,21 +157,40 @@ async function createServer(options = {}) {
       diceService: DiceService
     });
 
-    // Set adventure context on the context manager
     setAdventureContext(game.contextManager, adventure.adventureSummary, getAdventureOutline());
     setCharacterSheet(game.contextManager, player.character);
 
-    // Create coin pool for this adventure
     const coinPool = createCoinPool(adventure.coinPoolConfig);
-
-    // Generate rejoin code
     const rejoinCode = generateRejoinCode(adventureId);
 
-    // Store session + game + coin pool + history
     session.state = 'active';
     sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [] });
-    sseStreams.set(session.id, new Set());
     rejoinCodes.set(rejoinCode, session.id);
+
+    // Generate the opening narration and suggested actions immediately
+    const startInfo = getAdventureStart(adventureId);
+    if (startInfo) {
+      transitionScene(session, startInfo.scene.id);
+      updateScene(game.contextManager, startInfo.scene.summary, []);
+
+      recordMessage(session.id, {
+        type: 'connected',
+        sessionId: session.id,
+        character: player.character
+      });
+
+      recordMessage(session.id, MessageRouter.narration(
+        `You arrive at the Golden Krone Inn in the village of Bistritz. The evening air is thick with the scent of pine and wood smoke. Inside, the innkeeper — a stout, worried-looking man — glances at you with a mixture of pity and alarm when you mention your destination: Castle Dracula.\n\n"Surely you do not mean to go there tonight?" he says, wringing his hands. "The castle is far, and the roads... the roads are not safe after dark."\n\nHe presses a small crucifix into your hands. "Take this. For protection."\n\nOutside, the last light of day fades behind the Carpathian peaks. Your coach will arrive soon.`,
+        {}
+      ));
+
+      recordMessage(session.id, MessageRouter.suggestedActions([
+        { label: 'Ask the innkeeper about Castle Dracula', type: 'investigation' },
+        { label: 'Examine the crucifix and ask about local superstitions', type: 'investigation' },
+        { label: 'Step outside to survey the road and your surroundings', type: 'exploration' },
+        { label: 'Order a drink and steel yourself for the journey', type: 'social' }
+      ], 'What would you like to do?'));
+    }
 
     return {
       sessionId: session.id,
@@ -270,92 +219,30 @@ async function createServer(options = {}) {
     };
   });
 
-  // --- SSE EVENT STREAM ---
-  // Client connects here to receive real-time events from the server.
-  app.get('/api/sessions/:id/events', async (request, reply) => {
+  // --- POLLING ENDPOINT ---
+  // Client polls this to get new messages. Returns messages after the given index.
+  app.get('/api/sessions/:id/messages', async (request, reply) => {
     const sessionId = request.params.id;
-    const data = sessions.get(sessionId);
+    const after = parseInt(request.query.after || '0', 10);
 
+    const data = sessions.get(sessionId);
     if (!data) {
       return reply.status(404).send({ error: 'Session not found' });
     }
 
-    // Set SSE headers
-    reply.raw.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'X-Accel-Buffering': 'no'
-    });
-
-    // Register this stream
-    const streams = sseStreams.get(sessionId);
-    streams.add(reply);
-
-    const { session, game, coinPool } = data;
-    const player = getPrimaryPlayer(session);
-
-    // If there's existing history, this is a rejoin — replay everything
-    if (data.history.length > 0) {
-      // Rejoin — replay full history (connected event is sent separately by replayHistory)
-      replayHistory(reply, data, player.character);
-    } else {
-      // First connection — send welcome + opening narration + initial actions
-
-      // Send welcome (directly, not recorded in history — it's per-connection metadata)
-      reply.sse({
-        event: 'message',
-        data: JSON.stringify({
-          type: 'connected',
-          sessionId,
-          character: player.character,
-          rejoin: false
-        })
-      });
-
-      // Auto-start the adventure: send opening narration
-      const startInfo = getAdventureStart(data.session.adventureId);
-      if (startInfo) {
-        transitionScene(session, startInfo.scene.id);
-        updateScene(game.contextManager, startInfo.scene.summary, []);
-
-        const openingMessage = MessageRouter.narration(
-          `You arrive at the Golden Krone Inn in the village of Bistritz. The evening air is thick with the scent of pine and wood smoke. Inside, the innkeeper — a stout, worried-looking man — glances at you with a mixture of pity and alarm when you mention your destination: Castle Dracula.\n\n"Surely you do not mean to go there tonight?" he says, wringing his hands. "The castle is far, and the roads... the roads are not safe after dark."\n\nHe presses a small crucifix into your hands. "Take this. For protection."\n\nOutside, the last light of day fades behind the Carpathian peaks. Your coach will arrive soon.`,
-          {}
-        );
-        sendToStream(reply, openingMessage, sessionId);
-
-        // Send initial suggested actions
-        const actions = MessageRouter.suggestedActions([
-          { label: 'Ask the innkeeper about Castle Dracula', type: 'investigation' },
-          { label: 'Examine the crucifix and ask about local superstitions', type: 'investigation' },
-          { label: 'Step outside to survey the road and your surroundings', type: 'exploration' },
-          { label: 'Order a drink and steel yourself for the journey', type: 'social' }
-        ], 'What would you like to do?');
-        sendToStream(reply, actions, sessionId);
-      }
+    // Return messages after the given index
+    const messages = [];
+    for (let i = after; i < data.history.length; i++) {
+      messages.push({ index: i, data: JSON.parse(data.history[i]) });
     }
 
-    // Keep-alive ping every 30s
-    // Keep-alive ping every 10s (Render free tier kills idle connections after ~30s)
-    const keepAlive = setInterval(() => {
-      try {
-        reply.raw.write(': keepalive\n\n');
-      } catch (e) {
-        clearInterval(keepAlive);
-        streams.delete(reply);
-      }
-    }, 10000);
-
-    // Clean up on disconnect
-    request.raw.on('close', () => {
-      clearInterval(keepAlive);
-      streams.delete(reply);
-    });
+    return {
+      messages,
+      total: data.history.length
+    };
   });
 
   // --- ACTION ENDPOINT ---
-  // Client sends actions here via HTTP POST.
   app.post('/api/sessions/:id/actions', async (request, reply) => {
     const sessionId = request.params.id;
     const data = sessions.get(sessionId);
@@ -373,8 +260,8 @@ async function createServer(options = {}) {
     const player = getPrimaryPlayer(session);
 
     try {
-      // Record the player's action in history so rejoining devices see it
-      broadcast(sessionId, {
+      // Record the player's action
+      recordMessage(sessionId, {
         type: 'player_action',
         content: content,
         playerName: player.character.name,
@@ -384,16 +271,16 @@ async function createServer(options = {}) {
       // Process through DM service
       const result = await processAction(game, content, player.character);
 
-      // Score coins for this turn
+      // Score coins
       const currentSceneIndex = game.turnHistory.length;
       const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
 
-      // Broadcast narrative to all connected clients (also records in history)
-      broadcast(sessionId, MessageRouter.narration(result.narrative, {}));
+      // Record narrative
+      recordMessage(sessionId, MessageRouter.narration(result.narrative, {}));
 
-      // Send subtle coin notification if earned
+      // Record coin reward
       if (turnCoins.turnTotal > 0) {
-        broadcast(sessionId, MessageRouter.coinReward(
+        recordMessage(sessionId, MessageRouter.coinReward(
           turnCoins.turnTotal,
           'intelligence',
           'Clever play',
@@ -401,9 +288,9 @@ async function createServer(options = {}) {
         ));
       }
 
-      // Send suggested actions
+      // Record suggested actions
       if (result.suggestedActions.length > 0) {
-        broadcast(sessionId, MessageRouter.suggestedActions(
+        recordMessage(sessionId, MessageRouter.suggestedActions(
           result.suggestedActions.map(a => ({ label: a.label, type: a.type || 'free' })),
           'What would you like to do?'
         ));
@@ -415,13 +302,12 @@ async function createServer(options = {}) {
         updateScene(game.contextManager, result.sceneTransition.description, []);
       }
 
-      // Track scene coins
       data.sceneCoins.push(turnCoins);
 
       return { ok: true, turnNumber: game.turnHistory.length };
     } catch (err) {
       app.log.error(err);
-      broadcast(sessionId, MessageRouter.error('Something went wrong. Please try again.'));
+      recordMessage(sessionId, MessageRouter.error('Something went wrong. Please try again.'));
       return reply.status(500).send({ error: 'Action processing failed' });
     }
   });

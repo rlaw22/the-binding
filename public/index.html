@@ -41,8 +41,6 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 .rejoin-link{color:#C9A84C;cursor:pointer;font-size:0.95em;text-decoration:underline;}
 .rejoin-link:hover{color:#E8A838;}
 .hidden{display:none !important;}
-
-/* Landscape orientation: use side-by-side layout for actions */
 @media (orientation: landscape) {
   #app{padding:8px 24px;}
   #header{margin-bottom:8px;}
@@ -55,8 +53,6 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
   #free-input{padding:10px 14px;font-size:1em;}
   #send-btn{padding:10px 18px;font-size:1em;}
 }
-
-/* Very small screens */
 @media (max-width: 380px) {
   #app{padding:10px;}
   #header h1{font-size:1.3em;letter-spacing:2px;}
@@ -72,7 +68,6 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
     <div class="subtitle">Enter the books you love.</div>
   </div>
 
-  <!-- Start screen -->
   <div id="start-screen">
     <h2>Choose Your Adventure</h2>
     <p>Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
@@ -96,7 +91,6 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
     </div>
   </div>
 
-  <!-- Game UI (hidden until game starts) -->
   <div id="char-bar" class="hidden">
     <div><span class="stat" id="char-name">—</span></div>
     <div>Lvl <span class="stat" id="char-level">1</span></div>
@@ -122,20 +116,17 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 </div>
 
 <script>
-var evtSource = null;
 var sessionId = null;
+var lastMsgIndex = 0;
 var sending = false;
-var reconnecting = false;
-var reconnectCount = 0;
+var pollTimer = null;
+var pollErrors = 0;
 
 // --- On page load: check for rejoin URL param ---
 (function() {
   var params = new URLSearchParams(window.location.search);
   var sid = params.get('session');
-  if (sid) {
-    // Attempt to reconnect to existing session
-    reconnectToSession(sid);
-  }
+  if (sid) reconnectToSession(sid);
 })();
 
 function reconnectToSession(sid) {
@@ -146,7 +137,7 @@ function reconnectToSession(sid) {
       sessionId = sid;
       document.getElementById('start-screen').classList.add('hidden');
       showGameUI(data.character, null);
-      connectSSE();
+      startPolling();
     })
     .catch(function(e) { alert('Failed to reconnect: ' + e.message); });
 }
@@ -169,9 +160,8 @@ function rejoinGame() {
       sessionId = data.sessionId;
       document.getElementById('start-screen').classList.add('hidden');
       showGameUI(data.character, code);
-      // Update URL
       window.history.replaceState({}, '', '?session=' + sessionId);
-      connectSSE();
+      startPolling();
     })
     .catch(function(e) { alert('Rejoin failed: ' + e.message); });
 }
@@ -213,57 +203,59 @@ async function startGame() {
     if (data.error) { alert(data.error); return; }
 
     sessionId = data.sessionId;
+    lastMsgIndex = 0;
     showGameUI(data.character, data.rejoinCode);
-
-    // Update URL with session ID for easy sharing
     window.history.replaceState({}, '', '?session=' + sessionId);
-
-    connectSSE();
+    startPolling();
   } catch(e) {
     alert('Failed to create session: ' + e.message);
   }
 }
 
-function connectSSE() {
-  // Close any existing connection first to prevent duplicates
-  if (evtSource) { evtSource.close(); evtSource = null; }
-  evtSource = new EventSource('/api/sessions/' + sessionId + '/events');
+// --- POLLING: fetches new messages every 2 seconds ---
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollErrors = 0;
+  pollOnce(); // immediate first poll
+  pollTimer = setInterval(pollOnce, 2000);
+}
 
-  evtSource.addEventListener('message', function(event) {
-    handleMessage(JSON.parse(event.data));
-  });
-
-  evtSource.onerror = function() {
-    evtSource.close();
-    reconnectCount++;
-    if (reconnectCount > 5) {
-      addMessage('error', 'Connection lost. Please refresh the page.');
-      return;
-    }
-    reconnecting = true;
-    // Reconnect immediately — don't wait 3s, the keepalive should prevent this
-    setTimeout(function() {
-      if (sessionId) connectSSE();
-    }, 1000);
-  };
+function pollOnce() {
+  if (!sessionId) return;
+  fetch('/api/sessions/' + sessionId + '/messages?after=' + lastMsgIndex)
+    .then(function(r) {
+      if (!r.ok) {
+        pollErrors++;
+        if (pollErrors > 10) {
+          clearInterval(pollTimer);
+          addMessage('error', 'Connection lost. Please refresh the page.');
+        }
+        return null;
+      }
+      pollErrors = 0;
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data || !data.messages) return;
+      for (var i = 0; i < data.messages.length; i++) {
+        var msg = data.messages[i];
+        handleMessage(msg.data);
+        lastMsgIndex = msg.index + 1;
+      }
+    })
+    .catch(function(err) {
+      pollErrors++;
+      if (pollErrors > 10) {
+        clearInterval(pollTimer);
+        addMessage('error', 'Connection lost. Please refresh the page.');
+      }
+    });
 }
 
 function handleMessage(msg) {
   switch(msg.type) {
     case 'connected':
-      if (msg.rejoin || reconnecting) {
-        // Clear old messages before replaying history — prevents the duplicate/loop bug
-        var msgContainer = document.getElementById('messages');
-        msgContainer.innerHTML = '';
-        reconnecting = false;
-        reconnectCount = 0;
-        sending = false;
-        document.getElementById('send-btn').disabled = false;
-        document.getElementById('free-input').disabled = false;
-        document.getElementById('action-buttons').innerHTML = '';
-      } else {
-        addMessage('system', 'Welcome, ' + msg.character.name + '.');
-      }
+      // Initial welcome — don't add message, the opening narration follows immediately
       break;
     case 'narration':
       addMessage('dm', msg.content);
@@ -311,7 +303,6 @@ function showActions(actions) {
     btn.onclick = function() { sendAction(this.getAttribute('data-action')); };
     container.appendChild(btn);
   }
-  // Re-enable input after server responds
   sending = false;
   document.getElementById('send-btn').disabled = false;
   document.getElementById('free-input').disabled = false;
@@ -325,7 +316,7 @@ function sendAction(text) {
   addMessage('player', text);
   document.getElementById('action-buttons').innerHTML = '';
 
-  // Safety timeout: reset sending state if server doesn't respond in 20s
+  // Safety timeout: reset sending state if server doesn't respond in 15s
   var sendTimeout = setTimeout(function() {
     if (sending) {
       sending = false;
@@ -333,32 +324,23 @@ function sendAction(text) {
       document.getElementById('free-input').disabled = false;
       addMessage('error', 'Server is taking too long. You can try again.');
     }
-  }, 20000);
+  }, 15000);
 
-  // Send action via HTTP POST
   fetch('/api/sessions/' + sessionId + '/actions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 'action', content: text })
   }).then(function(resp) {
     if (!resp.ok) {
-      // Don't show error yet — SSE reconnect will replay the response
-      // Only show error after the full timeout expires
       console.warn('Action POST returned', resp.status);
     }
-    // If OK, the SSE stream will deliver the response and showActions() resets sending
+    // The polling loop will pick up the response — showActions() resets sending
   }).catch(function(err) {
     clearTimeout(sendTimeout);
-    addMessage('error', 'Connection issue — action saved, waiting for response...');
-    // Don't reset sending yet — SSE reconnect might still deliver the response
-    // Reset after timeout as fallback
-    setTimeout(function() {
-      if (sending) {
-        sending = false;
-        document.getElementById('send-btn').disabled = false;
-        document.getElementById('free-input').disabled = false;
-      }
-    }, 10000);
+    addMessage('error', 'Connection issue — please try again.');
+    sending = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('free-input').disabled = false;
   });
 }
 
@@ -379,7 +361,6 @@ function copyShareLink() {
       setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
     });
   } else {
-    // Fallback for older browsers
     var tmp = document.createElement('textarea');
     tmp.value = url;
     document.body.appendChild(tmp);
