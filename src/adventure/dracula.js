@@ -47,6 +47,76 @@ const DraculaAdventure = {
     { id: 'act5', name: 'The Final Battle', scenes: [20, 21, 22, 23, 24], summary: 'Chase Dracula back to Transylvania. Final confrontation at Castle Dracula.' }
   ],
 
+  // Scene manifests — discoverable content per scene for the scene engine
+  sceneManifests: {
+    scene_00: {
+      sceneId: 'scene_00',
+      sceneName: 'The Golden Krone Inn',
+      content: [
+        { id: 'talk_innkeeper', label: 'Talk to the innkeeper about Castle Dracula' },
+        { id: 'examine_crucifix', label: 'Examine the crucifix the innkeeper offers' },
+        { id: 'find_old_woman', label: 'Notice the old woman in the corner' },
+        { id: 'check_stables', label: 'Visit the stables and see the coach' },
+        { id: 'read_letter', label: 'Find a letter left behind on a bench' }
+      ],
+      exitAction: 'board_coach',
+      exitLabel: 'Board the coach for Castle Dracula',
+      hardExitNarration: 'The innkeeper locks the front door and blows out the last candle. "Your coach awaits, traveler. I pray you return from that place." He ushers you outside into the cold night air.'
+    },
+    scene_01: {
+      sceneId: 'scene_01',
+      sceneName: 'The Coach Ride',
+      content: [
+        { id: 'talk_driver', label: 'Try to speak with the silent coachman' },
+        { id: 'watch_landscape', label: 'Watch the dark forest pass by the window' },
+        { id: 'notice_wolves', label: 'Listen to the wolves howling in the distance' },
+        { id: 'examine_crucifix_coach', label: 'Clutch the crucifix for comfort' }
+      ],
+      exitAction: 'arrive_crossroads',
+      exitLabel: 'Step out at the crossroads',
+      hardExitNarration: 'The coach lurches to a stop. The driver gestures wordlessly toward a second coach waiting in the moonlight. You have no choice but to transfer.'
+    },
+    scene_02: {
+      sceneId: 'scene_02',
+      sceneName: 'The Borgo Pass',
+      content: [
+        { id: 'observe_coachman', label: 'Study the mysterious new coachman' },
+        { id: 'watch_wolves', label: 'Watch the wolves that follow the coach' },
+        { id: 'feel_speed', label: 'Grip the seat as the coach races through the dark' },
+        { id: 'notice_eyes', label: 'Peer into the forest and see pairs of glowing eyes' }
+      ],
+      exitAction: 'arrive_castle',
+      exitLabel: 'Look up as the castle comes into view',
+      hardExitNarration: 'The coach crashes to a halt at the base of a towering cliff. Above you, Castle Dracula looms against the lightning-split sky. The coachman opens the door with a thin smile.'
+    },
+    scene_03: {
+      sceneId: 'scene_03',
+      sceneName: 'Castle Dracula — Arrival',
+      content: [
+        { id: 'examine_castle', label: 'Study the castle exterior — ancient stone, no lights' },
+        { id: 'meet_dracula', label: 'Greet the Count as he welcomes you in perfect English' },
+        { id: 'notice_no_reflection', label: 'Look for a mirror and find none' },
+        { id: 'enter_great_hall', label: 'Step into the vast, candlelit great hall' }
+      ],
+      exitAction: 'go_to_dinner',
+      exitLabel: 'Follow the Count to the dining hall',
+      hardExitNarration: 'The Count extends a pale hand toward a corridor. "You must be famished from your journey. Please — dinner awaits." His tone makes it clear this is not a request.'
+    },
+    scene_04: {
+      sceneId: 'scene_04',
+      sceneName: 'Dinner with the Count',
+      content: [
+        { id: 'ask_about_england', label: 'Ask the Count about his interest in England' },
+        { id: 'notice_no_food', label: 'Notice that no food is set before you' },
+        { id: 'compliment_wine', label: 'Sip the deep red wine and compliment it' },
+        { id: 'test_dracula', label: 'Mention local legends and watch his reaction' }
+      ],
+      exitAction: 'retire_to_room',
+      exitLabel: 'Excuse yourself to retire for the night',
+      hardExitNarration: 'The Count rises abruptly. "The hour grows late, and you have had a long journey. I shall show you to your chambers." His eyes glitter in the candlelight as he leads you away.'
+    }
+  },
+
   // Scene definitions — the curated backbone
   scenes: [
     // ACT 1: THE JOURNEY

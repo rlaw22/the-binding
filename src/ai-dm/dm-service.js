@@ -11,6 +11,9 @@ const { v4: uuidv4 } = require('uuid');
 const { createContextManager, addTurn, setCharacterSheet, buildContext, updateScene, addKeyDecision, getStats } = require('./context-manager');
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT, buildCoinScoringPrompt } = require('./prompts');
 const MessageRouter = require('../session/message-router');
+const SceneEngine = require('../scene-engine');
+const { getScene, getDMGuidance } = require('../adventure/dracula');
+const { DraculaAdventure } = require('../adventure/dracula');
 
 // Player profile tracking for adaptive replayability
 function createPlayerProfile() {
@@ -62,6 +65,7 @@ function createGame(options) {
     ruleEngine: options.ruleEngine || null,   // injected
     diceService: options.diceService || null, // injected
     coinEngine: options.coinEngine || null,   // injected
+    sceneState: null, // scene engine state — initialized when first scene starts
   };
 }
 
@@ -72,25 +76,56 @@ function createGame(options) {
 async function processAction(game, playerAction, character) {
   const { contextManager, llmProvider } = game;
 
+  // Initialize scene state if needed
+  if (!game.sceneState && game.adventureId === 'dracula') {
+    const manifest = DraculaAdventure.sceneManifests['scene_00'];
+    if (manifest) {
+      game.sceneState = SceneEngine.enterScene(manifest);
+    }
+  }
+
   // Add player action to context
   addTurn(contextManager, 'user', playerAction);
 
-  // Build full context for LLM
+  // Build full context for LLM, including scene state
   const systemPrompt = buildAdventureSystemPrompt({
     adventureName: game.adventureName,
     adventureDescription: '',
-    tone: 'gothic, suspenseful, mysterious'
+    tone: 'gothic, suspenseful, mysterious',
+    sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
   });
   const messages = buildContext(contextManager, systemPrompt);
 
   // Call LLM for narrative response
   const dmResponse = await llmProvider(messages);
 
-  // Add DM response to context
+  // Process scene engine — discover content from DM response
+  if (game.sceneState) {
+    game.sceneState = SceneEngine.processTurn(game.sceneState, dmResponse, playerAction);
+  }
+
+  // Strip [EXPLORED: ...] tags from the player-facing narrative
+  const cleanResponse = dmResponse.replace(/\[EXPLORED:[^\]]*\]/gi, '').trim();
+
+  // Add DM response to context (with tags for context, clean for display)
   addTurn(contextManager, 'assistant', dmResponse);
 
   // Parse response for game mechanics
-  const parsed = parseDMResponse(dmResponse);
+  const parsed = parseDMResponse(cleanResponse);
+
+  // Check for hard exit
+  if (game.sceneState && SceneEngine.isHardExitTriggered(game.sceneState)) {
+    const hardExitNarration = SceneEngine.getHardExitNarration(game.sceneState);
+    // Append hard exit narration
+    parsed.narrative += '\n\n' + hardExitNarration;
+    // Force scene transition
+    parsed.sceneTransition = { sceneId: getNextSceneId(game), description: hardExitNarration };
+  }
+
+  // Generate suggested actions from scene engine
+  if (game.sceneState) {
+    parsed.suggestedActions = generateSceneActions(game.sceneState);
+  }
 
   // Score the player's action for coins
   const coinScores = scoreAction(playerAction, parsed.narrative);
@@ -118,6 +153,55 @@ async function processAction(game, playerAction, character) {
     turnNumber: game.turnHistory.length,
     contextStats: getStats(contextManager)
   };
+}
+
+/**
+ * Get the next scene ID in the adventure sequence.
+ */
+function getNextSceneId(game) {
+  if (!game.sceneState) return null;
+  const currentSceneIndex = DraculaAdventure.scenes.findIndex(s => s.id === game.sceneState.sceneId);
+  if (currentSceneIndex >= 0 && currentSceneIndex < DraculaAdventure.scenes.length - 1) {
+    return DraculaAdventure.scenes[currentSceneIndex + 1].id;
+  }
+  return null;
+}
+
+/**
+ * Generate suggested actions from the scene engine.
+ * 3 actions from undiscovered content + 1 exit action.
+ * Exit position depends on pressure level.
+ */
+function generateSceneActions(sceneState) {
+  const actions = [];
+  const exitAction = SceneEngine.getExitAction(sceneState);
+  const undiscovered = SceneEngine.getUndiscoveredContent(sceneState);
+
+  // Pick up to 3 undiscovered content items
+  const contentActions = undiscovered.slice(0, 3).map(item => ({
+    label: item.label,
+    type: 'exploration'
+  }));
+
+  if (exitAction && exitAction.priority === 1) {
+    // Strong/forced pressure — exit goes first
+    actions.push({ label: exitAction.label, type: 'exit' });
+    actions.push(...contentActions);
+  } else {
+    // Background/gentle — content first, exit last
+    actions.push(...contentActions);
+    if (exitAction) {
+      actions.push({ label: exitAction.label, type: 'exit' });
+    }
+  }
+
+  // Fill to 4 if needed with generic scene-appropriate actions
+  while (actions.length < 4) {
+    actions.push({ label: 'Look around carefully', type: 'exploration' });
+  }
+
+  // Always exactly 4
+  return actions.slice(0, 4);
 }
 
 /**
@@ -242,5 +326,6 @@ module.exports = {
   createPlayerProfile,
   updatePlayerProfile,
   parseDMResponse,
-  scoreAction
+  scoreAction,
+  generateSceneActions
 };

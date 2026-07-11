@@ -90,6 +90,9 @@ function buildAdventureSystemPrompt(adventureContext) {
   if (adventureContext.setting) {
     prompt += `\nSETTING: ${adventureContext.setting}`;
   }
+  if (adventureContext.sceneContext) {
+    prompt += adventureContext.sceneContext;
+  }
 
   return prompt;
 }

@@ -20,10 +20,12 @@ const { createSession, addPlayer, getPrimaryPlayer, transitionScene, setFlag, ha
 const MessageRouter = require('../session/message-router');
 const { createContextManager, addTurn, setCharacterSheet, setAdventureContext, updateScene, addKeyDecision } = require('../ai-dm/context-manager');
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT } = require('../ai-dm/prompts');
-const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction } = require('../ai-dm/dm-service');
+const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions } = require('../ai-dm/dm-service');
 const { createProvider } = require('../ai-dm/llm-provider');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, CoinCategory } = require('../coin-engine');
 const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline } = require('../adventure');
+const { DraculaAdventure } = require('../adventure/dracula');
+const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
 
@@ -300,6 +302,19 @@ async function createServer(options = {}) {
       if (result.sceneTransition) {
         transitionScene(session, result.sceneTransition.sceneId);
         updateScene(game.contextManager, result.sceneTransition.description, []);
+
+        // Load the next scene's manifest into the scene engine
+        const nextManifest = DraculaAdventure.sceneManifests[result.sceneTransition.sceneId];
+        if (nextManifest) {
+          game.sceneState = SceneEngine.enterScene(nextManifest);
+
+          // Generate fresh suggested actions for the new scene
+          const newActions = generateSceneActions(game.sceneState);
+          recordMessage(sessionId, MessageRouter.suggestedActions(
+            newActions.map(a => ({ label: a.label, type: a.type || 'free' })),
+            'What would you like to do?'
+          ));
+        }
       }
 
       data.sceneCoins.push(turnCoins);
