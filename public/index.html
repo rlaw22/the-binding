@@ -125,6 +125,8 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 var evtSource = null;
 var sessionId = null;
 var sending = false;
+var reconnecting = false;
+var reconnectCount = 0;
 
 // --- On page load: check for rejoin URL param ---
 (function() {
@@ -232,8 +234,13 @@ function connectSSE() {
   });
 
   evtSource.onerror = function() {
-    // Auto-reconnect after 3 seconds instead of giving up
     evtSource.close();
+    reconnectCount++;
+    if (reconnectCount > 5) {
+      addMessage('error', 'Connection lost. Please refresh the page.');
+      return;
+    }
+    reconnecting = true;
     addMessage('system', 'Connection interrupted — reconnecting...');
     setTimeout(function() {
       if (sessionId) connectSSE();
@@ -244,8 +251,16 @@ function connectSSE() {
 function handleMessage(msg) {
   switch(msg.type) {
     case 'connected':
-      if (msg.rejoin) {
-        addMessage('system', 'Reconnected — here\'s your adventure so far.');
+      if (msg.rejoin || reconnecting) {
+        // Clear old messages before replaying history — prevents the duplicate/loop bug
+        var msgContainer = document.getElementById('messages');
+        msgContainer.innerHTML = '';
+        reconnecting = false;
+        reconnectCount = 0;
+        sending = false;
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('free-input').disabled = false;
+        document.getElementById('action-buttons').innerHTML = '';
       } else {
         addMessage('system', 'Welcome, ' + msg.character.name + '.');
       }
