@@ -76,6 +76,7 @@ function createOpenAIProvider(config = {}) {
 /**
  * Create a scene-aware mock LLM provider for testing.
  * Returns contextually appropriate responses based on the current scene.
+ * Each instance has its own counter — no cross-session bleeding.
  */
 function createMockProvider() {
   let callCount = 0;

@@ -74,8 +74,9 @@ async function createServer(options = {}) {
     reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
   });
 
-  // LLM provider
-  const llmProvider = createProvider(options.llmConfig || { mock: true });
+    // LLM provider config — each session gets its own provider instance
+    // so mock response counters don't bleed across sessions
+    const llmConfig = options.llmConfig || { mock: true };
 
   // --- REST ENDPOINTS ---
 
@@ -154,7 +155,7 @@ async function createServer(options = {}) {
     const game = createGame({
       adventureId,
       adventureName: adventure.name,
-      llmProvider,
+      llmProvider: createProvider(llmConfig),
       ruleEngine: RuleEngine,
       diceService: DiceService
     });
@@ -169,7 +170,13 @@ async function createServer(options = {}) {
     sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [] });
     rejoinCodes.set(rejoinCode, session.id);
 
-    // Generate the opening narration and suggested actions immediately
+    // Initialize scene engine with the first scene's manifest
+    const sceneManifest = DraculaAdventure.sceneManifests[adventure.startScene || 'scene_00'];
+    if (sceneManifest) {
+      game.sceneState = SceneEngine.enterScene(sceneManifest);
+    }
+
+    // Generate the opening narration and suggested actions
     const startInfo = getAdventureStart(adventureId);
     if (startInfo) {
       transitionScene(session, startInfo.scene.id);
@@ -186,12 +193,12 @@ async function createServer(options = {}) {
         {}
       ));
 
-      recordMessage(session.id, MessageRouter.suggestedActions([
-        { label: 'Ask the innkeeper about Castle Dracula', type: 'investigation' },
-        { label: 'Examine the crucifix and ask about local superstitions', type: 'investigation' },
-        { label: 'Step outside to survey the road and your surroundings', type: 'exploration' },
-        { label: 'Order a drink and steel yourself for the journey', type: 'social' }
-      ], 'What would you like to do?'));
+      // Generate suggested actions from the scene engine
+      const openingActions = generateSceneActions(game.sceneState);
+      recordMessage(session.id, MessageRouter.suggestedActions(
+        openingActions.map(a => ({ label: a.label, type: a.type || 'free' })),
+        'What would you like to do?'
+      ));
     }
 
     return {

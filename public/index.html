@@ -313,7 +313,8 @@ function sendAction(text) {
   sending = true;
   document.getElementById('send-btn').disabled = true;
   document.getElementById('free-input').disabled = true;
-  addMessage('player', text);
+  // Don't show player message here — the server's player_action message handles it
+  // This prevents the duplicate display bug
   document.getElementById('action-buttons').innerHTML = '';
 
   // Safety timeout: reset sending state if server doesn't respond in 15s
