@@ -192,8 +192,8 @@ function generateSceneActions(sceneState) {
   const exitAction = SceneEngine.getExitAction(sceneState);
   const undiscovered = SceneEngine.getUndiscoveredContent(sceneState);
 
-  // Pick up to 3 undiscovered content items
-  const contentActions = undiscovered.slice(0, 3).map(item => ({
+  // Pick all undiscovered content items — no artificial limit
+  const contentActions = undiscovered.map(item => ({
     label: item.label,
     type: 'exploration'
   }));
@@ -210,14 +210,8 @@ function generateSceneActions(sceneState) {
     }
   }
 
-  // Fill to 4 if needed with scene-specific exploration actions
-  while (actions.length < 4) {
-    const sceneName = sceneState ? sceneState.sceneName : 'the area';
-    actions.push({ label: `Examine your surroundings in ${sceneName}`, type: 'exploration' });
-  }
-
-  // Always exactly 4
-  return actions.slice(0, 4);
+  // Return all available actions — no filler, no artificial limit
+  return actions;
 }
 
 /**

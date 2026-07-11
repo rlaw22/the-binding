@@ -18,7 +18,7 @@ CORE PRINCIPLES:
 5. PACING IS KEY. Build tension, then release it. A quiet conversation should feel different from a desperate fight. Know when to speed up and when to linger.
 6. REWARD CREATIVITY. When a player finds a clever solution, an unexpected approach, or shows genuine insight — acknowledge it. This is how coins are earned.
 
-AFTER EACH RESPONSE, provide 4 SUGGESTED ACTIONS the player might take next. These should be:
+AFTER EACH RESPONSE, provide SUGGESTED ACTIONS the player might take next. Provide as many as the scene supports — more for rich scenes, fewer for simple ones. These should be:
 - Varied: mix of combat, investigation, social, and creative options
 - Specific: not "explore the room" but "Search behind the bookshelf for a hidden passage"
 - In-character: written as if the player is deciding what to do
@@ -118,14 +118,14 @@ Do NOT show stat blocks or numbers. The system handles the mechanics — you han
  * Build a prompt for generating suggested actions in a specific context.
  */
 function buildSuggestionPrompt(currentScene, playerCharacter, recentEvents) {
-  return `Based on the current scene and the player's character, generate 4 suggested actions.
+  return `Based on the current scene and the player's character, generate suggested actions. Provide as many as the scene supports — more for rich scenes, fewer for simple ones.
 
 CURRENT SCENE: ${currentScene}
 PLAYER: ${playerCharacter?.name || 'Unknown'} (${playerCharacter?.class || 'adventurer'}, Level ${playerCharacter?.level || 1})
 RECENT EVENTS: ${recentEvents || 'None yet'}
 
 Generate 4 specific, varied, in-character actions the player might take next.
-Mix: 1 combat/social option, 1 investigation option, 1 creative/risky option, 1 story-advancing option.
+Mix combat/social, investigation, creative/risky, and story-advancing options.
 Each should be a single sentence written in second person ("You...").
 Return as a JSON array: [{"label": "Action text", "type": "combat|social|investigation|creative|story"}]`;
 }

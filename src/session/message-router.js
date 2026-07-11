@@ -13,7 +13,7 @@
  *   chapter_summary — end-of-chapter coin breakdown
  *   tier_award   — tier badge earned
  *   system       — system messages (player joined, session saved, etc.)
- *   suggested_actions — the 4 AI-generated action suggestions + free text prompt
+ *   suggested_actions — the AI-generated action suggestions + free text prompt
  */
 
 const MessageTypes = {
@@ -51,7 +51,7 @@ function createMessage(type, content, options = {}) {
       sceneImageUrl: options.sceneImageUrl || null,
       diceRoll: options.diceRoll || null,        // { dieType, result, modifier, total }
       coinAmount: options.coinAmount || null,     // { amount, category, reason }
-      actions: options.actions || null,           // the 4 suggested actions
+      actions: options.actions || null,           // the suggested actions
       combatData: options.combatData || null,     // { attacker, defender, damage, etc. }
       tierData: options.tierData || null,         // { tier, adventure, score }
       priority: options.priority || 'normal',     // 'low', 'normal', 'high'
@@ -162,7 +162,7 @@ function system(content, options = {}) {
 }
 
 /**
- * Create a suggested actions message (the 4 + free text prompt).
+ * Create a suggested actions message (the suggested actions + free text prompt).
  */
 function suggestedActions(actions, prompt, options = {}) {
   return createMessage(MessageTypes.SUGGESTED_ACTIONS, prompt, {
