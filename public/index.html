@@ -232,8 +232,12 @@ function connectSSE() {
   });
 
   evtSource.onerror = function() {
-    addMessage('error', 'Connection lost. Refresh to reconnect.');
+    // Auto-reconnect after 3 seconds instead of giving up
     evtSource.close();
+    addMessage('system', 'Connection interrupted — reconnecting...');
+    setTimeout(function() {
+      if (sessionId) connectSSE();
+    }, 3000);
   };
 }
 
@@ -323,19 +327,23 @@ function sendAction(text) {
     body: JSON.stringify({ type: 'action', content: text })
   }).then(function(resp) {
     if (!resp.ok) {
-      clearTimeout(sendTimeout);
-      addMessage('error', 'Server error. Please try again.');
-      sending = false;
-      document.getElementById('send-btn').disabled = false;
-      document.getElementById('free-input').disabled = false;
+      // Don't show error yet — SSE reconnect will replay the response
+      // Only show error after the full timeout expires
+      console.warn('Action POST returned', resp.status);
     }
     // If OK, the SSE stream will deliver the response and showActions() resets sending
   }).catch(function(err) {
     clearTimeout(sendTimeout);
-    addMessage('error', 'Failed to send action. Please try again.');
-    sending = false;
-    document.getElementById('send-btn').disabled = false;
-    document.getElementById('free-input').disabled = false;
+    addMessage('error', 'Connection issue — action saved, waiting for response...');
+    // Don't reset sending yet — SSE reconnect might still deliver the response
+    // Reset after timeout as fallback
+    setTimeout(function() {
+      if (sending) {
+        sending = false;
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('free-input').disabled = false;
+      }
+    }, 10000);
   });
 }
 
