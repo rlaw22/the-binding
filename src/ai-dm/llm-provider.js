@@ -92,8 +92,7 @@ function createMockProvider() {
 
     woman: `In the corner of the inn, an old woman sits alone, nursing a cup of something dark. Her eyes catch yours — sharp, knowing, afraid. She whispers something you can't hear, then looks away quickly. The innkeeper notices you watching her. "Pay her no mind," he says, though his voice lacks conviction. "She lost her husband on the road to the Borgo Pass twenty years ago. Hasn't been right since." The woman's hands tremble around her cup.`,
 
-    stable: `You step through the back door into the stable yard. The air is cold and smells of hay and horse sweat. A single coach stands ready — its driver a silent figure wrapped in dark cloth, sitting perfectly still on the bench. The horses stamp and snort, their eyes rolling white in the lamplight. One of them rears suddenly, pulling against its harness. The driver doesn't flinch. Something about the way he sits — too still, too patient — makes your skin crawl.`,
-
+    stable: `You peer through the back window into the stable yard. The air is cold and smells of hay and horse sweat. A single coach stands ready — its driver a silent figure wrapped in dark cloth, sitting perfectly still on the bench. The horses stamp and snort, their eyes rolling white in the lamplight. One of them rears suddenly, pulling against its harness. The driver doesn't flinch. Something about the way he sits — too still, too patient — makes your skin crawl. The innkeeper sees you looking. "Your coach," he says quietly. "Best not to keep him waiting."`,
     letter: `On a bench near the fire, half-hidden beneath a folded shawl, you find a letter. The handwriting is hurried, desperate: "To whoever finds this — do NOT travel to the Borgo Pass after dark. The wolves are not natural. The coachman is not what he seems. God have mercy on Jonathan Harker's soul." The letter is dated three months ago. The ink is smeared, as if the writer's hands were shaking.`,
 
     food: `The innkeeper sets a bowl of thick stew before you, though you hadn't asked for it. "Eat," he says. "You will need your strength." He glances at the window, where the last light of day is fading behind the Carpathian peaks. "Your coach arrives at sundown. I have sent word to the driver — he knows the route to the castle." He pauses, then adds quietly: "If you insist on going... do not eat anything the Count offers you. And do not fall asleep before dawn."`,
@@ -192,13 +191,48 @@ function createMockProvider() {
     const userMessages = messages.filter(m => m.role === 'user');
     const lastAction = userMessages.length > 0 ? userMessages[userMessages.length - 1].content : '';
 
-    // Detect context from the SCENE STATE only — don't scan system prompt
-    // The scene engine tracks which scene we're in via the warm context
+    // Check the system prompt for discovery text (works for ANY adventure)
+    // The scene engine passes discovery text via buildSceneContext()
+    const systemMessages = messages.filter(m => m.role === 'system');
+    let discoveryText = null;
+    for (const msg of systemMessages) {
+      if (!msg.content) continue;
+      // Parse: When player "<action>": <discovery text>
+      // Discovery text can span multiple lines — capture until next "When player" or end of section
+      const lines = msg.content.split('\n');
+      for (let i = 0; i < lines.length; i++) {
+        const lineMatch = lines[i].match(/^\s*-\s*When player "([^"]+)":\s*(.*)/);
+        if (lineMatch) {
+          const discoveryAction = lineMatch[1].toLowerCase();
+          let discovery = lineMatch[2].trim();
+          // Capture continuation lines (lines that don't start with a new bullet or section header)
+          for (let j = i + 1; j < lines.length; j++) {
+            if (lines[j].match(/^\s*-\s*When player/) || lines[j].match(/^[A-Z][A-Z ]+:/)) break;
+            if (lines[j].trim()) discovery += ' ' + lines[j].trim();
+          }
+          // Check if the player's action matches this discovery action
+          const actionLower = lastAction.toLowerCase();
+          const actionWords = discoveryAction.split(/\s+/).filter(w => w.length > 3);
+          const matched = actionWords.filter(w => actionLower.includes(w)).length;
+          if (matched >= Math.min(2, actionWords.length) && discovery.length > 10) {
+            discoveryText = discovery;
+            break;
+          }
+        }
+      }
+      if (discoveryText) break;
+    }
+
+    // If we found a matching discovery, use it as the response
+    if (discoveryText) {
+      return discoveryText;
+    }
+
+    // Otherwise fall back to the existing response pool
     const warmMessages = messages.filter(m => m.role === 'system' && m.content && m.content.includes('Current Scene:'));
     let context = 'inn';
     if (warmMessages.length > 0) {
       const sceneLine = warmMessages[warmMessages.length - 1].content.toLowerCase();
-      // Check inn FIRST — the inn scene summary mentions "Castle Dracula" as a destination
       if (sceneLine.includes('inn') || sceneLine.includes('bistritz')) context = 'inn';
       else if (sceneLine.includes('coach ride') || sceneLine.includes('borgo pass')) context = 'coach';
       else if (sceneLine.includes('castle') || sceneLine.includes('dinner') || sceneLine.includes('forbidden wing')) context = 'castle';

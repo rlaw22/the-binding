@@ -24,7 +24,9 @@ const HARD_EXIT_TURNS_AFTER_75 = 4;
 function enterScene(manifest) {
   const contentItems = (manifest.content || []).map(item => ({
     id: item.id,
-    label: item.label,
+    label: item.label,        // what the player sees as a button (a verb)
+    discovery: item.discovery || null,  // what the DM reveals after the action (hidden from player)
+    keywords: item.keywords || [],       // explicit keywords for action matching
     discovered: false
   }));
 
@@ -108,8 +110,8 @@ function parseExploredTags(text) {
 }
 
 /**
- * Keyword matching fallback — checks if the player's action text
- * contains keywords associated with undiscovered content items.
+ * Keyword matching — checks if the player's action matches an undiscovered content item.
+ * Uses explicit `keywords` array from the manifest (preferred), falls back to label word extraction.
  */
 function matchKeywords(actionText, contentItems) {
   if (!actionText) return [];
@@ -118,7 +120,17 @@ function matchKeywords(actionText, contentItems) {
 
   for (const item of contentItems) {
     if (item.discovered) continue;
-    // Check if the item's label words appear in the action
+
+    // Use explicit keywords if available
+    if (item.keywords && item.keywords.length > 0) {
+      const matchCount = item.keywords.filter(kw => action.includes(kw.toLowerCase())).length;
+      if (matchCount >= 1) {
+        matches.push(item.id);
+        continue;
+      }
+    }
+
+    // Fallback: extract content words from label
     const labelWords = item.label.toLowerCase().split(/\s+/).filter(w => w.length > 3);
     const matchCount = labelWords.filter(w => action.includes(w)).length;
     if (matchCount >= Math.min(2, labelWords.length)) {
@@ -168,7 +180,15 @@ function buildSceneContext(sceneState) {
   context += `Completion: ${discovered.length} of ${sceneState.totalItems} explored\n`;
 
   if (undiscovered.length > 0) {
-    context += `Undiscovered: ${undiscovered.map(i => i.label).join(', ')}\n`;
+    context += `Undiscovered actions: ${undiscovered.map(i => i.label).join(', ')}\n`;
+    // Pass discovery text to the DM so it knows what to reveal when the player acts
+    const withDiscovery = undiscovered.filter(i => i.discovery);
+    if (withDiscovery.length > 0) {
+      context += `Hidden discoveries (reveal when player acts on corresponding action):\n`;
+      for (const item of withDiscovery) {
+        context += `  - When player "${item.label}": ${item.discovery}\n`;
+      }
+    }
   }
 
   context += `Exit action: "${sceneState.exitLabel}"\n`;

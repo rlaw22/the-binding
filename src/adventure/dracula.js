@@ -53,11 +53,11 @@ const DraculaAdventure = {
       sceneId: 'scene_00',
       sceneName: 'The Golden Krone Inn',
       content: [
-        { id: 'talk_innkeeper', label: 'Talk to the innkeeper about Castle Dracula' },
-        { id: 'examine_crucifix', label: 'Examine the crucifix the innkeeper offers' },
-        { id: 'find_old_woman', label: 'Notice the old woman in the corner' },
-        { id: 'check_stables', label: 'Visit the stables and see the coach' },
-        { id: 'read_letter', label: 'Find a letter left behind on a bench' }
+        { id: 'talk_innkeeper', label: 'Talk to the innkeeper about Castle Dracula', keywords: ['innkeeper', 'ask', 'tell', 'dracula', 'castle', 'speak', 'talk'] },
+        { id: 'examine_crucifix', label: 'Examine the crucifix in your hands', keywords: ['crucifix', 'cross', 'examine', 'inspect', 'hold', 'brass'], },
+        { id: 'find_old_woman', label: 'Look around the inn more carefully', keywords: ['look around', 'carefully', 'explore', 'corner', 'woman'], discovery: 'In the corner of the inn, an old woman sits alone, nursing a cup of something dark. Her eyes catch yours — sharp, knowing, afraid. She whispers something you can\'t hear, then looks away quickly.' },
+        { id: 'check_stables', label: 'Step outside to the stable yard', keywords: ['stable', 'stables', 'outside', 'coach', 'horse', 'yard', 'step outside'] },
+        { id: 'read_letter', label: 'Search the benches near the fire', keywords: ['search', 'bench', 'benches', 'fire', 'letter', 'hidden', 'under'], discovery: 'You find a letter left behind on a bench, half-hidden beneath a folded shawl. The handwriting is hurried, desperate: "To whoever finds this — do NOT travel to the Borgo Pass after dark. The wolves are not natural. The coachman is not what he seems. God have mercy on Jonathan Harker\'s soul." The letter is dated three months ago. The ink is smeared, as if the writer\'s hands were shaking.' }
       ],
       exitAction: 'board_coach',
       exitLabel: 'Board the coach for Castle Dracula',
@@ -75,10 +75,10 @@ const DraculaAdventure = {
       sceneId: 'scene_01',
       sceneName: 'The Coach Ride',
       content: [
-        { id: 'talk_driver', label: 'Try to speak with the silent coachman' },
-        { id: 'watch_landscape', label: 'Watch the dark forest pass by the window' },
-        { id: 'notice_wolves', label: 'Listen to the wolves howling in the distance' },
-        { id: 'examine_crucifix_coach', label: 'Clutch the crucifix for comfort' }
+        { id: 'talk_driver', label: 'Try to speak with the silent coachman', keywords: ['driver', 'coachman', 'speak', 'talk', 'silent', 'address'] },
+        { id: 'watch_landscape', label: 'Watch the dark forest pass by the window', keywords: ['forest', 'window', 'outside', 'look', 'watch', 'trees', 'landscape'] },
+        { id: 'notice_wolves', label: 'Listen to the wolves howling in the distance', keywords: ['wolf', 'wolves', 'howl', 'hear', 'listen', 'distant'] },
+        { id: 'examine_crucifix_coach', label: 'Clutch the crucifix for comfort', keywords: ['crucifix', 'cross', 'hold', 'clutch', 'comfort', 'pray'] }
       ],
       exitAction: 'arrive_crossroads',
       exitLabel: 'Step out at the crossroads',
@@ -96,10 +96,10 @@ const DraculaAdventure = {
       sceneId: 'scene_02',
       sceneName: 'The Borgo Pass',
       content: [
-        { id: 'observe_coachman', label: 'Study the mysterious new coachman' },
-        { id: 'watch_wolves', label: 'Watch the wolves that follow the coach' },
-        { id: 'feel_speed', label: 'Grip the seat as the coach races through the dark' },
-        { id: 'notice_eyes', label: 'Peer into the forest and see pairs of glowing eyes' }
+        { id: 'observe_coachman', label: 'Study the mysterious new coachman', keywords: ['coachman', 'driver', 'new', 'study', 'watch', 'observe', 'mysterious'] },
+        { id: 'watch_wolves', label: 'Watch the wolves that follow the coach', keywords: ['wolf', 'wolves', 'follow', 'surround', 'watch', 'grey'] },
+        { id: 'feel_speed', label: 'Grip the seat as the coach races through the dark', keywords: ['fast', 'speed', 'race', 'grip', 'seat', 'racing'] },
+        { id: 'notice_eyes', label: 'Peer into the forest and see pairs of glowing eyes', keywords: ['eyes', 'forest', 'glow', 'peer', 'glowing', 'pairs'] }
       ],
       exitAction: 'arrive_castle',
       exitLabel: 'Look up as the castle comes into view',
@@ -117,10 +117,10 @@ const DraculaAdventure = {
       sceneId: 'scene_03',
       sceneName: 'Castle Dracula — Arrival',
       content: [
-        { id: 'examine_castle', label: 'Study the castle exterior — ancient stone, no lights' },
-        { id: 'meet_dracula', label: 'Greet the Count as he welcomes you in perfect English' },
-        { id: 'notice_no_reflection', label: 'Look for a mirror and find none' },
-        { id: 'enter_great_hall', label: 'Step into the vast, candlelit great hall' }
+        { id: 'examine_castle', label: 'Study the castle exterior', keywords: ['castle', 'exterior', 'stone', 'look', 'study', 'outside', 'ancient'] },
+        { id: 'meet_dracula', label: 'Greet the Count as he welcomes you', keywords: ['count', 'dracula', 'greet', 'welcome', 'english', 'meet', 'man'] },
+        { id: 'notice_no_reflection', label: 'Look for a mirror and find none', keywords: ['mirror', 'reflection', 'glass', 'look', 'find', 'absent'] },
+        { id: 'enter_great_hall', label: 'Step into the vast, candlelit great hall', keywords: ['hall', 'great', 'enter', 'step', 'candlelit', 'vast', 'door'] }
       ],
       exitAction: 'go_to_dinner',
       exitLabel: 'Follow the Count to the dining hall',
@@ -138,10 +138,10 @@ const DraculaAdventure = {
       sceneId: 'scene_04',
       sceneName: 'Dinner with the Count',
       content: [
-        { id: 'ask_about_england', label: 'Ask the Count about his interest in England' },
-        { id: 'notice_no_food', label: 'Notice that no food is set before you' },
-        { id: 'compliment_wine', label: 'Sip the deep red wine and compliment it' },
-        { id: 'test_dracula', label: 'Mention local legends and watch his reaction' }
+        { id: 'ask_about_england', label: 'Ask the Count about his interest in England', keywords: ['england', 'ask', 'interest', 'count', 'why'] },
+        { id: 'notice_no_food', label: 'Notice that no food is set before you', keywords: ['food', 'plate', 'meal', 'notice', 'empty', 'eat'] },
+        { id: 'compliment_wine', label: 'Sip the deep red wine and compliment it', keywords: ['wine', 'drink', 'sip', 'compliment', 'red', 'taste'] },
+        { id: 'test_dracula', label: 'Mention local legends and watch his reaction', keywords: ['legend', 'local', 'mention', 'watch', 'reaction', 'test'] }
       ],
       exitAction: 'retire_to_room',
       exitLabel: 'Excuse yourself to retire for the night',
