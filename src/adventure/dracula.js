@@ -61,7 +61,15 @@ const DraculaAdventure = {
       ],
       exitAction: 'board_coach',
       exitLabel: 'Board the coach for Castle Dracula',
-      hardExitNarration: 'The innkeeper locks the front door and blows out the last candle. "Your coach awaits, traveler. I pray you return from that place." He ushers you outside into the cold night air.'
+      hardExitNarration: 'The innkeeper locks the front door and blows out the last candle. "Your coach awaits, traveler. I pray you return from that place." He ushers you outside into the cold night air.',
+      initialFacts: {
+        items: ['crucifix'],
+        metNPCs: ['innkeeper'],
+        established: ['arrived at the Golden Krone Inn in Bistritz', 'evening, last light fading', 'coach will arrive soon']
+      },
+      locationKeywords: {
+        banned: ['great hall', 'castle dracula', 'dining hall', 'carfax abbey', 'london', 'transylvania']
+      }
     },
     scene_01: {
       sceneId: 'scene_01',
@@ -74,7 +82,15 @@ const DraculaAdventure = {
       ],
       exitAction: 'arrive_crossroads',
       exitLabel: 'Step out at the crossroads',
-      hardExitNarration: 'The coach lurches to a stop. The driver gestures wordlessly toward a second coach waiting in the moonlight. You have no choice but to transfer.'
+      hardExitNarration: 'The coach lurches to a stop. The driver gestures wordlessly toward a second coach waiting in the moonlight. You have no choice but to transfer.',
+      initialFacts: {
+        items: ['crucifix'],
+        metNPCs: ['innkeeper', 'driver'],
+        established: ['left the inn', 'riding in a coach at night', 'other passengers present (a priest, two women)']
+      },
+      locationKeywords: {
+        banned: ['great hall', 'castle dracula', 'dining hall', 'carfax abbey', 'london']
+      }
     },
     scene_02: {
       sceneId: 'scene_02',
@@ -87,7 +103,15 @@ const DraculaAdventure = {
       ],
       exitAction: 'arrive_castle',
       exitLabel: 'Look up as the castle comes into view',
-      hardExitNarration: 'The coach crashes to a halt at the base of a towering cliff. Above you, Castle Dracula looms against the lightning-split sky. The coachman opens the door with a thin smile.'
+      hardExitNarration: 'The coach crashes to a halt at the base of a towering cliff. Above you, Castle Dracula looms against the lightning-split sky. The coachman opens the door with a thin smile.',
+      initialFacts: {
+        items: ['crucifix'],
+        metNPCs: ['innkeeper', 'driver', 'dracula'],
+        established: ['transferred coaches at Borgo Pass', 'new coachman is Dracula in disguise', 'wolves surround the coach']
+      },
+      locationKeywords: {
+        banned: ['great hall', 'dining hall', 'carfax abbey', 'london', 'the inn', 'bistritz']
+      }
     },
     scene_03: {
       sceneId: 'scene_03',
@@ -100,7 +124,15 @@ const DraculaAdventure = {
       ],
       exitAction: 'go_to_dinner',
       exitLabel: 'Follow the Count to the dining hall',
-      hardExitNarration: 'The Count extends a pale hand toward a corridor. "You must be famished from your journey. Please — dinner awaits." His tone makes it clear this is not a request.'
+      hardExitNarration: 'The Count extends a pale hand toward a corridor. "You must be famished from your journey. Please — dinner awaits." His tone makes it clear this is not a request.',
+      initialFacts: {
+        items: ['crucifix'],
+        metNPCs: ['innkeeper', 'dracula'],
+        established: ['arrived at Castle Dracula', 'the castle is magnificent and terrible', 'no mirrors anywhere', 'Dracula speaks perfect English']
+      },
+      locationKeywords: {
+        banned: ['the inn', 'bistritz', 'coach ride', 'carfax abbey', 'london']
+      }
     },
     scene_04: {
       sceneId: 'scene_04',
@@ -113,7 +145,15 @@ const DraculaAdventure = {
       ],
       exitAction: 'retire_to_room',
       exitLabel: 'Excuse yourself to retire for the night',
-      hardExitNarration: 'The Count rises abruptly. "The hour grows late, and you have had a long journey. I shall show you to your chambers." His eyes glitter in the candlelight as he leads you away.'
+      hardExitNarration: 'The Count rises abruptly. "The hour grows late, and you have had a long journey. I shall show you to your chambers." His eyes glitter in the candlelight as he leads you away.',
+      initialFacts: {
+        items: ['crucifix'],
+        metNPCs: ['innkeeper', 'dracula'],
+        established: ['dining with the Count', 'no food served for the player', 'deep red wine offered', 'Dracula is interested in England']
+      },
+      locationKeywords: {
+        banned: ['the inn', 'bistritz', 'coach ride', 'carfax abbey', 'london', 'the forbidden wing']
+      }
     }
   },
 

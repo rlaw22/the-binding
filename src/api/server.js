@@ -172,8 +172,12 @@ async function createServer(options = {}) {
 
     // Initialize scene engine with the first scene's manifest
     const sceneManifest = DraculaAdventure.sceneManifests[adventure.startScene || 'scene_00'];
+    const openingNarrationText = `You arrive at the Golden Krone Inn in the village of Bistritz. The evening air is thick with the scent of pine and wood smoke. Inside, the innkeeper — a stout, worried-looking man — glances at you with a mixture of pity and alarm when you mention your destination: Castle Dracula. He says: "Surely you do not mean to go there tonight? The castle is far, and the roads... the roads are not safe after dark." He presses a small crucifix into your hands. "Take this. For protection." Outside, the last light of day fades behind the Carpathian peaks. Your coach will arrive soon.`;
     if (sceneManifest) {
       game.sceneState = SceneEngine.enterScene(sceneManifest);
+      // Initialize continuity validator with the opening narration as established facts
+      const { createValidator } = require('../scene-engine/continuity-validator');
+      game.validator = createValidator(sceneManifest, openingNarrationText);
     }
 
     // Generate the opening narration and suggested actions
@@ -319,6 +323,11 @@ async function createServer(options = {}) {
         const nextManifest = DraculaAdventure.sceneManifests[result.sceneTransition.sceneId];
         if (nextManifest) {
           game.sceneState = SceneEngine.enterScene(nextManifest);
+
+          // Update validator for new scene (preserves items/NPCs from previous scenes)
+          if (game.validator) {
+            game.validator.transitionTo(nextManifest, result.sceneTransition.description);
+          }
 
           // Generate fresh suggested actions for the new scene
           const newActions = generateSceneActions(game.sceneState);

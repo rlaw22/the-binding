@@ -12,6 +12,7 @@ const { createContextManager, addTurn, setCharacterSheet, buildContext, updateSc
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT, buildCoinScoringPrompt } = require('./prompts');
 const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
+const { createValidator } = require('../scene-engine/continuity-validator');
 const { getScene, getDMGuidance } = require('../adventure/dracula');
 const { DraculaAdventure } = require('../adventure/dracula');
 
@@ -66,6 +67,7 @@ function createGame(options) {
     diceService: options.diceService || null, // injected
     coinEngine: options.coinEngine || null,   // injected
     sceneState: null, // scene engine state — initialized when first scene starts
+    validator: null // continuity validator — initialized with first scene
   };
 }
 
@@ -76,11 +78,12 @@ function createGame(options) {
 async function processAction(game, playerAction, character) {
   const { contextManager, llmProvider } = game;
 
-  // Initialize scene state if needed
+  // Initialize scene state and validator if needed
   if (!game.sceneState && game.adventureId === 'dracula') {
     const manifest = DraculaAdventure.sceneManifests['scene_00'];
     if (manifest) {
       game.sceneState = SceneEngine.enterScene(manifest);
+      game.validator = createValidator(manifest, null);
     }
   }
 
@@ -98,6 +101,18 @@ async function processAction(game, playerAction, character) {
 
   // Call LLM for narrative response
   const dmResponse = await llmProvider(messages);
+
+  // Validate the DM response against established facts
+  if (game.validator) {
+    const validation = game.validator.validate(dmResponse, playerAction);
+    if (!validation.valid) {
+      console.warn('[ContinuityValidator] VIOLATIONS:', validation.violations);
+      // In mock mode, we log violations. With a real LLM, we'd regenerate.
+    }
+    if (validation.warnings.length > 0) {
+      console.warn('[ContinuityValidator] WARNINGS:', validation.warnings);
+    }
+  }
 
   // Process scene engine — discover content from DM response
   if (game.sceneState) {
