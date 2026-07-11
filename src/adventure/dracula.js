@@ -60,7 +60,7 @@ In the far corner, partially hidden in shadow, you notice an old woman sitting a
 
 Near the fireplace, a folded shawl lies discarded on one of the benches. A small brass crucifix sits heavy in your palm — the innkeeper pressed it into your hands the moment you mentioned Castle Dracula.
 
-Through a back window, you can see the stable yard. A coach waits there, its driver sitting unnervingly still on the bench.
+Through a back window, you can see the stable yard. A nervous horse stamps in its stall. The coach has not yet arrived — but the innkeeper says it will come at sundown.
 
 The innkeeper watches you with a mixture of pity and alarm. "Surely you do not mean to go there tonight?" he says. "The castle is far, and the roads... the roads are not safe after dark."`,
       content: [

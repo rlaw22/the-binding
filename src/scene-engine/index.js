@@ -16,6 +16,7 @@ const PRESSURE_LEVELS = {
 };
 
 const HARD_EXIT_TURNS_AFTER_75 = 4;
+const MIN_TURNS_BEFORE_EXIT = 3; // player must have at least this many turns before any exit trigger
 
 /**
  * Create a scene state tracker for a new scene.
@@ -82,7 +83,8 @@ function processTurn(sceneState, dmResponse, playerAction) {
   }
 
   // Check if hard exit should trigger
-  if (sceneState.turnsSinceThreshold !== null) {
+  // ENGINE RULE: player must have minimum exploration turns before any exit
+  if (sceneState.turnsSinceThreshold !== null && sceneState.turnCount >= MIN_TURNS_BEFORE_EXIT) {
     const turnsSince = sceneState.turnCount - sceneState.turnsSinceThreshold;
     if (turnsSince >= HARD_EXIT_TURNS_AFTER_75) {
       sceneState.hardExitTriggered = true;
@@ -109,9 +111,22 @@ function parseExploredTags(text) {
   return results;
 }
 
+// Generic verbs that appear across many items — must NOT count as unique keyword matches
+const GENERIC_VERBS = new Set([
+  'look', 'ask', 'talk', 'speak', 'find', 'get', 'go', 'see', 'try', 'use', 'take',
+  'open', 'close', 'search', 'approach', 'examine', 'inspect', 'walk', 'move', 'check',
+  'watch', 'listen', 'feel', 'touch', 'grab', 'hold', 'pull', 'push', 'turn', 'step',
+  'enter', 'leave', 'sit', 'stand', 'run', 'fight', 'attack', 'defend', 'cast', 'pray'
+]);
+
 /**
  * Keyword matching — checks if the player's action matches an undiscovered content item.
  * Uses explicit `keywords` array from the manifest (preferred), falls back to label word extraction.
+ *
+ * ENGINE RULES (apply to all adventures):
+ * - Generic verbs (look, ask, talk, search, etc.) are excluded from matching
+ * - At least 2 non-generic keywords must match (prevents false discoveries)
+ * - Keywords must be specific to THIS item, not shared across items
  */
 function matchKeywords(actionText, contentItems) {
   if (!actionText) return [];
@@ -123,17 +138,21 @@ function matchKeywords(actionText, contentItems) {
 
     // Use explicit keywords if available
     if (item.keywords && item.keywords.length > 0) {
-      const matchCount = item.keywords.filter(kw => action.includes(kw.toLowerCase())).length;
-      if (matchCount >= 1) {
+      // Filter out generic verbs — they match too many items
+      const specificKeywords = item.keywords.filter(kw => !GENERIC_VERBS.has(kw.toLowerCase()));
+      if (specificKeywords.length === 0) continue;
+      const matchCount = specificKeywords.filter(kw => action.includes(kw.toLowerCase())).length;
+      if (matchCount >= 2) {
         matches.push(item.id);
         continue;
       }
     }
 
-    // Fallback: extract content words from label
-    const labelWords = item.label.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    // Fallback: extract content words from label, excluding generic verbs
+    const labelWords = item.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !GENERIC_VERBS.has(w));
+    if (labelWords.length === 0) continue;
     const matchCount = labelWords.filter(w => action.includes(w)).length;
-    if (matchCount >= Math.min(2, labelWords.length)) {
+    if (matchCount >= 2) {
       matches.push(item.id);
     }
   }
