@@ -241,10 +241,10 @@ function connectSSE() {
       return;
     }
     reconnecting = true;
-    addMessage('system', 'Connection interrupted — reconnecting...');
+    // Reconnect immediately — don't wait 3s, the keepalive should prevent this
     setTimeout(function() {
       if (sessionId) connectSSE();
-    }, 3000);
+    }, 1000);
   };
 }
 

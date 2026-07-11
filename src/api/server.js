@@ -337,6 +337,7 @@ async function createServer(options = {}) {
     }
 
     // Keep-alive ping every 30s
+    // Keep-alive ping every 10s (Render free tier kills idle connections after ~30s)
     const keepAlive = setInterval(() => {
       try {
         reply.raw.write(': keepalive\n\n');
@@ -344,7 +345,7 @@ async function createServer(options = {}) {
         clearInterval(keepAlive);
         streams.delete(reply);
       }
-    }, 30000);
+    }, 10000);
 
     // Clean up on disconnect
     request.raw.on('close', () => {
