@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: the-binding
+    runtime: docker
+    envVars: []
+    plan: free

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Binding — Play</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{height:100%;height:-webkit-fill-available;}
+body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;}
+#app{display:flex;flex-direction:column;flex:1;max-width:800px;margin:0 auto;width:100%;padding:16px;padding:env(safe-area-inset-top,16px) env(safe-area-inset-right,16px) env(safe-area-inset-bottom,16px) env(safe-area-inset-left,16px);}
+#header{text-align:center;padding:12px 0;border-bottom:1px solid #C9A84C33;margin-bottom:12px;}
+#header h1{color:#C9A84C;font-size:1.6em;letter-spacing:3px;}
+#header .subtitle{color:#E8A838;font-size:0.85em;font-style:italic;}
+#char-bar{display:flex;gap:16px;padding:10px 14px;background:#C9A84C0d;border:1px solid #C9A84C22;border-radius:8px;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.9em;align-items:center;flex-wrap:wrap;}
+#char-bar .stat{color:#C9A84C;font-weight:600;}
+#rejoin-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#E8A83815;border:1px solid #E8A83833;border-radius:6px;margin-bottom:12px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;}
+#rejoin-bar .code{color:#C9A84C;font-weight:700;font-size:1em;letter-spacing:2px;}
+#rejoin-bar .copy-btn{background:#C9A84C;border:none;color:#1A1A2E;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:0.85em;font-weight:600;}
+#messages{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch;}
+.msg{padding:14px 18px;border-radius:8px;line-height:1.7;font-size:1.05em;white-space:pre-wrap;word-wrap:break-word;}
+.msg.dm{background:#C9A84C0d;border:1px solid #C9A84C22;}
+.msg.player{background:#E8A83815;border:1px solid #E8A83833;align-self:flex-end;max-width:85%;}
+.msg.system{color:#F5F0E166;font-size:0.85em;text-align:center;font-style:italic;}
+.msg.coin{color:#C9A84C;font-size:0.9em;text-align:center;font-weight:600;}
+.msg.error{color:#ff6b6b;font-size:0.9em;text-align:center;}
+#actions{display:flex;flex-direction:column;gap:10px;padding:12px 0;border-top:1px solid #C9A84C22;}
+.action-btn{background:#C9A84C15;border:1px solid #C9A84C44;color:#C9A84C;padding:14px 18px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:1em;text-align:left;transition:all 0.2s;line-height:1.4;}
+.action-btn:hover,.action-btn:active{background:#C9A84C33;border-color:#C9A84C;}
+#input-row{display:flex;gap:10px;margin-top:10px;}
+#free-input{flex:1;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#free-input::placeholder{color:#F5F0E144;}
+#send-btn{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#start-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
+#start-screen h2{color:#C9A84C;font-size:1.4em;}
+#start-screen p{color:#F5F0E1aa;max-width:500px;font-size:1.05em;line-height:1.6;}
+#start-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
+#start-form input,#start-form select{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#start-form button{background:#C9A84C;border:none;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1.1em;font-family:Georgia,serif;min-height:48px;}
+.divider{color:#F5F0E144;font-size:0.9em;margin:4px 0;}
+.rejoin-link{color:#C9A84C;cursor:pointer;font-size:0.95em;text-decoration:underline;}
+.rejoin-link:hover{color:#E8A838;}
+.hidden{display:none !important;}
+
+/* Landscape orientation: use side-by-side layout for actions */
+@media (orientation: landscape) {
+  #app{padding:8px 24px;}
+  #header{margin-bottom:8px;}
+  #header h1{font-size:1.3em;}
+  #messages{gap:8px;}
+  .msg{padding:10px 14px;font-size:0.95em;line-height:1.6;}
+  #action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .action-btn{padding:10px 14px;font-size:0.9em;}
+  #input-row{gap:8px;margin-top:6px;}
+  #free-input{padding:10px 14px;font-size:1em;}
+  #send-btn{padding:10px 18px;font-size:1em;}
+}
+
+/* Very small screens */
+@media (max-width: 380px) {
+  #app{padding:10px;}
+  #header h1{font-size:1.3em;letter-spacing:2px;}
+  .msg{padding:10px 12px;font-size:0.95em;}
+  .action-btn{padding:12px 14px;font-size:0.9em;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <h1>THE BINDING</h1>
+    <div class="subtitle">Enter the books you love.</div>
+  </div>
+
+  <!-- Start screen -->
+  <div id="start-screen">
+    <h2>Choose Your Adventure</h2>
+    <p>Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
+    <div id="start-form">
+      <input type="text" id="player-name" placeholder="Your character name" value="">
+      <select id="player-class">
+        <option value="fighter">Fighter</option>
+        <option value="wizard">Wizard</option>
+        <option value="rogue">Rogue</option>
+        <option value="cleric">Cleric</option>
+        <option value="ranger">Ranger</option>
+      </select>
+      <button onclick="startGame()">Begin Adventure</button>
+    </div>
+    <div class="divider">— or —</div>
+    <span class="rejoin-link" onclick="showRejoinForm()">Rejoin from another device</span>
+    <div id="rejoin-form" class="hidden" style="margin-top:12px;">
+      <input type="text" id="rejoin-code-input" placeholder="Enter rejoin code (e.g. DRAC-A1B2)" style="width:100%;max-width:300px;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:10px 14px;border-radius:6px;font-family:Georgia,serif;font-size:1em;text-align:center;letter-spacing:2px;">
+      <br><br>
+      <button onclick="rejoinGame()" style="background:#C9A84C;border:none;color:#1A1A2E;padding:12px 32px;border-radius:6px;cursor:pointer;font-weight:600;font-size:1em;font-family:Georgia,serif;">Rejoin</button>
+    </div>
+  </div>
+
+  <!-- Game UI (hidden until game starts) -->
+  <div id="char-bar" class="hidden">
+    <div><span class="stat" id="char-name">—</span></div>
+    <div>Lvl <span class="stat" id="char-level">1</span></div>
+    <div><span class="stat" id="char-class">—</span></div>
+    <div>HP <span class="stat" id="char-hp">10/10</span></div>
+  </div>
+
+  <div id="rejoin-bar" class="hidden">
+    <span>Rejoin code:</span>
+    <span class="code" id="rejoin-code-display">—</span>
+    <button class="copy-btn" onclick="copyShareLink()">Copy Link</button>
+  </div>
+
+  <div id="messages" class="hidden"></div>
+
+  <div id="actions" class="hidden">
+    <div id="action-buttons"></div>
+    <div id="input-row">
+      <input type="text" id="free-input" placeholder="Or type your own action..." onkeydown="if(event.key==='Enter')sendFree()">
+      <button id="send-btn" onclick="sendFree()">Send</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var evtSource = null;
+var sessionId = null;
+var sending = false;
+
+// --- On page load: check for rejoin URL param ---
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var sid = params.get('session');
+  if (sid) {
+    // Attempt to reconnect to existing session
+    reconnectToSession(sid);
+  }
+})();
+
+function reconnectToSession(sid) {
+  fetch('/api/sessions/' + sid)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) { alert('Session not found: ' + data.error); return; }
+      sessionId = sid;
+      document.getElementById('start-screen').classList.add('hidden');
+      showGameUI(data.character, null);
+      connectSSE();
+    })
+    .catch(function(e) { alert('Failed to reconnect: ' + e.message); });
+}
+
+function showRejoinForm() {
+  var form = document.getElementById('rejoin-form');
+  form.classList.toggle('hidden');
+  if (!form.classList.contains('hidden')) {
+    document.getElementById('rejoin-code-input').focus();
+  }
+}
+
+function rejoinGame() {
+  var code = document.getElementById('rejoin-code-input').value.trim().toUpperCase();
+  if (!code) return;
+  fetch('/api/rejoin/' + encodeURIComponent(code))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) { alert('Rejoin failed: ' + data.error); return; }
+      sessionId = data.sessionId;
+      document.getElementById('start-screen').classList.add('hidden');
+      showGameUI(data.character, code);
+      // Update URL
+      window.history.replaceState({}, '', '?session=' + sessionId);
+      connectSSE();
+    })
+    .catch(function(e) { alert('Rejoin failed: ' + e.message); });
+}
+
+function showGameUI(character, code) {
+  document.getElementById('char-bar').classList.remove('hidden');
+  document.getElementById('messages').classList.remove('hidden');
+  document.getElementById('actions').classList.remove('hidden');
+
+  if (character) {
+    document.getElementById('char-name').textContent = character.name;
+    document.getElementById('char-level').textContent = character.level;
+    document.getElementById('char-class').textContent = character.class;
+    document.getElementById('char-hp').textContent = character.hp.current + '/' + character.hp.max;
+  }
+
+  if (code) {
+    document.getElementById('rejoin-bar').classList.remove('hidden');
+    document.getElementById('rejoin-code-display').textContent = code;
+  }
+}
+
+async function startGame() {
+  var name = document.getElementById('player-name').value.trim() || 'Adventurer';
+  var cls = document.getElementById('player-class').value;
+
+  try {
+    var resp = await fetch('/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        adventureId: 'dracula',
+        playerName: name,
+        characterClass: cls,
+        characterRace: 'human'
+      })
+    });
+    var data = await resp.json();
+    if (data.error) { alert(data.error); return; }
+
+    sessionId = data.sessionId;
+    showGameUI(data.character, data.rejoinCode);
+
+    // Update URL with session ID for easy sharing
+    window.history.replaceState({}, '', '?session=' + sessionId);
+
+    connectSSE();
+  } catch(e) {
+    alert('Failed to create session: ' + e.message);
+  }
+}
+
+function connectSSE() {
+  // Close any existing connection first to prevent duplicates
+  if (evtSource) { evtSource.close(); evtSource = null; }
+  evtSource = new EventSource('/api/sessions/' + sessionId + '/events');
+
+  evtSource.addEventListener('message', function(event) {
+    handleMessage(JSON.parse(event.data));
+  });
+
+  evtSource.onerror = function() {
+    addMessage('error', 'Connection lost. Refresh to reconnect.');
+    evtSource.close();
+  };
+}
+
+function handleMessage(msg) {
+  switch(msg.type) {
+    case 'connected':
+      if (msg.rejoin) {
+        addMessage('system', 'Reconnected — here\'s your adventure so far.');
+      } else {
+        addMessage('system', 'Welcome, ' + msg.character.name + '.');
+      }
+      break;
+    case 'narration':
+      addMessage('dm', msg.content);
+      break;
+    case 'player_action':
+      addMessage('player', msg.content);
+      break;
+    case 'suggested_actions':
+      showActions((msg.metadata && msg.metadata.actions) || []);
+      break;
+    case 'coin_reward':
+      var amt = msg.metadata && msg.metadata.coinAmount ? msg.metadata.coinAmount.amount : '?';
+      var reason = msg.metadata && msg.metadata.coinAmount ? msg.metadata.coinAmount.reason : '';
+      addMessage('coin', '+' + amt + ' coins' + (reason ? ' — ' + reason : ''));
+      break;
+    case 'system':
+      addMessage('system', msg.content);
+      break;
+    case 'error':
+      addMessage('error', msg.content);
+      break;
+    default:
+      if (msg.content) addMessage('dm', msg.content);
+  }
+}
+
+function addMessage(type, text) {
+  var el = document.createElement('div');
+  el.className = 'msg ' + type;
+  el.textContent = text;
+  var container = document.getElementById('messages');
+  container.appendChild(el);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showActions(actions) {
+  var container = document.getElementById('action-buttons');
+  container.innerHTML = '';
+  for (var i = 0; i < actions.length; i++) {
+    var btn = document.createElement('button');
+    btn.className = 'action-btn';
+    var label = actions[i].label || actions[i];
+    btn.textContent = (i+1) + '. ' + label;
+    btn.setAttribute('data-action', label);
+    btn.onclick = function() { sendAction(this.getAttribute('data-action')); };
+    container.appendChild(btn);
+  }
+  // Re-enable input after server responds
+  sending = false;
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('free-input').disabled = false;
+}
+
+function sendAction(text) {
+  if (sending) return;
+  sending = true;
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('free-input').disabled = true;
+  addMessage('player', text);
+  document.getElementById('action-buttons').innerHTML = '';
+
+  // Safety timeout: reset sending state if server doesn't respond in 20s
+  var sendTimeout = setTimeout(function() {
+    if (sending) {
+      sending = false;
+      document.getElementById('send-btn').disabled = false;
+      document.getElementById('free-input').disabled = false;
+      addMessage('error', 'Server is taking too long. You can try again.');
+    }
+  }, 20000);
+
+  // Send action via HTTP POST
+  fetch('/api/sessions/' + sessionId + '/actions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'action', content: text })
+  }).then(function(resp) {
+    if (!resp.ok) {
+      clearTimeout(sendTimeout);
+      addMessage('error', 'Server error. Please try again.');
+      sending = false;
+      document.getElementById('send-btn').disabled = false;
+      document.getElementById('free-input').disabled = false;
+    }
+    // If OK, the SSE stream will deliver the response and showActions() resets sending
+  }).catch(function(err) {
+    clearTimeout(sendTimeout);
+    addMessage('error', 'Failed to send action. Please try again.');
+    sending = false;
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('free-input').disabled = false;
+  });
+}
+
+function sendFree() {
+  var input = document.getElementById('free-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  sendAction(text);
+}
+
+function copyShareLink() {
+  var url = window.location.origin + '/?session=' + sessionId;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(function() {
+      var btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+    });
+  } else {
+    // Fallback for older browsers
+    var tmp = document.createElement('textarea');
+    tmp.value = url;
+    document.body.appendChild(tmp);
+    tmp.select();
+    document.execCommand('copy');
+    document.body.removeChild(tmp);
+    var btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+  }
+}
+</script>
+</body>
+</html>
