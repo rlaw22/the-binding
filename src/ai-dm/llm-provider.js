@@ -206,7 +206,7 @@ function createMockProvider() {
           let discovery = lineMatch[2].trim();
           // Capture continuation lines (lines that don't start with a new bullet or section header)
           for (let j = i + 1; j < lines.length; j++) {
-            if (lines[j].match(/^\s*-\s*When player/) || lines[j].match(/^[A-Z][A-Z ]+:/)) break;
+            if (lines[j].match(/^\s*-\s*When player/) || lines[j].match(/^[A-Z][A-Z ]+:/) || lines[j].match(/^\s*[A-Z][a-zA-Z]+:/)) break;
             if (lines[j].trim()) discovery += ' ' + lines[j].trim();
           }
           // Check if the player's action matches this discovery action
