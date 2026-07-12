@@ -168,7 +168,18 @@ function createValidator(manifest, openingNarration) {
     }
   }
 
-  return { validate, markUsed, getFacts, transitionTo };
+  /**
+   * Accumulate facts from new narrative text (e.g., after a player action).
+   * Convenience wrapper around extractFactsFromText.
+   */
+  function accumulate(text) {
+    extractFactsFromText(text, facts);
+  }
+
+  const api = { validate, markUsed, getFacts, transitionTo, accumulate };
+  // Expose facts directly for easy access
+  Object.defineProperty(api, 'facts', { get: () => facts, enumerable: true });
+  return api;
 }
 
 /**
@@ -185,7 +196,7 @@ function extractFactsFromText(text, facts) {
     /(?:gives?|hands?|press|push|offer)\w*\s+(?:you\s+)?(?:a |the |your |his |her )?([\w\s]+?)(?:\s*[,.\n]|\s+(?:across|toward|to you|for protection|for you))/gi,
     /(?:take this|for protection|you will need)[^.]*?["']?([^"'.\n]+?)(?:["']|\.)/gi,
     /(?:a small|an old|the|your|his|her)\s+(crucifix|cross|letter|journal|key|dagger|sword|map|book|ring|amulet|shawl|cup|bowl|stew)/gi,
-    /(?:receive|obtain|gain|pick up|find|discover)\w*\s+(?:a |the )?([\w\s]+?)(?:\s*[,.])/gi
+    /(?:receive|obtain|gain|pick up|find|discover)\w*\s+(?:a |the )?(\w+(?:\s+\w+)?)(?:\s+(?:from|on|in|with|at|by|for|to|into|onto|under|over|near|behind|beside|toward|through)\b|\s*[,.])/gi
   ];
 
   for (const pattern of itemPatterns) {

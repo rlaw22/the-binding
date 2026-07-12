@@ -122,10 +122,13 @@ function resolveAttack(params) {
     attackBonus,
     targetAC,
     damageDice,
+    diceExpression,
     damageType = 'slashing',
     advantage = combat.AdvantageState.NORMAL,
     critThreshold = 20,
   } = params;
+
+  const effectiveDamageDice = diceExpression || damageDice;
 
   const attack = combat.makeAttackRoll({
     attackBonus,
@@ -135,17 +138,21 @@ function resolveAttack(params) {
   });
 
   let damage = null;
-  if (attack.hit) {
+  if (attack.hit && effectiveDamageDice) {
     damage = combat.rollDamage({
-      diceExpression: damageDice,
+      diceExpression: effectiveDamageDice,
       critical: attack.criticalHit,
       damageType,
     });
   }
 
   return {
+    hit: attack.hit,
+    criticalHit: attack.criticalHit,
+    criticalMiss: attack.criticalMiss,
     attack,
-    damage,
+    damage: damage ? damage.total : 0,
+    damageResult: damage,
     storyText: storyMode.attack(attack, damage),
   };
 }

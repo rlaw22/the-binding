@@ -117,7 +117,34 @@ function createMockProvider() {
     mirrors: `You notice the mirrors first. Or rather, the absence of them. In the great hall, the corridors, the chambers — not a single mirror. Where you'd expect glass, there is only stone or dark wood. The Count notices you looking. "I am an old man," he says with a thin smile, "and old men prefer not to be reminded of time's passage." His eyes glitter with something you can't quite read. "Besides — in a castle this old, mirrors have a way of showing things one would rather not see."`
   };
 
-  const allPools = { inn: innResponses, coach: coachResponses, castle: castleResponses };
+  // === LONDON RESPONSES ===
+  const londonResponses = {
+    vanhelsing: `Van Helsing listens intently, his blue eyes sharp behind his spectacles. He paces the study, hands clasped behind his back, occasionally stopping to peer at you over the rims. "Yes," he says softly. "Yes, this is as I feared. The signs are unmistakable — the pallor, the wounds, the wasting. We are dealing with a vampire. And not just any vampire. An ancient one. One who has perfected his craft over centuries." He opens a cabinet and produces a collection of strange objects: garlic bulbs, a small crucifix, a bottle of holy water. "These are not superstition," he says firmly. "These are weapons. And we will need every one of them.`,
+
+    lucy: `Lucy Westenra lies in her canopied bed, her golden hair spread across the pillow like a halo. She is beautiful even in illness — porcelain skin, dark lashes, lips that might once have been pink but are now the color of old roses. Her breathing is shallow, almost imperceptible. On her throat, barely visible above the lace collar of her nightgown, two small wounds — red, inflamed, placed precisely over the jugular. The room smells of lavender and something else: the sweet, metallic scent you remember from the coffins in the forbidden wing. A garlic bulb sits on the windowsill, its paper skin already browning.`,
+
+    renfield: `Renfield sits cross-legged on the floor of his cell, surrounded by the remains of his latest meal — a spider, half-crushed, its legs still twitching. He looks up at you with bright, feverish eyes and a smile that is equal parts madness and terrible clarity. "The Master is coming," he says conversationally, as if discussing the weather. "He is already here, in fact. In this city. Walking among you. Breathing your air. Planning his migration." He catches a fly from the air with startling speed and examines it thoughtfully. "You think I am mad. Perhaps I am. But madness and truth are not mutually exclusive, are they?"`
+  };
+
+  // === HUNT RESPONSES ===
+  const huntResponses = {
+    crypt: `The crypt is cold and damp, the walls slick with moisture that catches the lamplight like silver. The air smells of turned earth and something older — the sweet, wrong scent of vampire. Coffins line the walls, their lids slightly askew. Fresh earth stains the marble floor. At the far end, a figure lies in an open coffin — beautiful, terrible, familiar. The golden hair, the porcelain skin, the crimson lips. Lucy. But not Lucy. Something wearing Lucy's face like a mask.`,
+
+    mina: `Mina Murray sits in a straight-backed chair, her hands folded in her lap with the composure of someone who has decided to be brave and is holding onto that decision with both hands. Her skin is pale — not the deathly pallor of Lucy's illness, but something subtler, as if the color is draining from her one drop at a time. She touches her throat absently, then catches herself and drops her hand. "I can feel him," she says quietly. "Always. Like a thread pulling behind my ribs. He is... moving. Fleeing. But not fast enough.`,
+
+    carfax: `Carfax Abbey is a ruin of red brick and ivy, perched on a hill above the Thames like a rotting tooth. The chapel roof has collapsed. The nave is choked with dead leaves and the nests of rats. But the cellar — the cellar is different. Fresh-pressed earth, carefully laid stone, and the smell of Transylvanian soil that you will never forget. Eleven wooden crates, each six feet long, each filled to the brim with dark, rich earth from the Carpathian mountains. Earth boxes. Dracula's connection to his homeland. His source of power. His weakness.`
+  };
+
+  // === FINAL BATTLE RESPONSES ===
+  const finalResponses = {
+    transylvania: `The Carpathian mountains rise around you like the bones of the earth, grey and ancient and indifferent to the small group of humans struggling up the mountain path. The air is thin and cold. Snow lies in patches on the ground, and the trees press in on either side like a corridor of bones. Ahead, Mina walks with her eyes half-closed, guided by the bond, seeing through Dracula's eyes, walking his path. Behind you, Van Helsing prays under his breath. The castle is close now. You can feel it — a presence in the air, a weight in the silence. Something ancient and terrible is waiting for you.`,
+
+    castle_ruins: `Castle Dracula is a ruin. The iron gates hang from rusted hinges. The courtyard is choked with dead leaves and the bones of small animals. The great hall — where you once dined with the Count over crimson wine — is a cathedral of dust and shadow. But the castle is not empty. You feel them before you see them: a drop in temperature, a prickling on the back of your neck, a sense of being watched by something that has been watching for centuries. The sisters are here. And below, deeper, in the crypts, the Count waits.`,
+
+    final: `The coffin room is deep beneath the castle, carved from the living rock of the mountain. The air is thick with the smell of Transylvanian earth and something older — the scent of centuries, of dust and blood and time itself. He stands in the center of the room, beside the stone coffin that has been his bed for five hundred years. He is not the gracious host who welcomed you over wine. He is not the furious monster who stormed the asylum. He is something older than either — a creature of pure will, backed into a corner, fighting for his existence. His eyes are dark and ancient. His face is carved from pale stone. "You have come far," he says, and his voice fills the room like smoke. "Perhaps it is time."`
+  };
+
+  const allPools = { inn: innResponses, coach: coachResponses, castle: castleResponses, london: londonResponses, hunt: huntResponses, final: finalResponses };
 
   /**
    * Pick the best response based on what the player actually said.
@@ -234,9 +261,18 @@ function createMockProvider() {
     for (const msg of allSystem) {
       const text = msg.content.toLowerCase();
       if (text.includes('scene: ') || text.includes('current scene:')) {
+        // Act 1: Journey
         if (text.includes('inn') || text.includes('bistritz') || text.includes('golden krone')) { context = 'inn'; break; }
         if (text.includes('coach ride') || text.includes('borgo pass') || text.includes('crossroads')) { context = 'coach'; break; }
-        if (text.includes('castle') || text.includes('dinner') || text.includes('forbidden wing') || text.includes('dining hall')) { context = 'castle'; break; }
+        // Act 1-2: Castle
+        if (text.includes('arrival') || text.includes('dinner') || text.includes('dining hall') || text.includes('great hall')) { context = 'castle'; break; }
+        if (text.includes('forbidden wing') || text.includes('three sisters') || text.includes('journal') || text.includes('escape from') || text.includes('wilderness')) { context = 'castle'; break; }
+        // Act 3: London
+        if (text.includes('van helsing') || text.includes('london') || text.includes('lucy') || text.includes('renfield') || text.includes('night watch') || text.includes('asylum')) { context = 'london'; break; }
+        // Act 4: The Hunt
+        if (text.includes('crypt') || text.includes('mina') || text.includes('carfax') || text.includes('counter-attack') || text.includes('blood bond')) { context = 'hunt'; break; }
+        // Act 5: Final Battle
+        if (text.includes('chase') || text.includes('carpathian') || text.includes('revisited') || text.includes('final') || text.includes('dracula') || text.includes('bites end')) { context = 'final'; break; }
       }
     }
 

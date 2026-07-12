@@ -38,7 +38,7 @@ const human = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {},
+  subraces: [],
 });
 
 // ─── ELF ────────────────────────────────────────────────────────────────────
@@ -72,8 +72,8 @@ const elf = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {
-    high: Object.freeze({
+  subraces: Object.freeze([
+    Object.freeze({
       id: 'high',
       name: 'High Elf',
       abilityBonuses: { int: 1 },
@@ -95,7 +95,7 @@ const elf = Object.freeze({
         },
       ],
     }),
-    wood: Object.freeze({
+    Object.freeze({
       id: 'wood',
       name: 'Wood Elf',
       abilityBonuses: { wis: 1 },
@@ -118,7 +118,7 @@ const elf = Object.freeze({
       ],
       speedOverride: 35,
     }),
-  },
+  ]),
 });
 
 // ─── DWARF ──────────────────────────────────────────────────────────────────
@@ -157,8 +157,8 @@ const dwarf = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {
-    hill: Object.freeze({
+  subraces: Object.freeze([
+    Object.freeze({
       id: 'hill',
       name: 'Hill Dwarf',
       abilityBonuses: { wis: 1 },
@@ -171,7 +171,7 @@ const dwarf = Object.freeze({
         },
       ],
     }),
-    mountain: Object.freeze({
+    Object.freeze({
       id: 'mountain',
       name: 'Mountain Dwarf',
       abilityBonuses: { str: 2 },
@@ -183,7 +183,7 @@ const dwarf = Object.freeze({
         },
       ],
     }),
-  },
+  ]),
 });
 
 // ─── HALFLING ───────────────────────────────────────────────────────────────
@@ -212,8 +212,8 @@ const halfling = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {
-    lightfoot: Object.freeze({
+  subraces: Object.freeze([
+    Object.freeze({
       id: 'lightfoot',
       name: 'Lightfoot Halfling',
       abilityBonuses: { cha: 1 },
@@ -225,7 +225,7 @@ const halfling = Object.freeze({
         },
       ],
     }),
-    stout: Object.freeze({
+    Object.freeze({
       id: 'stout',
       name: 'Stout Halfling',
       abilityBonuses: { con: 1 },
@@ -237,7 +237,7 @@ const halfling = Object.freeze({
         },
       ],
     }),
-  },
+  ]),
 });
 
 // ─── GNOME ──────────────────────────────────────────────────────────────────
@@ -261,8 +261,8 @@ const gnome = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {
-    forest: Object.freeze({
+  subraces: Object.freeze([
+    Object.freeze({
       id: 'forest',
       name: 'Forest Gnome',
       abilityBonuses: { dex: 1 },
@@ -279,7 +279,7 @@ const gnome = Object.freeze({
         },
       ],
     }),
-    rock: Object.freeze({
+    Object.freeze({
       id: 'rock',
       name: 'Rock Gnome',
       abilityBonuses: { con: 1 },
@@ -296,7 +296,7 @@ const gnome = Object.freeze({
         },
       ],
     }),
-  },
+  ]),
 });
 
 // ─── HALF-ELF ───────────────────────────────────────────────────────────────
@@ -336,7 +336,7 @@ const halfElf = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {},
+  subraces: [],
 });
 
 // ─── HALF-ORC ───────────────────────────────────────────────────────────────
@@ -370,7 +370,7 @@ const halfOrc = Object.freeze({
       type: 'passive',
     },
   ],
-  subraces: {},
+  subraces: [],
 });
 
 // ─── TIEFLING ───────────────────────────────────────────────────────────────
@@ -404,7 +404,7 @@ const tiefling = Object.freeze({
       },
     },
   ],
-  subraces: {},
+  subraces: [],
 });
 
 // ─── DRAGONBORN ─────────────────────────────────────────────────────────────
@@ -449,7 +449,7 @@ const dragonborn = Object.freeze({
       type: 'resistance',
     },
   ],
-  subraces: {},
+  subraces: [],
 });
 
 // ─── Registry ───────────────────────────────────────────────────────────────
@@ -488,7 +488,7 @@ function getRaceWithSubrace(raceId, subraceId) {
 
   let subrace = null;
   if (subraceId && base.subraces) {
-    subrace = base.subraces[subraceId] || null;
+    subrace = base.subraces.find ? base.subraces.find(s => s.id === subraceId) || null : null;
   }
 
   // Merge ability bonuses
@@ -538,6 +538,7 @@ function listRaces() {
 function listSubraces(raceId) {
   const race = RACES[raceId];
   if (!race || !race.subraces) return [];
+  if (Array.isArray(race.subraces)) return race.subraces.map(s => s.id);
   return Object.keys(race.subraces);
 }
 

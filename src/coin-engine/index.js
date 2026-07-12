@@ -61,6 +61,7 @@ function createCoinPool(adventureConfig) {
   return {
     adventureId: adventureConfig.adventureId,
     totalPool,
+    totalBudget: totalPool,
     totalScenes,
     difficulty,
     scenePools: Array.from({ length: totalScenes }, (_, i) => ({
@@ -83,14 +84,30 @@ function createCoinPool(adventureConfig) {
  * Score a player action and return coins earned.
  * Called per-turn with the DM's creativity assessment.
  */
-function scoreTurn(scores, scenePool) {
+function scoreTurn(poolOrScores, sceneIndexOrPool, turnScores) {
+  // Support two calling conventions:
+  // 1. scoreTurn(pool, sceneIndex, scores) — test/API convention
+  // 2. scoreTurn(scores, scenePool) — internal convention
+  let scores, scenePool;
+  if (turnScores !== undefined) {
+    // Convention 1: poolOrScores is the pool, sceneIndexOrPool is scene index
+    const pool = poolOrScores;
+    const sceneIndex = typeof sceneIndexOrPool === 'string' ? 0 : sceneIndexOrPool;
+    scores = turnScores;
+    scenePool = pool.scenePools ? pool.scenePools[Math.min(sceneIndex, pool.scenePools.length - 1)] : pool;
+  } else {
+    // Convention 2: poolOrScores is scores, sceneIndexOrPool is scenePool
+    scores = poolOrScores;
+    scenePool = sceneIndexOrPool || {};
+  }
+
   const coins = {};
   let turnTotal = 0;
+  const breakdown = scenePool.categoryBreakdown || {};
 
   for (const category of Object.values(CoinCategory)) {
     const rawScore = scores[category] || 0;
-    const maxForCategory = scenePool.categoryBreakdown[category] || 0;
-    // Scale raw score (0-10) to the category's coin allocation
+    const maxForCategory = breakdown[category] || 0;
     const earned = Math.round((rawScore / 10) * maxForCategory);
     coins[category] = earned;
     turnTotal += earned;
@@ -98,8 +115,9 @@ function scoreTurn(scores, scenePool) {
 
   return {
     coins,
+    total: turnTotal,
     turnTotal,
-    isSubtle: true // real-time notification should be subtle
+    isSubtle: true
   };
 }
 

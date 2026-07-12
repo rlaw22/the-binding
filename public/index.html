@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#C9A84C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="/manifest.json">
 <title>The Binding — Play</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -12,6 +16,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 #header{text-align:center;padding:12px 0;border-bottom:1px solid #C9A84C33;margin-bottom:12px;}
 #header h1{color:#C9A84C;font-size:1.6em;letter-spacing:3px;}
 #header .subtitle{color:#E8A838;font-size:0.85em;font-style:italic;}
+#spectator-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;background:#6B5CE715;border:1px solid #6B5CE744;border-radius:6px;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;color:#6B5CE7;}
 #char-bar{display:flex;gap:16px;padding:10px 14px;background:#C9A84C0d;border:1px solid #C9A84C22;border-radius:8px;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.9em;align-items:center;flex-wrap:wrap;}
 #char-bar .stat{color:#C9A84C;font-weight:600;}
 #rejoin-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#E8A83815;border:1px solid #E8A83833;border-radius:6px;margin-bottom:12px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;}
@@ -24,6 +29,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 .msg.system{color:#F5F0E166;font-size:0.85em;text-align:center;font-style:italic;}
 .msg.coin{color:#C9A84C;font-size:0.9em;text-align:center;font-weight:600;}
 .msg.error{color:#ff6b6b;font-size:0.9em;text-align:center;}
+.msg.spectator_suggestion{background:#6B5CE710;border:1px solid #6B5CE744;border-left:3px solid #6B5CE7;font-size:0.95em;}
 #actions{display:flex;flex-direction:column;gap:10px;padding:12px 0;border-top:1px solid #C9A84C22;}
 .action-btn{background:#C9A84C15;border:1px solid #C9A84C44;color:#C9A84C;padding:14px 18px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:1em;text-align:left;transition:all 0.2s;line-height:1.4;}
 .action-btn:hover,.action-btn:active{background:#C9A84C33;border-color:#C9A84C;}
@@ -31,12 +37,19 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 #free-input{flex:1;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #free-input::placeholder{color:#F5F0E144;}
 #send-btn{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#suggest-row{display:flex;gap:10px;margin-top:10px;}
+#suggest-input{flex:1;background:#1A1A2E;border:1px solid #6B5CE744;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#suggest-input::placeholder{color:#F5F0E166;}
+#suggest-btn{background:#6B5CE7;border:1px solid #6B5CE7;color:#fff;padding:14px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #start-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
 #start-screen h2{color:#C9A84C;font-size:1.4em;}
 #start-screen p{color:#F5F0E1aa;max-width:500px;font-size:1.05em;line-height:1.6;}
 #start-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
 #start-form input,#start-form select{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #start-form button{background:#C9A84C;border:none;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1.1em;font-family:Georgia,serif;min-height:48px;}
+#spectate-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
+#spectate-form input{width:100%;background:#1A1A2E;border:1px solid #6B5CE744;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#spectate-form button{background:#6B5CE7;border:none;color:#fff;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1.1em;font-family:Georgia,serif;min-height:48px;}
 .divider{color:#F5F0E144;font-size:0.9em;margin:4px 0;}
 .rejoin-link{color:#C9A84C;cursor:pointer;font-size:0.95em;text-decoration:underline;}
 .rejoin-link:hover{color:#E8A838;}
@@ -52,6 +65,9 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
   #input-row{gap:8px;margin-top:6px;}
   #free-input{padding:10px 14px;font-size:1em;}
   #send-btn{padding:10px 18px;font-size:1em;}
+  #suggest-row{gap:8px;margin-top:6px;}
+  #suggest-input{padding:10px 14px;font-size:1em;}
+  #suggest-btn{padding:10px 18px;font-size:1em;}
 }
 @media (max-width: 380px) {
   #app{padding:10px;}
@@ -89,6 +105,19 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
       <br><br>
       <button onclick="rejoinGame()" style="background:#C9A84C;border:none;color:#1A1A2E;padding:12px 32px;border-radius:6px;cursor:pointer;font-weight:600;font-size:1em;font-family:Georgia,serif;">Rejoin</button>
     </div>
+    <div class="divider">— or —</div>
+    <span class="rejoin-link" onclick="showSpectateForm()" style="color:#6B5CE7;">Watch as Spectator</span>
+    <div id="spectate-form" class="hidden" style="margin-top:12px;">
+      <input type="text" id="spectator-name" placeholder="Your name" value="">
+      <input type="text" id="spectate-code-input" placeholder="Session code or paste link" style="text-align:center;letter-spacing:2px;">
+      <button onclick="joinAsSpectator()">Watch</button>
+    </div>
+  </div>
+
+  <div id="spectator-bar" class="hidden">
+    <span>&#128065;</span>
+    <span id="spectator-label">Watching adventure</span>
+    <span id="spectator-count"></span>
   </div>
 
   <div id="char-bar" class="hidden">
@@ -106,6 +135,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
 
   <div id="messages" class="hidden"></div>
 
+  <!-- Host actions panel -->
   <div id="actions" class="hidden">
     <div id="action-buttons"></div>
     <div id="input-row">
@@ -113,20 +143,42 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;min-height:100vh
       <button id="send-btn" onclick="sendFree()">Send</button>
     </div>
   </div>
+
+  <!-- Spectator suggestion panel -->
+  <div id="spectator-actions" class="hidden">
+    <div id="action-buttons-spectator"></div>
+    <div id="suggest-row">
+      <input type="text" id="suggest-input" placeholder="Suggest an action to the host..." onkeydown="if(event.key==='Enter')sendSuggestion()">
+      <button id="suggest-btn" onclick="sendSuggestion()">Suggest</button>
+    </div>
+  </div>
 </div>
 
 <script>
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register('/sw.js').catch(function() {});
+}
+
 var sessionId = null;
+var playerId = null;
+var playerRole = null; // 'host' or 'spectator'
 var lastMsgIndex = 0;
 var sending = false;
 var pollTimer = null;
 var pollErrors = 0;
 
-// --- On page load: check for rejoin URL param ---
+// --- On page load: check for URL params ---
 (function() {
   var params = new URLSearchParams(window.location.search);
   var sid = params.get('session');
-  if (sid) reconnectToSession(sid);
+  var spectate = params.get('spectate');
+  if (sid && spectate === 'true') {
+    // Spectator flow — will need a name prompt
+    showSpectateForm();
+    document.getElementById('spectate-code-input').value = sid;
+  } else if (sid) {
+    reconnectToSession(sid);
+  }
 })();
 
 function reconnectToSession(sid) {
@@ -135,8 +187,9 @@ function reconnectToSession(sid) {
     .then(function(data) {
       if (data.error) { alert('Session not found: ' + data.error); return; }
       sessionId = sid;
+      playerRole = 'host';
       document.getElementById('start-screen').classList.add('hidden');
-      showGameUI(data.character, null);
+      showGameUI(data.character, null, false);
       startPolling();
     })
     .catch(function(e) { alert('Failed to reconnect: ' + e.message); });
@@ -150,6 +203,14 @@ function showRejoinForm() {
   }
 }
 
+function showSpectateForm() {
+  var form = document.getElementById('spectate-form');
+  form.classList.toggle('hidden');
+  if (!form.classList.contains('hidden')) {
+    document.getElementById('spectator-name').focus();
+  }
+}
+
 function rejoinGame() {
   var code = document.getElementById('rejoin-code-input').value.trim().toUpperCase();
   if (!code) return;
@@ -158,29 +219,97 @@ function rejoinGame() {
     .then(function(data) {
       if (data.error) { alert('Rejoin failed: ' + data.error); return; }
       sessionId = data.sessionId;
+      playerRole = 'host';
       document.getElementById('start-screen').classList.add('hidden');
-      showGameUI(data.character, code);
+      showGameUI(data.character, code, false);
       window.history.replaceState({}, '', '?session=' + sessionId);
       startPolling();
     })
     .catch(function(e) { alert('Rejoin failed: ' + e.message); });
 }
 
-function showGameUI(character, code) {
-  document.getElementById('char-bar').classList.remove('hidden');
-  document.getElementById('messages').classList.remove('hidden');
-  document.getElementById('actions').classList.remove('hidden');
+function joinAsSpectator() {
+  var name = document.getElementById('spectator-name').value.trim() || 'Watcher';
+  var codeOrLink = document.getElementById('spectate-code-input').value.trim();
+  if (!codeOrLink) { alert('Enter a session code or link'); return; }
 
-  if (character) {
-    document.getElementById('char-name').textContent = character.name;
-    document.getElementById('char-level').textContent = character.level;
-    document.getElementById('char-class').textContent = character.class;
-    document.getElementById('char-hp').textContent = character.hp.current + '/' + character.hp.max;
+  // Extract session ID from link or use as-is
+  var sid = codeOrLink;
+  if (codeOrLink.indexOf('?session=') !== -1) {
+    sid = codeOrLink.split('?session=')[1].split('&')[0];
   }
 
-  if (code) {
-    document.getElementById('rejoin-bar').classList.remove('hidden');
-    document.getElementById('rejoin-code-display').textContent = code;
+  // Try as rejoin code first
+  var fetchUrl = sid.match(/^[0-9a-f]{8}-/i) ? '/api/sessions/' + sid + '/join' : null;
+
+  if (!fetchUrl) {
+    // It's a rejoin code — look up the session first
+    fetch('/api/rejoin/' + encodeURIComponent(sid.toUpperCase()))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) { alert('Session not found: ' + data.error); return; }
+        return joinSession(data.sessionId, name);
+      })
+      .catch(function(e) { alert('Failed to find session: ' + e.message); });
+  } else {
+    joinSession(sid, name);
+  }
+}
+
+function joinSession(sid, name) {
+  fetch('/api/sessions/' + sid + '/join', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerName: name })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error) { alert('Join failed: ' + data.error); return; }
+    sessionId = data.sessionId;
+    playerId = data.playerId;
+    playerRole = 'spectator';
+    document.getElementById('start-screen').classList.add('hidden');
+    // Get host character for the char bar
+    showGameUI(data.character, null, true);
+    window.history.replaceState({}, '', '?session=' + sessionId + '&spectate=true');
+    startPolling();
+  })
+  .catch(function(e) { alert('Failed to join: ' + e.message); });
+}
+
+function showGameUI(character, code, isSpectator) {
+  document.getElementById('messages').classList.remove('hidden');
+
+  if (isSpectator) {
+    // Spectator mode
+    document.getElementById('spectator-bar').classList.remove('hidden');
+    document.getElementById('actions').classList.add('hidden');
+    document.getElementById('spectator-actions').classList.remove('hidden');
+    // Show character bar with host's info (read-only)
+    if (character && character.name && character.name !== 'Unknown Hero') {
+      document.getElementById('char-bar').classList.remove('hidden');
+      document.getElementById('char-name').textContent = character.name;
+      document.getElementById('char-level').textContent = character.level;
+      document.getElementById('char-class').textContent = character.class;
+      document.getElementById('char-hp').textContent = character.hp.current + '/' + character.hp.max;
+    }
+  } else {
+    // Host mode
+    document.getElementById('char-bar').classList.remove('hidden');
+    document.getElementById('actions').classList.remove('hidden');
+    document.getElementById('spectator-actions').classList.add('hidden');
+
+    if (character) {
+      document.getElementById('char-name').textContent = character.name;
+      document.getElementById('char-level').textContent = character.level;
+      document.getElementById('char-class').textContent = character.class;
+      document.getElementById('char-hp').textContent = character.hp.current + '/' + character.hp.max;
+    }
+
+    if (code) {
+      document.getElementById('rejoin-bar').classList.remove('hidden');
+      document.getElementById('rejoin-code-display').textContent = code;
+    }
   }
 }
 
@@ -203,8 +332,10 @@ async function startGame() {
     if (data.error) { alert(data.error); return; }
 
     sessionId = data.sessionId;
+    playerId = data.playerId;
+    playerRole = 'host';
     lastMsgIndex = 0;
-    showGameUI(data.character, data.rejoinCode);
+    showGameUI(data.character, data.rejoinCode, false);
     window.history.replaceState({}, '', '?session=' + sessionId);
     startPolling();
   } catch(e) {
@@ -216,7 +347,7 @@ async function startGame() {
 function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollErrors = 0;
-  pollOnce(); // immediate first poll
+  pollOnce();
   pollTimer = setInterval(pollOnce, 2000);
 }
 
@@ -255,7 +386,6 @@ function pollOnce() {
 function handleMessage(msg) {
   switch(msg.type) {
     case 'connected':
-      // Initial welcome — don't add message, the opening narration follows immediately
       break;
     case 'narration':
       addMessage('dm', msg.content);
@@ -264,7 +394,18 @@ function handleMessage(msg) {
       addMessage('player', msg.content);
       break;
     case 'suggested_actions':
-      showActions((msg.metadata && msg.metadata.actions) || []);
+      if (playerRole === 'spectator') {
+        // Spectators see the suggested actions as read-only suggestions they can also propose
+        showSpectatorActions((msg.metadata && msg.metadata.actions) || []);
+      } else {
+        showActions((msg.metadata && msg.metadata.actions) || []);
+      }
+      break;
+    case 'spectator_suggestion':
+      // Host sees spectator suggestions as a special message
+      if (playerRole !== 'spectator') {
+        addMessage('spectator_suggestion', msg.content);
+      }
       break;
     case 'coin_reward':
       var amt = msg.metadata && msg.metadata.coinAmount ? msg.metadata.coinAmount.amount : '?';
@@ -308,16 +449,32 @@ function showActions(actions) {
   document.getElementById('free-input').disabled = false;
 }
 
+function showSpectatorActions(actions) {
+  var container = document.getElementById('action-buttons-spectator');
+  container.innerHTML = '';
+  for (var i = 0; i < actions.length; i++) {
+    var btn = document.createElement('button');
+    btn.className = 'action-btn';
+    btn.style.borderColor = '#6B5CE744';
+    btn.style.color = '#B8B0E8';
+    var label = actions[i].label || actions[i];
+    btn.textContent = 'Suggest: ' + label;
+    btn.setAttribute('data-action', label);
+    btn.onclick = function() {
+      document.getElementById('suggest-input').value = this.getAttribute('data-action');
+      document.getElementById('suggest-input').focus();
+    };
+    container.appendChild(btn);
+  }
+}
+
 function sendAction(text) {
   if (sending) return;
   sending = true;
   document.getElementById('send-btn').disabled = true;
   document.getElementById('free-input').disabled = true;
-  // Don't show player message here — the server's player_action message handles it
-  // This prevents the duplicate display bug
   document.getElementById('action-buttons').innerHTML = '';
 
-  // Safety timeout: reset sending state if server doesn't respond in 15s
   var sendTimeout = setTimeout(function() {
     if (sending) {
       sending = false;
@@ -330,12 +487,11 @@ function sendAction(text) {
   fetch('/api/sessions/' + sessionId + '/actions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'action', content: text })
+    body: JSON.stringify({ type: 'action', content: text, playerId: playerId })
   }).then(function(resp) {
     if (!resp.ok) {
       console.warn('Action POST returned', resp.status);
     }
-    // The polling loop will pick up the response — showActions() resets sending
   }).catch(function(err) {
     clearTimeout(sendTimeout);
     addMessage('error', 'Connection issue — please try again.');
@@ -351,6 +507,28 @@ function sendFree() {
   if (!text) return;
   input.value = '';
   sendAction(text);
+}
+
+function sendSuggestion() {
+  var input = document.getElementById('suggest-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+
+  fetch('/api/sessions/' + sessionId + '/suggestions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ playerId: playerId, content: text })
+  }).then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.error) {
+      addMessage('error', 'Could not send suggestion: ' + data.error);
+    } else {
+      addMessage('system', 'Suggestion sent: ' + text);
+    }
+  }).catch(function(err) {
+    addMessage('error', 'Connection issue — could not send suggestion.');
+  });
 }
 
 function copyShareLink() {

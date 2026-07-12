@@ -35,6 +35,11 @@ function createSession(options = {}) {
     // Players array — always an array, even for single-player
     players: [],
 
+    // Phase 2: host/spectator support
+    hostId: null,             // player ID of the host (first player)
+    suggestions: [],          // spectator suggestions: [{ id, spectatorId, spectatorName, action, timestamp, status }]
+    nextSuggestionId: 1,
+
     // Shared world state — everyone sees this
     worldState: {
       currentScene: null,
@@ -76,8 +81,17 @@ function createSession(options = {}) {
  * Each player has shared state (character visible to all) and private state (secrets).
  */
 function addPlayer(session, characterData) {
+  const isFirst = session.players.length === 0;
+  const role = characterData.role || (isFirst ? 'host' : 'spectator');
+
+  if (isFirst) {
+    // Will set hostId after we know the player id
+  }
+
   const player = {
-    id: uuidv4(),
+    id: characterData.id || uuidv4(),
+    name: characterData.name || 'Unknown Hero',
+    role,                    // 'host' | 'spectator'
     characterId: characterData.id || uuidv4(),
     character: {
       name: characterData.name || 'Unknown Hero',
@@ -104,7 +118,7 @@ function addPlayer(session, characterData) {
     // Player-specific stats
     stats: {
       coinsEarned: 0,
-      currentTier: null,    // Will be set after adventure
+      currentTier: null,
       diceRolls: 0,
       combatsWon: 0,
       skillChecksPassed: 0,
@@ -113,6 +127,12 @@ function addPlayer(session, characterData) {
   };
 
   session.players.push(player);
+
+  // First player is always the host
+  if (isFirst && !session.hostId) {
+    session.hostId = player.id;
+  }
+
   session.updatedAt = Date.now();
   return player;
 }
@@ -129,6 +149,80 @@ function getPlayer(session, playerId) {
  */
 function getPrimaryPlayer(session) {
   return session.players[0] || null;
+}
+
+/**
+ * Get the host player (the one who controls actions).
+ */
+function getHostPlayer(session) {
+  if (session.hostId) {
+    return session.players.find(p => p.id === session.hostId) || null;
+  }
+  // Fallback: first host-role player, or first player
+  return session.players.find(p => p.role === 'host') || session.players[0] || null;
+}
+
+/**
+ * Get all spectator players.
+ */
+function getSpectators(session) {
+  return session.players.filter(p => p.role === 'spectator');
+}
+
+/**
+ * Check if a player is the host.
+ */
+function isHost(session, playerId) {
+  const player = getPlayer(session, playerId);
+  return player && player.role === 'host';
+}
+
+/**
+ * Add a spectator suggestion.
+ */
+function addSuggestion(session, spectatorId, action) {
+  const spectator = getPlayer(session, spectatorId);
+  const suggestion = {
+    id: session.nextSuggestionId++,
+    spectatorId,
+    spectatorName: spectator ? spectator.character.name : 'Unknown',
+    action,
+    timestamp: Date.now(),
+    status: 'pending'  // 'pending' | 'approved' | 'dismissed'
+  };
+  session.suggestions.push(suggestion);
+  session.updatedAt = Date.now();
+  return suggestion;
+}
+
+/**
+ * Approve a spectator suggestion (host picks it as their action).
+ */
+function approveSuggestion(session, suggestionId) {
+  const suggestion = session.suggestions.find(s => s.id === suggestionId);
+  if (!suggestion) return null;
+  suggestion.status = 'approved';
+  session.updatedAt = Date.now();
+  return suggestion;
+}
+
+/**
+ * Dismiss a spectator suggestion.
+ */
+function dismissSuggestion(session, suggestionId) {
+  const suggestion = session.suggestions.find(s => s.id === suggestionId);
+  if (suggestion) {
+    suggestion.status = 'dismissed';
+    session.updatedAt = Date.now();
+  }
+  return suggestion;
+}
+
+/**
+ * Get pending (unresolved) suggestions.
+ */
+function getPendingSuggestions(session) {
+  return session.suggestions.filter(s => s.status === 'pending');
 }
 
 /**
@@ -157,14 +251,16 @@ function hasFlag(session, flag) {
 /**
  * Add an NPC to the world state.
  */
-function addNPC(session, npcId, npcData) {
+function addNPC(session, npcIdOrData, npcData) {
+  const npcId = typeof npcIdOrData === 'string' ? npcIdOrData : (npcIdOrData && npcIdOrData.id);
+  const data = typeof npcIdOrData === 'object' ? npcIdOrData : (npcData || {});
   session.worldState.npcs[npcId] = {
-    name: npcData.name,
-    mood: npcData.mood || 'neutral',
+    name: data.name,
+    mood: data.mood || data.attitude || 'neutral',
     lastSeen: session.worldState.currentScene,
     knownInfo: [],
     alive: true,
-    ...npcData
+    ...data
   };
   session.updatedAt = Date.now();
 }
@@ -216,6 +312,13 @@ module.exports = {
   addPlayer,
   getPlayer,
   getPrimaryPlayer,
+  getHostPlayer,
+  getSpectators,
+  isHost,
+  addSuggestion,
+  approveSuggestion,
+  dismissSuggestion,
+  getPendingSuggestions,
   updateWorldState,
   setFlag,
   hasFlag,

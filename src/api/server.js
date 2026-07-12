@@ -16,7 +16,7 @@ const fastifyStatic = require('@fastify/static');
 const path = require('path');
 const crypto = require('crypto');
 
-const { createSession, addPlayer, getPrimaryPlayer, transitionScene, setFlag, hasFlag, updateWorldState } = require('../session');
+const { createSession, addPlayer, getPrimaryPlayer, getHostPlayer, getPlayer, isHost, addSuggestion, approveSuggestion, dismissSuggestion, getPendingSuggestions, getSpectators, transitionScene, setFlag, hasFlag, updateWorldState } = require('../session');
 const MessageRouter = require('../session/message-router');
 const { createContextManager, addTurn, setCharacterSheet, setAdventureContext, updateScene, addKeyDecision } = require('../ai-dm/context-manager');
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT } = require('../ai-dm/prompts');
@@ -81,7 +81,7 @@ async function createServer(options = {}) {
   // --- REST ENDPOINTS ---
 
   app.get('/api/adventures', async () => {
-    return { adventures: listAdventures() };
+    return listAdventures();
   });
 
   app.get('/api/adventures/:id', async (request, reply) => {
@@ -208,27 +208,35 @@ async function createServer(options = {}) {
       ));
     }
 
+    // Collect opening messages for the response
+    const sessionData = sessions.get(session.id);
+    const openingMessages = sessionData ? sessionData.history.map((h, i) => ({ index: i, data: JSON.parse(h) })) : [];
+
     return {
       sessionId: session.id,
       rejoinCode,
       playerId: player.id,
       adventureName: adventure.name,
       character: player.character,
+      messages: openingMessages,
       message: `Welcome to ${adventure.name}. Your adventure begins...`
     };
   });
 
-  // Get session info
+  // Get session info (Phase 2: includes roles and suggestions)
   app.get('/api/sessions/:id', async (request, reply) => {
     const data = sessions.get(request.params.id);
     if (!data) return reply.status(404).send({ error: 'Session not found' });
-    const player = getPrimaryPlayer(data.session);
+    const host = getHostPlayer(data.session);
     return {
       sessionId: data.session.id,
       state: data.session.state,
       adventureName: data.session.sessionName,
-      character: player ? player.character : null,
-      players: data.session.players.map(p => ({ id: p.id, name: p.character.name, level: p.character.level })),
+      character: host ? host.character : null,
+      hostId: data.session.hostId,
+      players: data.session.players.map(p => ({ id: p.id, name: p.character.name, level: p.character.level, role: p.role })),
+      spectatorCount: getSpectators(data.session).length,
+      pendingSuggestions: getPendingSuggestions(data.session).length,
       currentScene: data.session.worldState.currentScene,
       totalTurns: data.game.turnHistory.length,
       historyLength: data.history.length
@@ -258,7 +266,7 @@ async function createServer(options = {}) {
     };
   });
 
-  // --- ACTION ENDPOINT ---
+  // --- ACTION ENDPOINT (Phase 2: host-only validation) ---
   app.post('/api/sessions/:id/actions', async (request, reply) => {
     const sessionId = request.params.id;
     const data = sessions.get(sessionId);
@@ -267,13 +275,23 @@ async function createServer(options = {}) {
       return reply.status(404).send({ error: 'Session not found' });
     }
 
-    const { type, content } = request.body || {};
+    const { type, content, playerId } = request.body || {};
     if (!content) {
       return reply.status(400).send({ error: 'content is required' });
     }
 
     const { session, game, coinPool } = data;
-    const player = getPrimaryPlayer(session);
+
+    // Phase 2: resolve the acting player — must be the host
+    let player;
+    if (playerId) {
+      player = getPlayer(session, playerId);
+      if (!player) return reply.status(404).send({ error: 'Player not found' });
+      if (player.role === 'spectator') return reply.status(403).send({ error: 'Spectators cannot submit actions' });
+    } else {
+      player = getHostPlayer(session);
+    }
+    if (!player) return reply.status(404).send({ error: 'No host player found' });
 
     try {
       // Record the player's action
@@ -312,38 +330,158 @@ async function createServer(options = {}) {
         ));
       }
 
-      // Handle scene transitions
+      // Handle scene transitions — session-level tracking only
+      // (dm-service already handled game state, validator, warm context, and opening narration)
       if (result.sceneTransition) {
         transitionScene(session, result.sceneTransition.sceneId);
-        updateScene(game.contextManager, result.sceneTransition.description, []);
-
-        // Load the next scene's manifest into the scene engine
-        const nextManifest = DraculaAdventure.sceneManifests[result.sceneTransition.sceneId];
-        if (nextManifest) {
-          game.sceneState = SceneEngine.enterScene(nextManifest);
-
-          // Update validator for new scene (preserves items/NPCs from previous scenes)
-          if (game.validator) {
-            game.validator.transitionTo(nextManifest, result.sceneTransition.description);
-          }
-
-          // Generate fresh suggested actions for the new scene
-          const newActions = generateSceneActions(game.sceneState);
-          recordMessage(sessionId, MessageRouter.suggestedActions(
-            newActions.map(a => ({ label: a.label, type: a.type || 'free' })),
-            'What would you like to do?'
-          ));
-        }
       }
 
       data.sceneCoins.push(turnCoins);
 
-      return { ok: true, turnNumber: game.turnHistory.length };
+      return {
+        ok: true,
+        turnNumber: game.turnHistory.length,
+        narrative: result.narrative,
+        suggestedActions: result.suggestedActions || []
+      };
     } catch (err) {
       app.log.error(err);
       recordMessage(sessionId, MessageRouter.error('Something went wrong. Please try again.'));
       return reply.status(500).send({ error: 'Action processing failed' });
     }
+  });
+
+  // --- PHASE 2: SPECTATOR JOIN ---
+  app.post('/api/sessions/:id/join', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const { playerName } = request.body || {};
+    if (!playerName) return reply.status(400).send({ error: 'playerName is required' });
+
+    const { session } = data;
+    if (session.players.length >= session.maxPlayers) {
+      return reply.status(400).send({ error: 'Session is full' });
+    }
+
+    const spectator = addPlayer(session, {
+      name: playerName,
+      role: 'spectator',
+      class: 'spectator',
+      race: 'spectator',
+      level: 0,
+      hp: { current: 0, max: 0 }
+    });
+
+    // Announce the spectator joining
+    recordMessage(session.id, MessageRouter.system(
+      `${playerName} is now watching the adventure.`
+    ));
+
+    return {
+      sessionId: session.id,
+      playerId: spectator.id,
+      role: 'spectator',
+      hostId: session.hostId,
+      character: spectator.character,
+      players: session.players.map(p => ({ id: p.id, name: p.character.name, role: p.role }))
+    };
+  });
+
+  // --- PHASE 2: SPECTATOR SUGGESTION ---
+  app.post('/api/sessions/:id/suggestions', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const { playerId, content } = request.body || {};
+    if (!content) return reply.status(400).send({ error: 'content is required' });
+    if (!playerId) return reply.status(400).send({ error: 'playerId is required' });
+
+    const { session } = data;
+    const player = getPlayer(session, playerId);
+    if (!player) return reply.status(404).send({ error: 'Player not found' });
+    if (player.role !== 'spectator') return reply.status(403).send({ error: 'Only spectators can submit suggestions' });
+
+    const suggestion = addSuggestion(session, playerId, content);
+
+    // Broadcast the suggestion to the host as a message
+    const msg = MessageRouter.spectatorSuggestion(content, player.character.name, playerId);
+    recordMessage(session.id, msg);
+
+    return { ok: true, suggestion };
+  });
+
+  // --- PHASE 2: HOST APPROVES SUGGESTION ---
+  app.post('/api/sessions/:id/suggestions/:suggestionId/approve', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const { playerId } = request.body || {};
+    const { session } = data;
+
+    // Verify the approver is the host
+    if (playerId) {
+      const player = getPlayer(session, playerId);
+      if (!player || player.role !== 'host') {
+        return reply.status(403).send({ error: 'Only the host can approve suggestions' });
+      }
+    }
+
+    const suggestionId = parseInt(request.params.suggestionId, 10);
+    const suggestion = approveSuggestion(session, suggestionId);
+    if (!suggestion) return reply.status(404).send({ error: 'Suggestion not found' });
+
+    // Execute the approved suggestion as a host action through the DM
+    const host = getHostPlayer(session);
+    const game = data.game;
+    const coinPool = data.coinPool;
+
+    try {
+      recordMessage(session.id, {
+        type: 'player_action',
+        content: suggestion.action,
+        playerName: host.character.name,
+        suggestedBy: suggestion.spectatorName,
+        timestamp: Date.now()
+      });
+
+      const result = await processAction(game, suggestion.action, host.character);
+
+      const currentSceneIndex = game.turnHistory.length;
+      const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
+
+      recordMessage(session.id, MessageRouter.narration(result.narrative, {}));
+
+      if (turnCoins.turnTotal > 0) {
+        recordMessage(session.id, MessageRouter.coinReward(turnCoins.turnTotal, 'intelligence', 'Clever play', {}));
+      }
+
+      if (result.suggestedActions.length > 0) {
+        recordMessage(session.id, MessageRouter.suggestedActions(
+          result.suggestedActions.map(a => ({ label: a.label, type: a.type || 'free' })),
+          'What would you like to do?'
+        ));
+      }
+
+      if (result.sceneTransition) {
+        transitionScene(session, result.sceneTransition.sceneId);
+      }
+
+      data.sceneCoins.push(turnCoins);
+
+      return { ok: true, suggestion, turnNumber: game.turnHistory.length, narrative: result.narrative };
+    } catch (err) {
+      app.log.error(err);
+      recordMessage(session.id, MessageRouter.error('Something went wrong processing the suggestion.'));
+      return reply.status(500).send({ error: 'Suggestion processing failed' });
+    }
+  });
+
+  // --- PHASE 2: GET PENDING SUGGESTIONS ---
+  app.get('/api/sessions/:id/suggestions', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    return { suggestions: getPendingSuggestions(data.session) };
   });
 
   return app;

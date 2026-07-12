@@ -7,6 +7,12 @@
  * Story structure: 5 acts, faithful to Bram Stoker's Dracula.
  */
 
+// Scene manifests loaded from per-act files for maintainability
+const Act2Manifests = require('../../manifests-act2');
+const Act3Manifests = require('../../manifests-act3');
+const Act4Manifests = require('../../manifests-act4');
+const Act5Manifests = require('../../manifests-act5');
+
 const DraculaAdventure = {
   id: 'dracula',
   name: 'Dracula',
@@ -477,6 +483,16 @@ The Count leans forward, his dark eyes glittering. "Tell me about England," he s
   // Adventure-level summary for the AI DM context
   adventureSummary: 'The player travels to Castle Dracula in Transylvania, discovers the Count is a vampire, barely escapes, pursues him to England, gathers allies (Van Helsing, Seward, Mina), witnesses Dracula\'s horror spreading (Lucy\'s death), and ultimately chases him back to Transylvania for a final confrontation. Themes: gothic horror, good vs. evil, sacrifice, the power of knowledge and courage.'
 };
+
+// Merge all per-act scene manifests into the adventure object
+Object.assign(DraculaAdventure.sceneManifests,
+  Act2Manifests,
+  Act3Manifests,
+  Act4Manifests,
+  Act5Manifests
+);
+
+console.log(`[Dracula] Loaded ${Object.keys(DraculaAdventure.sceneManifests).length} scene manifests (acts 1-5)`);
 
 /**
  * Get a scene by ID.

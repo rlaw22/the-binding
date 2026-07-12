@@ -148,10 +148,21 @@ function matchKeywords(actionText, contentItems) {
       }
     }
 
+    // Label match: if the player action contains most of the label, discover it
+    const labelLower = item.label.toLowerCase();
+    const labelWords = labelLower.split(/\s+/).filter(w => !GENERIC_VERBS.has(w));
+    if (labelWords.length > 0) {
+      const labelMatchCount = labelWords.filter(w => action.includes(w)).length;
+      if (labelMatchCount >= Math.ceil(labelWords.length * 0.5)) {
+        matches.push(item.id);
+        continue;
+      }
+    }
+
     // Fallback: extract content words from label, excluding generic verbs
-    const labelWords = item.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !GENERIC_VERBS.has(w));
-    if (labelWords.length === 0) continue;
-    const matchCount = labelWords.filter(w => action.includes(w)).length;
+    const contentWords = item.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !GENERIC_VERBS.has(w));
+    if (contentWords.length === 0) continue;
+    const matchCount = contentWords.filter(w => action.includes(w)).length;
     if (matchCount >= 2) {
       matches.push(item.id);
     }

@@ -61,6 +61,7 @@ const CLASSES = Object.freeze({
   barbarian: {
     id: 'barbarian',
     name: 'Barbarian',
+    hitDie: 'd12',
     hitDice: '1d12',
     hitPointsAtFirst: 12,
     hitPointsPerLevel: 7,
@@ -90,6 +91,7 @@ const CLASSES = Object.freeze({
   bard: {
     id: 'bard',
     name: 'Bard',
+    hitDie: 'd8',
     hitDice: '1d8',
     hitPointsAtFirst: 8,
     hitPointsPerLevel: 5,
@@ -119,6 +121,7 @@ const CLASSES = Object.freeze({
   cleric: {
     id: 'cleric',
     name: 'Cleric',
+    hitDie: 'd8',
     hitDice: '1d8',
     hitPointsAtFirst: 8,
     hitPointsPerLevel: 5,
@@ -148,6 +151,7 @@ const CLASSES = Object.freeze({
   druid: {
     id: 'druid',
     name: 'Druid',
+    hitDie: 'd8',
     hitDice: '1d8',
     hitPointsAtFirst: 8,
     hitPointsPerLevel: 5,
@@ -177,6 +181,7 @@ const CLASSES = Object.freeze({
   fighter: {
     id: 'fighter',
     name: 'Fighter',
+    hitDie: 'd10',
     hitDice: '1d10',
     hitPointsAtFirst: 10,
     hitPointsPerLevel: 6,
@@ -206,6 +211,7 @@ const CLASSES = Object.freeze({
   monk: {
     id: 'monk',
     name: 'Monk',
+    hitDie: 'd8',
     hitDice: '1d8',
     hitPointsAtFirst: 8,
     hitPointsPerLevel: 5,
@@ -236,6 +242,7 @@ const CLASSES = Object.freeze({
   paladin: {
     id: 'paladin',
     name: 'Paladin',
+    hitDie: 'd10',
     hitDice: '1d10',
     hitPointsAtFirst: 10,
     hitPointsPerLevel: 6,
@@ -264,6 +271,7 @@ const CLASSES = Object.freeze({
   ranger: {
     id: 'ranger',
     name: 'Ranger',
+    hitDie: 'd10',
     hitDice: '1d10',
     hitPointsAtFirst: 10,
     hitPointsPerLevel: 6,
@@ -293,6 +301,7 @@ const CLASSES = Object.freeze({
   rogue: {
     id: 'rogue',
     name: 'Rogue',
+    hitDie: 'd8',
     hitDice: '1d8',
     hitPointsAtFirst: 8,
     hitPointsPerLevel: 5,
@@ -322,6 +331,7 @@ const CLASSES = Object.freeze({
   sorcerer: {
     id: 'sorcerer',
     name: 'Sorcerer',
+    hitDie: 'd6',
     hitDice: '1d6',
     hitPointsAtFirst: 6,
     hitPointsPerLevel: 4,
@@ -351,6 +361,7 @@ const CLASSES = Object.freeze({
   warlock: {
     id: 'warlock',
     name: 'Warlock',
+    hitDie: 'd8',
     hitDice: '1d8',
     hitPointsAtFirst: 8,
     hitPointsPerLevel: 5,
@@ -379,6 +390,7 @@ const CLASSES = Object.freeze({
   wizard: {
     id: 'wizard',
     name: 'Wizard',
+    hitDie: 'd6',
     hitDice: '1d6',
     hitPointsAtFirst: 6,
     hitPointsPerLevel: 4,

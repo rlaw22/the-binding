@@ -162,7 +162,7 @@ function createCharacter(options) {
     stats: { ...finalStats },
     rawStats: { ...stats },
     modifiers: mods,
-    hp: maxHp,
+    hp: { current: maxHp, max: maxHp },
     maxHp,
     tempHp: 0,
     ac: baseAC,
@@ -213,7 +213,8 @@ function levelUp(character, opts = {}) {
     ? opts.hpRoll + conMod
     : classDef.hitPointsPerLevel + conMod;
   character.maxHp += Math.max(1, hpGain); // minimum 1 HP per level
-  character.hp += Math.max(1, hpGain);
+  character.hp.max = character.maxHp;
+  character.hp.current += Math.max(1, hpGain);
 
   // Recalculate proficiency
   character.proficiencyBonus = proficiencyBonus(character.level);
@@ -276,12 +277,12 @@ function applyDamage(character, amount, type) {
   }
 
   // Apply to real HP
-  hpLost = Math.min(character.hp, remaining);
-  character.hp -= hpLost;
+  hpLost = Math.min(character.hp.current, remaining);
+  character.hp.current -= hpLost;
   character.updatedAt = new Date().toISOString();
 
-  const unconscious = character.hp === 0;
-  const dead = character.hp <= 0 && character.deathSaves?.failures >= 3;
+  const unconscious = character.hp.current === 0;
+  const dead = character.hp.current <= 0 && character.deathSaves?.failures >= 3;
 
   return { actualDamage: tempHpLost + hpLost, tempHpLost, hpLost, unconscious, dead };
 }
@@ -295,16 +296,16 @@ function applyDamage(character, amount, type) {
  */
 function applyHealing(character, amount) {
   if (amount < 0) throw new RangeError('Healing amount must be non-negative');
-  const before = character.hp;
-  character.hp = Math.min(character.maxHp, character.hp + amount);
+  const before = character.hp.current;
+  character.hp.current = Math.min(character.hp.max, character.hp.current + amount);
   character.updatedAt = new Date().toISOString();
 
-  const stabilized = before === 0 && character.hp > 0;
+  const stabilized = before === 0 && character.hp.current > 0;
   if (stabilized) {
     character.deathSaves = { successes: 0, failures: 0 };
   }
 
-  return { actualHealing: character.hp - before, stabilized };
+  return { actualHealing: character.hp.current - before, stabilized };
 }
 
 // ─── Temp HP ────────────────────────────────────────────────────────────────
@@ -542,7 +543,7 @@ function recordDeathSave(character, result) {
   const dead = character.deathSaves.failures >= 3;
 
   if (stabilized) {
-    character.hp = 1;
+    character.hp.current = 1;
     resetDeathSaves(character);
   }
 

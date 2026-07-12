@@ -121,7 +121,7 @@ class CharacterService extends EventEmitter {
       stats,
       savingThrows,
       skills: {},
-      hp: maxHp,
+      hp: { current: maxHp, max: maxHp },
       maxHp,
       tempHp: 0,
       ac: baseAc,
@@ -212,10 +212,13 @@ class CharacterService extends EventEmitter {
    *
    * @returns {{ character, levelsGained, notifications: string[] }}
    */
-  gainXP(id, amount) {
+  gainXP(idOrObj, amount) {
     if (typeof amount !== 'number' || amount <= 0) {
       throw new ValidationError('amount', 'XP amount must be a positive number');
     }
+
+    const id = typeof idOrObj === 'string' ? idOrObj : (idOrObj && idOrObj.id);
+    if (!id) throw new Error('Character ID is required');
 
     const char = this._characters.get(id);
     if (!char) throw new Error(`Character not found: ${id}`);
@@ -405,8 +408,10 @@ class CharacterService extends EventEmitter {
 
     // Apply potion / consumable effects
     if (effects.healing) {
-      const healed = Math.min(effects.healing, char.maxHp - char.hp);
-      char.hp += healed;
+      const hpCurrent = (char.hp && typeof char.hp === 'object') ? char.hp.current : char.hp;
+      const hpMax = (char.hp && typeof char.hp === 'object') ? char.hp.max : char.maxHp;
+      const healed = Math.min(effects.healing, hpMax - hpCurrent);
+      if (char.hp && typeof char.hp === 'object') { char.hp.current += healed; } else { char.hp += healed; }
     }
     if (effects.tempHp) {
       char.tempHp = Math.max(char.tempHp, effects.tempHp);
@@ -434,42 +439,14 @@ class CharacterService extends EventEmitter {
    * Player-friendly summary for the AI DM context window.
    * Combines sanitizeForPlayer with key context the DM needs.
    */
-  getCharacterSummary(id) {
+  getCharacterSummary(idOrObj) {
+    const id = typeof idOrObj === 'string' ? idOrObj : (idOrObj && idOrObj.id);
     const raw = this.getCharacterOrThrow(id);
-    const sanitized = sanitizeForPlayer(raw);
 
-    return {
-      ...sanitized,
-      // DM-relevant structured data the sanitized version strips
-      _dm: {
-        id: raw.id,
-        userId: raw.userId,
-        level: raw.level,
-        xp: raw.xp,
-        xpToNext: raw.level < 20 ? XP_TABLE[raw.level] - raw.xp : null,
-        hp: raw.hp,
-        maxHp: raw.maxHp,
-        tempHp: raw.tempHp,
-        ac: raw.ac,
-        speed: raw.speed,
-        proficiencyBonus: raw.proficiencyBonus,
-        stats: { ...raw.stats },
-        conditions: [...raw.conditions],
-        inventoryCount: raw.inventory.length,
-        equippedItems: {
-          armor: raw.equipment.armor?.name || 'None',
-          shield: raw.equipment.shield?.name || 'None',
-          mainHand: raw.equipment.mainHand?.name || 'None',
-          offHand: raw.equipment.offHand?.name || 'None',
-          accessories: raw.equipment.accessories.map(a => a.name),
-        },
-        spellSlots: raw.spells.slots,
-        preparedSpells: raw.spells.prepared,
-        hitDiceRemaining: raw.hitDice.remaining,
-        deathSaves: { ...raw.deathSaves },
-        features: [...raw.features],
-      },
-    };
+    const hpCurrent = (raw.hp && typeof raw.hp === 'object') ? raw.hp.current : raw.hp;
+    const hpMax = (raw.hp && typeof raw.hp === 'object') ? raw.hp.max : raw.maxHp;
+
+    return `${raw.name}, Level ${raw.level} ${raw.race} ${raw.characterClass}. HP: ${hpCurrent}/${hpMax}. AC: ${raw.ac}. STR ${raw.stats.str} DEX ${raw.stats.dex} CON ${raw.stats.con} INT ${raw.stats.int} WIS ${raw.stats.wis} CHA ${raw.stats.cha}.`;
   }
 
   // ── Admin / Debug ────────────────────────────────────────────────────────
@@ -530,7 +507,12 @@ class CharacterService extends EventEmitter {
     // HP: max hit die / 2 + 1 + CON mod (average), or could be rolled
     const hpGain = Math.floor(hitDie / 2) + 1 + conMod;
     char.maxHp += Math.max(hpGain, 1); // minimum 1 HP per level
-    char.hp = char.maxHp; // Full heal on level up
+    if (char.hp && typeof char.hp === 'object') {
+      char.hp.max = char.maxHp;
+      char.hp.current = char.maxHp;
+    } else {
+      char.hp = char.maxHp;
+    } // Full heal on level up
 
     // Proficiency bonus
     char.proficiencyBonus = proficiencyBonus(newLevel);

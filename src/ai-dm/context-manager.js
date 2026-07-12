@@ -229,6 +229,7 @@ function formatCharacterSheet(character) {
 function getStats(contextManager) {
   return {
     hotTurns: contextManager.hot.length,
+    hotCount: contextManager.hot.length,
     totalTurns: contextManager.totalTurns,
     warmEvents: contextManager.warm.recentEvents.length,
     coldDecisions: contextManager.cold.keyDecisions.length,

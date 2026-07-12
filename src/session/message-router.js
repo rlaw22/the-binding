@@ -26,6 +26,7 @@ const MessageTypes = {
   TIER_AWARD: 'tier_award',
   SYSTEM: 'system',
   SUGGESTED_ACTIONS: 'suggested_actions',
+  SPECTATOR_SUGGESTION: 'spectator_suggestion',
   ERROR: 'error'
 };
 
@@ -69,6 +70,27 @@ function routeMessage(session, message, deliveryCallback) {
   if (!session || !session.players.length) return [];
 
   const deliveredTo = [];
+
+  // Phase 2: SUGGESTED_ACTIONS only go to hosts (spectators can't act)
+  if (message.type === MessageTypes.SUGGESTED_ACTIONS) {
+    for (const player of session.players) {
+      if (player.connected && player.role !== 'spectator') {
+        deliveryCallback(player.id, message);
+        deliveredTo.push(player.id);
+      }
+    }
+    return deliveredTo;
+  }
+
+  // Phase 2: SPECTATOR_SUGGESTION only goes to the host
+  if (message.type === MessageTypes.SPECTATOR_SUGGESTION) {
+    const host = session.players.find(p => p.role === 'host' && p.connected);
+    if (host) {
+      deliveryCallback(host.id, message);
+      deliveredTo.push(host.id);
+    }
+    return deliveredTo;
+  }
 
   if (message.type === MessageTypes.WHISPER) {
     // Whisper goes ONLY to specified targets
@@ -130,10 +152,17 @@ function combatUpdate(content, combatData, options = {}) {
 /**
  * Create a coin reward message (hybrid: real-time subtle notification).
  */
-function coinReward(amount, category, reason, options = {}) {
+function coinReward(amountOrObj, category, reason, options = {}) {
+  if (typeof amountOrObj === 'object' && amountOrObj !== null) {
+    const { amount, category: cat, reason: rsn } = amountOrObj;
+    return createMessage(MessageTypes.COIN_REWARD,
+      `+${amount} coins earned`,
+      { ...options, coinAmount: { amount, category: cat || '', reason: rsn || '' }, priority: 'low' }
+    );
+  }
   return createMessage(MessageTypes.COIN_REWARD,
-    `+${amount} coins earned`,
-    { ...options, coinAmount: { amount, category, reason }, priority: 'low' }
+    `+${amountOrObj} coins earned`,
+    { ...options, coinAmount: { amount: amountOrObj, category: category || '', reason: reason || '' }, priority: 'low' }
   );
 }
 
@@ -191,6 +220,20 @@ function generateId() {
   return 'msg_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 6);
 }
 
+function error(content, options = {}) {
+  return createMessage(MessageTypes.ERROR, content, options);
+}
+
+/**
+ * Create a spectator suggestion message — delivered only to the host.
+ */
+function spectatorSuggestion(action, spectatorName, spectatorId, options = {}) {
+  return createMessage(MessageTypes.SPECTATOR_SUGGESTION,
+    `${spectatorName} suggests: ${action}`,
+    { ...options, targets: [], metadata: { ...options.metadata, spectatorId, spectatorName, action } }
+  );
+}
+
 module.exports = {
   MessageTypes,
   createMessage,
@@ -203,5 +246,7 @@ module.exports = {
   tierAward,
   system,
   suggestedActions,
-  whisper
+  spectatorSuggestion,
+  whisper,
+  error
 };

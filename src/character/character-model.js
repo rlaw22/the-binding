@@ -181,7 +181,7 @@ function createCharacterTemplate(overrides = {}) {
     stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
     savingThrows: {},
     skills: {},
-    hp: 0,
+    hp: { current: 0, max: 0 },
     maxHp: 0,
     tempHp: 0,
     ac: 10,
@@ -264,9 +264,16 @@ function validateCharacter(char) {
   }
 
   // HP
-  if (typeof char.hp !== 'number') errors.push('hp must be a number');
-  if (typeof char.maxHp !== 'number' || char.maxHp < 1) errors.push('maxHp must be a positive number');
-  if (char.hp > char.maxHp) errors.push('hp cannot exceed maxHp');
+  if (char.hp && typeof char.hp === 'object') {
+    if (typeof char.hp.current !== 'number') errors.push('hp.current must be a number');
+    if (typeof char.hp.max !== 'number' || char.hp.max < 1) errors.push('hp.max must be a positive number');
+    if (char.hp.current > char.hp.max) errors.push('hp.current cannot exceed hp.max');
+  } else if (typeof char.hp === 'number') {
+    if (typeof char.maxHp !== 'number' || char.maxHp < 1) errors.push('maxHp must be a positive number');
+    if (char.hp > char.maxHp) errors.push('hp cannot exceed maxHp');
+  } else {
+    errors.push('hp must be a number or { current, max } object');
+  }
   if (typeof char.tempHp !== 'number' || char.tempHp < 0) errors.push('tempHp must be non-negative');
 
   // AC
@@ -336,6 +343,8 @@ function assertValid(char) {
  */
 function sanitizeForPlayer(char) {
   const { stats, hp, maxHp, tempHp, ac, speed, proficiencyBonus, level, hitDice, ...rest } = char;
+  const hpCurrent = (hp && typeof hp === 'object') ? hp.current : hp;
+  const hpMax = (hp && typeof hp === 'object') ? hp.max : maxHp;
 
   const safeStats = {};
   for (const [key, value] of Object.entries(stats || {})) {
@@ -347,7 +356,7 @@ function sanitizeForPlayer(char) {
   }
 
   // HP described in words
-  const hpRatio = maxHp > 0 ? hp / maxHp : 0;
+  const hpRatio = hpMax > 0 ? hpCurrent / hpMax : 0;
   let hpFeeling;
   if (hpRatio >= 1) hpFeeling = 'Unharmed';
   else if (hpRatio >= 0.75) hpFeeling = 'Barely Scratched';
