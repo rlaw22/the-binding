@@ -227,14 +227,17 @@ function createMockProvider() {
       return discoveryText;
     }
 
-    // Otherwise fall back to the existing response pool
-    const warmMessages = messages.filter(m => m.role === 'system' && m.content && m.content.includes('Current Scene:'));
+    // Fall back to response pool based on scene context
+    // Check two sources: warm context ("Current Scene:") and scene engine ("SCENE STATE" / "Scene:")
+    const allSystem = messages.filter(m => m.role === 'system' && m.content);
     let context = 'inn';
-    if (warmMessages.length > 0) {
-      const sceneLine = warmMessages[warmMessages.length - 1].content.toLowerCase();
-      if (sceneLine.includes('inn') || sceneLine.includes('bistritz')) context = 'inn';
-      else if (sceneLine.includes('coach ride') || sceneLine.includes('borgo pass')) context = 'coach';
-      else if (sceneLine.includes('castle') || sceneLine.includes('dinner') || sceneLine.includes('forbidden wing')) context = 'castle';
+    for (const msg of allSystem) {
+      const text = msg.content.toLowerCase();
+      if (text.includes('scene: ') || text.includes('current scene:')) {
+        if (text.includes('inn') || text.includes('bistritz') || text.includes('golden krone')) { context = 'inn'; break; }
+        if (text.includes('coach ride') || text.includes('borgo pass') || text.includes('crossroads')) { context = 'coach'; break; }
+        if (text.includes('castle') || text.includes('dinner') || text.includes('forbidden wing') || text.includes('dining hall')) { context = 'castle'; break; }
+      }
     }
 
     const pool = allPools[context] || allPools.inn;

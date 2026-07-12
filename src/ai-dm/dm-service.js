@@ -17,6 +17,63 @@ const { getScene, getDMGuidance } = require('../adventure/dracula');
 const { DraculaAdventure } = require('../adventure/dracula');
 
 // Player profile tracking for adaptive replayability
+
+/**
+ * Transition to the next scene in the adventure.
+ * Loads the new manifest, initializes scene state, updates validator and context.
+ * Returns the opening narration for the new scene, or null if no next scene.
+ */
+function transitionScene(game, narration) {
+  const nextSceneId = getNextSceneId(game);
+  if (!nextSceneId) return null;
+
+  const nextSceneData = DraculaAdventure.scenes.find(s => s.id === nextSceneId);
+  const nextManifest = DraculaAdventure.sceneManifests[nextSceneId];
+
+  if (nextManifest) {
+    // Full manifest available — initialize scene engine
+    game.sceneState = SceneEngine.enterScene(nextManifest);
+    if (game.validator) {
+      game.validator.transitionTo(nextManifest, nextManifest.description || '');
+    }
+  } else if (nextSceneData) {
+    // Scene exists in adventure graph but has no manifest yet — minimal state
+    game.sceneState = SceneEngine.enterScene({
+      sceneId: nextSceneId,
+      sceneName: nextSceneData.name,
+      content: [],
+      exitAction: null,
+      exitLabel: 'Continue',
+      hardExitNarration: 'The story pushes you forward.'
+    });
+    if (game.validator) {
+      game.validator.transitionTo({ sceneName: nextSceneData.name, sceneId: nextSceneId }, '');
+    }
+  }
+
+  // Update warm context so the LLM knows what scene we're in
+  if (nextSceneData) {
+    updateScene(game.contextManager, nextSceneData.name, []);
+  }
+
+  // Return the opening narration for the new scene
+  return nextManifest ? nextManifest.description : null;
+}
+
+/**
+ * Check if the player's action matches the scene's exit action.
+ * Uses keyword matching similar to the scene engine's discovery matching.
+ */
+function isExitAction(sceneState, playerAction) {
+  if (!sceneState || !sceneState.exitLabel) return false;
+  const action = (playerAction || '').toLowerCase();
+  const exitWords = sceneState.exitLabel.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+  const genericVerbs = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'have', 'will', 'into', 'onto']);
+  const specific = exitWords.filter(w => !genericVerbs.has(w));
+  if (specific.length === 0) return false;
+  const matched = specific.filter(w => action.includes(w)).length;
+  return matched >= Math.min(2, specific.length);
+}
 function createPlayerProfile() {
   return {
     combatAffinity: 0.5,
@@ -83,7 +140,9 @@ async function processAction(game, playerAction, character) {
     const manifest = DraculaAdventure.sceneManifests['scene_00'];
     if (manifest) {
       game.sceneState = SceneEngine.enterScene(manifest);
-      game.validator = createValidator(manifest, null);
+      game.validator = createValidator(manifest, manifest.description || null);
+      // Set warm context so the LLM knows what scene we're in
+      updateScene(game.contextManager, manifest.sceneName, []);
     }
   }
 
@@ -128,13 +187,40 @@ async function processAction(game, playerAction, character) {
   // Parse response for game mechanics
   const parsed = parseDMResponse(cleanResponse);
 
-  // Check for hard exit
-  if (game.sceneState && SceneEngine.isHardExitTriggered(game.sceneState)) {
-    const hardExitNarration = SceneEngine.getHardExitNarration(game.sceneState);
-    // Append hard exit narration
-    parsed.narrative += '\n\n' + hardExitNarration;
-    // Force scene transition
-    parsed.sceneTransition = { sceneId: getNextSceneId(game), description: hardExitNarration };
+  // Check for scene transition: explicit exit action OR hard exit triggered
+  if (game.sceneState) {
+    let shouldTransition = false;
+    let transitionNarration = '';
+
+    // Case 1: Player explicitly chose the exit action
+    if (isExitAction(game.sceneState, playerAction)) {
+      shouldTransition = true;
+      // Use the DM's response as the transition narration (it already narrated the departure)
+      transitionNarration = parsed.narrative;
+    }
+
+    // Case 2: Hard exit triggered by the scene engine (too many turns at high completion)
+    if (SceneEngine.isHardExitTriggered(game.sceneState)) {
+      shouldTransition = true;
+      const hardExitNarration = SceneEngine.getHardExitNarration(game.sceneState);
+      transitionNarration = parsed.narrative + '\n\n' + hardExitNarration;
+    }
+
+    if (shouldTransition) {
+      parsed.narrative = transitionNarration;
+      const openingNarration = transitionScene(game, parsed.narrative);
+      if (openingNarration) {
+        parsed.narrative += '\n\n' + openingNarration;
+      }
+      // Regenerate suggested actions from the new scene state
+      if (game.sceneState) {
+        parsed.suggestedActions = generateSceneActions(game.sceneState);
+      }
+      parsed.sceneTransition = {
+        sceneId: game.sceneState ? game.sceneState.sceneId : getNextSceneId(game),
+        fromScene: DraculaAdventure.scenes.findIndex(s => s.id === (game.sceneState ? game.sceneState.sceneId : ''))
+      };
+    }
   }
 
   // Generate suggested actions from scene engine

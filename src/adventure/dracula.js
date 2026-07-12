@@ -85,11 +85,20 @@ The innkeeper watches you with a mixture of pity and alarm. "Surely you do not m
     scene_01: {
       sceneId: 'scene_01',
       sceneName: 'The Coach Ride',
+      description: `The coach rattles through darkness so complete that the windows might as well be painted black. The only light comes from a single lantern swinging above the driver's bench, casting fitful orange shadows across the cramped interior.
+
+You are not alone. Across from you, a priest clutches a rosary and mutters prayers in a language you don't recognize. Beside him, two women in dark shawls press together, their faces hidden. None of them speak to you. None of them look at you directly.
+
+The road climbs steeply. Through the narrow window, the Carpathian forest is a wall of black shapes — twisted trees, jagged rocks, and occasionally, the gleam of eyes reflecting the coach lantern. The coachman sits perfectly still on the bench above, his silhouette barely visible against the sky. He has not spoken a single word since you left the inn.
+
+Outside, a wolf howls — long, mournful, impossibly close. Another answers. Then another. The priest crosses himself and prays louder. One of the women reaches out and grips your arm. "Do not look outside after midnight," she whispers. "Whatever you see — do not acknowledge it."
+
+The brass crucifix is warm in your pocket. You don't remember putting it there.`,
       content: [
-        { id: 'talk_driver', label: 'Try to speak with the silent coachman', keywords: ['driver', 'coachman', 'speak', 'talk', 'silent', 'address'] },
+        { id: 'talk_driver', label: 'Try to speak with the silent coachman', keywords: ['driver', 'coachman', 'speak', 'talk', 'silent', 'address'], discovery: 'You lean forward and speak to the driver through the small window. He does not turn. Does not acknowledge you. But you notice his hands on the reins — they are too pale, too steady, and the fingers are longer than they should be. He grips the leather with a gentleness that is almost tender. The priest grabs your arm and pulls you back. \"Do not speak to him,\" he hisses. \"He is not — \" He stops himself. Shakes his head. Returns to his prayers.' },
         { id: 'watch_landscape', label: 'Watch the dark forest pass by the window', keywords: ['forest', 'window', 'outside', 'look', 'watch', 'trees', 'landscape'] },
-        { id: 'notice_wolves', label: 'Listen to the wolves howling in the distance', keywords: ['wolf', 'wolves', 'howl', 'hear', 'listen', 'distant'] },
-        { id: 'examine_crucifix_coach', label: 'Clutch the crucifix for comfort', keywords: ['crucifix', 'cross', 'hold', 'clutch', 'comfort', 'pray'] }
+        { id: 'notice_wolves', label: 'Listen to the wolves howling in the distance', keywords: ['wolf', 'wolves', 'howl', 'hear', 'listen', 'distant'], discovery: 'You press your ear to the window and listen. The wolves are closer than you thought — not in the distance, but running alongside the coach, just beyond the lantern light. Their howls are not random. They rise and fall in patterns, almost like speech. One wolf runs directly beneath your window for a moment, and you see its eyes — not yellow like an animal\'s, but a deep, burning red. The innkeeper was right. These are not natural wolves.' },
+        { id: 'examine_crucifix_coach', label: 'Clutch the crucifix for comfort', keywords: ['crucifix', 'cross', 'hold', 'clutch', 'comfort', 'pray'], discovery: 'You reach into your pocket and close your fingers around the brass crucifix. It is warm — warmer than it should be, as if it has been sitting in sunlight. As your hand tightens around it, the wolves outside fall silent for a moment, and the coach seems to slow. The priest notices. His eyes widen. \"Where did you get that?\" he whispers. You tell him the innkeeper gave it to you. He nods slowly. \"Keep it close. Do not let go. Not for any reason.\"' }
       ],
       exitAction: 'arrive_crossroads',
       exitLabel: 'Step out at the crossroads',
@@ -106,11 +115,22 @@ The innkeeper watches you with a mixture of pity and alarm. "Surely you do not m
     scene_02: {
       sceneId: 'scene_02',
       sceneName: 'The Borgo Pass',
+      description: `The first coach stops at a crossroads where two roads meet in the moonlight. The driver — the same silent figure from Bistritz — gestures for you to transfer. A second coach waits here, larger, darker, its horses black as ink and breathing steam into the cold air. The new coachman sits motionless on the bench, wrapped in dark cloth, his face invisible beneath a wide-brimmed hat.
+
+The other passengers refuse to go further. The priest presses a crucifix into your hands and whispers something in Romanian that sounds like a prayer — or a warning. The women cross themselves and hurry back the way you came. You are alone now.
+
+The new coachman says nothing. He doesn't turn when you speak. He doesn't acknowledge your presence at all. But the moment you climb inside, the horses lurch forward at a speed that shouldn't be possible on these roads.
+
+The forest closes in. Trees lean over the road like grasping fingers. And then you hear them — wolves, closer than before, running alongside the coach. Their eyes glow in the lantern light, dozens of pairs, weaving between the trees. They don't attack. They escort.
+
+The coachman raises one hand and the wolves fall silent. As if he commanded them. As if they obey him.
+
+The road climbs higher. The air grows colder. Through the mist ahead, something vast and dark perches on a cliff — a shape that might be a castle, or might be a trick of the shadows.`,
       content: [
-        { id: 'observe_coachman', label: 'Study the mysterious new coachman', keywords: ['coachman', 'driver', 'new', 'study', 'watch', 'observe', 'mysterious'] },
+        { id: 'observe_coachman', label: 'Study the mysterious new coachman', keywords: ['coachman', 'driver', 'new', 'study', 'watch', 'observe', 'mysterious'], discovery: 'You lean forward to study the new coachman more closely. Beneath the wide brim of his hat, you catch a glimpse of his profile \u2014 sharp, aristocratic, pale as bone. His hands on the reins are perfectly still, yet the horses respond to his will alone. When lightning flashes, his eyes catch the light \u2014 not reflecting it, but burning with their own dark fire. He knows you are watching. The corner of his mouth twitches. Almost a smile. Almost a challenge.' },
         { id: 'watch_wolves', label: 'Watch the wolves that follow the coach', keywords: ['wolf', 'wolves', 'follow', 'surround', 'watch', 'grey'] },
         { id: 'feel_speed', label: 'Grip the seat as the coach races through the dark', keywords: ['fast', 'speed', 'race', 'grip', 'seat', 'racing'] },
-        { id: 'notice_eyes', label: 'Peer into the forest and see pairs of glowing eyes', keywords: ['eyes', 'forest', 'glow', 'peer', 'glowing', 'pairs'] }
+        { id: 'notice_eyes', label: 'Peer into the forest and see pairs of glowing eyes', keywords: ['eyes', 'forest', 'glow', 'peer', 'glowing', 'pairs'], discovery: 'You press your face to the glass and peer into the blackness between the trees. At first you see nothing. Then your eyes adjust, and the forest comes alive with points of red light \u2014 dozens of pairs of eyes, all watching the coach, all moving in perfect unison. They do not scatter. They do not hunt. They escort. As if they were summoned. As if they were commanded.' }
       ],
       exitAction: 'arrive_castle',
       exitLabel: 'Look up as the castle comes into view',
@@ -127,10 +147,19 @@ The innkeeper watches you with a mixture of pity and alarm. "Surely you do not m
     scene_03: {
       sceneId: 'scene_03',
       sceneName: 'Castle Dracula — Arrival',
+      description: `The coach halts at the base of a towering cliff. Above you, carved into the rock face like a wound, Castle Dracula rises — turrets and battlements silhouetted against the lightning-split sky. The stone is black with age, patched with moss and ivy that clings like veins. Iron gates hang open, rusted, as if no one has bothered to close them in centuries.
+
+The coachman — the one who commands wolves with a gesture — opens the door. His face is still hidden. But when he speaks, his English is flawless, his accent precise and aristocratic. "Welcome to my home," he says. "I trust your journey was not too unpleasant. The roads in my country can be... challenging."
+
+He extends a hand to help you from the coach. His grip is cold as marble. Now, standing in the courtyard, you can see his face in the lightning flash — sharp features, high cheekbones, a thin mouth that smiles too easily. His eyes are the strangest thing: dark, deep-set, burning with an intelligence that is almost inhuman.
+
+Inside, the great hall is magnificent and terrible. Ancient tapestries line the walls — scenes of battle, of victory, of something darker. Candles burn in iron sconces but give off little heat. The air is stone-cold and smells of earth and age. A fire burns in a massive hearth, but the flames cast strange shadows that seem to move with purpose.
+
+You look for a mirror. There are none. Where you'd expect glass, there is only stone or dark wood. The Count notices you looking. "I am an old man," he says with that thin smile, "and old men prefer not to be reminded of time's passage."`,
       content: [
         { id: 'examine_castle', label: 'Study the castle exterior', keywords: ['castle', 'exterior', 'stone', 'look', 'study', 'outside', 'ancient'] },
         { id: 'meet_dracula', label: 'Greet the Count as he welcomes you', keywords: ['count', 'dracula', 'greet', 'welcome', 'english', 'meet', 'man'] },
-        { id: 'notice_no_reflection', label: 'Look for a mirror and find none', keywords: ['mirror', 'reflection', 'glass', 'look', 'find', 'absent'] },
+        { id: 'notice_no_reflection', label: 'Look for a mirror and find none', keywords: ['mirror', 'reflection', 'glass', 'look', 'find', 'absent'], discovery: 'You turn slowly, scanning the great hall. Where mirrors should hang \u2014 above the mantelpiece, flanking the corridors \u2014 there is only bare stone or dark wood. Not one reflective surface in the entire castle. You catch your own reflection in the polished surface of a shield mounted on the wall. But something is wrong. The room behind you is empty in the reflection. The Count is not there. You look over your shoulder. He is standing right behind you. Smiling.' },
         { id: 'enter_great_hall', label: 'Step into the vast, candlelit great hall', keywords: ['hall', 'great', 'enter', 'step', 'candlelit', 'vast', 'door'] }
       ],
       exitAction: 'go_to_dinner',
@@ -148,11 +177,20 @@ The innkeeper watches you with a mixture of pity and alarm. "Surely you do not m
     scene_04: {
       sceneId: 'scene_04',
       sceneName: 'Dinner with the Count',
+      description: `The dining hall is vast and cold, despite the fire burning in a hearth large enough to stand in. A long table stretches the length of the room, set with silver candlesticks and dark linen. At one end, a single place has been laid — for you. The Count sits opposite, behind an empty plate. No food is set before him. No food is set before you either, though the table is otherwise immaculate.
+
+"I have already eaten," the Count says, noticing your glance. His lips are very red. "But please — wine. A vintage from my own cellars." He pours from a dark decanter. The wine is deep crimson, almost black in the candlelight, and it catches the light strangely — thick, clinging to the glass like something alive.
+
+The walls are hung with ancient maps and tapestries depicting battles you don't recognize. One shows a warrior on horseback driving a stake through a figure on the ground. Another depicts a castle — this castle — surrounded by flames. The Count catches you looking. "Family history," he says lightly. "My ancestors were... colorful men."
+
+There are no mirrors in this room. You noticed it in the great hall, and in the corridor. Not one. Where you'd expect glass, there is only dark wood or stone.
+
+The Count leans forward, his dark eyes glittering. "Tell me about England," he says. "I am planning a journey there — a permanent one, in fact. I have already purchased property. Carfax Abbey, it is called. Do you know it?" His smile is warm, curious, patient. He has all the time in the world.`,
       content: [
         { id: 'ask_about_england', label: 'Ask the Count about his interest in England', keywords: ['england', 'ask', 'interest', 'count', 'why'] },
-        { id: 'notice_no_food', label: 'Notice that no food is set before you', keywords: ['food', 'plate', 'meal', 'notice', 'empty', 'eat'] },
+        { id: 'notice_no_food', label: 'Notice that no food is set before you', keywords: ['food', 'plate', 'meal', 'notice', 'empty', 'eat'], discovery: 'You look at your plate. Empty. You look at the Count\'s plate. Also empty. But his lips are stained with something dark \u2014 not wine, something deeper, more vivid. He catches you staring and touches his mouth with a napkin. "A sauce from my homeland," he says smoothly. "An acquired taste." There is no food anywhere in this room. No kitchen door. No servants. No smell of cooking. Only the wine, and the Count\'s red, red lips.' },
         { id: 'compliment_wine', label: 'Sip the deep red wine and compliment it', keywords: ['wine', 'drink', 'sip', 'compliment', 'red', 'taste'] },
-        { id: 'test_dracula', label: 'Mention local legends and watch his reaction', keywords: ['legend', 'local', 'mention', 'watch', 'reaction', 'test'] }
+        { id: 'test_dracula', label: 'Mention local legends and watch his reaction', keywords: ['legend', 'local', 'mention', 'watch', 'reaction', 'test'], discovery: 'You mention the local legends carefully \u2014 the strigoi, the moroi, the living dead that walk the mountain passes. The Count listens with his head tilted, like a bird watching a worm. When you mention the word \"vampire,\" his smile does not waver. His hand does not tighten on the glass. He simply nods. \"Every culture has its monsters,\" he says. \"In England, I believe yours is the werewolf. The vampire is ours.\" He leans closer. \"But tell me \u2014 have you ever wondered what it would be like to live forever? To see empires rise and fall? To never age, never tire, never die?\" His eyes hold yours. The question is not rhetorical. He genuinely wants your answer.' }
       ],
       exitAction: 'retire_to_room',
       exitLabel: 'Excuse yourself to retire for the night',
