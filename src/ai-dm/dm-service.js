@@ -63,6 +63,11 @@ function transitionScene(game, narration) {
 /**
  * Check if the player's action matches the scene's exit action.
  * Uses keyword matching similar to the scene engine's discovery matching.
+ *
+ * FIX: The first specific word of the exit label is the ACTION VERB
+ * (e.g. "Board", "Follow", "Step"). The player must include that verb
+ * to trigger an exit — otherwise generic nouns like "Castle Dracula"
+ * would false-match actions like "Ask about Castle Dracula."
  */
 function isExitAction(sceneState, playerAction) {
   if (!sceneState || !sceneState.exitLabel) return false;
@@ -71,6 +76,12 @@ function isExitAction(sceneState, playerAction) {
   const genericVerbs = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'have', 'will', 'into', 'onto']);
   const specific = exitWords.filter(w => !genericVerbs.has(w));
   if (specific.length === 0) return false;
+
+  // The first specific word is the action verb — it MUST be present
+  const actionVerb = specific[0];
+  if (!action.includes(actionVerb)) return false;
+
+  // Require the verb + at least 1 more word from the exit label
   const matched = specific.filter(w => action.includes(w)).length;
   return matched >= Math.min(2, specific.length);
 }
