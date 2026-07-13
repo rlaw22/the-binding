@@ -30,6 +30,7 @@ const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
 const TokenStore = require('../auth/token-store');
 const { createVoiceService, getCachedAudio } = require('../voice');
+const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
 
 // In-memory session store
 const sessions = new Map();
@@ -153,6 +154,15 @@ async function createServer(options = {}) {
 
   app.get('/api/health', async () => {
     return { status: 'ok', uptime: process.uptime(), sessions: sessions.size, rejoinCodes: rejoinCodes.size, betaEnabled: !!ADMIN_KEY, voiceEnabled };
+  });
+
+  // --- LLM STATUS ENDPOINT ---
+  app.get('/api/llm/status', async () => {
+    return {
+      mode: llmConfig.mock ? 'mock' : 'real',
+      model: llmConfig.model || process.env.LLM_MODEL || 'gpt-4o',
+      hasApiKey: !!(llmConfig.apiKey || process.env.LLM_API_KEY)
+    };
   });
 
   // --- TTS VOICE ENDPOINTS ---
@@ -366,6 +376,8 @@ async function createServer(options = {}) {
     sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [] });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
+    session._rejoinCode = rejoinCode;
+    markDirty();
 
     // Initialize scene engine with the first scene's manifest
     const sceneManifest = DraculaAdventure.sceneManifests[adventure.startScene || 'scene_00'];
@@ -437,6 +449,37 @@ async function createServer(options = {}) {
       currentScene: data.session.worldState.currentScene,
       totalTurns: data.game.turnHistory.length,
       historyLength: data.history.length
+    };
+  });
+
+  // --- COIN STATS ENDPOINT ---
+  app.get('/api/sessions/:id/coins', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const { coinPool, sceneCoins, game } = data;
+    let totalEarned = 0;
+    for (const sc of sceneCoins) {
+      totalEarned += (sc && sc.turnTotal) || (sc && sc.total) || 0;
+    }
+
+    const currentScene = game.sceneState ? game.sceneState.sceneId : null;
+    const sceneIndex = DraculaAdventure.scenes.findIndex(s => s.id === currentScene);
+
+    return {
+      totalEarned,
+      totalPool: coinPool.totalPool,
+      percentage: coinPool.totalPool > 0 ? Math.round((totalEarned / coinPool.totalPool) * 100) : 0,
+      currentScene: sceneIndex,
+      totalScenes: coinPool.totalScenes,
+      categoryBreakdown: sceneCoins.reduce((acc, sc) => {
+        if (sc && sc.coins) {
+          for (const [cat, val] of Object.entries(sc.coins)) {
+            acc[cat] = (acc[cat] || 0) + val;
+          }
+        }
+        return acc;
+      }, {})
     };
   });
 
@@ -547,6 +590,7 @@ async function createServer(options = {}) {
       }
 
       data.sceneCoins.push(turnCoins);
+      markDirty();
 
       return {
         ok: true,
@@ -696,6 +740,7 @@ async function createServer(options = {}) {
       }
 
       data.sceneCoins.push(turnCoins);
+      markDirty();
 
       return { ok: true, suggestion, turnNumber: game.turnHistory.length, narrative: result.narrative };
     } catch (err) {
@@ -711,6 +756,14 @@ async function createServer(options = {}) {
     if (!data) return reply.status(404).send({ error: 'Session not found' });
     return { suggestions: getPendingSuggestions(data.session) };
   });
+
+  // --- PERSISTENCE: Load saved sessions and start auto-save ---
+  const loadedCount = loadSessions(sessions, rejoinCodes, createProvider, llmConfig, RuleEngine, DiceService);
+  if (loadedCount > 0) {
+    console.log('  \u{1f4be} Restored ' + loadedCount + ' saved session(s)');
+  }
+  startAutoSave(sessions);
+  setupExitSave(sessions);
 
   return app;
 }

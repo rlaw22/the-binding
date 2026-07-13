@@ -19,6 +19,15 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #spectator-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:8px 14px;background:#6B5CE715;border:1px solid #6B5CE744;border-radius:6px;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;color:#6B5CE7;}
 #char-bar{display:flex;gap:16px;padding:10px 14px;background:#C9A84C0d;border:1px solid #C9A84C22;border-radius:8px;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.9em;align-items:center;flex-wrap:wrap;}
 #char-bar .stat{color:#C9A84C;font-weight:600;}
+#coin-bar{display:flex;align-items:center;gap:6px;padding:6px 12px;background:#C9A84C12;border:1px solid #C9A84C33;border-radius:8px;margin-bottom:8px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:0.9em;}
+#coin-bar .coin-icon{font-size:1.1em;}
+#coin-bar .coin-amount{color:#C9A84C;font-weight:700;font-size:1.1em;}
+#coin-bar .coin-pool{color:#F5F0E166;font-size:0.85em;}
+#coin-bar .coin-bar-track{flex:1;height:4px;background:#C9A84C22;border-radius:2px;overflow:hidden;min-width:60px;}
+#coin-bar .coin-bar-fill{height:100%;background:linear-gradient(90deg,#C9A84C,#E8A838);border-radius:2px;transition:width 0.5s ease;}
+#coin-flash{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#C9A84C;color:#1A1A2E;padding:10px 24px;border-radius:12px;font-family:Georgia,serif;font-size:1.2em;font-weight:700;pointer-events:none;opacity:0;transition:opacity 0.3s;z-index:200;box-shadow:0 4px 20px #C9A84C66;}
+#coin-flash.show{opacity:1;animation:coinPop 1.5s ease forwards;}
+@keyframes coinPop{0%{opacity:0;transform:translate(-50%,-50%) scale(0.7);}15%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}30%{transform:translate(-50%,-50%) scale(1);}80%{opacity:1;}100%{opacity:0;transform:translate(-50%,-60%) scale(1);}}
 #rejoin-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#E8A83815;border:1px solid #E8A83833;border-radius:6px;margin-bottom:12px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;}
 #rejoin-bar .code{color:#C9A84C;font-weight:700;font-size:1em;letter-spacing:2px;}
 #rejoin-bar .copy-btn{background:#C9A84C;border:none;color:#1A1A2E;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:0.85em;font-weight:600;}
@@ -259,6 +268,15 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     <div><span class="stat" id="char-class">—</span></div>
     <div>HP <span class="stat" id="char-hp">10/10</span></div>
   </div>
+
+  <div id="coin-bar" class="hidden">
+    <span class="coin-icon">🪙</span>
+    <span class="coin-amount" id="coin-total">0</span>
+    <span class="coin-pool">/ <span id="coin-pool-display">0</span></span>
+    <div class="coin-bar-track"><div class="coin-bar-fill" id="coin-bar-fill" style="width:0%"></div></div>
+  </div>
+
+  <div id="coin-flash"></div>
 
   <div id="rejoin-bar" class="hidden">
     <span>Rejoin code:</span>
@@ -595,12 +613,50 @@ async function startGame() {
   }
 }
 
+var coinTotal = 0;
+var coinPool = 0;
+var lastCoinFetch = 0;
+
+function fetchCoins() {
+  if (!sessionId) return;
+  fetch('/api/sessions/' + sessionId + '/coins')
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(data) {
+      if (!data) return;
+      var prev = coinTotal;
+      coinTotal = data.totalEarned || 0;
+      coinPool = data.totalPool || 0;
+      var el = document.getElementById("coin-total");
+      var poolEl = document.getElementById("coin-pool-display");
+      var bar = document.getElementById("coin-bar");
+      var fill = document.getElementById("coin-bar-fill");
+      if (el) el.textContent = coinTotal;
+      if (poolEl) poolEl.textContent = coinPool;
+      if (bar) bar.classList.remove("hidden");
+      if (fill && coinPool > 0) fill.style.width = Math.round((coinTotal / coinPool) * 100) + "%";
+      if (coinTotal > prev && prev > 0) {
+        var flash = document.getElementById("coin-flash");
+        if (flash) {
+          flash.textContent = "+" + (coinTotal - prev) + " coins!";
+          flash.classList.remove("show");
+          void flash.offsetWidth;
+          flash.classList.add("show");
+        }
+      }
+    })
+    .catch(function() {});
+}
+
 // --- POLLING: fetches new messages every 2 seconds ---
 function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollErrors = 0;
   pollOnce();
-  pollTimer = setInterval(pollOnce, 2000);
+  fetchCoins();
+  pollTimer = setInterval(function() {
+    pollOnce();
+    if (Date.now() - lastCoinFetch > 10000) { fetchCoins(); lastCoinFetch = Date.now(); }
+  }, 2000);
 }
 
 function pollOnce() {
