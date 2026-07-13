@@ -6,6 +6,7 @@
  */
 
 const RuleEngine = require('../rule-engine');
+const { DynamicDifficulty, TIERS, NARRATIVE_WRAPPERS } = require('../difficulty/dynamic-difficulty');
 
 // ── Enemy Templates ─────────────────────────────────────────────────────────
 
@@ -27,9 +28,10 @@ const ENEMY_TEMPLATES = {
  * Start a new combat encounter.
  * @param {object} playerChar — character from the session (needs stats, hp, ac)
  * @param {Array} enemySpecs — [{ template: 'wolf', count: 3 }] or [{ template: 'wolf', name: 'Alpha Wolf', hp: 20 }]
+ * @param {DynamicDifficulty} [difficulty] — optional difficulty instance for rubber-band scaling
  * @returns {object} combat state
  */
-function startCombat(playerChar, enemySpecs) {
+function startCombat(playerChar, enemySpecs, difficulty) {
   const enemies = [];
   let enemyIndex = 0;
 
@@ -38,19 +40,48 @@ function startCombat(playerChar, enemySpecs) {
     const count = spec.count || 1;
     for (let i = 0; i < count; i++) {
       const id = `enemy_${enemyIndex++}`;
+      const baseHp = spec.hp || tmpl.hp;
+      const baseAttackBonus = spec.attackBonus || tmpl.attackBonus;
+
       enemies.push({
         id,
         name: count > 1 ? `${tmpl.name} ${i + 1}` : (spec.name || tmpl.name),
         template: spec.template,
-        hp: { current: spec.hp || tmpl.hp, max: spec.hp || tmpl.hp },
+        hp: { current: baseHp, max: baseHp },
         ac: spec.ac || tmpl.ac,
-        attackBonus: spec.attackBonus || tmpl.attackBonus,
+        attackBonus: baseAttackBonus,
         damageDice: spec.damageDice || tmpl.damageDice,
         damageMod: spec.damageMod || tmpl.damageMod,
         regeneration: tmpl.regeneration || 0,
         charmDc: tmpl.charmDc || 0,
         alive: true
       });
+    }
+  }
+
+  // Apply difficulty scaling if a DynamicDifficulty instance is provided
+  let difficultyTier = null;
+  if (difficulty) {
+    difficultyTier = difficulty.getNextTier();
+    for (const enemy of enemies) {
+      switch (difficultyTier) {
+        case TIERS.POWER_WINDOW:
+          // Reduce enemy HP by 20%, reduce attack bonus by 1
+          enemy.hp.max = Math.max(1, Math.floor(enemy.hp.max * 0.8));
+          enemy.hp.current = Math.min(enemy.hp.current, enemy.hp.max);
+          enemy.attackBonus = Math.max(0, enemy.attackBonus - 1);
+          break;
+        case TIERS.CHALLENGE:
+          // Increase enemy HP by 20%, increase attack bonus by 1
+          enemy.hp.max = Math.floor(enemy.hp.max * 1.2);
+          enemy.hp.current = enemy.hp.max;
+          enemy.attackBonus = enemy.attackBonus + 1;
+          break;
+        case TIERS.FAIR:
+        default:
+          // No change
+          break;
+      }
     }
   }
 
@@ -88,6 +119,19 @@ function startCombat(playerChar, enemySpecs) {
     };
   }).sort((a, b) => b.initiative - a.initiative);
 
+  const combatLog = [];
+
+  // Add difficulty narrative wrapper as the first log entry
+  if (difficultyTier) {
+    const wrapper = difficulty.getNarrativeWrapper(difficultyTier);
+    combatLog.push({
+      actor: 'system',
+      action: 'difficulty',
+      tier: difficultyTier,
+      description: wrapper
+    });
+  }
+
   return {
     active: true,
     round: 1,
@@ -95,8 +139,9 @@ function startCombat(playerChar, enemySpecs) {
     turnOrder,
     player: playerCombatant,
     enemies,
-    log: [],
-    outcome: null
+    log: combatLog,
+    outcome: null,
+    difficultyTier
   };
 }
 
@@ -118,9 +163,10 @@ function getCurrentCombatant(combat) {
  * @param {object} combat — current combat state
  * @param {string} action — 'attack' | 'defend' | 'cast' | 'flee' | 'use_item'
  * @param {object} [options] — extra data (e.g. { spell: 'sacred_flame', item: 'holy_water' })
+ * @param {DynamicDifficulty} [difficulty] — optional difficulty instance to record outcomes
  * @returns {object} { combat, narrative, diceRolls }
  */
-function processPlayerAction(combat, action, options = {}) {
+function processPlayerAction(combat, action, options = {}, difficulty) {
   if (!combat.active) return { combat, narrative: 'Combat is already over.', diceRolls: [] };
 
   const log = [];
@@ -262,8 +308,11 @@ function processPlayerAction(combat, action, options = {}) {
     });
   }
 
-  // If combat ended (fled or victory), return early
+  // If combat ended (fled or victory), return early — record outcome if difficulty provided
   if (!combat.active) {
+    if (difficulty && combat.outcome !== 'fled') {
+      difficulty.recordOutcome(combat.outcome, combat.player.hp.current, combat.enemies.length);
+    }
     combat.log.push(...log);
     return { combat, narrative: log.map(l => l.description).join('\n\n'), diceRolls };
   }
@@ -332,6 +381,10 @@ function processPlayerAction(combat, action, options = {}) {
         action: 'defeat',
         description: 'Darkness closes in around you. You have fallen...'
       });
+      // Record defeat outcome if difficulty provided
+      if (difficulty) {
+        difficulty.recordOutcome('defeat', player.hp.current, combat.enemies.length);
+      }
       break;
     }
   }
@@ -377,6 +430,7 @@ function getCombatSummary(combat) {
 
 module.exports = {
   ENEMY_TEMPLATES,
+  DynamicDifficulty,
   startCombat,
   getCurrentCombatant,
   processPlayerAction,

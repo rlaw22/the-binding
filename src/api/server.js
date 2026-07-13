@@ -24,7 +24,6 @@ const { createGame, processAction, processCharacterCreation, parseDMResponse, sc
 const { createProvider } = require('../ai-dm/llm-provider');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, CoinCategory } = require('../coin-engine');
 const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline } = require('../adventure');
-const { DraculaAdventure } = require('../adventure/dracula');
 const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
@@ -382,7 +381,7 @@ async function createServer(options = {}) {
     markDirty();
 
     // Initialize scene engine with the first scene's manifest
-    const sceneManifest = DraculaAdventure.sceneManifests[adventure.startScene || 'scene_00'];
+    const sceneManifest = adventure.sceneManifests[adventure.startScene || 'scene_00'];
     const openingNarrationText = sceneManifest ? sceneManifest.description : '';
     if (sceneManifest) {
       game.sceneState = SceneEngine.enterScene(sceneManifest);
@@ -466,7 +465,8 @@ async function createServer(options = {}) {
     }
 
     const currentScene = game.sceneState ? game.sceneState.sceneId : null;
-    const sceneIndex = DraculaAdventure.scenes.findIndex(s => s.id === currentScene);
+    const sessionAdv = getAdventure(data.game.adventureId) || getAdventure('dracula');
+    const sceneIndex = sessionAdv.scenes.findIndex(s => s.id === currentScene);
 
     return {
       totalEarned,
@@ -491,11 +491,12 @@ async function createServer(options = {}) {
     if (!data) return reply.status(404).send({ error: 'Session not found' });
 
     const currentScene = data.game.sceneState ? data.game.sceneState.sceneId : null;
-    const sceneIndex = DraculaAdventure.scenes.findIndex(s => s.id === currentScene);
-    const totalScenes = DraculaAdventure.scenes.length;
+    const progressAdv = getAdventure(data.game.adventureId) || getAdventure('dracula');
+    const sceneIndex = progressAdv.scenes.findIndex(s => s.id === currentScene);
+    const totalScenes = progressAdv.scenes.length;
 
     // Determine act based on scene index
-    const acts = DraculaAdventure.acts || [];
+    const acts = progressAdv.acts || [];
     let currentAct = null;
     for (const act of acts) {
       if (act.scenes && act.scenes.includes(sceneIndex)) {

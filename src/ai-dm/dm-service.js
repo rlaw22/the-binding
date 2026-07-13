@@ -13,10 +13,23 @@ const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT, buildCoinScoringP
 const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
-const { getScene, getDMGuidance } = require('../adventure/dracula');
-const { DraculaAdventure } = require('../adventure/dracula');
+const { getAdventure, getAdventureHelpers } = require('../adventure');
 
 // Player profile tracking for adaptive replayability
+
+/**
+ * Get the active adventure object from a game.
+ */
+function resolveAdventure(game) {
+  return getAdventure(game.adventureId) || getAdventure('dracula');
+}
+
+/**
+ * Get the helpers (getScene, getDMGuidance, getAdventureOutline) for a game's adventure.
+ */
+function resolveHelpers(game) {
+  return getAdventureHelpers(game.adventureId) || getAdventureHelpers('dracula');
+}
 
 /**
  * Transition to the next scene in the adventure.
@@ -24,11 +37,13 @@ const { DraculaAdventure } = require('../adventure/dracula');
  * Returns the opening narration for the new scene, or null if no next scene.
  */
 function transitionScene(game, narration) {
+  const adventure = resolveAdventure(game);
+  const helpers = resolveHelpers(game);
   const nextSceneId = getNextSceneId(game);
   if (!nextSceneId) return null;
 
-  const nextSceneData = DraculaAdventure.scenes.find(s => s.id === nextSceneId);
-  const nextManifest = DraculaAdventure.sceneManifests[nextSceneId];
+  const nextSceneData = adventure.scenes.find(s => s.id === nextSceneId);
+  const nextManifest = adventure.sceneManifests[nextSceneId];
 
   if (nextManifest) {
     // Full manifest available — initialize scene engine
@@ -145,10 +160,13 @@ function createGame(options) {
  */
 async function processAction(game, playerAction, character) {
   const { contextManager, llmProvider } = game;
+  const adventure = resolveAdventure(game);
+  const helpers = resolveHelpers(game);
 
   // Initialize scene state and validator if needed
-  if (!game.sceneState && game.adventureId === 'dracula') {
-    const manifest = DraculaAdventure.sceneManifests['scene_00'];
+  if (!game.sceneState && adventure) {
+    const startSceneId = adventure.startScene || 'scene_00';
+    const manifest = adventure.sceneManifests[startSceneId];
     if (manifest) {
       game.sceneState = SceneEngine.enterScene(manifest);
       game.validator = createValidator(manifest, manifest.description || null);
@@ -164,7 +182,7 @@ async function processAction(game, playerAction, character) {
   const systemPrompt = buildAdventureSystemPrompt({
     adventureName: game.adventureName,
     adventureDescription: '',
-    tone: 'gothic, suspenseful, mysterious',
+    tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
     sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
   });
   const messages = buildContext(contextManager, systemPrompt);
@@ -229,7 +247,7 @@ async function processAction(game, playerAction, character) {
       }
       parsed.sceneTransition = {
         sceneId: game.sceneState ? game.sceneState.sceneId : getNextSceneId(game),
-        fromScene: DraculaAdventure.scenes.findIndex(s => s.id === (game.sceneState ? game.sceneState.sceneId : ''))
+        fromScene: adventure.scenes.findIndex(s => s.id === (game.sceneState ? game.sceneState.sceneId : ''))
       };
     }
   }
@@ -272,9 +290,11 @@ async function processAction(game, playerAction, character) {
  */
 function getNextSceneId(game) {
   if (!game.sceneState) return null;
-  const currentSceneIndex = DraculaAdventure.scenes.findIndex(s => s.id === game.sceneState.sceneId);
-  if (currentSceneIndex >= 0 && currentSceneIndex < DraculaAdventure.scenes.length - 1) {
-    return DraculaAdventure.scenes[currentSceneIndex + 1].id;
+  const adventure = resolveAdventure(game);
+  if (!adventure) return null;
+  const currentSceneIndex = adventure.scenes.findIndex(s => s.id === game.sceneState.sceneId);
+  if (currentSceneIndex >= 0 && currentSceneIndex < adventure.scenes.length - 1) {
+    return adventure.scenes[currentSceneIndex + 1].id;
   }
   return null;
 }
@@ -321,7 +341,7 @@ function parseDMResponse(response) {
   let sceneTransition = null;
 
   // Extract suggested actions
-  const actionsMatch = response.match(/SUGGESTED ACTIONS:?[\s\S]*?(?=\n\n|$)/i);
+  const actionsMatch = response.match(/SUGGESTED ACTIONS?[\s\S]*?(?=\n\n|$)/i);
   if (actionsMatch) {
     const actionBlock = actionsMatch[0];
     const actionLines = actionBlock.match(/\d+\.\s+(.+)/g);

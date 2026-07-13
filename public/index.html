@@ -103,6 +103,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #q-error{color:#e74c3c;font-size:0.88em;min-height:1.2em;}
 #start-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
 #start-form input,#start-form select{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+#adventure-select{background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;font-family:Georgia,serif;padding:14px 16px;border-radius:8px;cursor:pointer;}
 #start-form button{background:#C9A84C;border:none;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1.1em;font-family:Georgia,serif;min-height:48px;}
 #spectate-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
 #spectate-form input{width:100%;background:#1A1A2E;border:1px solid #6B5CE744;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
@@ -292,8 +293,9 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 
   <div id="start-screen" class="hidden">
     <h2>Choose Your Adventure</h2>
-    <p>Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
+    <p id="adventure-description">Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
     <div id="start-form">
+      <select id="adventure-select"></select>
       <input type="text" id="player-name" placeholder="Your character name" value="">
       <select id="player-class">
         <option value="fighter">Fighter</option>
@@ -617,6 +619,7 @@ async function validateBetaToken() {
     if (localStorage.getItem('ndaAccepted_' + code)) {
       if (localStorage.getItem('questionnaireDone_' + code)) {
         document.getElementById('start-screen').classList.remove('hidden');
+        loadAdventures();
       } else {
         document.getElementById('questionnaire-screen').classList.remove('hidden');
       }
@@ -637,6 +640,7 @@ if (betaToken) {
   if (localStorage.getItem('ndaAccepted_' + betaToken)) {
     if (localStorage.getItem('questionnaireDone_' + betaToken)) {
       document.getElementById('start-screen').classList.remove('hidden');
+      loadAdventures();
     } else {
       document.getElementById('questionnaire-screen').classList.remove('hidden');
     }
@@ -689,6 +693,7 @@ async function submitQuestionnaire() {
   localStorage.setItem('questionnaireDone_' + betaToken, 'true');
   document.getElementById('questionnaire-screen').classList.add('hidden');
   document.getElementById('start-screen').classList.remove('hidden');
+  loadAdventures();
 }
 
 var betaInput = document.getElementById('beta-token-input');
@@ -696,6 +701,36 @@ if (betaInput) {
   betaInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') validateBetaToken();
   });
+}
+
+async function loadAdventures() {
+  try {
+    var resp = await fetch('/api/adventures');
+    if (!resp.ok) return;
+    var adventures = await resp.json();
+    var select = document.getElementById('adventure-select');
+    var desc = document.getElementById('adventure-description');
+    if (!select || !adventures || !adventures.length) return;
+    select.innerHTML = '';
+    for (var i = 0; i < adventures.length; i++) {
+      var opt = document.createElement('option');
+      opt.value = adventures[i].id;
+      opt.textContent = adventures[i].name;
+      opt.setAttribute('data-description', adventures[i].description || '');
+      select.appendChild(opt);
+    }
+    // Update description when selection changes
+    select.addEventListener('change', function() {
+      var selected = select.options[select.selectedIndex];
+      if (desc && selected) {
+        desc.textContent = selected.getAttribute('data-description') || '';
+      }
+    });
+    // Set initial description
+    if (select.options.length > 0 && desc) {
+      desc.textContent = select.options[0].getAttribute('data-description') || '';
+    }
+  } catch(e) { /* non-blocking */ }
 }
 
 async function startGame() {
@@ -710,7 +745,7 @@ async function startGame() {
         'x-beta-token': betaToken || ''
       },
       body: JSON.stringify({
-        adventureId: 'dracula',
+        adventureId: document.getElementById('adventure-select').value,
         playerName: name,
         characterClass: cls,
         characterRace: 'human',
