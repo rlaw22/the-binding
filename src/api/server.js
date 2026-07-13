@@ -182,6 +182,26 @@ async function createServer(options = {}) {
     return { ok: true, label: valid.label };
   });
 
+  // Record beta signup (NDA acceptance + questionnaire)
+  app.post('/api/beta/signup', async (request, reply) => {
+    const { token, ndaAccepted, questionnaire } = request.body || {};
+    if (!token) return reply.status(400).send({ error: 'token is required' });
+    if (!ndaAccepted) return reply.status(400).send({ error: 'ndaAccepted is required' });
+
+    const valid = TokenStore.validateToken(token);
+    if (!valid) return reply.status(401).send({ error: 'Invalid or expired token' });
+
+    TokenStore.recordSignup(token, ndaAccepted, questionnaire || {});
+    return { ok: true };
+  });
+
+  // Admin: list all signups
+  app.get('/api/admin/signups', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    return { signups: TokenStore.getSignups() };
+  });
+
+
   // Generate a new token (admin only)
   app.post('/api/admin/tokens', async (request, reply) => {
     if (!requireAdmin(request, reply)) return;

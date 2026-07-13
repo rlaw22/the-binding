@@ -158,8 +158,54 @@ function getTokenCount() {
 // Load on module init
 loadTokens();
 
-module.exports = {
-  generateToken,
+
+// --- Beta Signup Storage (NDA + Questionnaire) ---
+const SIGNUP_PATH = path.join(__dirname, '..', '..', 'data', 'beta-signups.json');
+let signups = [];
+
+function loadSignups() {
+  try {
+    const dir = path.dirname(SIGNUP_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    if (fs.existsSync(SIGNUP_PATH)) {
+      signups = JSON.parse(fs.readFileSync(SIGNUP_PATH, 'utf8'));
+    }
+  } catch (err) {
+    console.error('[TokenStore] Failed to load signups:', err.message);
+    signups = [];
+  }
+}
+
+function saveSignups() {
+  try {
+    const dir = path.dirname(SIGNUP_PATH);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(SIGNUP_PATH, JSON.stringify(signups, null, 2));
+  } catch (err) {
+    console.error('[TokenStore] Failed to save signups:', err.message);
+  }
+}
+
+function recordSignup(tokenCode, ndaAccepted, questionnaire) {
+  const normalized = (tokenCode || '').trim().toUpperCase();
+  const signup = {
+    token: normalized,
+    ndaAccepted: !!ndaAccepted,
+    acceptedAt: new Date().toISOString(),
+    questionnaire: questionnaire || {}
+  };
+  signups.push(signup);
+  saveSignups();
+  return signup;
+}
+
+function getSignups() {
+  return signups;
+}
+
+loadSignups();
+
+module.exports = {generateToken,
   validateToken,
   recordSession,
   revokeToken,
@@ -167,5 +213,6 @@ module.exports = {
   listTokens,
   getTokenCount,
   loadTokens,
-  saveTokens
-};
+  saveTokens,  recordSignup,
+  getSignups
+};;

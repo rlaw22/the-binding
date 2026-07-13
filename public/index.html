@@ -54,6 +54,32 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #gate-error{color:#e74c3c;font-size:0.9em;min-height:1.2em;}
 #gate-submit{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;width:100%;transition:all 0.2s;}
 #gate-submit:hover{background:#E8A838;border-color:#E8A838;}
+
+#nda-screen{text-align:center;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow-y:auto;flex:1;}
+#nda-screen h2{color:#C9A84C;font-size:1.3em;letter-spacing:2px;}
+#nda-box{background:#C9A84C08;border:1px solid #C9A84C22;border-radius:8px;padding:20px 24px;max-height:45vh;overflow-y:auto;text-align:left;font-size:0.92em;line-height:1.7;color:#F5F0E1cc;-webkit-overflow-scrolling:touch;}
+#nda-box h3{color:#C9A84C;font-size:1.05em;margin-bottom:10px;text-align:center;letter-spacing:2px;}
+#nda-box p{margin-bottom:8px;}
+#nda-box strong{color:#C9A84C;font-size:0.85em;letter-spacing:1px;display:block;margin-top:12px;margin-bottom:4px;}
+#nda-box ul{margin:4px 0 10px 18px;}
+#nda-box li{margin-bottom:5px;}
+#nda-agree-row{display:flex;align-items:center;gap:10px;width:100%;max-width:440px;cursor:pointer;user-select:none;}
+#nda-agree-row input[type=checkbox]{width:20px;height:20px;accent-color:#C9A84C;cursor:pointer;flex-shrink:0;}
+#nda-agree-row span{color:#F5F0E1cc;font-size:0.92em;text-align:left;}
+#nda-continue{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;width:100%;max-width:440px;transition:all 0.2s;opacity:0.4;pointer-events:none;}
+#nda-continue.enabled{opacity:1;pointer-events:auto;}
+#nda-continue.enabled:hover{background:#E8A838;border-color:#E8A838;}
+#questionnaire-screen{text-align:center;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow-y:auto;flex:1;}
+#questionnaire-screen h2{color:#C9A84C;font-size:1.3em;letter-spacing:2px;}
+#questionnaire-screen .q-sub{color:#F5F0E1aa;max-width:400px;font-size:0.92em;line-height:1.5;}
+#questionnaire-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:440px;text-align:left;}
+.q-field label{display:block;color:#C9A84C;font-size:0.88em;font-weight:600;margin-bottom:5px;}
+.q-field input,.q-field select,.q-field textarea{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:11px 14px;border-radius:8px;font-family:Georgia,serif;font-size:0.95em;}
+.q-field textarea{min-height:70px;resize:vertical;}
+.q-field input:focus,.q-field select:focus,.q-field textarea:focus{outline:none;border-color:#C9A84C;}
+#q-submit{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;width:100%;transition:all 0.2s;margin-top:4px;}
+#q-submit:hover{background:#E8A838;border-color:#E8A838;}
+#q-error{color:#e74c3c;font-size:0.88em;min-height:1.2em;}
 #start-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
 #start-form input,#start-form select{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #start-form button{background:#C9A84C;border:none;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1.1em;font-family:Georgia,serif;min-height:48px;}
@@ -101,6 +127,75 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
       <input type="text" id="beta-token-input" placeholder="BIND-XXXX" maxlength="9" autocomplete="off" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()">
       <div id="gate-error"></div>
       <button id="gate-submit" onclick="validateBetaToken()">Enter</button>
+    </div>
+  </div>
+
+  <!-- NDA Screen -->
+  <div id="nda-screen" class="hidden">
+    <h2>Before You Begin</h2>
+    <div id="nda-box">
+      <h3>CONFIDENTIALITY AGREEMENT</h3>
+      <p style="text-align:center;color:#C9A84C;font-size:0.9em;">THE BINDING &mdash; Closed Beta</p>
+      <p>By entering this beta, you agree to keep everything you see confidential.</p>
+      <strong>WHAT'S COVERED</strong>
+      <p>All game content &mdash; story, artwork, dialogue, game mechanics, character designs, audio, and technical details &mdash; is proprietary and confidential. This includes anything you experience during gameplay.</p>
+      <strong>YOUR OBLIGATIONS</strong>
+      <ul>
+        <li>Do not share, post, or publish any screenshots, recordings, or descriptions of game content</li>
+        <li>Do not share or redistribute your beta access code</li>
+        <li>Do not attempt to reverse-engineer, decompile, or extract game assets</li>
+        <li>Do not discuss specific game content on social media, forums, or public channels</li>
+      </ul>
+      <strong>FEEDBACK</strong>
+      <p>Any feedback, suggestions, or ideas you share may be used to improve the game without compensation or credit.</p>
+      <strong>DURATION</strong>
+      <p>This agreement stays in effect until The Binding enters public release or until terminated.</p>
+      <strong>ACKNOWLEDGMENT</strong>
+      <p>You understand that The Binding is a work in progress and may contain bugs, incomplete features, and placeholder content.</p>
+    </div>
+    <label id="nda-agree-row">
+      <input type="checkbox" id="nda-checkbox" onchange="toggleNdaContinue()">
+      <span>I have read and agree to the Confidentiality Agreement</span>
+    </label>
+    <button id="nda-continue" onclick="agreeNDA()">Continue</button>
+  </div>
+
+  <!-- Questionnaire Screen -->
+  <div id="questionnaire-screen" class="hidden">
+    <h2>A Few Quick Questions</h2>
+    <p class="q-sub">Help us make The Binding better. This takes about 30 seconds.</p>
+    <div id="questionnaire-form">
+      <div class="q-field">
+        <label>How did you hear about The Binding?</label>
+        <input type="text" id="q-howheard" placeholder="Friend, social media, etc.">
+      </div>
+      <div class="q-field">
+        <label>How experienced are you with D&D or tabletop RPGs?</label>
+        <select id="q-experience">
+          <option value="">&mdash; Select &mdash;</option>
+          <option value="never">Never played</option>
+          <option value="casual">A few sessions</option>
+          <option value="regular">Regular player</option>
+          <option value="veteran">Veteran / DM</option>
+          <option value="designer">Game designer</option>
+        </select>
+      </div>
+      <div class="q-field">
+        <label>What device will you primarily play on?</label>
+        <select id="q-device">
+          <option value="">&mdash; Select &mdash;</option>
+          <option value="iphone">iPhone</option>
+          <option value="android">Android phone</option>
+          <option value="tablet">iPad / Tablet</option>
+          <option value="desktop">Laptop / Desktop</option>
+        </select>
+      </div>
+      <div class="q-field">
+        <label>What excites you most about The Binding? <span style="color:#F5F0E166;font-weight:normal;">(optional)</span></label>
+        <textarea id="q-excitement" placeholder="Tell us what drew you in..."></textarea>
+      </div>
+      <div id="q-error"></div>
+      <button id="q-submit" onclick="submitQuestionnaire()">Enter the Game</button>
     </div>
   </div>
 
@@ -360,11 +455,19 @@ async function validateBetaToken() {
       btn.disabled = false;
       return;
     }
-    // Save token and show the game
+    // Save token and advance through NDA/questionnaire gate
     betaToken = code;
     localStorage.setItem('betaToken', code);
     document.getElementById('gate-screen').classList.add('hidden');
-    document.getElementById('start-screen').classList.remove('hidden');
+    if (localStorage.getItem('ndaAccepted_' + code)) {
+      if (localStorage.getItem('questionnaireDone_' + code)) {
+        document.getElementById('start-screen').classList.remove('hidden');
+      } else {
+        document.getElementById('questionnaire-screen').classList.remove('hidden');
+      }
+    } else {
+      document.getElementById('nda-screen').classList.remove('hidden');
+    }
   } catch(e) {
     error.textContent = 'Connection error. Try again.';
   } finally {
@@ -373,13 +476,66 @@ async function validateBetaToken() {
   }
 }
 
-// Auto-login: if we have a saved token, skip the gate
+// Auto-login: if we have a saved token, skip to the right screen
 if (betaToken) {
   document.getElementById('gate-screen').classList.add('hidden');
-  document.getElementById('start-screen').classList.remove('hidden');
+  if (localStorage.getItem('ndaAccepted_' + betaToken)) {
+    if (localStorage.getItem('questionnaireDone_' + betaToken)) {
+      document.getElementById('start-screen').classList.remove('hidden');
+    } else {
+      document.getElementById('questionnaire-screen').classList.remove('hidden');
+    }
+  } else {
+    document.getElementById('nda-screen').classList.remove('hidden');
+  }
 }
 
 // Allow Enter key on the beta token input
+
+// --- NDA GATE ---
+function toggleNdaContinue() {
+  var btn = document.getElementById('nda-continue');
+  var checked = document.getElementById('nda-checkbox').checked;
+  if (checked) { btn.classList.add('enabled'); } else { btn.classList.remove('enabled'); }
+}
+
+function agreeNDA() {
+  if (!document.getElementById('nda-checkbox').checked) return;
+  localStorage.setItem('ndaAccepted_' + betaToken, 'true');
+  document.getElementById('nda-screen').classList.add('hidden');
+  document.getElementById('questionnaire-screen').classList.remove('hidden');
+}
+
+async function submitQuestionnaire() {
+  var howHeard = document.getElementById('q-howheard').value.trim();
+  var experience = document.getElementById('q-experience').value;
+  var device = document.getElementById('q-device').value;
+  var excitement = document.getElementById('q-excitement').value.trim();
+  var errorEl = document.getElementById('q-error');
+
+  if (!howHeard) { errorEl.textContent = 'Please tell us how you heard about us.'; return; }
+  if (!experience) { errorEl.textContent = 'Please select your experience level.'; return; }
+  if (!device) { errorEl.textContent = 'Please select your device.'; return; }
+  errorEl.textContent = '';
+
+  // Save to server (non-blocking)
+  try {
+    await fetch('/api/beta/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        token: betaToken,
+        ndaAccepted: true,
+        questionnaire: { howHeard: howHeard, experience: experience, device: device, excitement: excitement }
+      })
+    });
+  } catch(e) { /* non-blocking — continue even if server is down */ }
+
+  localStorage.setItem('questionnaireDone_' + betaToken, 'true');
+  document.getElementById('questionnaire-screen').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
+}
+
 var betaInput = document.getElementById('beta-token-input');
 if (betaInput) {
   betaInput.addEventListener('keydown', function(e) {
