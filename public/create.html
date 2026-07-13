@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1A1A2E">
+<title>The Binding — Create Your Character</title>
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-dim: #C9A84C44;
+  --gold-glow: #E8A838;
+  --bg: #1A1A2E;
+  --bg-card: #C9A84C0d;
+  --text: #F5F0E1;
+  --text-dim: #F5F0E1aa;
+  --text-muted: #F5F0E166;
+  --purple: #6B5CE7;
+  --red: #e74c3c;
+  --green: #2ecc71;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { height:100%; overflow:hidden; }
+body { background:var(--bg); color:var(--text); font-family:Georgia,serif; display:flex; flex-direction:column; }
+#app { flex:1; display:flex; flex-direction:column; max-width:700px; margin:0 auto; width:100%; padding:16px 20px; overflow:hidden; }
+
+/* Header */
+#header { text-align:center; padding:10px 0 14px; flex-shrink:0; }
+#header h1 { color:var(--gold); font-size:1.5em; letter-spacing:4px; }
+#header .sub { color:var(--gold-glow); font-size:0.82em; font-style:italic; margin-top:2px; }
+
+/* Step indicator */
+#steps { display:flex; justify-content:center; gap:8px; padding:6px 0 16px; flex-shrink:0; }
+.step-dot { width:10px; height:10px; border-radius:50%; background:var(--gold-dim); transition:all 0.3s; }
+.step-dot.active { background:var(--gold); box-shadow:0 0 8px var(--gold-dim); }
+.step-dot.done { background:var(--green); }
+
+/* Screen container */
+#screen { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px 0; }
+.screen { display:none; flex-direction:column; gap:16px; animation:fadeIn 0.3s ease; }
+.screen.visible { display:flex; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.screen-title { color:var(--gold); font-size:1.3em; text-align:center; letter-spacing:2px; }
+.screen-desc { color:var(--text-dim); text-align:center; font-size:0.95em; line-height:1.6; max-width:500px; margin:0 auto; }
+
+/* Cards grid */
+.cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.cards.three-col { grid-template-columns:1fr 1fr 1fr; }
+.card { background:var(--bg-card); border:1px solid var(--gold-dim); border-radius:10px; padding:14px; cursor:pointer; transition:all 0.2s; text-align:center; }
+.card:hover { border-color:var(--gold); background:#C9A84C18; }
+.card.selected { border-color:var(--gold); background:#C9A84C22; box-shadow:0 0 12px #C9A84C22; }
+.card h3 { color:var(--gold); font-size:1em; margin-bottom:4px; letter-spacing:1px; }
+.card p { color:var(--text-dim); font-size:0.82em; line-height:1.4; }
+.card .icon { font-size:1.6em; margin-bottom:6px; }
+.card .badge { display:inline-block; background:var(--gold-dim); color:var(--gold); font-size:0.7em; padding:2px 8px; border-radius:10px; margin-top:6px; }
+
+/* Subrace row */
+#subrace-row { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.sub-chip { background:#C9A84C15; border:1px solid var(--gold-dim); border-radius:20px; padding:6px 16px; cursor:pointer; font-family:Georgia,serif; font-size:0.88em; color:var(--text-dim); transition:all 0.2s; }
+.sub-chip:hover { border-color:var(--gold); color:var(--text); }
+.sub-chip.selected { background:#C9A84C33; border-color:var(--gold); color:var(--gold); }
+
+/* Detail panel */
+.detail-panel { background:#C9A84C08; border:1px solid var(--gold-dim); border-radius:10px; padding:16px; }
+.detail-panel h3 { color:var(--gold); margin-bottom:8px; }
+.detail-panel p { color:var(--text-dim); font-size:0.9em; line-height:1.6; }
+.detail-panel .stats { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.detail-panel .stat-chip { background:#C9A84C18; border:1px solid var(--gold-dim); border-radius:6px; padding:4px 10px; font-size:0.8em; color:var(--gold); }
+
+/* Name input */
+#char-name { width:100%; background:#1A1A2E; border:1px solid var(--gold-dim); color:var(--text); padding:16px 18px; border-radius:10px; font-family:Georgia,serif; font-size:1.2em; text-align:center; letter-spacing:1px; }
+#char-name:focus { outline:none; border-color:var(--gold); box-shadow:0 0 12px #C9A84C33; }
+#char-name::placeholder { color:var(--text-muted); }
+#backstory { width:100%; background:#1A1A2E; border:1px solid var(--gold-dim); color:var(--text); padding:14px 16px; border-radius:10px; font-family:Georgia,serif; font-size:0.95em; min-height:80px; resize:vertical; }
+#backstory:focus { outline:none; border-color:var(--gold); }
+#backstory::placeholder { color:var(--text-muted); }
+
+/* Stats panel */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.stat-box { background:#C9A84C08; border:1px solid var(--gold-dim); border-radius:8px; padding:12px 8px; text-align:center; }
+.stat-box .label { color:var(--gold); font-size:0.75em; letter-spacing:2px; text-transform:uppercase; }
+.stat-box .value { color:var(--text); font-size:1.6em; font-weight:700; margin:4px 0 2px; }
+.stat-box .mod { color:var(--text-dim); font-size:0.82em; }
+.stat-box.highlight { border-color:var(--gold); background:#C9A84C15; }
+#reroll-btn { background:none; border:1px solid var(--gold-dim); color:var(--gold); padding:10px 24px; border-radius:8px; cursor:pointer; font-family:Georgia,serif; font-size:0.95em; transition:all 0.2s; }
+#reroll-btn:hover { border-color:var(--gold); background:#C9A84C18; }
+
+/* Review */
+.review-row { display:flex; justify-content:space-between; padding:10px 14px; background:#C9A84C08; border:1px solid var(--gold-dim); border-radius:8px; }
+.review-row .label { color:var(--text-dim); font-size:0.9em; }
+.review-row .value { color:var(--gold); font-size:0.95em; font-weight:600; }
+
+/* Nav buttons */
+.nav-row { display:flex; gap:10px; padding:14px 0 4px; flex-shrink:0; }
+.btn { flex:1; padding:14px; border-radius:10px; cursor:pointer; font-family:Georgia,serif; font-size:1.05em; font-weight:600; border:none; transition:all 0.2s; }
+.btn-primary { background:var(--gold); color:var(--bg); }
+.btn-primary:hover { background:var(--gold-glow); }
+.btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+.btn-secondary { background:none; border:1px solid var(--gold-dim); color:var(--gold); }
+.btn-secondary:hover { border-color:var(--gold); background:#C9A84C18; }
+
+/* Loading */
+.spinner { display:inline-block; width:18px; height:18px; border:2px solid var(--bg); border-top-color:transparent; border-radius:50%; animation:spin 0.6s linear infinite; margin-right:8px; vertical-align:middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Error */
+.error-msg { color:var(--red); text-align:center; font-size:0.9em; padding:8px; }
+
+/* Mobile */
+@media (max-width:500px) {
+  .cards { grid-template-columns:1fr; }
+  .cards.three-col { grid-template-columns:1fr 1fr; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <h1>THE BINDING</h1>
+    <div class="sub">Forge your character</div>
+  </div>
+  <div id="steps">
+    <div class="step-dot active" data-step="0"></div>
+    <div class="step-dot" data-step="1"></div>
+    <div class="step-dot" data-step="2"></div>
+    <div class="step-dot" data-step="3"></div>
+    <div class="step-dot" data-step="4"></div>
+  </div>
+  <div id="screen"></div>
+  <div class="nav-row" id="nav">
+    <button class="btn btn-secondary" id="btn-back" onclick="goBack()">Back</button>
+    <button class="btn btn-primary" id="btn-next" onclick="goNext()">Next</button>
+  </div>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+var RACES = [
+  { id:'human', name:'Human', icon:'⚔', desc:'Versatile and ambitious. Humans adapt to any path.', bonus:'+1 to all abilities', speed:30, languages:['Common'] },
+  { id:'elf', name:'Elf', icon:'🧝', desc:'Graceful and perceptive. Elves live for centuries.', bonus:'+2 DEX', speed:30, languages:['Common','Elvish'], subraces:['High Elf','Wood Elf','Dark Elf'] },
+  { id:'dwarf', name:'Dwarf', icon:'⛏', desc:'Stout and resilient. Dwarves are forged by stone.', bonus:'+2 CON', speed:25, languages:['Common','Dwarvish'], subraces:['Hill Dwarf','Mountain Dwarf'] },
+  { id:'halfling', name:'Halfling', icon:'🍀', desc:'Small but lucky. Halflings are surprisingly brave.', bonus:'+2 DEX', speed:25, languages:['Common','Halfling'], subraces:['Lightfoot','Stout'] },
+  { id:'gnome', name:'Gnome', icon:'🔧', desc:'Clever and curious. Gnomes tinker with everything.', bonus:'+2 INT', speed:25, languages:['Common','Gnomish'], subraces:['Forest Gnome','Rock Gnome'] },
+  { id:'half-elf', name:'Half-Elf', icon:'🌙', desc:'Between two worlds. Half-elves are natural diplomats.', bonus:'+2 CHA, +1 to two others', speed:30, languages:['Common','Elvish'] },
+  { id:'half-orc', name:'Half-Orc', icon:'🪓', desc:'Fierce and relentless. Half-orcs are born survivors.', bonus:'+2 STR, +1 CON', speed:30, languages:['Common','Orc'] },
+  { id:'tiefling', name:'Tiefling', icon:'😈', desc:'Touched by the infernal. Tieflings command dark power.', bonus:'+2 CHA, +1 INT', speed:30, languages:['Common','Infernal'] },
+  { id:'dragonborn', name:'Dragonborn', icon:'🐉', desc:'Draconic blood runs true. Dragonborn breathe fire and fury.', bonus:'+2 STR, +1 CHA', speed:30, languages:['Common','Draconic'], subraces:['Black','Blue','Brass','Bronze','Copper','Gold','Green','Red','Silver','White'] }
+];
+
+var CLASSES = [
+  { id:'barbarian', name:'Barbarian', icon:'🪓', hitDie:12, primary:'STR', desc:'A fierce warrior of primitive background who can enter a battle rage.', role:'Tank / Melee DPS' },
+  { id:'bard', name:'Bard', icon:'🎵', hitDie:8, primary:'CHA', desc:'An inspiring magician whose power echoes the music of creation.', role:'Support / Caster' },
+  { id:'cleric', name:'Cleric', icon:'✝', hitDie:8, primary:'WIS', desc:'A priestly champion who wields divine magic in service of a higher power.', role:'Healer / Caster' },
+  { id:'druid', name:'Druid', icon:'🌿', hitDie:8, primary:'WIS', desc:'A priest of the Old Faith, wielding the powers of nature.', role:'Caster / Shapeshifter' },
+  { id:'fighter', name:'Fighter', icon:'⚔', hitDie:10, primary:'STR', desc:'A master of martial combat, skilled with a variety of weapons and armor.', role:'Melee / Ranged DPS' },
+  { id:'monk', name:'Monk', icon:'👊', hitDie:8, primary:'DEX', desc:'A master of martial arts, harnessing the power of the body.', role:'Melee DPS / Mobility' },
+  { id:'paladin', name:'Paladin', icon:'🛡', hitDie:10, primary:'STR', desc:'A holy warrior bound to a sacred oath.', role:'Tank / Healer' },
+  { id:'ranger', name:'Ranger', icon:'🏹', hitDie:10, primary:'DEX', desc:'A warrior of the wilderness, skilled in tracking and survival.', role:'Ranged DPS / Scout' },
+  { id:'rogue', name:'Rogue', icon:'🗡', hitDie:8, primary:'DEX', desc:'A scoundrel who uses stealth and trickery to overcome obstacles.', role:'Stealth / DPS' },
+  { id:'sorcerer', name:'Sorcerer', icon:'✨', hitDie:6, primary:'CHA', desc:'A spellcaster who draws on inherent magic from a gift or bloodline.', role:'Caster DPS' },
+  { id:'warlock', name:'Warlock', icon:'👁', hitDie:8, primary:'CHA', desc:'A wielder of magic derived from a bargain with an extraplanar entity.', role:'Caster DPS / Debuff' },
+  { id:'wizard', name:'Wizard', icon:'📖', hitDie:6, primary:'INT', desc:'A scholarly magic-user who has mastered the arcane through study.', role:'Caster DPS / Utility' }
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+var step = 0;
+var selectedRace = null;
+var selectedSubrace = null;
+var selectedClass = null;
+var charName = '';
+var backstory = '';
+var stats = {};
+var API_URL = '';
+
+function detectAPI() {
+  // Always use relative URLs — served from the same server as the API
+  return '';
+}
+
+API_URL = detectAPI();
+
+// ─── NAVIGATION ─────────────────────────────────────────────────────────────
+function updateDots() {
+  var dots = document.querySelectorAll('.step-dot');
+  for (var i = 0; i < dots.length; i++) {
+    dots[i].className = 'step-dot';
+    if (i < step) dots[i].classList.add('done');
+    if (i === step) dots[i].classList.add('active');
+  }
+}
+
+function renderScreen() {
+  var el = document.getElementById('screen');
+  var screens = [renderRace, renderClass, renderStats, renderName, renderReview];
+  el.innerHTML = '';
+  var div = document.createElement('div');
+  div.className = 'screen visible';
+  div.innerHTML = screens[step]();
+  el.appendChild(div);
+  updateDots();
+  updateNav();
+}
+
+function updateNav() {
+  var back = document.getElementById('btn-back');
+  var next = document.getElementById('btn-next');
+  back.style.display = step === 0 ? 'none' : '';
+  if (step === 4) {
+    next.textContent = 'Begin Adventure';
+    next.disabled = !charName.trim();
+  } else {
+    next.textContent = 'Next';
+    next.disabled = (step === 0 && !selectedRace) || (step === 1 && !selectedClass);
+  }
+}
+
+function goBack() { if (step > 0) { step--; renderScreen(); } }
+function goNext() {
+  if (step === 4) { createSession(); return; }
+  if (step < 4) { step++; renderScreen(); }
+}
+
+// ─── SCREEN RENDERERS ───────────────────────────────────────────────────────
+function renderRace() {
+  var h = '<h2 class="screen-title">Choose Your Race</h2>';
+  h += '<p class="screen-desc">Your bloodline shapes your destiny. Each race brings unique gifts.</p>';
+  h += '<div class="cards">';
+  for (var i = 0; i < RACES.length; i++) {
+    var r = RACES[i];
+    var sel = selectedRace === r.id ? ' selected' : '';
+    h += '<div class="card' + sel + '" onclick="pickRace(\'' + r.id + '\')">';
+    h += '<div class="icon">' + r.icon + '</div>';
+    h += '<h3>' + r.name + '</h3>';
+    h += '<p>' + r.desc + '</p>';
+    h += '<span class="badge">' + r.bonus + '</span>';
+    h += '</div>';
+  }
+  h += '</div>';
+  if (selectedRace) {
+    var race = RACES.find(function(r){return r.id===selectedRace;});
+    if (race && race.subraces) {
+      h += '<div class="detail-panel"><h3>Choose Subrace</h3><div id="subrace-row">';
+      for (var j = 0; j < race.subraces.length; j++) {
+        var s = race.subraces[j];
+        var ssel = selectedSubrace === s ? ' selected' : '';
+        h += '<button class="sub-chip' + ssel + '" onclick="pickSubrace(\'' + s + '\')">' + s + '</button>';
+      }
+      h += '</div></div>';
+    }
+  }
+  return h;
+}
+
+function renderClass() {
+  var h = '<h2 class="screen-title">Choose Your Class</h2>';
+  h += '<p class="screen-desc">Your class defines how you fight, cast, and survive.</p>';
+  h += '<div class="cards three-col">';
+  for (var i = 0; i < CLASSES.length; i++) {
+    var c = CLASSES[i];
+    var sel = selectedClass === c.id ? ' selected' : '';
+    h += '<div class="card' + sel + '" onclick="pickClass(\'' + c.id + '\')">';
+    h += '<div class="icon">' + c.icon + '</div>';
+    h += '<h3>' + c.name + '</h3>';
+    h += '<p>' + c.role + '</p>';
+    h += '<span class="badge">d' + c.hitDie + ' · ' + c.primary + '</span>';
+    h += '</div>';
+  }
+  h += '</div>';
+  if (selectedClass) {
+    var cls = CLASSES.find(function(c){return c.id===selectedClass;});
+    if (cls) {
+      h += '<div class="detail-panel"><h3>' + cls.icon + ' ' + cls.name + '</h3>';
+      h += '<p>' + cls.desc + '</p>';
+      h += '<div class="stats">';
+      h += '<span class="stat-chip">Hit Die: d' + cls.hitDie + '</span>';
+      h += '<span class="stat-chip">Primary: ' + cls.primary + '</span>';
+      h += '</div></div>';
+    }
+  }
+  return h;
+}
+
+function renderStats() {
+  if (!stats.str) rollStats();
+  var labels = { str:'STR', dex:'DEX', con:'CON', int:'INT', wis:'WIS', cha:'CHA' };
+  var cls = CLASSES.find(function(c){return c.id===selectedClass;});
+  var primary = cls ? cls.primary.toLowerCase() : '';
+
+  var h = '<h2 class="screen-title">Your Abilities</h2>';
+  h += '<p class="screen-desc">These are your rolled stats (4d6, drop lowest). Reroll if you like.</p>';
+  h += '<div class="stats-grid">';
+  var keys = ['str','dex','con','int','wis','cha'];
+  for (var i = 0; i < keys.length; i++) {
+    var k = keys[i];
+    var v = stats[k] || 10;
+    var mod = Math.floor((v - 10) / 2);
+    var modStr = mod >= 0 ? '+' + mod : '' + mod;
+    var hl = k === primary ? ' highlight' : '';
+    h += '<div class="stat-box' + hl + '">';
+    h += '<div class="label">' + labels[k] + '</div>';
+    h += '<div class="value">' + v + '</div>';
+    h += '<div class="mod">' + modStr + '</div>';
+    h += '</div>';
+  }
+  h += '</div>';
+  h += '<div style="text-align:center"><button id="reroll-btn" onclick="rollStats();renderScreen();">🎲 Reroll</button></div>';
+  return h;
+}
+
+function renderName() {
+  var race = RACES.find(function(r){return r.id===selectedRace;});
+  var cls = CLASSES.find(function(c){return c.id===selectedClass;});
+  var h = '<h2 class="screen-title">Name Your Character</h2>';
+  h += '<p class="screen-desc">Every great adventure begins with a name. What shall the world call you?</p>';
+  h += '<input type="text" id="char-name" placeholder="Enter character name..." value="' + escapeHtml(charName) + '" oninput="charName=this.value;updateNav()" maxlength="64">';
+  h += '<textarea id="backstory" placeholder="Write a brief backstory (optional)..." oninput="backstory=this.value">' + escapeHtml(backstory) + '</textarea>';
+  return h;
+}
+
+function renderReview() {
+  var race = RACES.find(function(r){return r.id===selectedRace;});
+  var cls = CLASSES.find(function(c){return c.id===selectedClass;});
+  var h = '<h2 class="screen-title">Review Your Character</h2>';
+  h += '<p class="screen-desc">Everything looks right? Step into the story.</p>';
+  h += '<div class="detail-panel">';
+  h += '<div class="review-row"><span class="label">Name</span><span class="value">' + escapeHtml(charName || 'Unnamed') + '</span></div>';
+  h += '<div class="review-row"><span class="label">Race</span><span class="value">' + (race ? race.icon + ' ' + race.name : '—') + (selectedSubrace ? ' (' + selectedSubrace + ')' : '') + '</span></div>';
+  h += '<div class="review-row"><span class="label">Class</span><span class="value">' + (cls ? cls.icon + ' ' + cls.name : '—') + '</span></div>';
+  h += '<div class="review-row"><span class="label">Hit Die</span><span class="value">d' + (cls ? cls.hitDie : 10) + '</span></div>';
+  h += '</div>';
+  if (stats.str) {
+    var labels = { str:'STR', dex:'DEX', con:'CON', int:'INT', wis:'WIS', cha:'CHA' };
+    h += '<div class="stats-grid" style="margin-top:8px">';
+    var keys = ['str','dex','con','int','wis','cha'];
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      var v = stats[k] || 10;
+      var mod = Math.floor((v - 10) / 2);
+      var modStr = mod >= 0 ? '+' + mod : '' + mod;
+      h += '<div class="stat-box"><div class="label">' + labels[k] + '</div><div class="value">' + v + '</div><div class="mod">' + modStr + '</div></div>';
+    }
+    h += '</div>';
+  }
+  if (backstory.trim()) {
+    h += '<div class="detail-panel" style="margin-top:8px"><h3>Backstory</h3><p>' + escapeHtml(backstory) + '</p></div>';
+  }
+  h += '<div id="error-area"></div>';
+  return h;
+}
+
+// ─── ACTIONS ────────────────────────────────────────────────────────────────
+function pickRace(id) { selectedRace = id; selectedSubrace = null; renderScreen(); }
+function pickSubrace(s) { selectedSubrace = s; renderScreen(); }
+function pickClass(id) { selectedClass = id; renderScreen(); }
+
+function rollStats() {
+  stats = {};
+  var keys = ['str','dex','con','int','wis','cha'];
+  for (var i = 0; i < keys.length; i++) {
+    var rolls = [d6(), d6(), d6(), d6()];
+    rolls.sort(function(a,b){return b-a;});
+    stats[keys[i]] = rolls[0] + rolls[1] + rolls[2]; // drop lowest
+  }
+}
+
+function d6() { return Math.floor(Math.random() * 6) + 1; }
+
+function escapeHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function createSession() {
+  var btn = document.getElementById('btn-next');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Creating...';
+  var errArea = document.getElementById('error-area');
+  if (errArea) errArea.innerHTML = '';
+
+  try {
+    var raceId = selectedRace;
+    var classId = selectedClass;
+    var name = charName.trim() || 'Adventurer';
+
+    var resp = await fetch(API_URL + '/api/sessions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        adventureId: 'dracula',
+        playerName: name,
+        characterClass: classId,
+        characterRace: raceId
+      })
+    });
+    var data = await resp.json();
+    if (data.error) {
+      if (errArea) errArea.innerHTML = '<div class="error-msg">' + data.error + '</div>';
+      btn.disabled = false;
+      btn.textContent = 'Begin Adventure';
+      return;
+    }
+
+    // Success — redirect to the game
+    var gameUrl = API_URL + '/?session=' + data.sessionId;
+    window.location.href = gameUrl;
+  } catch(e) {
+    if (errArea) errArea.innerHTML = '<div class="error-msg">Failed to connect: ' + e.message + '</div>';
+    btn.disabled = false;
+    btn.textContent = 'Begin Adventure';
+  }
+}
+
+// ─── INIT ───────────────────────────────────────────────────────────────────
+renderScreen();
+</script>
+</body>
+</html>
