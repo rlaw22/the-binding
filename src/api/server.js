@@ -45,6 +45,53 @@ function generateRejoinCode(adventureId) {
 /**
  * Record a message in the session history and return its index.
  */
+/**
+ * Generate a natural DM comment for a smart player action.
+ * Varies the response and connects it to what the player did.
+ */
+function generateCoinComment(topCategory, playerAction) {
+  const action = (playerAction || '').toLowerCase();
+
+  const comments = {
+    creativity: [
+      "That's an approach no one else would have thought of.",
+      "You have a clever mind.",
+      "Interesting — that's not the obvious choice, and it just might work.",
+      "A creative solution. The game rewards that.",
+      "That's the kind of thinking that keeps you alive in places like this."
+    ],
+    investigation: [
+      "You notice things others would miss.",
+      "Sharp eye. That detail matters more than you know.",
+      "Good instinct to look closer.",
+      "Your attention to detail is paying off.",
+      "You're putting the pieces together."
+    ],
+    roleplay: [
+      "You speak with conviction, and it shows.",
+      "That's exactly what someone in your position would say.",
+      "Well played. The character suits you.",
+      "You're getting into the spirit of this.",
+      "That was well said."
+    ],
+    combat: [
+      "Good instincts under pressure.",
+      "That was tactically sound.",
+      "You move like someone who's done this before.",
+      "Quick thinking. That could have gone badly."
+    ],
+    exploration: [
+      "Your curiosity is rewarded.",
+      "You find something most travelers would have walked right past.",
+      "Good eye. Not everyone thinks to look there.",
+      "You're thorough. That pays off in a place like this."
+    ]
+  };
+
+  const pool = comments[topCategory] || comments.creativity;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 function recordMessage(sessionId, data) {
   const sessionData = sessions.get(sessionId);
   if (!sessionData) return -1;
@@ -312,14 +359,15 @@ async function createServer(options = {}) {
       // Record narrative
       recordMessage(sessionId, MessageRouter.narration(result.narrative, {}));
 
-      // Record coin reward
-      if (turnCoins.turnTotal > 0) {
-        recordMessage(sessionId, MessageRouter.coinReward(
-          turnCoins.turnTotal,
-          'intelligence',
-          'Clever play',
-          {}
-        ));
+      // Coin reward — only on genuinely smart moves, shown as a natural DM comment
+      const smartThreshold = 4; // any individual category must score >= 4
+      const scores = result.coinScores || {};
+      const topCategory = Object.entries(scores).reduce((best, [cat, val]) =>
+        val > best[1] ? [cat, val] : best, ['none', 0]);
+
+      if (topCategory[1] >= smartThreshold) {
+        const comment = generateCoinComment(topCategory[0], content);
+        recordMessage(sessionId, MessageRouter.narration(comment));
       }
 
       // Record suggested actions
@@ -452,8 +500,15 @@ async function createServer(options = {}) {
 
       recordMessage(session.id, MessageRouter.narration(result.narrative, {}));
 
-      if (turnCoins.turnTotal > 0) {
-        recordMessage(session.id, MessageRouter.coinReward(turnCoins.turnTotal, 'intelligence', 'Clever play', {}));
+      // Coin reward — same logic as main action endpoint
+      const smartThreshold = 4;
+      const scores = result.coinScores || {};
+      const topCategory = Object.entries(scores).reduce((best, [cat, val]) =>
+        val > best[1] ? [cat, val] : best, ['none', 0]);
+
+      if (topCategory[1] >= smartThreshold) {
+        const comment = generateCoinComment(topCategory[0], suggestion.action);
+        recordMessage(session.id, MessageRouter.narration(comment));
       }
 
       if (result.suggestedActions.length > 0) {
