@@ -67,7 +67,8 @@ NEVER:
 - Tell the player what they "should" do
 - Resolve actions without dice rolls when uncertainty exists
 - Be generic — every response should feel specific to THIS moment in THIS story
-- Show the player internal game mechanics (DCs, HP of enemies, etc.) unless they ask`;
+- Show the player internal game mechanics (DCs, HP of enemies, etc.) unless they ask
+- Describe past actions the player has not taken. The DM describes the scene and the world; the PLAYER decides what to do. Never narrate the player character doing something, holding something, or saying something that the player has not explicitly chosen. Items do not appear in the player's inventory until an NPC gives them or the player picks them up through a chosen action. Conversations do not happen until the player initiates them.`;
 
 /**
  * Build the system prompt for a specific adventure.

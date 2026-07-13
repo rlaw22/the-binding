@@ -60,15 +60,15 @@ const DraculaAdventure = {
       sceneName: 'The Golden Krone Inn',
       // D&D-style scene description — the DM narrates this BEFORE showing any actions.
       // Every element mentioned here can become a suggested action.
-      description: `The Golden Krone Inn is warm and dim, lit by a crackling fireplace against the far wall. Wooden benches line the walls around rough-hewn tables. A long bar runs along the back, where a stout innkeeper stands wringing his hands. The air smells of pine smoke and old ale.
+      description: `The Golden Krone Inn is warm and dim, lit by a crackling fireplace against the far wall. Wooden benches line the walls around rough-hewn tables. A long bar runs along the back, where a stout innkeeper stands wringing his hands. He glances at you as you enter, then looks away quickly.
 
 In the far corner, partially hidden in shadow, you notice an old woman sitting alone — nursing a cup of something dark. She hasn't looked up.
 
-Near the fireplace, a folded shawl lies discarded on one of the benches. A small brass crucifix sits heavy in your palm — the innkeeper pressed it into your hands the moment you mentioned Castle Dracula.
+Near the fireplace, a folded shawl lies discarded on one of the benches. On the bar, half-hidden beneath a rag, a small brass crucifix catches the firelight.
 
-Through a back window, you can see the stable yard. A nervous horse stamps in its stall. The coach has not yet arrived — but the innkeeper says it will come at sundown.
+Through a back window, you can see the stable yard. A nervous horse stamps in its stall. No coach yet — just the empty yard and the darkening sky.
 
-The innkeeper watches you with a mixture of pity and alarm. "Surely you do not mean to go there tonight?" he says. "The castle is far, and the roads... the roads are not safe after dark."`,
+The innkeeper watches you from behind the bar. He looks like a man with something to say, but he is waiting for you to speak first.`,
       content: [
         { id: 'talk_innkeeper', label: 'Ask the innkeeper about Castle Dracula', keywords: ['innkeeper', 'ask', 'tell', 'dracula', 'castle', 'speak', 'talk'] },
         { id: 'examine_crucifix', label: 'Examine the brass crucifix', keywords: ['crucifix', 'cross', 'examine', 'inspect', 'hold', 'brass'] },
@@ -80,9 +80,9 @@ The innkeeper watches you with a mixture of pity and alarm. "Surely you do not m
       exitLabel: 'Board the coach for Castle Dracula',
       hardExitNarration: 'The innkeeper locks the front door and blows out the last candle. "Your coach awaits, traveler. I pray you return from that place." He ushers you outside into the cold night air.',
       initialFacts: {
-        items: ['crucifix'],
-        metNPCs: ['innkeeper'],
-        established: ['arrived at the Golden Krone Inn in Bistritz', 'evening, last light fading', 'coach will arrive soon']
+        items: [],
+        metNPCs: [],
+        established: ['arrived at the Golden Krone Inn in Bistritz', 'evening, last light fading', 'coach has not yet arrived']
       },
       locationKeywords: {
         banned: ['great hall', 'castle dracula', 'dining hall', 'carfax abbey', 'london', 'transylvania']
@@ -99,7 +99,7 @@ The road climbs steeply. Through the narrow window, the Carpathian forest is a w
 
 Outside, a wolf howls — long, mournful, impossibly close. Another answers. Then another. The priest crosses himself and prays louder. One of the women reaches out and grips your arm. "Do not look outside after midnight," she whispers. "Whatever you see — do not acknowledge it."
 
-The brass crucifix is warm in your pocket. You don't remember putting it there.`,
+You check your pockets. Something warm and hard rests against your thigh — the brass crucifix from the inn. You don't remember putting it there.`,
       content: [
         { id: 'talk_driver', label: 'Try to speak with the silent coachman', keywords: ['driver', 'coachman', 'speak', 'talk', 'silent', 'address'], discovery: 'You lean forward and speak to the driver through the small window. He does not turn. Does not acknowledge you. But you notice his hands on the reins — they are too pale, too steady, and the fingers are longer than they should be. He grips the leather with a gentleness that is almost tender. The priest grabs your arm and pulls you back. \"Do not speak to him,\" he hisses. \"He is not — \" He stops himself. Shakes his head. Returns to his prayers.' },
         { id: 'watch_landscape', label: 'Watch the dark forest pass by the window', keywords: ['forest', 'window', 'outside', 'look', 'watch', 'trees', 'landscape'] },

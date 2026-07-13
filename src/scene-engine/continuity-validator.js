@@ -114,6 +114,28 @@ function createValidator(manifest, openingNarration) {
       }
     }
 
+    // === LAYER 4: NARRATIVE CAUSALITY ===
+    // The DM must never describe the player doing something they didn't choose.
+    // Patterns: "you mention", "you told", "you pressed into your hand", "in your palm",
+    // "in your pocket", items already in inventory that weren't given through a chosen action.
+    const causalityPatterns = [
+      { pattern: /you (?:mention|said|told|asked|spoke) (?:about |of )?(?:castle dracula|the castle|the count)/i, msg: 'DM narrated player mentioning Castle Dracula without player choosing to' },
+      { pattern: /(?:in your palm|in your hand|in your pocket|you carry|you hold) (?:a |the )?(?:crucifix|cross|journal|letter|key|dagger)/i, msg: 'DM placed item in player inventory without player choosing to take it' },
+      { pattern: /(?:pressed|placed|given|handed) (?:it |them |a |the )?(?:into your|to you|in your) (?:hand|palm|pocket)/i, msg: 'DM described item transfer without player action' }
+    ];
+
+    // Only check causality if the player hasn't explicitly done the thing
+    const playerLower = (playerAction || '').toLowerCase();
+    for (const check of causalityPatterns) {
+      if (check.pattern.test(dmResponse)) {
+        // Allow if the player's action explicitly triggered this
+        const actionMatchesPattern = check.pattern.test(playerAction || '');
+        if (!actionMatchesPattern) {
+          warnings.push(`CAUSALITY: ${check.msg}`);
+        }
+      }
+    }
+
     // === UPDATE FACTS from the response ===
     extractFactsFromText(dmResponse, facts);
 
