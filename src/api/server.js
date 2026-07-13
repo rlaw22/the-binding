@@ -31,6 +31,8 @@ const DiceService = require('../dice/dice-service');
 const TokenStore = require('../auth/token-store');
 const { createVoiceService, getCachedAudio } = require('../voice');
 const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
+const CombatManager = require('../combat/combat-manager');
+const Inventory = require('../inventory/inventory');
 
 // In-memory session store
 const sessions = new Map();
@@ -481,6 +483,150 @@ async function createServer(options = {}) {
         return acc;
       }, {})
     };
+  });
+
+  // --- PROGRESS TRACKER ENDPOINT ---
+  app.get('/api/sessions/:id/progress', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const currentScene = data.game.sceneState ? data.game.sceneState.sceneId : null;
+    const sceneIndex = DraculaAdventure.scenes.findIndex(s => s.id === currentScene);
+    const totalScenes = DraculaAdventure.scenes.length;
+
+    // Determine act based on scene index
+    const acts = DraculaAdventure.acts || [];
+    let currentAct = null;
+    for (const act of acts) {
+      if (act.scenes && act.scenes.includes(sceneIndex)) {
+        currentAct = act;
+        break;
+      }
+    }
+
+    // Completion from scene engine
+    const sceneState = data.game.sceneState;
+    const sceneCompletion = sceneState ? SceneEngine.getCompletion(sceneState) : 0;
+
+    return {
+      currentScene: sceneIndex >= 0 ? sceneIndex : 0,
+      totalScenes,
+      sceneName: sceneState ? sceneState.sceneName : 'Unknown',
+      sceneCompletion: Math.round(sceneCompletion * 100),
+      act: currentAct ? {
+        id: currentAct.id,
+        name: currentAct.name,
+        number: acts.indexOf(currentAct) + 1,
+        totalActs: acts.length,
+        summary: currentAct.summary
+      } : null,
+      totalTurns: data.game.turnHistory.length
+    };
+  });
+
+  // --- INVENTORY ENDPOINTS ---
+  app.get('/api/sessions/:id/inventory', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    return { items: Inventory.listItems(data.inventory) };
+  });
+
+  app.post('/api/sessions/:id/inventory/use', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    const { itemId } = request.body || {};
+    if (!itemId) return reply.status(400).send({ error: 'itemId is required' });
+
+    const result = Inventory.useItem(data.inventory, itemId);
+    if (!result) return reply.status(400).send({ error: 'Item not found or no uses remaining' });
+
+    // If there's active combat and the item has a combat effect, apply it
+    if (data.combat && data.combat.active && result.effect) {
+      const effect = result.effect;
+      if (effect.type === 'heal') {
+        const healRoll = RuleEngine.rollDamage({ dice: effect.dice, modifier: effect.modifier });
+        data.combat.player.hp.current = Math.min(data.combat.player.hp.max, data.combat.player.hp.current + healRoll.total);
+        return { ok: true, item: result.item.name, effect: 'heal', amount: healRoll.total, consumed: result.consumed, playerHp: data.combat.player.hp };
+      }
+      if (effect.type === 'damage') {
+        // Apply to first alive enemy
+        const target = data.combat.enemies.find(e => e.alive);
+        if (target) {
+          const dmg = RuleEngine.rollDamage({ dice: effect.dice, modifier: 0 });
+          target.hp.current = Math.max(0, target.hp.current - dmg.total);
+          if (target.hp.current <= 0) target.alive = false;
+          markDirty();
+          return { ok: true, item: result.item.name, effect: 'damage', amount: dmg.total, target: target.name, consumed: result.consumed, targetHp: target.hp };
+        }
+      }
+      if (effect.type === 'repel' || effect.type === 'ward') {
+        // Give the player advantage on next round
+        data.combat.player._itemAdvantage = true;
+        markDirty();
+        return { ok: true, item: result.item.name, effect: effect.type, description: result.item.name + ' repels the undead!', consumed: result.consumed };
+      }
+    }
+
+    markDirty();
+    return { ok: true, item: result.item.name, consumed: result.consumed, remainingUses: result.remainingUses };
+  });
+
+  // --- COMBAT ENDPOINTS ---
+  app.post('/api/sessions/:id/combat/start', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    const { enemies } = request.body || {};
+    if (!enemies || !enemies.length) return reply.status(400).send({ error: 'enemies array required (e.g. [{template: "wolf", count: 3}])' });
+
+    const player = data.session.players[0];
+    if (!player) return reply.status(400).send({ error: 'No player in session' });
+
+    data.combat = CombatManager.startCombat(player.character, enemies);
+    recordMessage(data.session.id, MessageRouter.narration(
+      'Combat begins! Roll for initiative...',
+      { combat: true }
+    ));
+    markDirty();
+
+    return { ok: true, combat: CombatManager.getCombatSummary(data.combat) };
+  });
+
+  app.get('/api/sessions/:id/combat', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    if (!data.combat) return { active: false };
+    return CombatManager.getCombatSummary(data.combat);
+  });
+
+  app.post('/api/sessions/:id/combat/action', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    if (!data.combat || !data.combat.active) return reply.status(400).send({ error: 'No active combat' });
+
+    const { action } = request.body || {};
+    if (!action) return reply.status(400).send({ error: 'action required (attack, defend, cast, flee, use_item)' });
+
+    const result = CombatManager.processPlayerAction(data.combat, action, request.body);
+
+    // Record combat narration as messages
+    recordMessage(data.session.id, MessageRouter.narration(result.narrative));
+
+    // If combat ended, clear combat state and add aftermath
+    if (!result.combat.active) {
+      data.combat = null;
+      // Add victory/defeat suggested actions
+      if (result.combat.outcome === 'victory') {
+        recordMessage(data.session.id, MessageRouter.suggestedActions([
+          { label: 'Catch your breath', type: 'free' },
+          { label: 'Search the area', type: 'exploration' },
+          { label: 'Check your wounds', type: 'free' },
+          { label: 'Press onward', type: 'exit' }
+        ], 'The battle is won. What do you do?'));
+      }
+    }
+
+    markDirty();
+    return { ok: true, narrative: result.narrative, combat: CombatManager.getCombatSummary(result.combat), diceRolls: result.diceRolls };
   });
 
   // --- POLLING ENDPOINT ---
