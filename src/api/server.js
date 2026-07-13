@@ -29,6 +29,7 @@ const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
 const TokenStore = require('../auth/token-store');
+const { createVoiceService, getCachedAudio } = require('../voice');
 
 // In-memory session store
 const sessions = new Map();
@@ -126,6 +127,10 @@ async function createServer(options = {}) {
     // so mock response counters don't bleed across sessions
     const llmConfig = options.llmConfig || { mock: true };
 
+  // Voice / TTS service — additive, gracefully disabled if no API key
+  const voiceService = createVoiceService();
+  const voiceEnabled = voiceService.isReady();
+
   // --- REST ENDPOINTS ---
 
   app.get('/api/adventures', async () => {
@@ -147,7 +152,39 @@ async function createServer(options = {}) {
   });
 
   app.get('/api/health', async () => {
-    return { status: 'ok', uptime: process.uptime(), sessions: sessions.size, rejoinCodes: rejoinCodes.size, betaEnabled: !!ADMIN_KEY };
+    return { status: 'ok', uptime: process.uptime(), sessions: sessions.size, rejoinCodes: rejoinCodes.size, betaEnabled: !!ADMIN_KEY, voiceEnabled };
+  });
+
+  // --- TTS VOICE ENDPOINTS ---
+
+  // Get TTS audio for a task (polls async providers, returns cached sync results)
+  app.get('/api/tts/:taskId', async (request, reply) => {
+    const taskId = request.params.taskId;
+    if (!taskId) return reply.status(400).send({ error: 'taskId required' });
+
+    // Check cache first
+    const cached = getCachedAudio(taskId);
+    if (cached) {
+      return { ready: true, audioUrl: cached.audioUrl, audioBase64: cached.audioBase64, audioType: cached.audioType };
+    }
+
+    // For async providers, poll for the result
+    if (voiceEnabled) {
+      const result = await voiceService.getAudio(taskId);
+      return result;
+    }
+
+    return { ready: false, reason: 'TTS disabled' };
+  });
+
+  // Get voice service status
+  app.get('/api/voice/status', async () => {
+    return {
+      enabled: voiceEnabled,
+      provider: voiceService.provider,
+      voice: voiceService.voice,
+      speed: voiceService.speed
+    };
   });
 
   // --- BETA TOKEN ENDPOINTS ---
@@ -472,6 +509,18 @@ async function createServer(options = {}) {
       // Record narrative
       recordMessage(sessionId, MessageRouter.narration(result.narrative, {}));
 
+      // Generate TTS voice for the narration (async, non-blocking)
+      if (voiceEnabled) {
+        voiceService.generate(result.narrative).then(ttsResult => {
+          if (ttsResult.taskId) {
+            recordMessage(sessionId, MessageRouter.voiceAudio(ttsResult.taskId, ttsResult.status));
+          }
+        }).catch(err => {
+          console.error('[TTS] Voice generation failed:', err.message);
+          // Gameplay continues without voice — no error to user
+        });
+      }
+
       // Coin reward — only on genuinely smart moves, shown as a natural DM comment
       const smartThreshold = 4; // any individual category must score >= 4
       const scores = result.coinScores || {};
@@ -612,6 +661,17 @@ async function createServer(options = {}) {
       const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
 
       recordMessage(session.id, MessageRouter.narration(result.narrative, {}));
+
+      // Generate TTS voice for the narration (async, non-blocking)
+      if (voiceEnabled) {
+        voiceService.generate(result.narrative).then(ttsResult => {
+          if (ttsResult.taskId) {
+            recordMessage(session.id, MessageRouter.voiceAudio(ttsResult.taskId, ttsResult.status));
+          }
+        }).catch(err => {
+          console.error('[TTS] Voice generation failed (suggestion):', err.message);
+        });
+      }
 
       // Coin reward — same logic as main action endpoint
       const smartThreshold = 4;

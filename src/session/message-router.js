@@ -27,6 +27,7 @@ const MessageTypes = {
   SYSTEM: 'system',
   SUGGESTED_ACTIONS: 'suggested_actions',
   SPECTATOR_SUGGESTION: 'spectator_suggestion',
+  VOICE_AUDIO: 'voice_audio',
   ERROR: 'error'
 };
 
@@ -55,6 +56,8 @@ function createMessage(type, content, options = {}) {
       actions: options.actions || null,           // the suggested actions
       combatData: options.combatData || null,     // { attacker, defender, damage, etc. }
       tierData: options.tierData || null,         // { tier, adventure, score }
+      voiceTaskId: options.voiceTaskId || null,   // TTS task ID for voice_audio messages
+      voiceStatus: options.voiceStatus || null,   // 'pending' | 'complete'
       priority: options.priority || 'normal',     // 'low', 'normal', 'high'
       ephemeral: options.ephemeral || false       // if true, don't persist in history
     }
@@ -234,6 +237,21 @@ function spectatorSuggestion(action, spectatorName, spectatorId, options = {}) {
   );
 }
 
+/**
+ * Create a voice audio message — tells the frontend to play DM narration audio.
+ * @param {string} taskId - TTS task ID for fetching audio
+ * @param {string} status - 'pending' | 'complete'
+ * @param {Object} options
+ */
+function voiceAudio(taskId, status, options = {}) {
+  return createMessage(MessageTypes.VOICE_AUDIO, 'DM narration audio', {
+    ...options,
+    voiceTaskId: taskId,
+    voiceStatus: status,
+    priority: 'low'
+  });
+}
+
 module.exports = {
   MessageTypes,
   createMessage,
@@ -248,5 +266,6 @@ module.exports = {
   suggestedActions,
   spectatorSuggestion,
   whisper,
+  voiceAudio,
   error
 };

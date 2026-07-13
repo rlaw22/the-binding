@@ -41,6 +41,18 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #suggest-input{flex:1;background:#1A1A2E;border:1px solid #6B5CE744;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #suggest-input::placeholder{color:#F5F0E166;}
 #suggest-btn{background:#6B5CE7;border:1px solid #6B5CE7;color:#fff;padding:14px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
+
+/* Voice toggle */
+#voice-toggle{position:fixed;top:12px;right:12px;z-index:100;display:flex;align-items:center;gap:8px;background:#1A1A2E;border:1px solid #C9A84C44;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;color:#C9A84C;transition:all 0.2s;}
+#voice-toggle:hover{border-color:#C9A84C;background:#C9A84C15;}
+#voice-toggle .voice-icon{font-size:1.1em;}
+#voice-toggle .voice-label{font-weight:600;}
+#voice-toggle.muted{color:#F5F0E144;border-color:#F5F0E122;}
+#voice-toggle.muted:hover{color:#F5F0E188;border-color:#F5F0E144;}
+
+/* Voice playing indicator */
+.voice-indicator{display:inline-block;margin-left:8px;font-size:0.8em;color:#C9A84C;animation:voicePulse 1.5s ease-in-out infinite;}
+@keyframes voicePulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
 #start-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
 #start-screen h2{color:#C9A84C;font-size:1.4em;}
 #start-screen p{color:#F5F0E1aa;max-width:500px;font-size:1.05em;line-height:1.6;}
@@ -115,6 +127,12 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 </head>
 <body>
 <div id="app">
+  <!-- Voice Toggle -->
+  <div id="voice-toggle" class="muted" onclick="toggleVoice()" title="Toggle DM voice">
+    <span class="voice-icon">🔇</span>
+    <span class="voice-label">Voice Off</span>
+  </div>
+
   <div id="header">
     <h1>THE BINDING</h1>
     <div class="subtitle">Enter the books you love.</div>
@@ -649,6 +667,9 @@ function handleMessage(msg) {
     case 'system':
       addMessage('system', msg.content);
       break;
+    case 'voice_audio':
+      handleVoiceAudio(msg);
+      break;
     case 'error':
       addMessage('error', msg.content);
       break;
@@ -783,6 +804,178 @@ function copyShareLink() {
     var btn = document.querySelector('.copy-btn');
     btn.textContent = 'Copied!';
     setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+  }
+}
+
+// --- VOICE / TTS ---
+var voiceEnabled = false;
+var voiceQueue = [];
+var isPlayingVoice = false;
+var currentAudio = null;
+
+function toggleVoice() {
+  voiceEnabled = !voiceEnabled;
+  var toggle = document.getElementById('voice-toggle');
+  var icon = toggle.querySelector('.voice-icon');
+  var label = toggle.querySelector('.voice-label');
+  
+  if (voiceEnabled) {
+    toggle.classList.remove('muted');
+    icon.textContent = '🔊';
+    label.textContent = 'Voice On';
+    // Resume playing queued audio if any
+    playNextInQueue();
+  } else {
+    toggle.classList.add('muted');
+    icon.textContent = '🔇';
+    label.textContent = 'Voice Off';
+    // Stop current playback
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+      isPlayingVoice = false;
+    }
+    voiceQueue = [];
+  }
+  
+  // Save preference
+  localStorage.setItem('voiceEnabled', voiceEnabled ? 'true' : 'false');
+}
+
+// Restore voice preference on load
+(function() {
+  var saved = localStorage.getItem('voiceEnabled');
+  if (saved === 'true') {
+    voiceEnabled = true;
+    var toggle = document.getElementById('voice-toggle');
+    var icon = toggle.querySelector('.voice-icon');
+    var label = toggle.querySelector('.voice-label');
+    toggle.classList.remove('muted');
+    icon.textContent = '🔊';
+    label.textContent = 'Voice On';
+  }
+})();
+
+function handleVoiceAudio(msg) {
+  if (!voiceEnabled) return;
+  if (!msg.metadata || !msg.metadata.voiceTaskId) return;
+  
+  var taskId = msg.metadata.voiceTaskId;
+  var status = msg.metadata.voiceStatus;
+  
+  if (status === 'complete') {
+    // Sync provider — audio is ready immediately
+    fetchAndPlayAudio(taskId);
+  } else if (status === 'pending') {
+    // Async provider — poll for completion
+    pollAndPlayAudio(taskId);
+  }
+}
+
+function fetchAndPlayAudio(taskId) {
+  fetch('/api/tts/' + taskId)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.ready && (data.audioUrl || data.audioBase64)) {
+        queueAudio(data.audioUrl, data.audioBase64, data.audioType);
+      }
+    })
+    .catch(function(err) {
+      console.warn('[Voice] Failed to fetch audio:', err);
+    });
+}
+
+function pollAndPlayAudio(taskId, attempts) {
+  attempts = attempts || 0;
+  if (attempts > 20) return; // Give up after ~40 seconds
+  
+  fetch('/api/tts/' + taskId)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.ready && (data.audioUrl || data.audioBase64)) {
+        queueAudio(data.audioUrl, data.audioBase64, data.audioType);
+      } else if (data.ready === false && attempts < 20) {
+        // Still processing — poll again in 2 seconds
+        setTimeout(function() { pollAndPlayAudio(taskId, attempts + 1); }, 2000);
+      }
+    })
+    .catch(function(err) {
+      console.warn('[Voice] Poll failed:', err);
+    });
+}
+
+function queueAudio(audioUrl, audioBase64, audioType) {
+  voiceQueue.push({ audioUrl: audioUrl, audioBase64: audioBase64, audioType: audioType || 'mp3' });
+  if (!isPlayingVoice) {
+    playNextInQueue();
+  }
+}
+
+function playNextInQueue() {
+  if (!voiceEnabled || voiceQueue.length === 0) {
+    isPlayingVoice = false;
+    removeVoiceIndicators();
+    return;
+  }
+  
+  isPlayingVoice = true;
+  var item = voiceQueue.shift();
+  var audioSrc = '';
+  
+  if (item.audioUrl) {
+    audioSrc = item.audioUrl;
+  } else if (item.audioBase64) {
+    var mimeType = item.audioType === 'mp3' ? 'audio/mpeg' : 'audio/wav';
+    audioSrc = 'data:' + mimeType + ';base64,' + item.audioBase64;
+  }
+  
+  if (!audioSrc) {
+    playNextInQueue();
+    return;
+  }
+  
+  showVoiceIndicator();
+  
+  currentAudio = new Audio(audioSrc);
+  currentAudio.volume = 1.0;
+  
+  currentAudio.onended = function() {
+    currentAudio = null;
+    playNextInQueue();
+  };
+  
+  currentAudio.onerror = function(e) {
+    console.warn('[Voice] Audio playback error:', e);
+    currentAudio = null;
+    playNextInQueue();
+  };
+  
+  currentAudio.play().catch(function(err) {
+    console.warn('[Voice] Playback blocked (user interaction needed):', err.message);
+    currentAudio = null;
+    isPlayingVoice = false;
+    removeVoiceIndicators();
+  });
+}
+
+function showVoiceIndicator() {
+  // Add a pulsing indicator to the last DM message
+  var msgs = document.querySelectorAll('.msg.dm');
+  if (msgs.length > 0) {
+    var last = msgs[msgs.length - 1];
+    if (!last.querySelector('.voice-indicator')) {
+      var span = document.createElement('span');
+      span.className = 'voice-indicator';
+      span.textContent = '🔊';
+      last.appendChild(span);
+    }
+  }
+}
+
+function removeVoiceIndicators() {
+  var indicators = document.querySelectorAll('.voice-indicator');
+  for (var i = 0; i < indicators.length; i++) {
+    indicators[i].remove();
   }
 }
 </script>
