@@ -44,6 +44,16 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #start-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
 #start-screen h2{color:#C9A84C;font-size:1.4em;}
 #start-screen p{color:#F5F0E1aa;max-width:500px;font-size:1.05em;line-height:1.6;}
+#gate-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
+#gate-screen h2{color:#C9A84C;font-size:1.4em;letter-spacing:2px;}
+#gate-screen p{color:#F5F0E1aa;max-width:400px;font-size:1em;line-height:1.6;}
+#gate-form{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:340px;}
+#gate-form input{width:100%;background:#1A1A2E;border:1px solid #C9A84C66;color:#F5F0E1;padding:16px 18px;border-radius:8px;font-family:Georgia,serif;font-size:1.2em;text-align:center;letter-spacing:3px;text-transform:uppercase;}
+#gate-form input::placeholder{color:#F5F0E144;letter-spacing:1px;text-transform:none;}
+#gate-form input:focus{outline:none;border-color:#C9A84C;box-shadow:0 0 12px #C9A84C33;}
+#gate-error{color:#e74c3c;font-size:0.9em;min-height:1.2em;}
+#gate-submit{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;width:100%;transition:all 0.2s;}
+#gate-submit:hover{background:#E8A838;border-color:#E8A838;}
 #start-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
 #start-form input,#start-form select{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #start-form button{background:#C9A84C;border:none;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-size:1.1em;font-family:Georgia,serif;min-height:48px;}
@@ -84,7 +94,17 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     <div class="subtitle">Enter the books you love.</div>
   </div>
 
-  <div id="start-screen">
+  <div id="gate-screen">
+    <h2>⚔ THE BINDING ⚔</h2>
+    <p>Beta access required. Enter your invite code to begin.</p>
+    <div id="gate-form">
+      <input type="text" id="beta-token-input" placeholder="BIND-XXXX" maxlength="9" autocomplete="off" autocapitalize="characters" oninput="this.value=this.value.toUpperCase()">
+      <div id="gate-error"></div>
+      <button id="gate-submit" onclick="validateBetaToken()">Enter</button>
+    </div>
+  </div>
+
+  <div id="start-screen" class="hidden">
     <h2>Choose Your Adventure</h2>
     <p>Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
     <div id="start-form">
@@ -160,6 +180,7 @@ if (navigator.serviceWorker) {
 }
 
 var sessionId = null;
+var betaToken = localStorage.getItem('betaToken') || null;
 var playerId = null;
 var playerRole = null; // 'host' or 'spectator'
 var lastMsgIndex = 0;
@@ -313,6 +334,59 @@ function showGameUI(character, code, isSpectator) {
   }
 }
 
+// --- BETA TOKEN GATE ---
+async function validateBetaToken() {
+  var input = document.getElementById('beta-token-input');
+  var error = document.getElementById('gate-error');
+  var code = (input.value || '').trim().toUpperCase();
+  error.textContent = '';
+
+  if (!code) { error.textContent = 'Please enter your code.'; return; }
+  if (!/^BIND-[A-Z0-9]{4}$/.test(code)) { error.textContent = 'Code format: BIND-XXXX'; return; }
+
+  try {
+    var btn = document.getElementById('gate-submit');
+    btn.textContent = 'Checking...';
+    btn.disabled = true;
+    var resp = await fetch('/api/beta/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: code })
+    });
+    var data = await resp.json();
+    if (!resp.ok || data.error) {
+      error.textContent = data.error || 'Invalid code.';
+      btn.textContent = 'Enter';
+      btn.disabled = false;
+      return;
+    }
+    // Save token and show the game
+    betaToken = code;
+    localStorage.setItem('betaToken', code);
+    document.getElementById('gate-screen').classList.add('hidden');
+    document.getElementById('start-screen').classList.remove('hidden');
+  } catch(e) {
+    error.textContent = 'Connection error. Try again.';
+  } finally {
+    var btn = document.getElementById('gate-submit');
+    if (btn) { btn.textContent = 'Enter'; btn.disabled = false; }
+  }
+}
+
+// Auto-login: if we have a saved token, skip the gate
+if (betaToken) {
+  document.getElementById('gate-screen').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
+}
+
+// Allow Enter key on the beta token input
+var betaInput = document.getElementById('beta-token-input');
+if (betaInput) {
+  betaInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') validateBetaToken();
+  });
+}
+
 async function startGame() {
   var name = document.getElementById('player-name').value.trim() || 'Adventurer';
   var cls = document.getElementById('player-class').value;
@@ -320,12 +394,16 @@ async function startGame() {
   try {
     var resp = await fetch('/api/sessions', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-beta-token': betaToken || ''
+      },
       body: JSON.stringify({
         adventureId: 'dracula',
         playerName: name,
         characterClass: cls,
-        characterRace: 'human'
+        characterRace: 'human',
+        betaToken: betaToken
       })
     });
     var data = await resp.json();

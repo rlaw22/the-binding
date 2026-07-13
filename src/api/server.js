@@ -28,6 +28,7 @@ const { DraculaAdventure } = require('../adventure/dracula');
 const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
+const TokenStore = require('../auth/token-store');
 
 // In-memory session store
 const sessions = new Map();
@@ -146,7 +147,85 @@ async function createServer(options = {}) {
   });
 
   app.get('/api/health', async () => {
-    return { status: 'ok', uptime: process.uptime(), sessions: sessions.size, rejoinCodes: rejoinCodes.size };
+    return { status: 'ok', uptime: process.uptime(), sessions: sessions.size, rejoinCodes: rejoinCodes.size, betaEnabled: !!ADMIN_KEY };
+  });
+
+  // --- BETA TOKEN ENDPOINTS ---
+
+  const ADMIN_KEY = process.env.ADMIN_KEY || '';
+
+  /**
+   * Simple admin auth check. Returns true if the request has a valid admin key.
+   * If ADMIN_KEY is not set, admin endpoints are disabled.
+   */
+  function requireAdmin(request, reply) {
+    if (!ADMIN_KEY) {
+      reply.status(403).send({ error: 'Admin endpoints disabled — set ADMIN_KEY env var' });
+      return false;
+    }
+    const key = request.headers['x-admin-key'] || request.query.adminKey;
+    if (key !== ADMIN_KEY) {
+      reply.status(401).send({ error: 'Invalid admin key' });
+      return false;
+    }
+    return true;
+  }
+
+  // Validate a beta token (public — used by the gate page)
+  app.post('/api/beta/validate', async (request, reply) => {
+    const { token } = request.body || {};
+    if (!token) return reply.status(400).send({ error: 'token is required' });
+
+    const valid = TokenStore.validateToken(token);
+    if (!valid) return reply.status(401).send({ error: 'Invalid or expired token' });
+
+    return { ok: true, label: valid.label };
+  });
+
+  // Generate a new token (admin only)
+  app.post('/api/admin/tokens', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    const { label, maxSessions } = request.body || {};
+    const token = TokenStore.generateToken(label, maxSessions);
+    return { ok: true, token };
+  });
+
+  // Generate a batch of tokens (admin only)
+  app.post('/api/admin/tokens/batch', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    const { count, prefix, maxSessions } = request.body || {};
+    const n = Math.min(Math.max(parseInt(count) || 10, 1), 100);
+    const tokens = [];
+    for (let i = 0; i < n; i++) {
+      tokens.push(TokenStore.generateToken(prefix ? `${prefix}-${i + 1}` : '', maxSessions));
+    }
+    return { ok: true, count: tokens.length, tokens };
+  });
+
+  // List all tokens (admin only)
+  app.get('/api/admin/tokens', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    return { tokens: TokenStore.listTokens(), stats: TokenStore.getTokenCount() };
+  });
+
+  // Revoke a token (admin only)
+  app.delete('/api/admin/tokens/:code', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    const ok = TokenStore.revokeToken(request.params.code);
+    if (!ok) return reply.status(404).send({ error: 'Token not found' });
+    return { ok: true };
+  });
+
+  // Reactivate a token (admin only)
+  app.put('/api/admin/tokens/:code', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    const { action } = request.body || {};
+    if (action === 'activate') {
+      const ok = TokenStore.activateToken(request.params.code);
+      if (!ok) return reply.status(404).send({ error: 'Token not found' });
+      return { ok: true };
+    }
+    return reply.status(400).send({ error: 'Unknown action. Use action: "activate"' });
   });
 
   // Rejoin: look up a session by its short code
@@ -172,9 +251,22 @@ async function createServer(options = {}) {
     };
   });
 
-  // Create a new game session
+  // Create a new game session (requires valid beta token when ADMIN_KEY is set)
   app.post('/api/sessions', async (request, reply) => {
-    const { adventureId, playerName, characterClass, characterRace } = request.body || {};
+    const { adventureId, playerName, characterClass, characterRace, betaToken } = request.body || {};
+
+    // Resolve beta token code — available for both validation and session recording
+    const betaTokenHeader = request.headers['x-beta-token'];
+    const tokenCode = betaToken || betaTokenHeader || '';
+
+    // Validate beta token — only enforce when ADMIN_KEY is set (production mode)
+    let betaUser = null;
+    if (ADMIN_KEY) {
+      betaUser = TokenStore.validateToken(tokenCode);
+      if (!betaUser) {
+        return reply.status(401).send({ error: 'Valid beta access code required. Please enter your code on the login page.' });
+      }
+    }
 
     if (!adventureId) {
       return reply.status(400).send({ error: 'adventureId is required' });
@@ -216,6 +308,7 @@ async function createServer(options = {}) {
     session.state = 'active';
     sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [] });
     rejoinCodes.set(rejoinCode, session.id);
+    if (tokenCode) TokenStore.recordSession(tokenCode);
 
     // Initialize scene engine with the first scene's manifest
     const sceneManifest = DraculaAdventure.sceneManifests[adventure.startScene || 'scene_00'];
