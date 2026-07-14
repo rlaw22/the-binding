@@ -63,8 +63,7 @@ module.exports = {
     initialFacts: {
       items: [
         "crucifix",
-        "jonathan journal",
-        "holy water"
+        "jonathan journal"
       ],
       metNPCs: [
         "innkeeper",
@@ -205,7 +204,8 @@ module.exports = {
           "know",
           "girl",
           "woman"
-        ]
+        ],
+        discovery: "Renfield's eyes widen. Then he laughs — a wet, broken sound. \"Miss Westenra? Oh yes, I know about her. The Master's new pet.\" He licks his lips. \"She is not dead, you know. Not truly. She will rise, as he rises. The beautiful ones always do.\" He leans closer. \"Did you think you could save her with your little crosses and your prayers? The Master is patient. The Master always wins.\""
       },
       {
         id: "ask_about_weakness",
@@ -295,7 +295,8 @@ module.exports = {
           "frame",
           "bless",
           "water"
-        ]
+        ],
+        discovery: "You splash the holy water across the window frame. It sizzles on contact, steaming as if poured on hot iron. Outside, something shrieks — a bat, or not a bat — and the window cracks from top to bottom. The Count's voice comes from the darkness beyond: \"You delay the inevitable, child. The night is long, and I am eternal.\" The smell of burning fills the room."
       },
       {
         id: "check_lucy",
@@ -321,11 +322,12 @@ module.exports = {
           "door",
           "chimney",
           "seal"
-        ]
+        ],
+        discovery: "You stuff garlic into every crack and opening — the window frame, the door gap, the chimney. The smell is overwhelming, sharp and ancient. Through the walls, you hear scratching. Then silence. Then a low hiss, like air escaping a tomb. The garlic is holding. For now. You press your back against the wall and wait for dawn."
       }
     ],
     exitAction: "end_night_watch",
-    exitLabel: "Hold out until dawn breaks",
+    exitLabel: "Wait until dawn breaks",
     hardExitNarration: "Dawn seeps through the curtains and the bats scatter. Van Helsing slumps in his chair. 'He will come again,' he says. 'And he will not stop until she is his — or she is dead.'",
     initialFacts: {
       items: [
@@ -425,12 +427,12 @@ module.exports = {
         "innkeeper",
         "dracula",
         "van helsing",
-        "lucy",
         "seward",
         "renfield"
       ],
       established: [
         "Lucy has died",
+        "lucy (deceased)",
         "bite marks healed at death",
         "Van Helsing says she will rise as vampire"
       ]

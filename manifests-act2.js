@@ -43,7 +43,8 @@ module.exports = {
           "marks",
           "examine",
           "key"
-        ]
+        ],
+        discovery: "The lock is iron, ancient but functional — three tumblers, well-oiled. The scratch marks around the jamb are deep and frantic. You run your finger along them. They are on the OUTSIDE. Someone — or something — was trying to get IN. The lock held. For now."
       },
       {
         id: "listen_at_door",
@@ -60,12 +61,11 @@ module.exports = {
       }
     ],
     exitAction: "leave_forbidden_wing",
-    exitLabel: "Return upstairs before the Count wakes",
-    hardExitNarration: "The light through the corridor windows is fading fast. Sunset is minutes away. You hear a sound from deep below — stone grinding on stone. A tomb lid opening. You run.",
+    exitLabel: "Go back upstairs before the Count wakes",
+    hardExitNarration: "The light through the corridor windows is fading fast. You race back to your chamber, bar the door, and collapse onto the bed. Sleep comes eventually, fitful and haunted. You wake in darkness. The fire has died to embers. Something is wrong with the shadows in the corner of the room. They are deeper than they should be. They are moving.",
     initialFacts: {
       items: [
-        "crucifix",
-        "jonathan journal"
+        "crucifix"
       ],
       metNPCs: [
         "innkeeper",
@@ -149,7 +149,7 @@ module.exports = {
       }
     ],
     exitAction: "survive_sisters",
-    exitLabel: "Escape through the door the Count left open",
+    exitLabel: "Run through the door the Count left open",
     hardExitNarration: "The Count draws the sisters away with a single gesture. 'Go,' he says to you, without looking back. 'Sleep in the great hall tonight. Lock the door. Do not come upstairs again after dark.' His voice carries the weight of command that is older than language.",
     initialFacts: {
       items: [
@@ -222,7 +222,8 @@ module.exports = {
           "start",
           "journal",
           "diary"
-        ]
+        ],
+        discovery: "You read from the beginning. Harker's early entries are precise, professional — a solicitor documenting a property transaction. But as the dates progress, the handwriting deteriorates. The entries grow shorter. He mentions the Count's nocturnal habits, the strange absence of mirrors, the women at the castle. The final entry is nearly illegible: \"I am a prisoner. God help me. I do not think I will leave this place alive.\""
       },
       {
         id: "copy_notes",
@@ -235,11 +236,12 @@ module.exports = {
           "take",
           "pocket",
           "notes"
-        ]
+        ],
+        discovery: "You tear out the final six pages — the ones describing the castle, the boxes of earth, the strange women, the Count's plans for England. Your hands shake as you fold them into your coat. This is evidence. If you survive, someone must read this."
       }
     ],
     exitAction: "close_journal",
-    exitLabel: "Close the journal and plan your escape",
+    exitLabel: "Finish reading and plan your escape",
     hardExitNarration: "The shadows are growing longer. The Count will wake soon. You cannot be here when he does. You tuck the journal inside your coat and move toward the window.",
     initialFacts: {
       items: [
@@ -248,8 +250,7 @@ module.exports = {
       ],
       metNPCs: [
         "innkeeper",
-        "dracula",
-        "jonathan harker"
+        "dracula"
       ],
       established: [
         "read Harker journal",
@@ -284,7 +285,8 @@ module.exports = {
           "window",
           "stone",
           "handholds"
-        ]
+        ],
+        discovery: "The wall is rough stone, but the mortar crumbles under your fingers. You lower yourself inch by inch, feet searching for holds in the dark. Fifty feet down, a stone gives way and you drop — catching yourself on raw, bleeding fingers. Below, the wolves stir. Their eyes turn upward. They have heard you."
       },
       {
         id: "dodge_wolves",
@@ -312,7 +314,8 @@ module.exports = {
           "find",
           "trail",
           "descend"
-        ]
+        ],
+        discovery: "You push through the undergrowth, branches whipping your face. The ground slopes steeply — you're on a mountain path, barely a track, winding between ancient oaks. The moon breaks through the clouds and for a moment you see it: a narrow trail descending through the trees toward a distant valley. The wolves are closer now. You run."
       },
       {
         id: "use_journal",
@@ -329,7 +332,7 @@ module.exports = {
       }
     ],
     exitAction: "reach_mountain_path",
-    exitLabel: "Plunge into the dark forest and run",
+    exitLabel: "Run into the dark forest and don't look back",
     hardExitNarration: "The castle door crashes open below. You do not look back. You run into the forest, branches tearing at your clothes, the wolves behind you and the darkness ahead, and you do not stop until the castle is a silhouette against the sky and the howling has faded to nothing.",
     initialFacts: {
       items: [
@@ -338,8 +341,7 @@ module.exports = {
       ],
       metNPCs: [
         "innkeeper",
-        "dracula",
-        "jonathan harker"
+        "dracula"
       ],
       established: [
         "escaped Castle Dracula",
@@ -420,18 +422,16 @@ module.exports = {
       }
     ],
     exitAction: "enter_monastery",
-    exitLabel: "Approach the monastery and seek help",
+    exitLabel: "Walk to the monastery and seek help",
     hardExitNarration: "The monastery gate opens at your knock. A monk takes one look at you — torn clothes, bleeding hands, wild eyes — and pulls you inside without a word. The gate closes behind you. For the first time since Bistritz, you are safe. But safety is temporary. England is waiting.",
     initialFacts: {
       items: [
         "crucifix",
-        "jonathan journal",
-        "wooden cross"
+        "jonathan journal"
       ],
       metNPCs: [
         "innkeeper",
-        "dracula",
-        "jonathan harker"
+        "dracula"
       ],
       established: [
         "escaped through Carpathian wilderness",
