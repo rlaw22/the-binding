@@ -402,7 +402,7 @@ async function createServer(options = {}) {
     const rejoinCode = generateRejoinCode(adventureId);
 
     session.state = 'active';
-    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [] });
+    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [], inventory: Inventory.createInventory() });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
     session._rejoinCode = rejoinCode;
