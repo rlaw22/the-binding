@@ -143,6 +143,28 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #progress-bar .pip.visited{background:#C9A84C;}
 #progress-bar .pip.current{background:#E8A838;box-shadow:0 0 4px #E8A838;transform:scale(1.3);}
 
+/* ── Report Issue Button ──────────────────────────────────────────────────── */
+#report-btn{position:fixed;bottom:12px;right:12px;z-index:100;background:#1A1A2E;border:1px solid #C9A84C44;color:#C9A84C;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.8em;transition:all 0.2s;opacity:0.7;}
+#report-btn:hover{opacity:1;border-color:#C9A84C;background:#C9A84C15;}
+#report-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:300;align-items:center;justify-content:center;}
+#report-modal.open{display:flex;}
+#report-modal .modal-content{background:#1A1A2E;border:1px solid #C9A84C44;border-radius:12px;padding:24px;max-width:420px;width:90%;}
+#report-modal h3{color:#C9A84C;margin-bottom:12px;font-size:1.1em;}
+#report-modal textarea{width:100%;background:#0D0D1A;border:1px solid #C9A84C44;color:#F5F0E1;padding:12px;border-radius:8px;font-family:Georgia,serif;font-size:0.95em;min-height:80px;resize:vertical;margin-bottom:12px;}
+#report-modal .modal-btns{display:flex;gap:10px;justify-content:flex-end;}
+#report-modal .modal-btns button{padding:10px 20px;border-radius:6px;cursor:pointer;font-family:Georgia,serif;font-size:0.95em;border:none;}
+#report-modal .cancel-btn{background:#333;color:#F5F0E1;}
+#report-modal .submit-btn{background:#C9A84C;color:#1A1A2E;font-weight:600;}
+#report-modal .submit-btn:disabled{opacity:0.5;cursor:not-allowed;}
+#report-status{color:#C9A84C;font-size:0.85em;min-height:1.2em;margin-top:8px;}
+
+/* ── Error Recovery ──────────────────────────────────────────────────────── */
+.retry-btn{background:#C9A84C15;border:1px solid #C9A84C44;color:#C9A84C;padding:10px 20px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:0.95em;margin-top:8px;display:inline-block;transition:all 0.2s;}
+.retry-btn:hover{background:#C9A84C33;border-color:#C9A84C;}
+#reconnect-banner{display:none;padding:12px 16px;background:#e74c3c22;border:1px solid #e74c3c44;border-radius:8px;text-align:center;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;}
+#reconnect-banner .reconnect-text{color:#ff6b6b;font-size:0.9em;}
+#reconnect-banner .reconnect-btn{background:#e74c3c;border:none;color:#fff;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-left:10px;}
+
 /* ── Inventory Panel ──────────────────────────────────────────────────────── */
 #inv-toggle{position:fixed;bottom:16px;right:16px;z-index:90;width:44px;height:44px;border-radius:50%;background:#C9A84C;border:2px solid #E8A838;color:#1A1A2E;font-size:1.2em;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px #C9A84C44;transition:all 0.2s;}
 #inv-toggle:hover{transform:scale(1.1);box-shadow:0 4px 20px #C9A84C66;}
@@ -206,6 +228,9 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     <span class="voice-icon">🔇</span>
     <span class="voice-label">Voice Off</span>
   </div>
+
+  <!-- Report Issue Button (beta testers) -->
+  <button id="report-btn" onclick="openReportModal()" title="Report a bug or give feedback">🐛 Report Issue</button>
 
   <div id="header">
     <h1>THE BINDING</h1>
@@ -403,6 +428,12 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     <span>Rejoin code:</span>
     <span class="code" id="rejoin-code-display">—</span>
     <button class="copy-btn" onclick="copyShareLink()">Copy Link</button>
+  </div>
+
+  <!-- Reconnect banner (shown on connection errors) -->
+  <div id="reconnect-banner">
+    <span class="reconnect-text">Connection lost.</span>
+    <button class="reconnect-btn" onclick="reconnect()">Reconnect</button>
   </div>
 
   <div id="messages" class="hidden"></div>
@@ -821,7 +852,8 @@ function pollOnce() {
         pollErrors++;
         if (pollErrors > 10) {
           clearInterval(pollTimer);
-          addMessage('error', 'Connection lost. Please refresh the page.');
+          document.getElementById('reconnect-banner').style.display = 'block';
+          addMessage('error', 'Connection lost. Use the Reconnect button above or refresh the page.');
         }
         return null;
       }
@@ -840,7 +872,8 @@ function pollOnce() {
       pollErrors++;
       if (pollErrors > 10) {
         clearInterval(pollTimer);
-        addMessage('error', 'Connection lost. Please refresh the page.');
+        document.getElementById('reconnect-banner').style.display = 'block';
+        addMessage('error', 'Connection lost. Use the Reconnect button above or refresh the page.');
       }
     });
 }
@@ -1438,6 +1471,75 @@ var originalPollOnce = typeof pollOnce === 'function' ? pollOnce : null;
   };
 })();
 
+</script>
+
+<!-- Report Issue Modal -->
+<div id="report-modal">
+  <div class="modal-content">
+    <h3>🐛 Report an Issue</h3>
+    <textarea id="report-text" placeholder="Describe what happened — a bug, a weird response, something that felt wrong. The more specific, the better."></textarea>
+    <div id="report-status"></div>
+    <div class="modal-btns">
+      <button class="cancel-btn" onclick="closeReportModal()">Cancel</button>
+      <button class="submit-btn" id="report-submit" onclick="submitReport()">Send Report</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// --- REPORT ISSUE ---
+function openReportModal() {
+  document.getElementById('report-modal').classList.add('open');
+  document.getElementById('report-text').focus();
+}
+function closeReportModal() {
+  document.getElementById('report-modal').classList.remove('open');
+  document.getElementById('report-text').value = '';
+  document.getElementById('report-status').textContent = '';
+  document.getElementById('report-submit').disabled = false;
+}
+async function submitReport() {
+  var text = document.getElementById('report-text').value.trim();
+  if (!text) return;
+  var status = document.getElementById('report-status');
+  var btn = document.getElementById('report-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  try {
+    // Gather last few messages for context
+    var msgEls = document.querySelectorAll('#messages .msg');
+    var recentMsgs = [];
+    for (var i = Math.max(0, msgEls.length - 6); i < msgEls.length; i++) {
+      recentMsgs.push({ type: msgEls[i].className.replace('msg ', ''), text: msgEls[i].textContent.substring(0, 200) });
+    }
+    var resp = await fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sessionId, betaToken: betaToken, description: text, recentMessages: recentMsgs })
+    });
+    if (resp.ok) {
+      status.textContent = '✓ Report sent. Thank you!';
+      setTimeout(closeReportModal, 1500);
+    } else {
+      status.textContent = 'Could not send. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Send Report';
+    }
+  } catch(e) {
+    status.textContent = 'Connection error. Try again.';
+    btn.disabled = false;
+    btn.textContent = 'Send Report';
+  }
+}
+
+// --- ERROR RECOVERY: reconnect ---
+function reconnect() {
+  document.getElementById('reconnect-banner').style.display = 'none';
+  pollErrors = 0;
+  addMessage('system', 'Reconnecting...');
+  pollOnce();
+  startPolling();
+}
 </script>
 </body>
 </html>

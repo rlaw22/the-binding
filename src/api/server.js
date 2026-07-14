@@ -249,6 +249,34 @@ async function createServer(options = {}) {
     return { signups: TokenStore.getSignups() };
   });
 
+  // --- FEEDBACK: Beta tester bug reports ---
+  const feedbackLog = [];
+  app.post('/api/feedback', async (request, reply) => {
+    const { sessionId, betaToken, description, recentMessages } = request.body || {};
+    if (!description || !description.trim()) {
+      return reply.status(400).send({ error: 'description is required' });
+    }
+    const entry = {
+      id: 'fb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+      sessionId: sessionId || null,
+      betaToken: betaToken || null,
+      description: description.trim(),
+      recentMessages: recentMessages || [],
+      timestamp: new Date().toISOString(),
+      userAgent: request.headers['user-agent'] || ''
+    };
+    feedbackLog.push(entry);
+    console.log('[Feedback] #' + feedbackLog.length + ': ' + description.trim().substring(0, 120));
+    // Keep last 500 feedback entries in memory
+    if (feedbackLog.length > 500) feedbackLog.splice(0, feedbackLog.length - 500);
+    return { ok: true, id: entry.id };
+  });
+
+  // Admin: list all feedback
+  app.get('/api/admin/feedback', async (request, reply) => {
+    if (!requireAdmin(request, reply)) return;
+    return { feedback: feedbackLog };
+  });
 
   // Generate a new token (admin only)
   app.post('/api/admin/tokens', async (request, reply) => {
