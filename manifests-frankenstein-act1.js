@@ -49,10 +49,10 @@ The bookshelves call to you. The old volumes on natural philosophy — their pag
       }
     ],
     exitAction: 'retire_for_night',
-    exitLabel: 'Retire to your room, your mind ablaze with ideas',
+    exitLabel: 'Go to your room, your mind ablaze with ideas',
     hardExitNarration: 'Your mother kisses your forehead. "Goodnight, my son. Dream of pleasant things." Elizabeth squeezes your hand as you pass. You climb the stairs to your room, but you do not sleep. You lie in the dark, watching the lightning play across the ceiling, and you think about the oak tree — split open, its heart exposed, the life gone out of it in an instant. And you think: what if it could be put back?',
     initialFacts: {
-      items: ['Agrippa\'s De Occulta Philosophia'],
+      items: [],
       metNPCs: ['victor frankenstein', 'elizabeth', 'caroline frankenstein', 'alphonse frankenstein'],
       established: ['Victor is a young man in Geneva', 'family is warm and loving', 'Victor is fascinated by natural philosophy', 'a storm is gathering over the lake', 'Elizabeth is Victor\'s beloved companion']
     },
@@ -98,10 +98,10 @@ After the lecture, you approach him. His study is small and warm, lined with boo
       }
     ],
     exitAction: 'embrace_chemistry',
-    exitLabel: 'Devote yourself to the study of chemistry and galvanism',
+    exitLabel: 'Study the chemistry and galvanism you crave',
     hardExitNarration: 'You leave Waldman\'s study with his notes clutched to your chest and a fire in your mind that will never be extinguished. The corridors of the university echo with your footsteps — quick, purposeful, the footsteps of a man who has found his calling. Behind you, Waldman watches from his doorway. He looks older than he did an hour ago. He looks afraid.',
     initialFacts: {
-      items: ['Agrippa\'s De Occulta Philosophia', 'Waldman\'s galvanism notes'],
+      items: ['Agrippa\'s De Occulta Philosophia'],
       metNPCs: ['victor frankenstein', 'professor waldman', 'professor krempe'],
       established: ['Victor is at the University of Ingolstadt', 'Waldman has inspired Victor', 'Victor is focused on galvanism and the secret of life', 'Victor has access to anatomy facilities']
     },
@@ -158,7 +158,7 @@ On the desk, under a stack of papers, lies a letter from your father. You have n
     exitLabel: 'Continue the work that consumes you',
     hardExitNarration: 'The candle burns low. The shadows lengthen. You work through the night, as you have worked through every night for months, and when dawn comes you do not notice. The creature is taking shape. Piece by piece, part by part, assembled from the dead and animated by the science of the living. You are close. So close. And you are so far from the man you used to be that you cannot see him anymore.',
     initialFacts: {
-      items: ['Agrippa\'s De Occulta Philosophia', 'Waldman\'s galvanism notes', 'father\'s letter', 'anatomical sketches'],
+      items: ['Agrippa\'s De Occulta Philosophia', 'Waldman\'s galvanism notes'],
       metNPCs: ['victor frankenstein'],
       established: ['months have passed', 'Victor is consumed by obsession', 'Waldman is dead', 'Victor has not contacted his family', 'Victor gathers materials from charnel houses and slaughterhouses', 'the creature is being assembled']
     },

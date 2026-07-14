@@ -48,7 +48,7 @@ The man who enters is of medium height, with a thin, clean-shaven face and spect
     exitLabel: 'Listen as Dr. Mortimer begins his extraordinary tale',
     hardExitNarration: 'Mortimer opens his portfolio with trembling fingers. The paper inside is old — very old — the ink faded to a pale brown, the edges brittle with age. "This manuscript," he says, "was written in 1742 by Sir Hugo Baskerville\'s own hand. It tells the story of how the curse began." He begins to read, and the fire crackles, and the room grows very still.',
     initialFacts: {
-      items: ['mortimer walking stick'],
+      items: [],
       metNPCs: ['holmes', 'watson', 'mortimer'],
       established: ['Dr. Mortimer has come to consult Holmes', 'the matter involves the Baskerville family of Dartmoor', 'Mortimer has brought an old manuscript', 'the case involves a legend two hundred years old']
     },
@@ -96,10 +96,10 @@ Or rather — what found them.`,
       }
     ],
     exitAction: 'consider_case',
-    exitLabel: 'Consider the implications of the manuscript',
+    exitLabel: 'Think about the implications of the manuscript',
     hardExitNarration: 'Holmes rises from his chair and stands before the fire, his long shadow stretching across the room. "This is a three-pipe problem," he says, reaching for the Persian slipper. "Dr. Mortimer, you have brought me something genuinely interesting. The question is: is this a case for the police, or for me?" He turns, his eyes gleaming. "I think, Watson, that Dartmoor is calling us."',
     initialFacts: {
-      items: ['mortimer walking stick', 'baskerville manuscript'],
+      items: ['mortimer walking stick'],
       metNPCs: ['holmes', 'watson', 'mortimer'],
       established: ['the Baskerville family is cursed by a supernatural hound', 'Sir Hugo Baskerville died on the moor two hundred years ago', 'Sir Charles Baskerville died at the gate of the Hall', 'enormous hound prints were found near Sir Charles\'s body', 'Mortimer believes something unnatural is at work']
     },
@@ -147,10 +147,10 @@ But even as he speaks, his eyes are not entirely steady. There is a tension in h
       }
     ],
     exitAction: 'receive_warning',
-    exitLabel: 'Consider the anonymous warning letter',
+    exitLabel: 'Think about the anonymous warning letter',
     hardExitNarration: 'Holmes holds the warning letter to the light, his eyes narrowed. "Someone does not want you to go to Dartmoor, Sir Henry," he says. "The question is: is this a warning from a friend, or a threat from an enemy?" He places the letter carefully on the desk. "Watson, I think our course is clear. Sir Henry must go to Dartmoor — but he must not go alone."',
     initialFacts: {
-      items: ['mortimer walking stick', 'baskerville manuscript', 'anonymous warning letter'],
+      items: ['mortimer walking stick', 'baskerville manuscript'],
       metNPCs: ['holmes', 'watson', 'mortimer', 'sir_henry'],
       established: ['Sir Henry Baskerville has arrived from Canada', 'he is the sole heir to the Baskerville estate', 'the estate is worth seven hundred and forty thousand pounds', 'an anonymous warning letter has been received', 'the warning was assembled from newspaper cuttings']
     },
@@ -200,10 +200,10 @@ He arrives within the hour, and the examination begins.`,
       }
     ],
     exitAction: 'return_baker_street',
-    exitLabel: 'Return to Baker Street with Sir Henry',
+    exitLabel: 'Go back to Baker Street with Sir Henry',
     hardExitNarration: 'Holmes ushers you and Sir Henry out of the hotel and into a waiting cab. As the cab rattles toward Baker Street, Holmes is unusually quiet. His eyes are distant, his fingers drumming on his knee. At last he speaks: "Watson, the game is afoot. Someone is watching Sir Henry — watching him closely — and that someone has access to his private rooms. We are not dealing with a legend, Watson. We are dealing with a very real, very present danger."',
     initialFacts: {
-      items: ['mortimer walking stick', 'baskerville manuscript', 'anonymous warning letter'],
+      items: ['mortimer walking stick', 'baskerville manuscript'],
       metNPCs: ['holmes', 'watson', 'mortimer', 'sir_henry'],
       established: ['a brown boot has been stolen from Sir Henry\'s hotel room', 'only one boot was taken — not a pair', 'no sign of forced entry', 'someone with access to the hotel took it', 'Holmes believes someone is watching Sir Henry closely']
     },
@@ -258,7 +258,7 @@ Holmes extends his hand. "Then God speed, Sir Henry. Watson — keep your eyes o
     exitLabel: 'Board the train at Paddington Station',
     hardExitNarration: 'The train pulls out of Paddington at ten-fifteen, and London begins to recede — the grey terraces, the gas works, the spires and chimneys of the city dissolving into the soft green hills of the West Country. Sir Henry sits opposite you, his face set toward the window, watching the countryside change. Beside you, Dr. Mortimer dozes with his chin on his chest. The train gathers speed, and the moor draws closer — mile by mile, station by station, the landscape growing wilder, emptier, darker. By late afternoon, the heather begins. Purple, vast, stretching to the horizon. The moor. And somewhere on it, waiting, the house that has killed one Baskerville and may yet kill another.',
     initialFacts: {
-      items: ['mortimer walking stick', 'baskerville manuscript', 'anonymous warning letter', 'webley revolver'],
+      items: ['mortimer walking stick', 'baskerville manuscript', 'anonymous warning letter'],
       metNPCs: ['holmes', 'watson', 'mortimer', 'sir_henry'],
       established: ['Holmes is staying in London to investigate the London clues', 'Watson is going to Dartmoor with Sir Henry', 'Holmes has instructed Watson to observe everything and write daily', 'the moor is dangerous at night', 'the Barrymores are the servants at the Hall', 'Holmes suspects a human intelligence behind the events']
     },

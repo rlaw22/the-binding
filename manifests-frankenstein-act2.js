@@ -18,34 +18,34 @@ The creature's chest rises and falls — not with breath, but with the settling 
 The switch is cold under your hand.`,
     content: [
       {
-        id: 'pull_switch',
-        label: 'Pull the copper switch and send the current through the creature',
-        keywords: ['switch', 'pull', 'current', 'electric', 'galvanic', 'activate', 'animate', 'start'],
-        discovery: 'You pull the switch. The voltaic apparatus screams — a high, keening whine that fills the laboratory and rattles the glass jars on the shelves. Blue-white lightning arcs between the electrodes and the creature\'s body convulses. Its back arches. Its fingers claw the table. Its chest heaves once, twice, three times — and then it breathes. A rattling, wet intake of air that smells of the grave. The creature\'s eyes open. They are pale, watery, and utterly, horribly alive. They find your face. They focus. And the creature smiles — a hideous, uncertain stretching of dead muscle over living bone. You have done it. You have created life. And in the same instant, you know with absolute certainty that you have made a terrible mistake.'
+        id: 'examine_living_creature',
+        label: 'Study the creature now that it is alive',
+        keywords: ['examine', 'study', 'creature', 'alive', 'look', 'inspect', 'living', 'breathing'],
+        discovery: 'You force yourself to look at what you have made. The creature breathes — a wet, rattling sound that fills the laboratory with each inhale. Its skin, which lay flat and waxy on the table, now moves with the pulse of blood beneath. The yellow tint has not faded, but the eyes — those pale, watery eyes — are no longer glass. They track. They focus. They find your face and hold it with an intensity that pins you in place. The creature\'s fingers flex against the table, leaving deep grooves in the wood. Its chest rises and falls with a rhythm that is almost human but too deep, too slow. You study the face you built — the high cheekbones, the straight nose, the lips that now move, forming shapes that are not yet words — and you see something you did not put there. Something behind the eyes. A mind. Awake. Watching you.'
       },
       {
-        id: 'examine_creature',
-        label: 'Study the creature\'s body before the animation',
-        keywords: ['examine', 'study', 'body', 'creature', 'look', 'inspect', 'form'],
-        discovery: 'You lean close and study your creation. The skin is yellow — the color of old parchment — and translucent in places, showing the dark veins beneath. The muscles are well-formed, powerful, but the joints are wrong: too large, too prominent, giving the limbs an insectile quality. The face is... almost beautiful. High cheekbones, a straight nose, lips that might be handsome on a living man. But the eyes, set too deep in their sockets, and the skin, stretched too tight over the skull, give the whole assembly an air of wrongness. Like a painting done by someone who has never seen a human face but has had one described to them.'
+        id: 'back_away_from_creature',
+        label: 'Step back from the creature as the horror sets in',
+        keywords: ['back', 'away', 'step', 'horror', 'retreat', 'fear', 'creature'],
+        discovery: 'You step back. Your hip strikes the workbench and glass jars rattle. The creature flinches at the sound — a full-body shudder that sends it cowering against the wall, arms wrapping around its massive frame. It is afraid. It is eight feet tall and assembled from the dead, and it is afraid of the sound of breaking glass. You stare at it and the revulsion rises in your throat like bile. Two years. Two years of work, of sacrifice, of descent into madness — and this is what you have made. Not a triumph of science. Not a conqueror of death. A terrified, confused creature that looks at you the way a newborn looks at its mother. And you feel nothing for it. Nothing but horror.'
       },
       {
-        id: 'hesitate',
-        label: 'Step back from the switch and reconsider what you are about to do',
-        keywords: ['hesitate', 'stop', 'reconsider', 'step', 'back', 'think', 'doubt'],
-        discovery: 'Your hand trembles on the switch. You step back. The creature lies still, inert, a collection of dead tissue and stolen parts. You think of your mother, dead. Of the graves you opened, the charnel houses you visited, the things you did in the name of science. And now you stand on the threshold of the greatest achievement in human history — and you are afraid. Not of failure. Of success. What will it think? What will it feel? What have you given it, besides a body made from the dead and a mind that will wake in a world that will recoil from it in horror?'
+        id: 'listen_to_creature_breathing',
+        label: 'Listen to the creature\'s first breaths and sounds',
+        keywords: ['listen', 'breathing', 'sounds', 'creature', 'breaths', 'hear', 'noise'],
+        discovery: 'You stand frozen and listen. The creature\'s breathing fills the room — wet, labored, each breath a small battle against lungs that have never drawn air. Between the breaths, other sounds: a low moan from deep in its chest, the scrape of its fingers on the table, the creak of its joints as it shifts its massive frame. And then a new sound — not a moan, not a cry, but something shaped. Almost a word. Almost a plea. The creature is trying to speak. In its first minutes of life, with lungs that have never breathed and a tongue that has never moved, it is trying to form language. The sound is terrible and beautiful and it breaks something inside you that you did not know was still intact.'
       },
       {
-        id: 'check_apparatus',
-        label: 'Verify the voltaic apparatus and Leyden jars are properly charged',
-        keywords: ['apparatus', 'leyden', 'jar', 'voltaic', 'check', 'charge', 'verify', 'electric'],
-        discovery: 'You examine the voltaic apparatus with trembling hands. The galvanic cells are fresh — you replaced them this morning. The Leyden jars hold enough charge to kill a horse. The copper wires run from the jars through a series of glass insulators to the electrodes embedded in the creature\'s skull and spine. The connections are sound. The circuit is complete. Everything is ready. You have spent months ensuring this moment. And now that it is here, you wish you had spent those months doing anything else.'
+        id: 'check_switch_position',
+        label: 'Look at the switch you just pulled',
+        keywords: ['switch', 'look', 'pulled', 'copper', 'position', 'handle', 'examine'],
+        discovery: 'You look down at the copper switch. It is in the down position — the circuit closed, the current flowing, the deed done. Your hand is still on it. Your fingers are white-knuckled, locked around the handle as if your body is trying to pull it back, to undo what you have done. But there is no undoing this. The switch is thrown. The current has flowed. The creature is alive. You release the switch and your hand drops to your side, trembling. The copper is warm from your grip. The apparatus hums behind you, its work done, its purpose fulfilled. You wish you had never built it.'
       },
       {
-        id: 'read_journal',
-        label: 'Re-read your journal entry about the creation process',
-        keywords: ['journal', 'read', 'entry', 'notes', 'process', 'creation', 'diary'],
-        discovery: 'You flip back through your journal. The early entries are clinical, excited: "The muscle tissue responds to galvanic stimulation. The nerve fibers conduct. The brain — I have built a brain from the finest materials." But the later entries grow darker: "I have not left the laboratory in weeks. Clerval visits but I send him away. Elizabeth writes. I do not answer. I dream of the creature and it speaks to me in a voice I do not recognize." The final entry before tonight: "I have become so consumed by the creation that I have forgotten the creator. What manner of man builds a man from the dead? And what manner of man will that dead man become?"'
+        id: 'search_for_escape',
+        label: 'Look for a way out of the laboratory',
+        keywords: ['escape', 'way', 'out', 'door', 'exit', 'laboratory', 'leave', 'flee'],
+        discovery: 'Your eyes dart around the laboratory. The door — behind you, ten steps, the handle cold brass. The window — too small. The skylight — twenty feet up, the ladder still propped against the wall. The creature watches your eyes move. It tracks each glance with the desperate attention of a creature that has just learned that the world contains things worth watching. It sees you looking at the door. It does not understand what a door is. But it understands — with the instinct of the newly born — that you are thinking about leaving. Its hand reaches toward you. Its lips move. The moan becomes something shaped: a sound like "Mmm..." Not a word. Not yet. But the beginning of one. The beginning of a plea that will haunt you for the rest of your life.'
       }
     ],
     exitAction: 'animate_creature',
@@ -102,7 +102,7 @@ You cannot give it any of those things.`,
       }
     ],
     exitAction: 'abandon_creature',
-    exitLabel: 'Flee the laboratory in horror',
+    exitLabel: 'Run from the laboratory in horror',
     hardExitNarration: 'You stumble into the corridor and slam the door behind you. The lock clicks. Through the wood, muffled but unmistakable, you hear the creature\'s cry — a long, desolate wail that follows you down the stairs and out into the night. It does not stop. Even when you are three streets away, ears ringing, breath ragged, you can still hear it. You will hear it for the rest of your life.',
     initialFacts: {
       items: ['journal'],
@@ -155,7 +155,7 @@ You cannot tell him. The words will not come. You open your mouth and the creatu
       }
     ],
     exitAction: 'fall_ill',
-    exitLabel: 'Succumb to the fever and collapse',
+    exitLabel: 'Give in to the fever and collapse',
     hardExitNarration: 'The fever takes you like a wave. For weeks, you burn — raving, shaking, calling out names that Clerval does not recognize. He tends you through every hour, changing your sheets, forcing broth between your lips, listening to your nightmares. When you finally wake, clear-headed and weak as a child, the first thing you see is Clerval\'s face, drawn with worry but smiling. "Welcome back," he says. "You have been gone a long time."',
     initialFacts: {
       items: ['journal'],
@@ -265,7 +265,7 @@ Clerval finds you staring at the letter. He reads it over your shoulder. His han
       }
     ],
     exitAction: 'depart_for_geneva',
-    exitLabel: 'Depart for Geneva with Clerval',
+    exitLabel: 'Leave for Geneva with Clerval',
     hardExitNarration: 'The coach pulls away from the lodgings in the grey light of early morning. Clerval sits beside you, silent, his hand on your arm. The road to Geneva stretches south through the German countryside — green, peaceful, indifferent to the grief that fills the coach like smoke. You do not speak. You stare at the passing landscape and see nothing but the face of a creature with pale blue eyes, reaching for you with gentle hands. And behind it, smaller, stiller, the face of a boy who will never laugh again.',
     initialFacts: {
       items: ['journal', 'father\'s letter'],

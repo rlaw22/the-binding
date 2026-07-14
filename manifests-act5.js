@@ -38,7 +38,7 @@ A dockworker approaches — a thick man with a tarred cap and suspicious eyes. '
       }
     ],
     exitAction: "board_orion",
-    exitLabel: "Board the Orion and sail for Varna",
+    exitLabel: "Get on the Orion and sail for Varna",
     hardExitNarration: `The Orion's horn sounds across the Thames. You stand at the rail as London falls away behind you — the grey towers, the smoking chimneys, the bridges dissolving into mist. Mina grips your hand, her skin cold, her eyes fixed east. Van Helsing stands at the bow, Bible in hand, muttering prayers in Latin. The open water stretches ahead, grey and endless, and somewhere on it — in a box of Transylvanian earth — the Count is waiting.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],
@@ -226,7 +226,7 @@ The hall fills with the sound of wings. Bats — hundreds of them — pour from 
       }
     ],
     exitAction: "defeat_sisters",
-    exitLabel: "Finish the last sister and press toward the crypt stairs",
+    exitLabel: "Kill the last sister and head toward the crypt stairs",
     hardExitNarration: `The eldest sister — the last — hovers at the ceiling, her ruined face a mask of fury and terror. 'You cannot kill what has lived for centuries,' she whispers. But the crucifix in your hand is blazing and Van Helsing's voice fills the hall with prayer. She turns to flee. Jonathan Harker is waiting. His stake catches her in the back as she passes. She crumbles to dust on the wind, and the great hall falls silent. The hearth fire has died. The bats are gone. From below — far below — you hear a sound: the grinding of a stone lid opening. Dracula is awake. Dracula is rising.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],

@@ -43,7 +43,7 @@ You are hungry. You are cold. You are alone. And somewhere in the distance, you 
       }
     ],
     exitAction: 'discover_fire',
-    exitLabel: 'Approach the cottage and discover the warmth of fire',
+    exitLabel: 'Walk toward the cottage and the warmth of fire',
     hardExitNarration: 'Dawn comes grey and cold. You crawl from your hollow and stand in the forest, stiff and hungry and alone. The smoke from the cottage rises in a thin thread against the pale sky. You follow it. You have nothing else.',
     initialFacts: {
       items: [],
@@ -102,12 +102,12 @@ You live in the lean-to attached to the cottage wall. Through a crack in the boa
       }
     ],
     exitAction: 'approach_family',
-    exitLabel: 'Plan to approach the family and reveal yourself',
+    exitLabel: 'Plan to walk up to the family and show yourself',
     hardExitNarration: 'You return to your lean-to with a decision made. You will approach the old man — the blind one. He cannot see your face. He cannot recoil from your appearance. He will hear your words, your educated, careful words, and he will judge you by what you say, not by what you look like. Tomorrow. You will go tomorrow.',
     initialFacts: {
-      items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],
-      metNPCs: ['the creature', 'felix de lacey', 'agatha de lacey', 'de lacey (old man)', 'safie'],
-      established: ['creature lives in lean-to beside the cottage', 'creature has learned language by listening', 'creature reads the family\'s books', 'creature leaves gifts for the family', 'creature plans to approach the blind old man']
+      items: [],
+      metNPCs: ['the creature'],
+      established: ['creature lives in lean-to beside the cottage', 'creature has learned language by listening', 'creature reads the family\'s books', 'creature leaves gifts for the family', 'creature plans to approach the blind old man', 'De Lacey family (Felix, Agatha, old man, Safie) observed through the wall but not yet met']
     },
     locationKeywords: {
       banned: ['ingolstadt', 'university', 'laboratory', 'geneva', 'arctic']
@@ -157,7 +157,7 @@ The old man smiles. "Enter, friend. You are welcome in this house."`,
       }
     ],
     exitAction: 'family_returns',
-    exitLabel: 'Hear the family returning and prepare to meet them',
+    exitLabel: 'Hear the family returning and get ready to meet them',
     hardExitNarration: 'The sound of footsteps on the path. Voices — Felix\'s laugh, Agatha\'s singing, Safie\'s accented French. The old man brightens. "My children return! Come, let me introduce you —" But you are already on your feet, your heart hammering, your hands shaking. The door opens. Felix sees you first. His face goes white. His mouth opens. And then he screams.',
     initialFacts: {
       items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],
@@ -212,7 +212,7 @@ Behind you, the cottage door slams shut. And this time, no one opens it.`,
       }
     ],
     exitAction: 'flee_into_night',
-    exitLabel: 'Flee deeper into the forest',
+    exitLabel: 'Run deeper into the forest',
     hardExitNarration: 'You run. The forest swallows you — branch and bramble, shadow and stone. You run until your legs buckle and your lungs burn and the cottage is a memory. You collapse beside a frozen stream and stare at the stars, and in their cold, indifferent light, you make a promise. You will find the man who made you. You will find your creator. And you will demand what every creature deserves: a companion. Someone to love. Someone who will not recoil at the sight of you.',
     initialFacts: {
       items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],
@@ -263,7 +263,7 @@ But you do not despair. Not yet. Because you have a purpose now. You have a dest
       }
     ],
     exitAction: 'journey_to_geneva',
-    exitLabel: 'Continue the journey toward Geneva and your creator',
+    exitLabel: 'Keep walking toward Geneva and your creator',
     hardExitNarration: 'The mountains rise before you — the Alps, white and terrible, their peaks lost in cloud. Beyond them lies Geneva. Beyond Geneva lies the man who made you. You pull your stolen coat tighter and begin to climb. The snow is deep. The wind is cruel. But you are stronger than the wind, and more enduring than the snow, and more determined than the mountain itself. You will find him. You will make him listen. And if he will not give you what you deserve, you will take what he loves.',
     initialFacts: {
       items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],

@@ -39,8 +39,8 @@ You hear a footstep behind you. "I rather thought you might find your way here, 
     exitLabel: 'Leave the camp with Holmes',
     hardExitNarration: 'Holmes gathers his pipe and newspapers with practised efficiency. "Come, Watson. We have work to do. Stapleton will be heading for the Mire soon, and I want to be in position." He pulls his hat low and leads you out of the hut, moving across the moor with the easy stride of a man who has been living on it for days.',
     initialFacts: {
-      items: [],
-      metNPCs: ['holmes'],
+      items: ['webley revolver'],
+      metNPCs: [],
       established: ['Holmes has been hiding on the moor in disguise', 'Holmes has been watching Stapleton', 'Stapleton goes to the Grimpen Mire every evening', 'Stapleton has a large dog', 'Holmes found by Watson at Bronze Age hut']
     },
     locationKeywords: {
@@ -87,7 +87,7 @@ He turns to you, and his eyes are hard. "He has been breeding something in the G
     exitLabel: 'Walk with Holmes toward the Grimpen Mire',
     hardExitNarration: 'Holmes pulls his hat low and sets off across the heather with long, purposeful strides. "Stay close, Watson. And keep your revolver ready. The moor has teeth tonight." You follow him into the gathering dusk, toward the dark mass of the Grimpen Mire.',
     initialFacts: {
-      items: [],
+      items: ['webley revolver'],
       metNPCs: ['holmes'],
       established: ['Beryl Stapleton is Stapleton\'s wife, not sister', 'Stapleton is likely a Baskerville heir', 'Stapleton has a large dog hidden in the Mire', 'Holmes suspects Stapleton lured Sir Charles through Laura Lyons', 'Stapleton goes to the Mire every evening']
     },
@@ -132,10 +132,10 @@ He crouches and points. In the soft earth beside the path: paw prints. Enormous.
       }
     ],
     exitAction: 'leave_mire',
-    exitLabel: 'Retreat from the Mire before dark',
+    exitLabel: 'Fall back from the Mire before dark',
     hardExitNarration: 'Holmes checks the sky. The sun is low, the shadows lengthening across the heather. "We must go," he says. "Stapleton will be coming soon, and I do not want him to know we have found his path." He leads you back along the cairned route, each step careful, deliberate, until the solid ground of the moor is beneath your feet again. Behind you, the Mire waits — green, silent, bottomless.',
     initialFacts: {
-      items: [],
+      items: ['webley revolver'],
       metNPCs: ['holmes'],
       established: ['the Grimpen Mire is a deadly bog', 'Holmes has marked safe paths with cairns', 'enormous paw prints lead into the Mire', 'a kennel is hidden in the Mire', 'phosphorus smell near the Mire', 'a pony was swallowed by the bog']
     },
@@ -182,11 +182,11 @@ She tells you the story in a flat, exhausted voice. Stapleton approached her a y
       }
     ],
     exitAction: 'leave_laura',
-    exitLabel: 'Leave Laura Lyons and return to the moor',
+    exitLabel: 'Leave Laura Lyons and go back to the moor',
     hardExitNarration: 'Laura shows you to the door. Her face is grey, her eyes hollow. "What will happen to me?" she asks. You tell her the truth will protect her. She nods, but she does not look convinced. As you walk back through Grimpen, the evening mist is rising from the Mire, and somewhere in the gathering dark, a dog is barking — deep, resonant, hungry.',
     initialFacts: {
-      items: [],
-      metNPCs: ['laura_lyons'],
+      items: ['webley revolver'],
+      metNPCs: [],
       established: ['Laura Lyons wrote to Sir Charles on the night he died', 'Stapleton used Laura to lure Sir Charles to the gate', 'Stapleton promised Laura marriage but never intended it', 'Laura was not at the meeting — she stayed home', 'Stapleton told Laura to keep silent about the letter']
     },
     locationKeywords: {
@@ -239,7 +239,7 @@ He turns from the portrait, and his voice is cold as the moor in winter. "We hav
     exitLabel: 'Join Holmes in planning the trap',
     hardExitNarration: 'Holmes gathers you and Sir Henry in the study. He closes the curtains, locks the door, and spreads a map of the moor on the desk. "Now," he says, his finger tracing a path from Merripit House to Baskerville Hall, across the open moor. "Here is what we are going to do." The trap is set.',
     initialFacts: {
-      items: [],
+      items: ['webley revolver'],
       metNPCs: ['holmes', 'sir_henry'],
       established: ['Stapleton is a Baskerville heir — descended from Rodger Baskerville', 'Stapleton is murdering the main line to claim the estate', 'the portrait proves the family connection', 'Holmes plans to set a trap using Sir Henry as bait']
     },

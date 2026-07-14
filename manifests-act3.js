@@ -14,7 +14,8 @@ module.exports = {
           "give",
           "share",
           "read"
-        ]
+        ],
+        discovery: "You place Harker's journal on Van Helsing's desk. He opens it with trembling hands, his spectacles sliding down his nose. He reads in silence — page after page — and his face changes. The scholarly composure cracks. His breath quickens. When he reaches the passages about the coffins filled with earth, he sets the book down and removes his spectacles. 'Mein Gott,' he whispers. 'This is everything I feared and more.' He looks at you with new eyes — not as a stranger but as a fellow witness. 'You have seen these things yourself? The coffins? The sisters?' When you nod, he grips your hand. 'Then we are brothers in this fight, you and I. And we will need every word this journal contains.'"
       },
       {
         id: "ask_about_lucy",
@@ -41,7 +42,8 @@ module.exports = {
           "action",
           "help",
           "stop"
-        ]
+        ],
+        discovery: "Van Helsing rises and paces the room, his hands clasped behind his back. 'First, we protect the living. Lucy Westenra is dying — the Count has been feeding on her. We must guard her at night with crucifixes, garlic, and holy water. Second, we investigate Carfax Abbey — the Count's English lair. His earth boxes will be there. Without them, he cannot rest. Third, we gather allies. Dr. Seward is a good man but blind to the truth. We must open his eyes.' He stops pacing and faces you. 'And fourth — we prepare to destroy the Count himself. Stake through the heart. Decapitation. Garlic in the mouth. There is no other way.' His voice is steady, but his eyes burn with a fury that is personal. 'He has taken too many already. This ends now.'"
       },
       {
         id: "describe_escape",
@@ -54,7 +56,8 @@ module.exports = {
           "tell",
           "story",
           "dracula"
-        ]
+        ],
+        discovery: "You tell Van Helsing everything — the coach ride, the wolves, the Count's impossible hospitality. The forbidden wing with its coffins of earth. The three sisters and their terrible beauty. The climb down the castle wall in the dark, the wolves at your heels, the crucifix burning in your hand. Van Helsing listens without interruption, his eyes never leaving your face. When you finish, he is silent for a long time. Then he opens a drawer and produces a map of London. 'You climbed the wall,' he says quietly. 'In the dark. With wolves below.' He shakes his head. 'You are either the bravest person I have ever met, or the most foolish. Either way, I am glad you are here.' He taps the map. 'Carfax Abbey. That is where we begin.'"
       }
     ],
     exitAction: "leave_van_helsing",
@@ -68,7 +71,7 @@ module.exports = {
       metNPCs: [
         "innkeeper",
         "dracula",
-        "van helsing"
+        "van_helsing"
       ],
       established: [
         "arrived in London",
@@ -156,7 +159,7 @@ module.exports = {
       metNPCs: [
         "innkeeper",
         "dracula",
-        "van helsing",
+        "van_helsing",
         "lucy",
         "seward"
       ],
@@ -234,7 +237,7 @@ module.exports = {
       }
     ],
     exitAction: "leave_asylum",
-    exitLabel: "Leave the asylum to prepare for the night watch",
+    exitLabel: "Leave the asylum and get ready for the night watch",
     hardExitNarration: "As you leave, Renfield calls after you: 'Tell the Doctor to guard her tonight! He comes with the dark!' His voice follows you down the corridor.",
     initialFacts: {
       items: [
@@ -245,7 +248,7 @@ module.exports = {
       metNPCs: [
         "innkeeper",
         "dracula",
-        "van helsing",
+        "van_helsing",
         "lucy",
         "seward",
         "renfield"
@@ -338,7 +341,7 @@ module.exports = {
       metNPCs: [
         "innkeeper",
         "dracula",
-        "van helsing",
+        "van_helsing",
         "lucy",
         "seward",
         "renfield"
@@ -415,7 +418,7 @@ module.exports = {
       }
     ],
     exitAction: "leave_mourning",
-    exitLabel: "Leave the room to prepare for what comes next",
+    exitLabel: "Leave the room and get ready for what comes next",
     hardExitNarration: "Van Helsing finds you in the corridor. 'Three days,' he says. 'Garlic, crucifixes, a stake of wood, and the courage to use them. Find a consecrated wafer. And a carpenter.'",
     initialFacts: {
       items: [
@@ -426,7 +429,7 @@ module.exports = {
       metNPCs: [
         "innkeeper",
         "dracula",
-        "van helsing",
+        "van_helsing",
         "seward",
         "renfield"
       ],

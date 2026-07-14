@@ -94,7 +94,7 @@ Outside, the sea crashes against the cliffs. The wind howls. And somewhere on th
       }
     ],
     exitAction: 'continue_or_stop',
-    exitLabel: 'Continue the work despite your doubts',
+    exitLabel: 'Keep working despite your doubts',
     hardExitNarration: 'You return to the table. The half-finished body lies under the sheet, waiting. You pull the sheet back and pick up your tools. The work continues. Outside, the creature stands on the headland, watching. The sea crashes. The wind howls. And piece by piece, the female creature takes shape — a body built from the dead, a life waiting to be sparked, a companion for a monster, a sin for a creator.',
     initialFacts: {
       items: ['journal', 'voltaic apparatus'],
@@ -257,7 +257,7 @@ You fold the letter. You press it to your lips. And you think: the creature prom
       }
     ],
     exitAction: 'return_to_geneva',
-    exitLabel: 'Return to Geneva to marry Elizabeth',
+    exitLabel: 'Go back to Geneva to marry Elizabeth',
     hardExitNarration: 'The coach carries you south through France, through the Jura mountains, into Switzerland. The landscape is beautiful — green valleys, snow-capped peaks, the clean blue of Lake Geneva in the distance. You see none of it. You stare at the road ahead and think about the creature. You think about the wedding night. You think about Elizabeth\'s face — her grey-green eyes, her gentle hands, her voice reading poetry by the fire. And you think: I will protect her. I will die to protect her. The coach crests a hill and Geneva spreads below you — the lake, the old town, the spire of St. Pierre\'s. Home. Elizabeth is there. The creature is there. And somewhere between them, you stand — a man who created life and death in the same breath, and who now must face the consequences of both.',
     initialFacts: {
       items: ['journal', 'elizabeth\'s letter', 'letter to father'],

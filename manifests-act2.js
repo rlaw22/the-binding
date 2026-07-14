@@ -120,7 +120,8 @@ module.exports = {
           "attack",
           "strike",
           "weapon"
-        ]
+        ],
+        discovery: "You lunge for the fireplace and your fingers close around the iron poker — heavy, cold, solid. You swing it at the nearest sister and the metal bites into her shoulder. She shrieks — a sound that cracks the windowpane — and recoils, her porcelain skin splitting to reveal something dark and ancient beneath. But the other two are on you in an instant. Cold hands grip your arms, your throat. Their beauty is terrifying up close: perfect features, crimson lips, eyes that burn with a hunger older than civilization. The youngest sister leans close to your ear and whispers something in a language that predates Latin. You do not understand the words but your body does — every hair stands on end, every nerve screams. You swing the poker again and again, fighting not just their strength but their impossible grace. They move like smoke, like water, like something that was never human."
       },
       {
         id: "call_for_dracula",
@@ -145,7 +146,8 @@ module.exports = {
           "door",
           "corridor",
           "hallway"
-        ]
+        ],
+        discovery: "You bolt for the door. The corridor beyond is pitch black — the candles have guttered out, as if the darkness itself swallowed them. You run blind, one hand trailing along the cold stone wall, your feet catching on uneven flagstones. Behind you, the sisters do not follow. They laugh — a sound that echoes from every direction, bouncing off the walls, seeming to come from ahead of you and behind you at once. The corridor twists. A staircase appears in the gloom, spiraling downward. You take it two steps at a time, nearly falling, the iron poker clanging against the wall. The laughter fades. The darkness thins. You burst through a door and find yourself in the great hall, gasping, your heart hammering against your ribs. The fire has been rekindled. You are alone. But the laughter still rings in your ears."
       }
     ],
     exitAction: "survive_sisters",
@@ -241,7 +243,7 @@ module.exports = {
       }
     ],
     exitAction: "close_journal",
-    exitLabel: "Finish reading and plan your escape",
+    exitLabel: "Stop reading and plan your escape",
     hardExitNarration: "The shadows are growing longer. The Count will wake soon. You cannot be here when he does. You tuck the journal inside your coat and move toward the window.",
     initialFacts: {
       items: [
@@ -328,7 +330,8 @@ module.exports = {
           "follow",
           "map",
           "notes"
-        ]
+        ],
+        discovery: "You pull the journal from your coat and flip to the pages where Harker described his own escape — the route he mapped in desperation, the landmarks he clung to. 'The mountain path descends west from the courtyard gate, past a broken shrine, through a stand of dead oaks.' You hold the journal open in one hand and the crucifix in the other, and you follow his words like a prayer. The broken shrine appears — a stone Madonna with her face worn smooth. The dead oaks stand like sentinels. Harker's handwriting becomes your compass, his terror your guide. Without these pages, you would be lost in the dark with the wolves. With them, you have a chance. The journal is not just evidence. It is a lifeline."
       }
     ],
     exitAction: "reach_mountain_path",
@@ -378,7 +381,8 @@ module.exports = {
           "enter",
           "door",
           "wall"
-        ]
+        ],
+        discovery: "You walk toward the monastery as dawn breaks over the mountains, painting the stone walls in gold and rose. The building is ancient — older than the castle, perhaps — its walls thick with lichen, its iron gate studded with rivets the size of a man's fist. Bells ring from the tower, deep and resonant, and the sound washes over you like warm water. Monks move in the courtyard beyond the gate, their dark robes swaying, their voices raised in a chant that vibrates in your chest. The air smells of beeswax, incense, and baking bread — the smells of civilization, of safety, of a world where the dead stay dead. Your legs buckle. You have been walking for hours — or days — and the sight of human habitation, of ordinary life, breaks something open in you that the castle and the wolves could not."
       },
       {
         id: "rest_by_stream",
@@ -405,7 +409,8 @@ module.exports = {
           "passage",
           "carfax",
           "weakness"
-        ]
+        ],
+        discovery: "You sit on a rock and open the journal to the passages you tore out. Harker's words are steadier now that you read them in daylight, in safety. 'The Count cannot rest without his native earth. He has purchased fifty boxes of Transylvanian soil and shipped them to Carfax Abbey. Destroy the earth and you destroy his sanctuary.' Below, a note: 'He fears crucifixes, garlic, holy water. He cannot enter a home uninvited. He has no reflection. He casts no shadow.' You read the passages twice, three times, committing them to memory. This is your arsenal. This is how you fight what cannot be fought with fists and steel."
       },
       {
         id: "plan_next_move",
@@ -418,7 +423,8 @@ module.exports = {
           "london",
           "carfax",
           "strategy"
-        ]
+        ],
+        discovery: "You sit by the frozen stream and think. The Count is going to England. Carfax Abbey. Fifty boxes of earth. He means to spread his kind — to establish a foothold in the heart of the civilized world. You cannot fight him alone. You need allies — someone who understands the occult, someone with authority, someone who will believe you. Harker's journal is your proof. The monastery ahead is your first step toward safety. From there, you must reach London. You must find Van Helsing — the name Harker mentioned in the margins, circled twice, underlined: 'A professor in Amsterdam. Expert in obscure diseases. If anyone will believe, it is he.' The plan crystallizes: survive, escape, warn, fight. In that order."
       }
     ],
     exitAction: "enter_monastery",

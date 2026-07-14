@@ -43,7 +43,7 @@ From somewhere beneath the surface, from somewhere deep in the acid peat and the
     exitLabel: 'Walk back from the Mire with Holmes',
     hardExitNarration: 'Holmes turns from the bog and walks back toward solid ground. You follow. The fog is lifting, and the moor is emerging from the whiteness — the purple heather, the grey tors, the vast, indifferent sky. Behind you, the Grimpen Mire waits, green and silent, keeping its secrets.',
     initialFacts: {
-      items: ['stapleton satchel', 'forged documents', 'unfinished letter'],
+      items: [],
       metNPCs: ['holmes'],
       established: ['Stapleton fell into the Grimpen Mire', 'the Mire has swallowed him', 'Stapleton carried forged identity documents', 'the case is effectively over']
     },
@@ -93,7 +93,7 @@ Holmes stops pacing and looks at Sir Henry. "The phosphorus was the key. A large
     exitLabel: 'Leave Sir Henry to his reflections',
     hardExitNarration: 'Sir Henry stands at the window, looking out at the moor. The last light of day paints the heather in shades of gold and purple. The Hall is quiet. The curse is broken. Holmes touches your arm and nods toward the door. There is nothing more to say.',
     initialFacts: {
-      items: ['stapleton satchel', 'forged documents', 'breeding notebook'],
+      items: ['stapleton satchel', 'forged documents'],
       metNPCs: ['holmes', 'sir_henry'],
       established: ['Stapleton was Rodger Baskerville\'s grandson', 'he changed his name and moved to Dartmoor', 'the hound was bred from a fighting mastiff', 'phosphorus paste was Stapleton\'s invention', 'Sir Charles died of fright', 'Sir Henry will inherit and live at the Hall']
     },
@@ -186,7 +186,7 @@ The train gathers speed. The green hills give way to the flatlands of Somerset, 
       }
     ],
     exitAction: 'arrive_paddington',
-    exitLabel: 'Step off the train at Paddington Station',
+    exitLabel: 'Get off the train at Paddington Station',
     hardExitNarration: 'The train shudders to a halt. Holmes stands, collects his bag, and steps onto the platform with the easy grace of a man returning to familiar territory. "Come, Watson," he says. "Mrs. Hudson will have tea waiting, and I have a violin that has been neglected for far too long." He strides toward the exit, and you follow, and the noise of London swallows you both.',
     initialFacts: {
       items: [],
@@ -236,7 +236,7 @@ Holmes removes his pipe and looks at you. "Watson," he says. "Do you believe in 
       }
     ],
     exitAction: 'close_adventure',
-    exitLabel: 'Settle back by the fire as the case closes',
+    exitLabel: 'Sit back by the fire and enjoy the evening',
     hardExitNarration: 'Holmes picks up his violin and draws the bow across the strings — a slow, melancholy air that fills the room and drifts out through the window into the London night. The fire burns low. The tea grows cold. The case of the Hound of the Baskervilles is over. But on still nights, they say, if you stand on the edge of the Grimpen Mire and listen very carefully, you can still hear howling — faint, distant, mournful — rising from the dark heart of the moor.',
     initialFacts: {
       items: [],

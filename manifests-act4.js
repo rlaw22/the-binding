@@ -162,7 +162,7 @@ module.exports = {
       }
     ],
     exitAction: "leave_safe_house",
-    exitLabel: "Rest briefly before the dawn assault on Carfax Abbey",
+    exitLabel: "Rest before the dawn assault on Carfax Abbey",
     hardExitNarration: "Van Helsing takes the first watch. Seward sleeps fitfully in a chair. Mina lies still, the communion wafer on her forehead glowing faintly in the dark. Outside, the rain has stopped. The clouds part and moonlight spills through a crack in the shutters, falling across Mina's face. For a moment — just a moment — she smiles in her sleep, and the smile is not hers.",
     initialFacts: {
       items: [
@@ -267,7 +267,7 @@ module.exports = {
       }
     ],
     exitAction: "leave_carfax",
-    exitLabel: "Finish destroying the earth boxes and retreat before Dracula returns",
+    exitLabel: "Destroy the last earth boxes and retreat before Dracula returns",
     hardExitNarration: "You have destroyed thirty-seven of the fifty boxes when Van Helsing grabs your arm. 'Enough. Dawn is ending. He will rise soon, and he will come here first.' The soil screams as you drop the last wafer. The sound echoes through the abbey. Above you, the Szgany are running — fleeing through the nave and out the broken doors. They know what is coming. You run too.",
     initialFacts: {
       items: [
@@ -477,7 +477,7 @@ module.exports = {
       }
     ],
     exitAction: "leave_church",
-    exitLabel: "Prepare the group for the final hunt into the caves beneath Whitby",
+    exitLabel: "Get the group ready for the final hunt into the caves beneath Whitby",
     hardExitNarration: "Mina stands at the church door, wrapped in a borrowed shawl, her face pale but set with iron determination. 'I will lead you to him,' she says. 'And when you find him — when you raise the stake — do not hesitate. Do not look at my face. Because what he shows you will not be me.' She takes your hand one last time. Outside, the sun is setting over the North Sea, painting the sky in blood and gold. The hunt begins at dark.",
     initialFacts: {
       items: [
