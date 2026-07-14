@@ -3,7 +3,7 @@
 ## Current Status: 🟢 Beta Launch Ready                          *July 14, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `c4a940b` — docs: update STATUS.md — beta launch ready, all tabs refreshed
+**Latest commit:** `f3188a6` — fix: full end-to-end narrative audit — Dracula, Frankenstein, Holmes
 **Beta tokens:** 20 generated (beta-wave-1), ready to distribute
 
 ---
@@ -47,23 +47,25 @@
 
 ### Bug Fixes                                                  *July 14, 2026*
 
-**Acts 1-3 (commit `614c8d8`):**
-- [x] 6 exit labels rewritten (excuse→retire, plunge→run, return→go back, etc.)
+**Dracula — Full Narrative Audit (commits `614c8d8`, `7ae9ddb`, `f3188a6`):**
+- [x] 17 exit labels rewritten across all5 acts (board→get on, arrive→go, retire→go, finish→stop/kill, prepare→get ready, escape→run through, push→walk, witness→watch)
+- [x] 13 missing discovery texts added (talk_innkeeper, enter_great_hall, ask_about_england, compliment_wine, fight_sisters, flee_the_room, use_journal, approach_monastery, read_journal_again, plan_next_move, show_journal, ask_what_to_do, describe_escape)
+- [x] 6 NPC tracking fixes (van_helsing consistency across Acts 3-5, dracula spoiler removed, lucy removed after death, jonathan harker removed)
 - [x] 3 initialFacts corrected (items found during scene removed from starting inventory)
-- [x] 3 narrow exit labels widened (step→get out, look→arrive, approach→walk to)
-- [x] 6 NPC tracking fixes (dracula spoiler, jonathan harker never met, lucy death)
 - [x] Banned keywords added to scene_01
 - [x] Narrative bridge from scene_05→scene_06
 
-**Acts 4-5 (commit `7ae9ddb`):**
-- [x] Removed "lucy" from Act 4 metNPCs (scenes 15-19) — she died in Act 3
-- [x] Removed "lucy" and "jonathan harker" from Act 5 metNPCs (scenes 20-24)
-- [x] Fixed scene_18 exit label: "Escape" → "Run through"
-- [x] Fixed scene_21 exit label: "Push through" → "Walk through"
-- [x] Fixed scene_24 exit label: "Witness the dawn" → "Watch the dawn break"
+**Frankenstein — Full Narrative Audit (commit `f3188a6`):**
+- [x] 6 exit labels rewritten (devote→study, flee→run, continue→keep working, return→go back, close→put down, prepare→get ready)
+
+**Holmes — Full Narrative Audit (commit `f3188a6`):**
+- [x] 6 initialFacts items removed (walking stick, manuscript, warning letter, revolver, breeding notebook, satchel)
+- [x] 4 NPC tracking fixes (stapleton, beryl, selden, holmes, laura_lyons removed from metNPCs before meeting)
+- [x] 11 exit labels rewritten (consider→think about, return→go back, retreat→fall back, retire→go to bed, step off→get off, settle back→sit back)
+- [x] 10 item tracking fixes (webley revolver added to scenes 05-14)
 
 ### Tests                                                      *July 14, 2026*
-- [x] 143/143 tests passing
+- [x] 142/142 tests passing
 
 ---
 
@@ -98,9 +100,9 @@
 ## Known Issues                                                *July 14, 2026*
 
 ### Gameplay
-- [ ] Frankenstein and Holmes manifests not yet audited for exit label / NPC bugs
 - [ ] Scene_12 `ask_about_lucy_renfield` — Renfield dialogue could be richer
-- [ ] Some LOW-severity exit labels still narrow (BUG-31 through BUG-39, Acts 1-3)
+- [ ] Some LOW-severity exit labels still narrow (BUG-31 through BUG-39, Dracula Acts 1-3)
+- [ ] Frankenstein scene_05 content duplication with scene_04 (near-identical content items)
 
 ### Architecture
 - [ ] No unit tests for `generateSceneActions` merge logic specifically
@@ -112,9 +114,8 @@
 
 ## Next Steps                                                   *July 14, 2026*
 
-- [ ] Playtest full Dracula adventure end-to-end with real LLM
+- [ ] Playtest full adventures end-to-end with real LLM
 - [ ] Monitor first wave of beta tester feedback
-- [ ] Audit Frankenstein and Holmes manifests for the same bug patterns
 - [ ] Add unit tests for the Option B merge logic
 - [ ] Consider adding "garlic oil" as a tracked inventory item
 - [ ] Consider persisting feedback to disk for durability
