@@ -1,9 +1,10 @@
 # The Binding — Status Tracker
 
-## Current Status: ✅ Beta Deployed
+## Current Status: 🟢 Beta Launch Ready
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `1ddb2ed` — feat: merge AI-suggested contextual actions into button list (Option B)
+**Latest commit:** `7ae9ddb` — fix: Acts 4-5 NPC tracking and exit label fixes
+**Beta tokens:** 20 generated (beta-wave-1), ready to distribute
 
 ---
 
@@ -32,15 +33,33 @@
 - [x] AI DM with rich, evocative prose
 - [x] Discovery texts for exploration actions (15 added in Act 1-3 fixes)
 - [x] Pressure system (background → gentle → strong → forced)
-- [x] **Option B: AI contextual actions merged into button list** ← NEW
+- [x] **Option B: AI contextual actions merged into button list** (commit `1ddb2ed`)
 
-### Bug Fixes (commit `614c8d8`)
+### Beta Launch Infrastructure
+- [x] Beta token gate (NDA acceptance + questionnaire)
+- [x] Admin API (token generation, feedback review)
+- [x] **Feedback system** — Report Issue button + `/api/feedback` endpoint (commit `6031a8c`)
+- [x] **Error recovery UI** — Reconnect banner + retry on connection loss (commit `6031a8c`)
+- [x] PWA support (manifest.json + service worker)
+- [x] Rejoin codes for multi-device play
+- [x] Voice/TTS support (Novita provider)
+- [x] CORS configured
+
+### Bug Fixes
+**Acts 1-3 (commit `614c8d8`):**
 - [x] 6 exit labels rewritten (excuse→retire, plunge→run, return→go back, etc.)
 - [x] 3 initialFacts corrected (items found during scene removed from starting inventory)
 - [x] 3 narrow exit labels widened (step→get out, look→arrive, approach→walk to)
 - [x] 6 NPC tracking fixes (dracula spoiler, jonathan harker never met, lucy death)
 - [x] Banned keywords added to scene_01
 - [x] Narrative bridge from scene_05→scene_06
+
+**Acts 4-5 (commit `7ae9ddb`):**
+- [x] Removed "lucy" from Act 4 metNPCs (scenes 15-19) — she died in Act 3
+- [x] Removed "lucy" and "jonathan harker" from Act 5 metNPCs (scenes 20-24)
+- [x] Fixed scene_18 exit label: "Escape" → "Run through"
+- [x] Fixed scene_21 exit label: "Push through" → "Walk through"
+- [x] Fixed scene_24 exit label: "Witness the dawn" → "Watch the dawn break"
 
 ### Tests
 - [x] 143/143 tests passing
@@ -62,23 +81,39 @@
 
 ---
 
+## Beta Launch Checklist
+
+- [x] LLM_API_KEY set on Render
+- [x] LLM_BASE_URL set on Render
+- [x] LLM_MODEL set on Render
+- [x] ADMIN_KEY set on Render
+- [x] Health check confirms `betaEnabled: true`
+- [x] 20 beta tokens generated (beta-wave-1)
+- [ ] Distribute tokens to testers
+- [ ] Monitor feedback via `/api/admin/feedback`
+
+---
+
 ## Known Issues
 
-### Gameplay (from REVIEW-acts1-3.md)
-- [ ] 15 missing discovery texts in Acts 4-5 (not yet audited)
+### Gameplay
+- [ ] Frankenstein and Holmes manifests not yet audited for exit label / NPC bugs
 - [ ] Scene_12 `ask_about_lucy_renfield` — Renfield dialogue could be richer
-- [ ] Some LOW-severity exit labels still narrow (BUG-31 through BUG-39)
+- [ ] Some LOW-severity exit labels still narrow (BUG-31 through BUG-39, Acts 1-3)
 
 ### Architecture
 - [ ] No unit tests for `generateSceneActions` merge logic specifically
 - [ ] AI contextual actions are not persisted across sessions (regenerated each turn)
 - [ ] No max cap on contextual actions (AI could suggest many)
+- [ ] Feedback stored in-memory only (last 500 entries, lost on restart)
 
 ---
 
 ## Next Steps
-- [ ] Audit Acts 4-5 manifests for missing discovery texts
+- [ ] Playtest full Dracula adventure end-to-end with real LLM
+- [ ] Monitor first wave of beta tester feedback
+- [ ] Audit Frankenstein and Holmes manifests for the same bug patterns
 - [ ] Add unit tests for the Option B merge logic
-- [ ] Playtest full Dracula adventure end-to-end
 - [ ] Consider adding "garlic oil" as a tracked inventory item
-- [ ] Add voice/TTS integration for narration
+- [ ] Consider persisting feedback to disk for durability
+- [ ] Rotate ADMIN_KEY after initial testing confirms everything works
