@@ -40,7 +40,7 @@ Inside, the entrance hall is panelled in dark oak. Portraits line the walls — 
     hardExitNarration: 'Barrymore leads you up the main staircase, past more portraits, past windows that look out onto nothing but moor. "Supper will be at eight, sir," he says, and leaves you in a room where the fire has been lit but cannot quite drive out the cold.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: ['barrymore', 'sir_henry'],
+      metNPCs: ['barrymore', 'mrs_barrymore', 'sir_henry'],
       established: ['arrived at Baskerville Hall', 'the Hall is ancient and imposing', 'portraits line the walls', 'Mrs. Barrymore has been weeping', 'Hugo Baskerville portrait resembles someone']
     },
     locationKeywords: {
@@ -190,7 +190,7 @@ A woman appears on the path behind him — younger, dark-haired, striking. She m
     hardExitNarration: 'Stapleton collects his butterfly net and offers a final warm smile. "You must come to Merripit House for dinner," he says. "We are lonely out here." He takes Beryl\'s arm — firmly, you notice, not gently — and they walk away across the heather. Beryl does not look back. But at the gate, she turns, just for a moment, and her expression is unmistakable: pure, desperate fear.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: [],
+      metNPCs: ['stapleton', 'beryl'],
       established: ['met Jack Stapleton, naturalist neighbour', 'met Beryl Stapleton (his sister)', 'Beryl warned to leave the moor', 'Stapleton resembles Hugo Baskerville portrait', 'Stapleton knew Sir Charles']
     },
     locationKeywords: {
@@ -240,7 +240,7 @@ Behind you, a shout. Sir Henry has followed you. And Selden is running.`,
     hardExitNarration: 'The moor is quiet now. Selden has vanished into the darkness, and the answering light has gone out. You walk back to the Hall through the cold predawn air, your mind racing. Barrymore\'s secret is out. But it does not explain the howling. It does not explain the paw prints. It does not explain the terror on the face of a man who has killed before and fears something worse than death.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: ['barrymore'],
+      metNPCs: ['barrymore', 'selden', 'sir_henry'],
       established: ['Selden the convict is on the moor', 'Barrymore signals to Selden', 'Mrs. Barrymore is Selden\'s sister', 'Selden is terrified of something on the moor', 'enormous paw prints near Selden\'s camp']
     },
     locationKeywords: {

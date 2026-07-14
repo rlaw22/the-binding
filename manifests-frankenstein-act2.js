@@ -49,11 +49,11 @@ The switch is cold under your hand.`,
       }
     ],
     exitAction: 'animate_creature',
-    exitLabel: 'Pull the switch and bring the creature to life',
-    hardExitNarration: 'The switch falls. Lightning screams through the apparatus. The creature\'s eyes open — pale, blue, and alive. They find your face. They focus. And in that moment, the laboratory, the university, the world itself contracts to a single point: the horror in those newborn eyes, and the horror in your own.',
+    exitLabel: 'Face the horror of what you have created',
+    hardExitNarration: 'You stumble backward. The creature breathes. Its eyes follow you. And you know — with a certainty that turns your blood to ice — that you cannot stay here. You cannot be near this thing you have made. The door is behind you. Ten steps. You take them.',
     initialFacts: {
-      items: ['journal', 'voltaic apparatus'],
-      metNPCs: ['victor frankenstein'],
+      items: ['journal'],
+      metNPCs: ['victor frankenstein', 'elizabeth', 'caroline frankenstein', 'alphonse frankenstein', 'professor waldman', 'professor krempe'],
       established: ['laboratory is ready', 'creature is assembled', 'voltaic apparatus is charged', 'Victor is alone']
     },
     locationKeywords: {
@@ -155,7 +155,7 @@ You cannot tell him. The words will not come. You open your mouth and the creatu
       }
     ],
     exitAction: 'fall_ill',
-    exitLabel: 'Give in to the fever and collapse',
+    exitLabel: 'Give in to the fever and let collapse take you',
     hardExitNarration: 'The fever takes you like a wave. For weeks, you burn — raving, shaking, calling out names that Clerval does not recognize. He tends you through every hour, changing your sheets, forcing broth between your lips, listening to your nightmares. When you finally wake, clear-headed and weak as a child, the first thing you see is Clerval\'s face, drawn with worry but smiling. "Welcome back," he says. "You have been gone a long time."',
     initialFacts: {
       items: ['journal'],

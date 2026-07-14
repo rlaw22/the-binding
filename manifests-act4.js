@@ -169,8 +169,6 @@ module.exports = {
         "crucifix",
         "jonathan journal",
         "holy water",
-        "garlic",
-        "communion wafers"
       ],
       metNPCs: [
         "innkeeper",
@@ -373,13 +371,12 @@ module.exports = {
       }
     ],
     exitAction: "flee_safe_house",
-    exitLabel: "Run through the safe house back door as the wolves close in",
+    exitLabel: "Run through the back door before the wolves break in",
     hardExitNarration: "The wolves breach the front door as you climb through the back window. Rain hammers the streets. Lightning illuminates the alley in strobing white, and for one frozen second, you see him — standing on the roof of the building opposite, his cloak billowing in a wind that touches nothing else. Dracula. Watching. Smiling. Then the lightning dies and he is gone, and you are running through London's midnight streets with the howling at your back.",
     initialFacts: {
       items: [
         "crucifix",
-        "jonathan journal",
-        "holy water"
+        "jonathan journal"
       ],
       metNPCs: [
         "innkeeper",
@@ -477,13 +474,12 @@ module.exports = {
       }
     ],
     exitAction: "leave_church",
-    exitLabel: "Get the group ready for the final hunt into the caves beneath Whitby",
+    exitLabel: "Get ready for the final hunt into the caves beneath Whitby",
     hardExitNarration: "Mina stands at the church door, wrapped in a borrowed shawl, her face pale but set with iron determination. 'I will lead you to him,' she says. 'And when you find him — when you raise the stake — do not hesitate. Do not look at my face. Because what he shows you will not be me.' She takes your hand one last time. Outside, the sun is setting over the North Sea, painting the sky in blood and gold. The hunt begins at dark.",
     initialFacts: {
       items: [
         "crucifix",
-        "jonathan journal",
-        "holy water"
+        "jonathan journal"
       ],
       metNPCs: [
         "innkeeper",

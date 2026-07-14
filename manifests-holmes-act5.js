@@ -43,8 +43,8 @@ From somewhere beneath the surface, from somewhere deep in the acid peat and the
     exitLabel: 'Walk back from the Mire with Holmes',
     hardExitNarration: 'Holmes turns from the bog and walks back toward solid ground. You follow. The fog is lifting, and the moor is emerging from the whiteness — the purple heather, the grey tors, the vast, indifferent sky. Behind you, the Grimpen Mire waits, green and silent, keeping its secrets.',
     initialFacts: {
-      items: [],
-      metNPCs: ['holmes'],
+      items: ['webley revolver', 'phosphorus sample'],
+      metNPCs: ['holmes', 'lestrade'],
       established: ['Stapleton fell into the Grimpen Mire', 'the Mire has swallowed him', 'Stapleton carried forged identity documents', 'the case is effectively over']
     },
     locationKeywords: {
@@ -186,7 +186,7 @@ The train gathers speed. The green hills give way to the flatlands of Somerset, 
       }
     ],
     exitAction: 'arrive_paddington',
-    exitLabel: 'Get off the train at Paddington Station',
+    exitLabel: 'Step off the train at Paddington Station',
     hardExitNarration: 'The train shudders to a halt. Holmes stands, collects his bag, and steps onto the platform with the easy grace of a man returning to familiar territory. "Come, Watson," he says. "Mrs. Hudson will have tea waiting, and I have a violin that has been neglected for far too long." He strides toward the exit, and you follow, and the noise of London swallows you both.',
     initialFacts: {
       items: [],

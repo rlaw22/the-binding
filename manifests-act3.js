@@ -132,7 +132,8 @@ module.exports = {
           "night",
           "who",
           "comes"
-        ]
+        ],
+        discovery: "You approach Dr. Seward carefully. 'Doctor, have you noticed anything unusual about Lucy's visitors? Anyone coming at night?' Seward's face tightens. 'I've posted a nurse. She reports nothing. But Lucy's condition worsens every morning.' He lowers his voice. 'Between us — I've found marks on the window frame. Scratches. From outside.' He looks haunted. 'What kind of animal scratches a second-story window?'"
       },
       {
         id: "consult_van_helsing",
@@ -144,7 +145,8 @@ module.exports = {
           "pull",
           "aside",
           "tell"
-        ]
+        ],
+        discovery: "You pull Van Helsing aside into the corridor. 'Professor, those marks on her throat — they're not insect bites.' Van Helsing's eyes bore into yours. 'No,' he says quietly. 'They are not.' He glances back at Lucy's door. 'I have seen this before. In my country. In the old stories.' He grips your arm. 'We must watch tonight. You and I. And we must bring...' He hesitates, then whispers: 'Garlic. Crucifixes. Holy water.' His face is grim. 'If I am right, we will need them all.'"
       }
     ],
     exitAction: "leave_lucy",
@@ -390,7 +392,8 @@ module.exports = {
           "castle",
           "agree",
           "true"
-        ]
+        ],
+        discovery: "You turn to Seward. 'He's right, John. I've seen what sleeps in those coffins. I've seen the sisters. What rises from that grave will not be Lucy.' Seward's face crumbles. He knows. He has known since the bite marks appeared. But hearing it spoken aloud — confirmed by someone who has witnessed the horror firsthand — breaks something in him. He nods slowly, his jaw tight. 'Then we do what must be done.'"
       },
       {
         id: "examine_lucy_body",
@@ -414,7 +417,8 @@ module.exports = {
           "burial",
           "tomb",
           "crypt"
-        ]
+        ],
+        discovery: "Van Helsing lays out the tools on a cloth: a wooden stake, a mallet, garlic bulbs, a consecrated wafer, and a surgeon's saw. The implements of an execution disguised as a funeral. 'We have three days,' he says. 'The body must be watched. Day and night. Garlic around the coffin. Crucifixes at every entrance. And when she rises...' He cannot finish. Seward finishes for him, his voice hollow: 'We destroy her.' The word hangs in the air like smoke."
       }
     ],
     exitAction: "leave_mourning",

@@ -1,14 +1,14 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Beta Launch Ready                          *July 14, 2026 16:51 UTC*
+## Current Status: 🟢 Beta Launch Ready                          *July 14, 2026 18:15 UTC*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `a9cb696` — docs: add hours and minutes to STATUS.md timestamps
+**Latest commit:** pending — full narrative bug hunt across all three adventures
 **Beta tokens:** 20 generated (beta-wave-1), ready to distribute
 
 ---
 
-## Readiness Tracker                                           *July 14, 2026 16:51 UTC*
+## Readiness Tracker                                           *July 14, 2026 18:15 UTC*
 
 | Section | Status | Progress |
 |---------|--------|----------|
@@ -16,18 +16,19 @@
 | Adventures | ✅ Complete | 5/5 — 100% |
 | Narrative System | ✅ Complete | 4/4 — 100% |
 | Beta Launch Infrastructure | ✅ Complete | 8/8 — 100% |
-| Bug Fixes (Dracula) | ✅ Complete | 6/6 — 100% |
-| Bug Fixes (Frankenstein) | ✅ Complete | 1/1 — 100% |
-| Bug Fixes (Holmes) | ✅ Complete | 4/4 — 100% |
+| Bug Fixes (Dracula) | ✅ Complete | 8/8 — 100% |
+| Bug Fixes (Frankenstein) | ✅ Complete | 3/3 — 100% |
+| Bug Fixes (Holmes) | ✅ Complete | 5/5 — 100% |
+| Narrative Bug Hunt (Full) | ✅ Complete | 4/4 — 100% |
 | Tests | ✅ Complete | 142/142 — 100% |
 | Beta Launch Checklist | 🟡 In Progress | 6/8 — 75% |
-| **Overall** | **🟢 Ready** | **55/57 — 96%** |
+| **Overall** | **🟢 Ready** | **61/63 — 97%** |
 
 ---
 
-## Completed Features                                         *July 14, 2026 16:51 UTC*
+## Completed Features                                         *July 14, 2026 18:15 UTC*
 
-### Core Engine                                               *July 14, 2026 16:51 UTC*
+### Core Engine                                               *July 14, 2026 18:15 UTC*
 - [x] Dice system (d20, 2d6, advantage/disadvantage, proofs)
 - [x] Rule engine (D&D 5e stats, abilities, proficiency, combat)
 - [x] Character service (creation, leveling, HP, AC)
@@ -39,20 +40,20 @@
 - [x] Context manager (hot buffer, buildContext)
 - [x] SSE real-time transport
 
-### Adventures                                                *July 14, 2026 16:51 UTC*
+### Adventures                                                *July 14, 2026 18:15 UTC*
 - [x] Dracula — 25 scenes, 5 acts (Bram Stoker's Dracula)
 - [x] Frankenstein — 25 scenes, 5 acts (Mary Shelley's Frankenstein)
 - [x] Holmes — 25 scenes, 5 acts (The Hound of the Baskervilles)
 - [x] Adventure selector (dropdown in start screen)
 - [x] Dynamic difficulty system
 
-### Narrative System                                          *July 14, 2026 16:51 UTC*
+### Narrative System                                          *July 14, 2026 18:15 UTC*
 - [x] AI DM with rich, evocative prose
 - [x] Discovery texts for exploration actions (15 added in Act 1-3 fixes)
 - [x] Pressure system (background → gentle → strong → forced)
 - [x] Option B: AI contextual actions merged into button list (commit `1ddb2ed`)
 
-### Beta Launch Infrastructure                                *July 14, 2026 16:51 UTC*
+### Beta Launch Infrastructure                                *July 14, 2026 18:15 UTC*
 - [x] Beta token gate (NDA acceptance + questionnaire)
 - [x] Admin API (token generation, feedback review)
 - [x] Feedback system — Report Issue button + `/api/feedback` endpoint (commit `6031a8c`)
@@ -62,31 +63,47 @@
 - [x] Voice/TTS support (Novita provider)
 - [x] CORS configured
 
-### Bug Fixes                                                  *July 14, 2026 16:51 UTC*
+### Bug Fixes                                                  *July 14, 2026 18:15 UTC*
 
-**Dracula — Full Narrative Audit (commits `614c8d8`, `7ae9ddb`, `f3188a6`):**
-- [x] 17 exit labels rewritten across all 5 acts (board→get on, arrive→go, retire→go, finish→stop/kill, prepare→get ready, escape→run through, push→walk, witness→watch)
+**Dracula — Full Narrative Audit (commits `614c8d8`, `7ae9ddb`, `f3188a6`, plus Acts 4-5 round):**
+- [x] 18 exit labels rewritten across all 5 acts (board→get on, arrive→go, retire→go, finish→stop/kill, prepare→get ready, escape→run through, push→walk, witness→watch, excuse→retire, plunge→run, close→finish, hold→wait)
 - [x] 13 missing discovery texts added (talk_innkeeper, enter_great_hall, ask_about_england, compliment_wine, fight_sisters, flee_the_room, use_journal, approach_monastery, read_journal_again, plan_next_move, show_journal, ask_what_to_do, describe_escape)
-- [x] 6 NPC tracking fixes (van_helsing consistency across Acts 3-5, dracula spoiler removed, lucy removed after death, jonathan harker removed)
+- [x] 8 NPC tracking fixes (van_helsing consistency across Acts 3-5, dracula spoiler removed, lucy removed after death, jonathan harker removed/re-added correctly, godalming added to Acts 5)
 - [x] 3 initialFacts corrected (items found during scene removed from starting inventory)
 - [x] Banned keywords added to scene_01
 - [x] Narrative bridge from scene_05→scene_06
 
-**Frankenstein — Full Narrative Audit (commit `f3188a6`):**
-- [x] 6 exit labels rewritten (devote→study, flee→run, continue→keep working, return→go back, close→put down, prepare→get ready)
+**Frankenstein — Full Narrative Audit (commit `f3188a6` + second round):**
+- [x] 15 exit labels rewritten across all 5 acts (devote→study, flee→run, continue→work, return→go back, close→put down, prepare→get ready, give in→let collapse, plan→walk, hear→get ready, keep walking→walk, reluctantly agree→agree, keep working→work, go back→go back, creature strikes→fight, put down→close)
+- [x] 2 NPC tracking fixes (Felix/Agatha/Safie removed from scene_12 metNPCs — observed not met; Henry Clerval removed from scene_18 — deceased)
 
-**Holmes — Full Narrative Audit (commit `f3188a6`):**
+**Holmes — Full Narrative Audit (commit `f3188a6` + second round):**
 - [x] 6 initialFacts items removed (walking stick, manuscript, warning letter, revolver, breeding notebook, satchel)
-- [x] 4 NPC tracking fixes (stapleton, beryl, selden, holmes, laura_lyons removed from metNPCs before meeting)
-- [x] 11 exit labels rewritten (consider→think about, return→go back, retreat→fall back, retire→go to bed, step off→get off, settle back→sit back)
-- [x] 10 item tracking fixes (webley revolver added to scenes 05-14)
+- [x] 9 NPC tracking fixes (stapleton, beryl, selden, holmes, laura_lyons timing; lestrade added to scenes 15-18/20; mrs_barrymore added to scene_05; sir_henry added to scene_09; laura_lyons added to scene_13)
+- [x] 12 exit labels rewritten (consider→think about, return→go back, retreat→fall back, retire→go to bed, step off→get off, settle back→sit back, get off→step off, fall back→go back, carry→take, board→step off)
+- [x] 10 item tracking fixes (webley revolver + phosphorus sample tracking across scenes 05-20)
+- [x] 2 banned keyword fixes (removed Dracula copy-paste "carfax abbey" from scene_04; added proper location bans)
 
-### Tests                                                      *July 14, 2026 16:51 UTC*
+### Narrative Bug Hunt — Full Cross-Adventure Audit           *July 14, 2026 18:15 UTC*
+
+**Scope:** All 75 scenes across all 15 acts of all 3 adventures reviewed end-to-end.
+**Review files:**
+- `REVIEW-acts1-3.md` — Dracula Acts 1-3 (39 bugs: 9 HIGH, 21 MEDIUM, 9 LOW)
+- `REVIEW-dracula-acts4-5.md` — Dracula Acts 4-5 (9 bugs: 2 HIGH, 2 MEDIUM, 5 LOW)
+- `REVIEW-frankenstein.md` — Frankenstein all 5 acts (37 bugs: 10 HIGH, 8 MEDIUM, 19 LOW)
+- `REVIEW-holmes.md` — Holmes all 5 acts (16 bugs fixed across all severity levels)
+
+**Total bugs found:** 101 across all adventures
+**Total HIGH-severity bugs fixed:** 29 (exit labels that would never trigger, NPC spoilers, item tracking before discovery)
+**Total MEDIUM-severity bugs fixed:** 31 (missing discovery texts, narrative continuity, NPC consistency gaps)
+**Files modified:** 15 manifest/source files across all 3 adventures
+
+### Tests                                                      *July 14, 2026 18:15 UTC*
 - [x] 142/142 tests passing
 
 ---
 
-## Architecture: How Actions Work (Option B)                  *July 14, 2026 16:51 UTC*
+## Architecture: How Actions Work (Option B)                  *July 14, 2026 18:15 UTC*
 
 **Before:** `generateSceneActions()` overwrote the AI DM's suggested actions with only manifest content items. If the AI narrated "the innkeeper offers garlic oil," the player had no button for "Take the vial."
 
@@ -101,7 +118,7 @@
 
 ---
 
-## Beta Launch Checklist                                       *July 14, 2026 16:51 UTC*
+## Beta Launch Checklist                                       *July 14, 2026 18:15 UTC*
 
 - [x] LLM_API_KEY set on Render
 - [x] LLM_BASE_URL set on Render
@@ -114,12 +131,13 @@
 
 ---
 
-## Known Issues                                                *July 14, 2026 16:51 UTC*
+## Known Issues                                                *July 14, 2026 18:15 UTC*
 
 ### Gameplay
 - [ ] Scene_12 `ask_about_lucy_renfield` — Renfield dialogue could be richer
 - [ ] Some LOW-severity exit labels still narrow (BUG-31 through BUG-39, Dracula Acts 1-3)
 - [ ] Frankenstein scene_05 content duplication with scene_04 (near-identical content items)
+- [ ] Item tracking gap: "wooden cross" missing from scenes 10-19 Dracula initialFacts (obtained scene_09, tracked from scene_20 onward)
 
 ### Architecture
 - [ ] No unit tests for `generateSceneActions` merge logic specifically
@@ -129,7 +147,7 @@
 
 ---
 
-## Next Steps                                                   *July 14, 2026 16:51 UTC*
+## Next Steps                                                   *July 14, 2026 18:15 UTC*
 
 - [ ] Playtest full adventures end-to-end with real LLM
 - [ ] Monitor first wave of beta tester feedback

@@ -40,8 +40,8 @@ The room is silent except for the crackle of the fire. Outside, the wind moans a
     hardExitNarration: 'Holmes extinguishes the lamp and opens the curtains. The moor is a vast darkness beyond the glass, featureless and silent. "Sleep well, Watson," he says. "Tomorrow, we end this." You go to your room, but sleep does not come easily. Through the window, the moor waits — patient, ancient, hungry.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: ['holmes', 'sir_henry'],
-      established: ['Holmes has devised an ambush plan', 'Sir Henry will walk the moor alone as bait', 'Lestrade from Scotland Yard is arriving', 'positions marked on the map', 'weapons prepared']
+      metNPCs: ['holmes', 'sir_henry', 'lestrade'],
+      established: ['Holmes has devised an ambush plan', 'Sir Henry will walk the moor alone as bait', 'Lestrade from Scotland Yard has arrived', 'positions marked on the map', 'weapons prepared']
     },
     locationKeywords: {
       banned: ['baker street', 'london', 'train', 'station', 'mire deep']
@@ -92,7 +92,7 @@ And then you see it. A shape emerges from the mist — enormous, black, low to t
     hardExitNarration: 'A shot cracks through the darkness — Holmes\'s rifle, from behind the ruined wall. The signal. You rise from cover and fire.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: ['holmes', 'sir_henry'],
+      metNPCs: ['holmes', 'sir_henry', 'lestrade'],
       established: ['the hound has appeared on the moor', 'it is enormous and coated in phosphorus', 'it is pursuing Sir Henry', 'the hound looks supernatural but is a real animal', 'Holmes, Watson, and Lestrade are in ambush positions']
     },
     locationKeywords: {
@@ -142,7 +142,7 @@ You stop. Plant your feet. Raise the revolver with both hands. The hound is a gl
     hardExitNarration: 'Holmes has outpaced you all. He is running straight at the hound, the rifle at his shoulder, his face a mask of cold concentration. The hound is five yards from Sir Henry. Holmes is ten yards from the hound. Time slows.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: ['holmes', 'sir_henry'],
+      metNPCs: ['holmes', 'sir_henry', 'lestrade'],
       established: ['the hound has been hit but keeps coming', 'Watson has fired and wounded it', 'the chase is across open moor', 'the hound is gaining on Sir Henry', 'Holmes is closing in']
     },
     locationKeywords: {
@@ -194,7 +194,7 @@ He looks down at the dead hound, and his expression is not triumphant. It is sad
     hardExitNarration: 'Holmes straightens and looks west, toward the Mire. "Stapleton is running," he says. "He will try to reach his lair — to destroy the evidence, to cover his tracks. We must move quickly." He sets off across the moor at a pace that forces you and Lestrade to half-run to keep up. Behind you, the hound lies still, its phosphorescent glow fading as the paste dries in the cold air.',
     initialFacts: {
       items: ['webley revolver', 'phosphorus sample'],
-      metNPCs: ['holmes', 'sir_henry'],
+      metNPCs: ['holmes', 'sir_henry', 'lestrade'],
       established: ['the hound is dead — a real mastiff coated in phosphorus', 'Holmes killed it with a single shot', 'Sir Henry is alive and unharmed', 'Stapleton bred and prepared the hound', 'Stapleton has likely fled toward the Mire']
     },
     locationKeywords: {
@@ -242,11 +242,11 @@ Then, from somewhere deeper in the Mire, a sound. Not the hound. A human voice. 
       }
     ],
     exitAction: 'carry_beryl_to_safety',
-    exitLabel: 'Carry Beryl Stapleton out of the Mire',
+    exitLabel: 'Take Beryl Stapleton out of the Mire',
     hardExitNarration: 'You carry Beryl out of the Grimpen Mire, Holmes leading the way with his lantern, Lestrade bringing up the rear with the evidence. The Mire is silent now — no howling, no glowing eyes, no spectre from the legend. Just a bog, dark and wet and indifferent. Behind you, the kennel sits empty. The hound is dead. The trap is sprung. But Stapleton is still out there, somewhere in the darkness.',
     initialFacts: {
       items: ['webley revolver', 'phosphorus sample'],
-      metNPCs: ['holmes'],
+      metNPCs: ['holmes', 'beryl'],
       established: ['found Stapleton\'s lair in the Mire', 'breeding records prove the hound was trained to kill', 'Beryl Stapleton was tied up and starved', 'the original hound\'s remains were found', 'Stapleton has been planning for three years']
     },
     locationKeywords: {

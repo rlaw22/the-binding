@@ -204,11 +204,11 @@ He arrives within the hour, and the examination begins.`,
     hardExitNarration: 'Holmes ushers you and Sir Henry out of the hotel and into a waiting cab. As the cab rattles toward Baker Street, Holmes is unusually quiet. His eyes are distant, his fingers drumming on his knee. At last he speaks: "Watson, the game is afoot. Someone is watching Sir Henry — watching him closely — and that someone has access to his private rooms. We are not dealing with a legend, Watson. We are dealing with a very real, very present danger."',
     initialFacts: {
       items: ['mortimer walking stick', 'baskerville manuscript'],
-      metNPCs: ['holmes', 'watson', 'mortimer', 'sir_henry'],
+      metNPCs: ['holmes', 'watson', 'sir_henry'],
       established: ['a brown boot has been stolen from Sir Henry\'s hotel room', 'only one boot was taken — not a pair', 'no sign of forced entry', 'someone with access to the hotel took it', 'Holmes believes someone is watching Sir Henry closely']
     },
     locationKeywords: {
-      banned: ['dartmoor', 'moor', 'baskerville hall', 'grimpen', 'mire']
+      banned: ['dartmoor', 'moor', 'baskerville hall', 'grimpen', 'mire', 'train', 'station']
     }
   },
 
@@ -258,12 +258,12 @@ Holmes extends his hand. "Then God speed, Sir Henry. Watson — keep your eyes o
     exitLabel: 'Board the train at Paddington Station',
     hardExitNarration: 'The train pulls out of Paddington at ten-fifteen, and London begins to recede — the grey terraces, the gas works, the spires and chimneys of the city dissolving into the soft green hills of the West Country. Sir Henry sits opposite you, his face set toward the window, watching the countryside change. Beside you, Dr. Mortimer dozes with his chin on his chest. The train gathers speed, and the moor draws closer — mile by mile, station by station, the landscape growing wilder, emptier, darker. By late afternoon, the heather begins. Purple, vast, stretching to the horizon. The moor. And somewhere on it, waiting, the house that has killed one Baskerville and may yet kill another.',
     initialFacts: {
-      items: ['mortimer walking stick', 'baskerville manuscript', 'anonymous warning letter'],
+      items: ['mortimer walking stick', 'baskerville manuscript', 'anonymous warning letter', 'webley revolver'],
       metNPCs: ['holmes', 'watson', 'mortimer', 'sir_henry'],
       established: ['Holmes is staying in London to investigate the London clues', 'Watson is going to Dartmoor with Sir Henry', 'Holmes has instructed Watson to observe everything and write daily', 'the moor is dangerous at night', 'the Barrymores are the servants at the Hall', 'Holmes suspects a human intelligence behind the events']
     },
     locationKeywords: {
-      banned: ['baker street', 'london', 'northumberland hotel', 'carfax abbey']
+      banned: ['dartmoor', 'moor', 'baskerville hall', 'grimpen', 'mire', 'stone circle']
     }
   }
 };

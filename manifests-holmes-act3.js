@@ -40,7 +40,7 @@ You hear a footstep behind you. "I rather thought you might find your way here, 
     hardExitNarration: 'Holmes gathers his pipe and newspapers with practised efficiency. "Come, Watson. We have work to do. Stapleton will be heading for the Mire soon, and I want to be in position." He pulls his hat low and leads you out of the hut, moving across the moor with the easy stride of a man who has been living on it for days.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: [],
+      metNPCs: ['holmes'],
       established: ['Holmes has been hiding on the moor in disguise', 'Holmes has been watching Stapleton', 'Stapleton goes to the Grimpen Mire every evening', 'Stapleton has a large dog', 'Holmes found by Watson at Bronze Age hut']
     },
     locationKeywords: {
@@ -110,7 +110,7 @@ He crouches and points. In the soft earth beside the path: paw prints. Enormous.
         id: 'follow_paw_prints',
         label: 'Follow the paw prints deeper into the Mire',
         keywords: ['paw', 'prints', 'follow', 'track', 'mire', 'deeper', 'hound', 'dog'],
-        discovery: 'You follow the prints, stepping carefully from tussock to tussock. The prints are enormous — each one the size of a dinner plate, sunk deep into the peat. Whatever made them is heavy. Very heavy. The prints lead along a winding path that avoids the worst of the bogs, as if the creature knows the Mire intimately. After two hundred yards, the prints stop at the edge of a patch of dense gorse. Beyond the gorse, you can see the faint outline of a structure — a low building, half-buried in the vegetation. A kennel. A very large kennel.'
+        discovery: 'You follow the prints, stepping carefully from tussock to tussock. The prints are enormous — each print as wide as a man's spread hand, sunk deep into the peat. Whatever made them is heavy. Very heavy. The prints lead along a winding path that avoids the worst of the bogs, as if the creature knows the Mire intimately. After two hundred yards, the prints stop at the edge of a patch of dense gorse. Beyond the gorse, you can see the faint outline of a structure — a low building, half-buried in the vegetation. A kennel. A very large kennel.'
       },
       {
         id: 'examine_pony_death',
@@ -132,7 +132,7 @@ He crouches and points. In the soft earth beside the path: paw prints. Enormous.
       }
     ],
     exitAction: 'leave_mire',
-    exitLabel: 'Fall back from the Mire before dark',
+    exitLabel: 'Go back from the Mire before dark',
     hardExitNarration: 'Holmes checks the sky. The sun is low, the shadows lengthening across the heather. "We must go," he says. "Stapleton will be coming soon, and I do not want him to know we have found his path." He leads you back along the cairned route, each step careful, deliberate, until the solid ground of the moor is beneath your feet again. Behind you, the Mire waits — green, silent, bottomless.',
     initialFacts: {
       items: ['webley revolver'],
@@ -186,7 +186,7 @@ She tells you the story in a flat, exhausted voice. Stapleton approached her a y
     hardExitNarration: 'Laura shows you to the door. Her face is grey, her eyes hollow. "What will happen to me?" she asks. You tell her the truth will protect her. She nods, but she does not look convinced. As you walk back through Grimpen, the evening mist is rising from the Mire, and somewhere in the gathering dark, a dog is barking — deep, resonant, hungry.',
     initialFacts: {
       items: ['webley revolver'],
-      metNPCs: [],
+      metNPCs: ['laura_lyons'],
       established: ['Laura Lyons wrote to Sir Charles on the night he died', 'Stapleton used Laura to lure Sir Charles to the gate', 'Stapleton promised Laura marriage but never intended it', 'Laura was not at the meeting — she stayed home', 'Stapleton told Laura to keep silent about the letter']
     },
     locationKeywords: {

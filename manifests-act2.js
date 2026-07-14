@@ -243,7 +243,7 @@ module.exports = {
       }
     ],
     exitAction: "close_journal",
-    exitLabel: "Stop reading and plan your escape",
+    exitLabel: "Close the journal and figure out how escape",
     hardExitNarration: "The shadows are growing longer. The Count will wake soon. You cannot be here when he does. You tuck the journal inside your coat and move toward the window.",
     initialFacts: {
       items: [

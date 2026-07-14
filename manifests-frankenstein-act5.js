@@ -45,7 +45,7 @@ And then you hear it — a sound from below. A window opening. A footstep on the
       }
     ],
     exitAction: 'creature_strikes',
-    exitLabel: 'The creature strikes',
+    exitLabel: 'Fight the creature as it strikes',
     hardExitNarration: 'The creature moves with a speed that your eyes cannot follow. One moment it is in the doorway. The next, it is beside you, and the pistol is on the floor, and your wrist is broken, and you are on your knees. It does not look at you. It looks toward the closet — toward the sound of Elizabeth\'s voice, muffled, terrified, calling your name. "I told you," it says again. "I told you what I would do." It turns and walks to the closet door. You scream. You scream and you crawl toward it and you try to stand, but your wrist is broken and your legs will not hold you. The creature opens the closet door. Elizabeth stands there, her face white, her eyes wide, her hands raised. The creature reaches for her. And the world ends.',
     initialFacts: {
       items: ['journal', 'elizabeth\'s letter', 'pistol'],
@@ -253,7 +253,7 @@ It sees you through the window. It does not attack. It does not threaten. It spe
       }
     ],
     exitAction: 'adventure_end',
-    exitLabel: 'Put down Victor\'s journal and think about what you have learned',
+    exitLabel: 'Close Victor\'s journal and reflect on what you have learned',
     hardExitNarration: 'You close the journal. The cabin is quiet. Victor\'s body lies in the bunk, peaceful at last. Outside, the ice creaks and the wind howls and the ship waits for the thaw that will carry you home. You sit at the desk and pick up your pen and begin to write — not to anyone in particular, but to the world. "I have heard a story," you write, "that has changed everything I believe about the nature of life, the limits of ambition, and the consequences of playing God. I tell it now so that others may learn. So that others may be warned. So that the creature\'s suffering — and its creator\'s — will not have been in vain." You write through the night. And when dawn comes, grey and cold over the ice, you are still writing. The story must be told. The lesson must be learned. And the creature — somewhere on the ice, building its pyre — must be remembered.',
     initialFacts: {
       items: ['journal', 'pistol', 'knife', 'compass'],

@@ -155,11 +155,11 @@ On the desk, under a stack of papers, lies a letter from your father. You have n
       }
     ],
     exitAction: 'continue_work',
-    exitLabel: 'Continue the work that consumes you',
+    exitLabel: 'Push deeper into the work that consumes you',
     hardExitNarration: 'The candle burns low. The shadows lengthen. You work through the night, as you have worked through every night for months, and when dawn comes you do not notice. The creature is taking shape. Piece by piece, part by part, assembled from the dead and animated by the science of the living. You are close. So close. And you are so far from the man you used to be that you cannot see him anymore.',
     initialFacts: {
       items: ['Agrippa\'s De Occulta Philosophia', 'Waldman\'s galvanism notes'],
-      metNPCs: ['victor frankenstein'],
+      metNPCs: ['victor frankenstein', 'elizabeth', 'caroline frankenstein', 'alphonse frankenstein', 'professor waldman', 'professor krempe'],
       established: ['months have passed', 'Victor is consumed by obsession', 'Waldman is dead', 'Victor has not contacted his family', 'Victor gathers materials from charnel houses and slaughterhouses', 'the creature is being assembled']
     },
     locationKeywords: {
@@ -207,8 +207,8 @@ You stand over the creature, your shadow falling across its face, and you realiz
     exitLabel: 'Make the final preparations for the animation',
     hardExitNarration: 'You close the skylight and climb down the ladder. The laboratory is lit by a single oil lamp and the stuttering blue-white glare of the voltaic apparatus. The storm is almost here. The creature lies on the table, waiting. Your hand rests on the copper switch. Your heart hammers. And you think of your mother, dead. Of Elizabeth, waiting. Of the face that will open its eyes and look at you with the trust of a child for its parent. God forgive me, you whisper. And you wait for the lightning.',
     initialFacts: {
-      items: ['journal', 'voltaic apparatus'],
-      metNPCs: ['victor frankenstein'],
+      items: ['journal'],
+      metNPCs: ['victor frankenstein', 'elizabeth', 'caroline frankenstein', 'alphonse frankenstein', 'professor waldman', 'professor krempe'],
       established: ['the creature is fully assembled', 'the laboratory is ready', 'a storm is approaching', 'Victor is isolated and exhausted', 'the voltaic apparatus is charged']
     },
     locationKeywords: {
@@ -266,8 +266,8 @@ And because you cannot turn back.`,
     exitLabel: 'Pull the switch and bring the creature to life',
     hardExitNarration: 'The switch falls. Lightning screams through the apparatus. The creature\'s eyes open — pale, blue, and alive. They find your face. They focus. And in that moment, the laboratory, the university, the world itself contracts to a single point: the horror in those newborn eyes, and the horror in your own.',
     initialFacts: {
-      items: ['journal', 'voltaic apparatus'],
-      metNPCs: ['victor frankenstein'],
+      items: ['journal'],
+      metNPCs: ['victor frankenstein', 'elizabeth', 'caroline frankenstein', 'alphonse frankenstein', 'professor waldman', 'professor krempe'],
       established: ['the storm has arrived', 'the creature is on the table', 'the voltaic apparatus is ready', 'Victor is alone with his creation', 'the electrodes are attached']
     },
     locationKeywords: {

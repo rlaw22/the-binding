@@ -102,7 +102,7 @@ You live in the lean-to attached to the cottage wall. Through a crack in the boa
       }
     ],
     exitAction: 'approach_family',
-    exitLabel: 'Plan to walk up to the family and show yourself',
+    exitLabel: 'Walk up to the family and show yourself',
     hardExitNarration: 'You return to your lean-to with a decision made. You will approach the old man — the blind one. He cannot see your face. He cannot recoil from your appearance. He will hear your words, your educated, careful words, and he will judge you by what you say, not by what you look like. Tomorrow. You will go tomorrow.',
     initialFacts: {
       items: [],
@@ -157,12 +157,12 @@ The old man smiles. "Enter, friend. You are welcome in this house."`,
       }
     ],
     exitAction: 'family_returns',
-    exitLabel: 'Hear the family returning and get ready to meet them',
+    exitLabel: 'Get ready to meet the returning family',
     hardExitNarration: 'The sound of footsteps on the path. Voices — Felix\'s laugh, Agatha\'s singing, Safie\'s accented French. The old man brightens. "My children return! Come, let me introduce you —" But you are already on your feet, your heart hammering, your hands shaking. The door opens. Felix sees you first. His face goes white. His mouth opens. And then he screams.',
     initialFacts: {
-      items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],
-      metNPCs: ['the creature', 'felix de lacey', 'agatha de lacey', 'de lacey (old man)', 'safie'],
-      established: ['creature spoke with the blind old man', 'old man accepted the creature as a friend', 'old man is blind and cannot see the creature', 'family is returning from the market']
+      items: [],
+      metNPCs: ['the creature', 'de lacey (old man)'],
+      established: ['creature spoke with the blind old man', 'old man accepted the creature as a friend', 'old man is blind and cannot see the creature', 'family is returning from the market', 'the creature has read Paradise Lost, Plutarch's Lives, and The Sorrows of Young Werther']
     },
     locationKeywords: {
       banned: ['ingolstadt', 'university', 'laboratory', 'geneva', 'arctic']
@@ -215,9 +215,9 @@ Behind you, the cottage door slams shut. And this time, no one opens it.`,
     exitLabel: 'Run deeper into the forest',
     hardExitNarration: 'You run. The forest swallows you — branch and bramble, shadow and stone. You run until your legs buckle and your lungs burn and the cottage is a memory. You collapse beside a frozen stream and stare at the stars, and in their cold, indifferent light, you make a promise. You will find the man who made you. You will find your creator. And you will demand what every creature deserves: a companion. Someone to love. Someone who will not recoil at the sight of you.',
     initialFacts: {
-      items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],
+      items: [],
       metNPCs: ['the creature', 'felix de lacey', 'agatha de lacey', 'de lacey (old man)', 'safie'],
-      established: ['creature was beaten by Felix', 'creature did not fight back', 'family has rejected the creature', 'creature is devastated', 'creature will seek its creator']
+      established: ['creature was beaten by Felix', 'creature did not fight back', 'family has rejected the creature', 'creature is devastated', 'creature will seek its creator', 'the creature has read Paradise Lost, Plutarch\'s Lives, and The Sorrows of Young Werther']
     },
     locationKeywords: {
       banned: ['ingolstadt', 'university', 'laboratory', 'geneva', 'arctic']
@@ -263,12 +263,12 @@ But you do not despair. Not yet. Because you have a purpose now. You have a dest
       }
     ],
     exitAction: 'journey_to_geneva',
-    exitLabel: 'Keep walking toward Geneva and your creator',
+    exitLabel: 'Walk toward Geneva and your creator',
     hardExitNarration: 'The mountains rise before you — the Alps, white and terrible, their peaks lost in cloud. Beyond them lies Geneva. Beyond Geneva lies the man who made you. You pull your stolen coat tighter and begin to climb. The snow is deep. The wind is cruel. But you are stronger than the wind, and more enduring than the snow, and more determined than the mountain itself. You will find him. You will make him listen. And if he will not give you what you deserve, you will take what he loves.',
     initialFacts: {
-      items: ['Paradise Lost', 'Plutarch\'s Lives', 'The Sorrows of Young Werther'],
+      items: ['Paradise Lost'],
       metNPCs: ['the creature', 'felix de lacey', 'agatha de lacey', 'de lacey (old man)', 'safie'],
-      established: ['creature was rejected by the De Lacey family', 'creature is traveling to find its creator', 'creature has learned language, reading, and human customs', 'creature plans to demand a companion', 'creature is becoming bitter and desperate']
+      established: ['creature was rejected by the De Lacey family', 'creature is traveling to find its creator', 'creature has learned language, reading, and human customs', 'creature plans to demand a companion', 'creature is becoming bitter and desperate', 'the creature has read Plutarch\'s Lives and The Sorrows of Young Werther']
     },
     locationKeywords: {
       banned: ['ingolstadt', 'university', 'laboratory', 'arctic']
