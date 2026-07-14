@@ -1,16 +1,16 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Beta Launch Ready
+## Current Status: 🟢 Beta Launch Ready                          *July 14, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `7ae9ddb` — fix: Acts 4-5 NPC tracking and exit label fixes
+**Latest commit:** `c4a940b` — docs: update STATUS.md — beta launch ready, all tabs refreshed
 **Beta tokens:** 20 generated (beta-wave-1), ready to distribute
 
 ---
 
-## Completed Features
+## Completed Features                                         *July 14, 2026*
 
-### Core Engine
+### Core Engine                                               *July 14, 2026*
 - [x] Dice system (d20, 2d6, advantage/disadvantage, proofs)
 - [x] Rule engine (D&D 5e stats, abilities, proficiency, combat)
 - [x] Character service (creation, leveling, HP, AC)
@@ -22,30 +22,31 @@
 - [x] Context manager (hot buffer, buildContext)
 - [x] SSE real-time transport
 
-### Adventures
+### Adventures                                                *July 14, 2026*
 - [x] Dracula — 25 scenes, 5 acts (Bram Stoker's Dracula)
 - [x] Frankenstein — 25 scenes, 5 acts (Mary Shelley's Frankenstein)
 - [x] Holmes — 25 scenes, 5 acts (The Hound of the Baskervilles)
 - [x] Adventure selector (dropdown in start screen)
 - [x] Dynamic difficulty system
 
-### Narrative System
+### Narrative System                                          *July 14, 2026*
 - [x] AI DM with rich, evocative prose
 - [x] Discovery texts for exploration actions (15 added in Act 1-3 fixes)
 - [x] Pressure system (background → gentle → strong → forced)
-- [x] **Option B: AI contextual actions merged into button list** (commit `1ddb2ed`)
+- [x] Option B: AI contextual actions merged into button list (commit `1ddb2ed`)
 
-### Beta Launch Infrastructure
+### Beta Launch Infrastructure                                *July 14, 2026*
 - [x] Beta token gate (NDA acceptance + questionnaire)
 - [x] Admin API (token generation, feedback review)
-- [x] **Feedback system** — Report Issue button + `/api/feedback` endpoint (commit `6031a8c`)
-- [x] **Error recovery UI** — Reconnect banner + retry on connection loss (commit `6031a8c`)
+- [x] Feedback system — Report Issue button + `/api/feedback` endpoint (commit `6031a8c`)
+- [x] Error recovery UI — Reconnect banner + retry on connection loss (commit `6031a8c`)
 - [x] PWA support (manifest.json + service worker)
 - [x] Rejoin codes for multi-device play
 - [x] Voice/TTS support (Novita provider)
 - [x] CORS configured
 
-### Bug Fixes
+### Bug Fixes                                                  *July 14, 2026*
+
 **Acts 1-3 (commit `614c8d8`):**
 - [x] 6 exit labels rewritten (excuse→retire, plunge→run, return→go back, etc.)
 - [x] 3 initialFacts corrected (items found during scene removed from starting inventory)
@@ -61,12 +62,12 @@
 - [x] Fixed scene_21 exit label: "Push through" → "Walk through"
 - [x] Fixed scene_24 exit label: "Witness the dawn" → "Watch the dawn break"
 
-### Tests
+### Tests                                                      *July 14, 2026*
 - [x] 143/143 tests passing
 
 ---
 
-## Architecture: How Actions Work (Option B)
+## Architecture: How Actions Work (Option B)                  *July 14, 2026*
 
 **Before:** `generateSceneActions()` overwrote the AI DM's suggested actions with only manifest content items. If the AI narrated "the innkeeper offers garlic oil," the player had no button for "Take the vial."
 
@@ -81,7 +82,7 @@
 
 ---
 
-## Beta Launch Checklist
+## Beta Launch Checklist                                       *July 14, 2026*
 
 - [x] LLM_API_KEY set on Render
 - [x] LLM_BASE_URL set on Render
@@ -94,7 +95,7 @@
 
 ---
 
-## Known Issues
+## Known Issues                                                *July 14, 2026*
 
 ### Gameplay
 - [ ] Frankenstein and Holmes manifests not yet audited for exit label / NPC bugs
@@ -109,7 +110,8 @@
 
 ---
 
-## Next Steps
+## Next Steps                                                   *July 14, 2026*
+
 - [ ] Playtest full Dracula adventure end-to-end with real LLM
 - [ ] Monitor first wave of beta tester feedback
 - [ ] Audit Frankenstein and Holmes manifests for the same bug patterns
