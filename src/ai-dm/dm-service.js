@@ -216,6 +216,9 @@ async function processAction(game, playerAction, character) {
   // Parse response for game mechanics
   const parsed = parseDMResponse(cleanResponse);
 
+  // Save AI-suggested actions before generateSceneActions overwrites them
+  const aiSuggestedActions = parsed.suggestedActions;
+
   // Check for scene transition: explicit exit action OR hard exit triggered
   if (game.sceneState) {
     let shouldTransition = false;
@@ -243,7 +246,7 @@ async function processAction(game, playerAction, character) {
       }
       // Regenerate suggested actions from the new scene state
       if (game.sceneState) {
-        parsed.suggestedActions = generateSceneActions(game.sceneState);
+        parsed.suggestedActions = generateSceneActions(game.sceneState, aiSuggestedActions);
       }
       parsed.sceneTransition = {
         sceneId: game.sceneState ? game.sceneState.sceneId : getNextSceneId(game),
@@ -252,9 +255,9 @@ async function processAction(game, playerAction, character) {
     }
   }
 
-  // Generate suggested actions from scene engine
+  // Generate suggested actions from scene engine + AI contextual actions
   if (game.sceneState) {
-    parsed.suggestedActions = generateSceneActions(game.sceneState);
+    parsed.suggestedActions = generateSceneActions(game.sceneState, aiSuggestedActions);
   }
 
   // Score the player's action for coins
@@ -304,7 +307,7 @@ function getNextSceneId(game) {
  * 3 actions from undiscovered content + 1 exit action.
  * Exit position depends on pressure level.
  */
-function generateSceneActions(sceneState) {
+function generateSceneActions(sceneState, aiSuggestedActions = []) {
   const actions = [];
   const exitAction = SceneEngine.getExitAction(sceneState);
   const undiscovered = SceneEngine.getUndiscoveredContent(sceneState);
@@ -315,13 +318,35 @@ function generateSceneActions(sceneState) {
     type: 'exploration'
   }));
 
+  // Build a set of significant words from content items for deduplication
+  const genericWords = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'have', 'will', 'into', 'onto', 'back', 'out', 'about', 'through', 'every']);
+  const contentWordSets = contentActions.map(a =>
+    new Set(a.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w)))
+  );
+
+  // Filter AI suggestions: keep only those that don't significantly overlap with content items
+  const contextualActions = (aiSuggestedActions || [])
+    .filter(ai => {
+      const aiWords = ai.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w));
+      if (aiWords.length === 0) return false;
+      // Count how many significant AI words appear in any content item
+      const overlap = aiWords.filter(w =>
+        contentWordSets.some(cws => [...cws].some(cw => cw.includes(w) || w.includes(cw)))
+      ).length;
+      // If more than half the words overlap, it's a duplicate
+      return overlap < Math.ceil(aiWords.length / 2);
+    })
+    .map(ai => ({ label: ai.label, type: 'contextual' }));
+
   if (exitAction && exitAction.priority === 1) {
     // Strong/forced pressure — exit goes first
     actions.push({ label: exitAction.label, type: 'exit' });
     actions.push(...contentActions);
+    actions.push(...contextualActions);
   } else {
-    // Background/gentle — content first, exit last
+    // Background/gentle — content first, contextual next, exit last
     actions.push(...contentActions);
+    actions.push(...contextualActions);
     if (exitAction) {
       actions.push({ label: exitAction.label, type: 'exit' });
     }
