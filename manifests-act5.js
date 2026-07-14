@@ -42,7 +42,7 @@ A dockworker approaches — a thick man with a tarred cap and suspicious eyes. '
     hardExitNarration: `The Orion's horn sounds across the Thames. You stand at the rail as London falls away behind you — the grey towers, the smoking chimneys, the bridges dissolving into mist. Mina grips your hand, her skin cold, her eyes fixed east. Van Helsing stands at the bow, Bible in hand, muttering prayers in Latin. The open water stretches ahead, grey and endless, and somewhere on it — in a box of Transylvanian earth — the Count is waiting.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],
-      metNPCs: ["innkeeper", "dracula", "van_helsing", "lucy", "seward", "renfield", "mina", "jonathan harker"],
+      metNPCs: ["innkeeper", "dracula", "van_helsing", "seward", "renfield", "mina"],
       established: [
         "Dracula fleeing England by ship",
         "blood bond lets Mina sense Dracula",
@@ -100,11 +100,11 @@ It comes from the rocks above — a high, ululating cry in a language you do not
       }
     ],
     exitAction: "traverse_pass",
-    exitLabel: "Push through the mountain pass toward the castle",
+    exitLabel: "Walk through the mountain pass toward the castle",
     hardExitNarration: `You press into the narrow defile, single file, weapons drawn. The walls of rock close in until you can touch both sides with outstretched arms. Snow falls in a fine curtain, erasing the world behind you. Ahead, the pass opens onto a frozen plateau — and beyond it, silhouetted against a sky the color of bruises, the broken towers of Castle Dracula rise from the cliff edge like a crown of bone. You are here. The end begins.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],
-      metNPCs: ["innkeeper", "dracula", "van_helsing", "lucy", "seward", "renfield", "mina", "jonathan harker"],
+      metNPCs: ["innkeeper", "dracula", "van_helsing", "seward", "renfield", "mina"],
       established: [
         "arrived in Transylvania",
         "crossing Carpathian mountains",
@@ -167,7 +167,7 @@ The castle door is ajar. Beyond it, a corridor stretches into blackness. Somethi
     hardExitNarration: `The iron door swings open with a shriek that echoes through the castle like a scream. Beyond it, the great hall yawns — vast, dark, its vaulted ceiling lost in shadow. The remnants of a long table lie splintered across the floor. Tapestries hang in shreds. And at the far end, arranged in a semicircle around the cold hearth, three shapes materialize from the darkness. The sisters have been waiting.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],
-      metNPCs: ["innkeeper", "dracula", "van_helsing", "lucy", "seward", "renfield", "mina", "jonathan harker"],
+      metNPCs: ["innkeeper", "dracula", "van_helsing", "seward", "renfield", "mina"],
       established: [
         "entered Castle Dracula",
         "castle is decayed and ruined",
@@ -230,7 +230,7 @@ The hall fills with the sound of wings. Bats — hundreds of them — pour from 
     hardExitNarration: `The eldest sister — the last — hovers at the ceiling, her ruined face a mask of fury and terror. 'You cannot kill what has lived for centuries,' she whispers. But the crucifix in your hand is blazing and Van Helsing's voice fills the hall with prayer. She turns to flee. Jonathan Harker is waiting. His stake catches her in the back as she passes. She crumbles to dust on the wind, and the great hall falls silent. The hearth fire has died. The bats are gone. From below — far below — you hear a sound: the grinding of a stone lid opening. Dracula is awake. Dracula is rising.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],
-      metNPCs: ["innkeeper", "dracula", "van_helsing", "lucy", "seward", "renfield", "mina", "jonathan harker"],
+      metNPCs: ["innkeeper", "dracula", "van_helsing", "seward", "renfield", "mina"],
       established: [
         "destroyed all three vampire sisters",
         "holy water burns vampires severely",
@@ -305,7 +305,7 @@ Jonathan Harker draws his stake and hammer. You ready the crucifix. Seward opens
       }
     ],
     exitAction: "witness_sunrise",
-    exitLabel: "Witness the dawn",
+    exitLabel: "Watch the dawn break",
     hardExitNarration: `The shaft of dawn light widens. Through the crack in the stone ceiling, the sun itself begins to pour — first a thread, then a river, then a torrent of gold that floods the crypt with warmth. Dracula burns. Not like paper or wood but like a dark star collapsing inward, his form turning to ash and shadow and memory. His red eyes find yours one last time, and in them you see not rage but something like relief — the look of a creature that has existed for five centuries and, at the very end, is grateful for the ending.
 
 Then he is gone. The ash scatters in the light. The crypt falls silent.
@@ -329,7 +329,7 @@ But that is tomorrow. Today, the sun is warm. The road home is long. And you are
 The adventure of Dracula is over.`,
     initialFacts: {
       items: ["crucifix", "jonathan journal", "holy water", "wooden cross"],
-      metNPCs: ["innkeeper", "dracula", "van_helsing", "lucy", "seward", "renfield", "mina", "jonathan harker"],
+      metNPCs: ["innkeeper", "dracula", "van_helsing", "seward", "renfield", "mina"],
       established: [
         "confronted Dracula in his crypt",
         "Dracula destroyed by stake and sunlight",

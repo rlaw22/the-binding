@@ -74,7 +74,6 @@ module.exports = {
         "innkeeper",
         "dracula",
         "van_helsing",
-        "lucy",
         "seward",
         "renfield",
         "mina"
@@ -177,7 +176,6 @@ module.exports = {
         "innkeeper",
         "dracula",
         "van_helsing",
-        "lucy",
         "seward",
         "renfield",
         "mina"
@@ -283,7 +281,6 @@ module.exports = {
         "innkeeper",
         "dracula",
         "van_helsing",
-        "lucy",
         "seward",
         "renfield",
         "mina"
@@ -376,7 +373,7 @@ module.exports = {
       }
     ],
     exitAction: "flee_safe_house",
-    exitLabel: "Escape the safe house through the back as the wolves close in",
+    exitLabel: "Run through the safe house back door as the wolves close in",
     hardExitNarration: "The wolves breach the front door as you climb through the back window. Rain hammers the streets. Lightning illuminates the alley in strobing white, and for one frozen second, you see him — standing on the roof of the building opposite, his cloak billowing in a wind that touches nothing else. Dracula. Watching. Smiling. Then the lightning dies and he is gone, and you are running through London's midnight streets with the howling at your back.",
     initialFacts: {
       items: [
@@ -388,7 +385,6 @@ module.exports = {
         "innkeeper",
         "dracula",
         "van_helsing",
-        "lucy",
         "seward",
         "renfield",
         "mina"
@@ -493,7 +489,6 @@ module.exports = {
         "innkeeper",
         "dracula",
         "van_helsing",
-        "lucy",
         "seward",
         "renfield",
         "mina"
