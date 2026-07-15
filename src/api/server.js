@@ -776,7 +776,10 @@ async function createServer(options = {}) {
     } catch (err) {
       app.log.error(err);
       recordMessage(sessionId, MessageRouter.error('Something went wrong. Please try again.'));
-      return reply.status(500).send({ error: 'Action processing failed' });
+      return reply.status(500).send({
+        error: 'Action processing failed',
+        ...(llmConfig.mock && { detail: err.message })
+      });
     }
   });
 
@@ -921,7 +924,10 @@ async function createServer(options = {}) {
     } catch (err) {
       app.log.error(err);
       recordMessage(session.id, MessageRouter.error('Something went wrong processing the suggestion.'));
-      return reply.status(500).send({ error: 'Suggestion processing failed' });
+      return reply.status(500).send({
+        error: 'Suggestion processing failed',
+        ...(llmConfig.mock && { detail: err.message })
+      });
     }
   });
 
