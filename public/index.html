@@ -457,6 +457,8 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
   </div>
 </div>
 
+<script src="/dice-box-threejs.umd.js"></script>
+<script src="/dice-roller.js"></script>
 <script>
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/sw.js').catch(function() {});
@@ -1414,6 +1416,14 @@ function sendCombatAction(action) {
   if (!sessionId) return;
   var btns = document.querySelectorAll('.combat-action-btn');
   for (var i = 0; i < btns.length; i++) btns[i].disabled = true;
+
+  // Trigger 3D dice roll animation for attack/spell actions
+  var dicePromise = Promise.resolve();
+  if (typeof DiceRoller !== 'undefined' && (action === 'attack' || action === 'cast')) {
+    var dieType = action === 'cast' ? 'd8' : 'd20';
+    var result = Math.floor(Math.random() * (dieType === 'd8' ? 8 : 20)) + 1;
+    dicePromise = DiceRoller.roll({ type: dieType, result: result });
+  }
 
   fetch('/api/sessions/' + sessionId + '/combat/action', {
     method: 'POST',
