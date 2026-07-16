@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@3d-dice/dice-box-threejs": "^0.0.12",
     "@fastify/cors": "^11.3.0",
     "@fastify/static": "^10.0.0",
     "@fastify/websocket": "^11.3.0",

@@ -39,3 +39,15 @@ Server runs at http://localhost:3001
 - **Transport**: SSE (Server-Sent Events) + HTTP POST
 - **DM**: OpenAI-compatible LLM provider (mock mode for testing)
 - **Adventure Engine**: Scene graph with curated backbone + dynamic DM responses
+
+## Monster Database (SRD 5.1)
+
+The Binding includes a comprehensive **334-creature monster database** built from the D&D 5.1 Systems Reference Document (CC-BY-4.0). It powers combat encounters in Campaign Mode and Digital DM Mode.
+
+- **Source:** `data/monsters/srd-monsters.json`
+- **Engine Module:** `src/campaign/monster-manual.js`
+- **Documentation:** `docs/monster-database.md`
+- **Docs Site:** `public/docs/monster-database.html`
+- **Builder Script:** `data/monsters/build_monster_db.py`
+
+See [docs/monster-database.md](docs/monster-database.md) for full schema, encounter building, and CR tables.

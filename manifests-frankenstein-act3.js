@@ -162,7 +162,7 @@ The old man smiles. "Enter, friend. You are welcome in this house."`,
     initialFacts: {
       items: [],
       metNPCs: ['the creature', 'de lacey (old man)'],
-      established: ['creature spoke with the blind old man', 'old man accepted the creature as a friend', 'old man is blind and cannot see the creature', 'family is returning from the market', 'the creature has read Paradise Lost, Plutarch's Lives, and The Sorrows of Young Werther']
+      established: ['creature spoke with the blind old man', 'old man accepted the creature as a friend', 'old man is blind and cannot see the creature', 'family is returning from the market', 'the creature has read Paradise Lost, Plutarch\'s Lives, and The Sorrows of Young Werther']
     },
     locationKeywords: {
       banned: ['ingolstadt', 'university', 'laboratory', 'geneva', 'arctic']

@@ -80,7 +80,7 @@ function createOpenAIProvider(config = {}) {
  * not a blind cycling counter. Each session gets its own instance.
  */
 function createMockProvider() {
-  const usedResponses = { inn: new Set(), coach: new Set(), castle: new Set() };
+  const usedResponses = { inn: new Set(), coach: new Set(), castle: new Set(), london: new Set(), hunt: new Set(), final: new Set() };
 
   // === INN RESPONSES ===
   // Each mapped to a keyword pattern. Removed duplicate crucifix from #0

@@ -110,7 +110,7 @@ He crouches and points. In the soft earth beside the path: paw prints. Enormous.
         id: 'follow_paw_prints',
         label: 'Follow the paw prints deeper into the Mire',
         keywords: ['paw', 'prints', 'follow', 'track', 'mire', 'deeper', 'hound', 'dog'],
-        discovery: 'You follow the prints, stepping carefully from tussock to tussock. The prints are enormous — each print as wide as a man's spread hand, sunk deep into the peat. Whatever made them is heavy. Very heavy. The prints lead along a winding path that avoids the worst of the bogs, as if the creature knows the Mire intimately. After two hundred yards, the prints stop at the edge of a patch of dense gorse. Beyond the gorse, you can see the faint outline of a structure — a low building, half-buried in the vegetation. A kennel. A very large kennel.'
+        discovery: 'You follow the prints, stepping carefully from tussock to tussock. The prints are enormous — each print as wide as a man\'s spread hand, sunk deep into the peat. Whatever made them is heavy. Very heavy. The prints lead along a winding path that avoids the worst of the bogs, as if the creature knows the Mire intimately. After two hundred yards, the prints stop at the edge of a patch of dense gorse. Beyond the gorse, you can see the faint outline of a structure — a low building, half-buried in the vegetation. A kennel. A very large kennel.'
       },
       {
         id: 'examine_pony_death',
