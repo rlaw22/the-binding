@@ -9,8 +9,13 @@
  * API:
  *   DiceRoller.roll({ type: 'd20', result: 17 }) → Promise<result>
  *   DiceRoller.roll([{ type: 'd6', result: 4 }, { type: 'd6', result: 3 }]) → Promise<result>
- *   DiceRoller.setTheme(themeName) — change dice appearance
+ *   DiceRoller.setTheme(themeName) — change dice colorset + material
+ *   DiceRoller.setSurface(surface) — change table surface (green-felt, blue-felt, wood, etc.)
+ *   DiceRoller.setPhysics({ gravity, strength, lightIntensity, baseScale }) — physics tuning
+ *   DiceRoller.setSounds(enabled, volume?) — toggle sound effects
  *   DiceRoller.themes — list of available themes
+ *   DiceRoller.surfaces — list of available surfaces
+ *   DiceRoller.materials — list of available materials
  *
  * Requires:
  *   <script src="/dice-box-threejs.umd.js"></script>
@@ -31,23 +36,34 @@ const DiceRoller = (function () {
     return null;
   }
 
-  // Available themes — use named colorset IDs from dice-box-threejs
+  // ── Theme definitions ────────────────────────────────────────────
   var THEMES = {
-    'bronze':      { label: 'Thylean Bronze', colorset: 'bronze', material: 'metal' },
-    'bloodmoon':   { label: 'Blood Moon',     colorset: 'bloodmoon', material: 'metal' },
-    'necrotic':    { label: 'Necrotic',        colorset: 'necrotic', material: 'glass' },
-    'fire':        { label: 'Fire',            colorset: 'fire', material: 'metal' },
-    'ice':         { label: 'Ice',             colorset: 'ice', material: 'glass' },
-    'classic':     { label: 'Classic White',   colorset: 'white', material: 'none' },
-    'black':       { label: 'Obsidian',        colorset: 'black', material: 'none' },
-    'rainbow':     { label: 'Rainbow',         colorset: 'rainbow', material: 'none' },
-    'glitterparty':{ label: 'Glitter Party',   colorset: 'glitterparty', material: 'glass' },
-    'astralsea':   { label: 'Astral Sea',      colorset: 'astralsea', material: 'none' },
-    'dragons':     { label: 'Here be Dragons', colorset: 'dragons', material: 'none' },
-    'starynight':  { label: 'Stary Night',     colorset: 'starynight', material: 'none' }
+    'bronze':       { label: 'Thylean Bronze',   colorset: 'bronze',       material: 'metal' },
+    'bloodmoon':    { label: 'Blood Moon',        colorset: 'bloodmoon',    material: 'metal' },
+    'necrotic':     { label: 'Necrotic',          colorset: 'necrotic',     material: 'glass' },
+    'fire':         { label: 'Fire',              colorset: 'fire',         material: 'metal' },
+    'ice':          { label: 'Ice',               colorset: 'ice',          material: 'glass' },
+    'classic':      { label: 'Classic White',     colorset: 'white',        material: 'none' },
+    'black':        { label: 'Obsidian',          colorset: 'black',        material: 'none' },
+    'rainbow':      { label: 'Rainbow',           colorset: 'rainbow',      material: 'none' },
+    'glitterparty': { label: 'Glitter Party',     colorset: 'glitterparty', material: 'glass' },
+    'astralsea':    { label: 'Astral Sea',        colorset: 'astralsea',    material: 'none' },
+    'dragons':      { label: 'Here be Dragons',   colorset: 'dragons',      material: 'none' },
+    'starynight':   { label: 'Stary Night',       colorset: 'starynight',   material: 'none' }
   };
 
+  // ── Surface options ──────────────────────────────────────────────
+  var SURFACES = [
+    'green-felt', 'blue-felt', 'red-felt', 'wood', 'wood-dark',
+    'metal', 'marble', 'sand', 'snow'
+  ];
+
+  // ── Material options ─────────────────────────────────────────────
+  var MATERIALS = ['none', 'metal', 'wood', 'glass', 'plastic'];
+
   var currentTheme = 'bronze';
+  var currentSurface = 'green-felt';
+  var currentMaterial = 'metal';
 
   // ── Create result overlay ────────────────────────────────────────
   function ensureOverlay() {
@@ -106,7 +122,7 @@ const DiceRoller = (function () {
           sounds: true,
           volume: 60,
           shadows: true,
-          theme_surface: 'green-felt',
+          theme_surface: currentSurface,
           theme_colorset: THEMES[currentTheme].colorset,
           theme_material: THEMES[currentTheme].material,
           sound_dieMaterial: 'plastic',
@@ -115,7 +131,6 @@ const DiceRoller = (function () {
           baseScale: 100,
           strength: 1,
           onRollComplete: function (results) {
-            // dice-box-threejs returns { notation, sets: [{rolls, total}], total }
             var total = 0;
             if (results) {
               if (results.total !== undefined) {
@@ -154,31 +169,64 @@ const DiceRoller = (function () {
     if (!box || !THEMES[themeName]) return;
     currentTheme = themeName;
     var theme = THEMES[themeName];
+    currentMaterial = theme.material || 'none';
     try {
       box.updateConfig({
         theme_colorset: theme.colorset,
-        theme_material: theme.material || 'none'
+        theme_material: currentMaterial
       });
     } catch (e) {
       console.warn('Theme update failed:', e);
     }
   }
 
+  // ── Set surface ──────────────────────────────────────────────────
+  function applySurface(surface) {
+    if (!box) return;
+    currentSurface = surface;
+    try {
+      box.updateConfig({ theme_surface: surface });
+    } catch (e) {
+      console.warn('Surface update failed:', e);
+    }
+  }
+
+  // ── Set physics parameters ───────────────────────────────────────
+  function applyPhysics(params) {
+    if (!box) return;
+    var cfg = {};
+    if (params.gravity !== undefined) cfg.gravity_multiplier = params.gravity;
+    if (params.strength !== undefined) cfg.strength = params.strength;
+    if (params.lightIntensity !== undefined) cfg.light_intensity = params.lightIntensity;
+    if (params.baseScale !== undefined) cfg.baseScale = params.baseScale;
+    if (params.shadows !== undefined) cfg.shadows = params.shadows;
+    try {
+      box.updateConfig(cfg);
+    } catch (e) {
+      console.warn('Physics update failed:', e);
+    }
+  }
+
+  // ── Set sounds ───────────────────────────────────────────────────
+  function applySounds(enabled, volume) {
+    if (!box) return;
+    try {
+      var cfg = { sounds: !!enabled };
+      if (volume !== undefined) cfg.volume = volume;
+      box.updateConfig(cfg);
+    } catch (e) {
+      console.warn('Sound update failed:', e);
+    }
+  }
+
   // ── Main roll function (preserves original API) ──────────────────
-  /**
-   * Roll dice with a predetermined result.
-   * @param {Object|Array} params — { type: 'd20', result: 17 } or array of same
-   * @returns {Promise<number>} — the total result
-   */
   function roll(params) {
     return init().then(function () {
       hideOverlay();
 
-      // Normalize to array
       var rolls = Array.isArray(params) ? params : [params];
       if (rolls.length === 0) return Promise.resolve(0);
 
-      // Build dice-box notation: "1d20@17" or "1d6+1d6@4,3"
       var parts = [];
       var values = [];
       rolls.forEach(function (r) {
@@ -206,23 +254,17 @@ const DiceRoller = (function () {
     });
   }
 
-  // ── Set theme from outside ───────────────────────────────────────
-  function setTheme(themeName) {
-    if (THEMES[themeName]) {
-      applyTheme(themeName);
-    }
-  }
-
-  // ── Get available themes ─────────────────────────────────────────
-  function getThemes() {
-    return Object.keys(THEMES);
-  }
-
   // ── Public API ───────────────────────────────────────────────────
   return {
     roll: roll,
-    setTheme: setTheme,
-    themes: getThemes,
-    init: init
+    init: init,
+    setTheme: applyTheme,
+    setSurface: applySurface,
+    setPhysics: applyPhysics,
+    setSounds: applySounds,
+    themes: function () { return Object.keys(THEMES); },
+    themeLabels: function () { return THEMES; },
+    surfaces: function () { return SURFACES.slice(); },
+    materials: function () { return MATERIALS.slice(); }
   };
 })();

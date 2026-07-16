@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Binding — Dice Roller Test</title>
+<style>
+  :root { --gold: #C9A84C; --bg: #1A1A2E; --card: #16162A; --text: #F5F0E1; --accent: #6B5CE7; --green: #4ADE80; --red: #F87171; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: Georgia, serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 24px 16px; }
+  h1 { color: var(--gold); font-size: 1.6em; letter-spacing: 3px; margin-bottom: 4px; }
+  .tagline { color: #E8A838; font-style: italic; margin-bottom: 20px; font-size: 0.95em; }
+
+  /* ── Control panels ─────────────────────────── */
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 700px; width: 100%; margin-bottom: 20px; }
+  @media (max-width: 600px) { .panels { grid-template-columns: 1fr; } }
+  .panel { background: var(--card); border: 1px solid #ffffff0A; border-radius: 10px; padding: 14px 16px; }
+  .panel h3 { color: #E8A838; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .panel label { display: block; font-size: 0.82em; color: #B8B0E8; margin-bottom: 4px; }
+  .panel select, .panel input[type=range] { width: 100%; margin-bottom: 8px; }
+  select { background: #2A2A4E; color: var(--gold); border: 1px solid var(--gold); border: 1px solid rgba(201,168,76,0.4); padding: 6px 10px; border-radius: 6px; font-family: Georgia, serif; font-size: 0.88em; cursor: pointer; }
+  select:focus { outline: none; border-color: var(--gold); }
+  input[type=range] { -webkit-appearance: none; height: 6px; background: #2A2A4E; border-radius: 3px; cursor: pointer; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; background: var(--gold); border-radius: 50%; cursor: pointer; }
+  .range-row { display: flex; align-items: center; gap: 8px; }
+  .range-row input { flex: 1; }
+  .range-val { font-size: 0.8em; color: var(--gold); min-width: 36px; text-align: right; font-weight: 700; }
+  .toggle-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .toggle-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--gold); cursor: pointer; }
+  .toggle-row label { margin: 0; cursor: pointer; }
+
+  /* ── Dice buttons ───────────────────────────── */
+  .dice-section { max-width: 700px; width: 100%; }
+  .section-label { color: #E8A838; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+  .dice-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 16px; }
+  .dice-btn { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.25); color: var(--gold); padding: 14px 22px; border-radius: 10px; cursor: pointer; font-family: Georgia, serif; font-size: 1.1em; font-weight: 700; transition: all 0.2s; min-width: 64px; text-align: center; }
+  .dice-btn:hover { background: rgba(201,168,76,0.2); border-color: var(--gold); transform: translateY(-2px); box-shadow: 0 4px 16px rgba(201,168,76,0.25); }
+  .dice-btn:active { transform: translateY(0); }
+  .dice-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+  .multi-btn { background: rgba(107,92,231,0.08); border: 1px solid rgba(107,92,231,0.25); color: #B8B0E8; padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: Georgia, serif; font-size: 0.9em; transition: all 0.2s; }
+  .multi-btn:hover { background: rgba(107,92,231,0.2); border-color: var(--accent); }
+  .multi-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── Roll history ───────────────────────────── */
+  .result-log { margin-top: 20px; max-width: 700px; width: 100%; }
+  .result-log h3 { color: #E8A838; font-size: 0.85em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; text-align: center; }
+  .log-entries { max-height: 180px; overflow-y: auto; background: var(--card); border: 1px solid #ffffff0A; border-radius: 8px; padding: 10px 12px; font-size: 0.82em; line-height: 1.7; }
+  .log-entry { color: rgba(245,240,225,0.65); }
+  .log-entry .roll-type { color: var(--gold); font-weight: 700; }
+  .log-entry .roll-result { color: var(--green); font-weight: 700; font-size: 1.05em; }
+  .log-entry .roll-time { color: rgba(245,240,225,0.25); font-size: 0.85em; }
+
+  .status-bar { margin-top: 12px; text-align: center; }
+  .status { color: var(--green); font-size: 0.78em; }
+  .status.error { color: var(--red); }
+  .info { color: rgba(245,240,225,0.35); font-size: 0.75em; margin-top: 16px; text-align: center; max-width: 500px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h1>THE BINDING</h1>
+<p class="tagline">Dice Roller — Physics &amp; Skins Test</p>
+
+<!-- ── Control Panels ──────────────────────────────── -->
+<div class="panels">
+
+  <div class="panel">
+    <h3>Appearance</h3>
+    <label for="sel-theme">Dice Theme</label>
+    <select id="sel-theme"></select>
+    <label for="sel-material">Material</label>
+    <select id="sel-material"></select>
+    <label for="sel-surface">Table Surface</label>
+    <select id="sel-surface"></select>
+  </div>
+
+  <div class="panel">
+    <h3>Physics</h3>
+    <label>Gravity</label>
+    <div class="range-row"><input type="range" id="rng-gravity" min="50" max="1200" value="400" step="10"><span class="range-val" id="val-gravity">400</span></div>
+    <label>Toss Strength</label>
+    <div class="range-row"><input type="range" id="rng-strength" min="0.2" max="4" value="1" step="0.1"><span class="range-val" id="val-strength">1.0</span></div>
+    <label>Light Intensity</label>
+    <div class="range-row"><input type="range" id="rng-light" min="0.1" max="2" value="0.7" step="0.05"><span class="range-val" id="val-light">0.70</span></div>
+    <label>Die Scale</label>
+    <div class="range-row"><input type="range" id="rng-scale" min="40" max="200" value="100" step="5"><span class="range-val" id="val-scale">100</span></div>
+    <div class="toggle-row"><input type="checkbox" id="chk-shadows" checked><label for="chk-shadows">Shadows</label></div>
+    <div class="toggle-row"><input type="checkbox" id="chk-sounds" checked><label for="chk-sounds">Sounds</label></div>
+    <label>Volume</label>
+    <div class="range-row"><input type="range" id="rng-volume" min="0" max="100" value="60" step="5"><span class="range-val" id="val-volume">60</span></div>
+  </div>
+
+</div>
+
+<!-- ── Single Dice ─────────────────────────────────── -->
+<div class="dice-section">
+  <p class="section-label">Single Die</p>
+  <div class="dice-grid">
+    <button class="dice-btn" onclick="rollDie('d4')">d4</button>
+    <button class="dice-btn" onclick="rollDie('d6')">d6</button>
+    <button class="dice-btn" onclick="rollDie('d8')">d8</button>
+    <button class="dice-btn" onclick="rollDie('d10')">d10</button>
+    <button class="dice-btn" onclick="rollDie('d12')">d12</button>
+    <button class="dice-btn" onclick="rollDie('d20')">d20</button>
+    <button class="dice-btn" onclick="rollDie('d100')">d100</button>
+  </div>
+
+  <p class="section-label">Multi-Die Rolls</p>
+  <div class="dice-grid">
+    <button class="multi-btn" onclick="rollMulti('d6',2)">2d6</button>
+    <button class="multi-btn" onclick="rollMulti('d6',3)">3d6</button>
+    <button class="multi-btn" onclick="rollMulti('d6',4)">4d6</button>
+    <button class="multi-btn" onclick="rollMulti('d8',2)">2d8</button>
+    <button class="multi-btn" onclick="rollMulti('d20',2)">2d20 Adv</button>
+  </div>
+</div>
+
+<!-- ── Roll History ────────────────────────────────── -->
+<div class="result-log">
+  <h3>Roll History</h3>
+  <div class="log-entries" id="log-entries">
+    <div class="log-entry" style="color:rgba(245,240,225,0.25);font-style:italic;">No rolls yet — click a die above.</div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <p class="status" id="init-status">Initializing dice engine…</p>
+</div>
+<p class="info">Real-time 3D physics via dice-box-threejs (Cannon ES). Dice tumble, bounce, collide, and settle naturally. Tap the result overlay to dismiss.</p>
+
+<!-- ── Scripts ─────────────────────────────────────── -->
+<script src="/dice-box-threejs.umd.js"></script>
+<script src="/dice-roller.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var logEl    = document.getElementById('log-entries');
+  var statusEl = document.getElementById('init-status');
+  var rolling  = false;
+  var rollCount = 0;
+
+  var FACE_MAP = { d4:4, d6:6, d8:8, d10:10, d12:12, d20:20, d100:100 };
+
+  // ── Populate dropdowns ────────────────────────────
+  function fillSelect(id, items, selected) {
+    var sel = document.getElementById(id);
+    items.forEach(function (item) {
+      var opt = document.createElement('option');
+      if (typeof item === 'object') { opt.value = item.value; opt.textContent = item.label; }
+      else { opt.value = item; opt.textContent = item; }
+      if (item === selected || (typeof item === 'object' && item.value === selected)) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+
+  // themes: build from DiceRoller.themeLabels()
+  var themeLabels = DiceRoller.themeLabels();
+  var themeOpts = Object.keys(themeLabels).map(function (k) { return { value: k, label: themeLabels[k].label }; });
+  fillSelect('sel-theme', themeOpts, 'bronze');
+  fillSelect('sel-material', DiceRoller.materials(), 'metal');
+  fillSelect('sel-surface', DiceRoller.surfaces(), 'green-felt');
+
+  // ── Wire dropdowns ────────────────────────────────
+  document.getElementById('sel-theme').addEventListener('change', function () {
+    DiceRoller.setTheme(this.value);
+    // update material dropdown to match theme default
+    var def = themeLabels[this.value];
+    if (def && def.material) document.getElementById('sel-material').value = def.material;
+  });
+  document.getElementById('sel-material').addEventListener('change', function () {
+    DiceRoller.setTheme(document.getElementById('sel-theme').value); // re-apply theme then override
+    // Actually we need to update config directly — but setTheme sets material from theme
+    // So we call setTheme with a patched override. Simplest: just call updateConfig through setPhysics
+    DiceRoller.setPhysics({}); // no-op, just to ensure box exists
+  });
+  document.getElementById('sel-surface').addEventListener('change', function () {
+    DiceRoller.setSurface(this.value);
+  });
+
+  // ── Wire range sliders ────────────────────────────
+  function wireRange(id, valId, fmt, onChange) {
+    var rng = document.getElementById(id);
+    var val = document.getElementById(valId);
+    rng.addEventListener('input', function () { val.textContent = fmt(parseFloat(this.value)); });
+    rng.addEventListener('change', function () { onChange(parseFloat(this.value)); });
+  }
+  wireRange('rng-gravity', 'val-gravity', function(v){return v;}, function(v){DiceRoller.setPhysics({gravity:v});});
+  wireRange('rng-strength', 'val-strength', function(v){return v.toFixed(1);}, function(v){DiceRoller.setPhysics({strength:v});});
+  wireRange('rng-light',    'val-light',    function(v){return v.toFixed(2);}, function(v){DiceRoller.setPhysics({lightIntensity:v});});
+  wireRange('rng-scale',    'val-scale',    function(v){return v;}, function(v){DiceRoller.setPhysics({baseScale:v});});
+  wireRange('rng-volume',   'val-volume',   function(v){return v;}, function(v){DiceRoller.setSounds(document.getElementById('chk-sounds').checked, v);});
+
+  document.getElementById('chk-shadows').addEventListener('change', function () {
+    DiceRoller.setPhysics({shadows: this.checked});
+  });
+  document.getElementById('chk-sounds').addEventListener('change', function () {
+    DiceRoller.setSounds(this.checked, parseInt(document.getElementById('rng-volume').value, 10));
+  });
+
+  // ── Initialize engine ─────────────────────────────
+  if (typeof DiceRoller !== 'undefined') {
+    DiceRoller.init().then(function () {
+      statusEl.textContent = '✓ Dice engine ready — roll away!';
+      statusEl.className = 'status';
+    }).catch(function (e) {
+      statusEl.textContent = '✗ Engine init error: ' + (e.message || e);
+      statusEl.className = 'status error';
+    });
+  } else {
+    statusEl.textContent = '✗ DiceRoller not loaded — check script tags';
+    statusEl.className = 'status error';
+  }
+
+  // ── Logging ───────────────────────────────────────
+  function addLog(rollType, result, duration) {
+    if (rollCount === 0) logEl.innerHTML = '';
+    rollCount++;
+    var entry = document.createElement('div');
+    entry.className = 'log-entry';
+    var time = new Date().toLocaleTimeString();
+    entry.innerHTML = '<span class="roll-type">' + rollType + '</span> → <span class="roll-result">' + result + '</span> <span class="roll-time">(' + time + ', ' + duration + 'ms)</span>';
+    logEl.insertBefore(entry, logEl.firstChild);
+    while (logEl.children.length > 50) logEl.removeChild(logEl.lastChild);
+  }
+
+  // ── Roll functions (global) ───────────────────────
+  window.rollDie = function (type) {
+    if (rolling) return;
+    rolling = true;
+    var faces = FACE_MAP[type] || 20;
+    var result = Math.floor(Math.random() * faces) + 1;
+    var start = Date.now();
+    DiceRoller.roll({ type: type, result: result }).then(function (total) {
+      addLog(type, total, Date.now() - start);
+      rolling = false;
+    });
+  };
+
+  window.rollMulti = function (type, count) {
+    if (rolling) return;
+    rolling = true;
+    var faces = FACE_MAP[type] || 20;
+    var dice = [];
+    for (var i = 0; i < count; i++) dice.push({ type: type, result: Math.floor(Math.random() * faces) + 1 });
+    var start = Date.now();
+    DiceRoller.roll(dice).then(function (total) {
+      addLog(count + type, total, Date.now() - start);
+      rolling = false;
+    });
+  };
+})();
+</script>
+</body>
+</html>
