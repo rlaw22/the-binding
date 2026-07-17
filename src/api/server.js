@@ -31,6 +31,7 @@ const TokenStore = require('../auth/token-store');
 const { createVoiceService, getCachedAudio, detectProvider } = require('../voice');
 const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
 const CombatManager = require('../combat/combat-manager');
+const { DynamicDifficulty } = require('../difficulty/dynamic-difficulty');
 const Inventory = require('../inventory/inventory');
 
 // In-memory session store
@@ -466,7 +467,7 @@ async function createServer(options = {}) {
     const rejoinCode = generateRejoinCode(adventureId);
 
     session.state = 'active';
-    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [], inventory: Inventory.createInventory() });
+    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty() });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
     session._rejoinCode = rejoinCode;
@@ -674,7 +675,7 @@ async function createServer(options = {}) {
     const player = data.session.players[0];
     if (!player) return reply.status(400).send({ error: 'No player in session' });
 
-    data.combat = CombatManager.startCombat(player.character, enemies);
+    data.combat = CombatManager.startCombat(player.character, enemies, data.difficulty);
     recordMessage(data.session.id, MessageRouter.narration(
       'Combat begins! Roll for initiative...',
       { combat: true }
@@ -699,7 +700,7 @@ async function createServer(options = {}) {
     const { action } = request.body || {};
     if (!action) return reply.status(400).send({ error: 'action required (attack, defend, cast, flee, use_item)' });
 
-    const result = CombatManager.processPlayerAction(data.combat, action, request.body);
+    const result = CombatManager.processPlayerAction(data.combat, action, request.body, data.difficulty);
 
     // Record combat narration as messages
     recordMessage(data.session.id, MessageRouter.narration(result.narrative));
