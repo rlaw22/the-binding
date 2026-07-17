@@ -58,3 +58,50 @@ async function main() {
 }
 
 main();
+
+// ---------------------------------------------------------------------------
+// Image Generation Pipeline Integration
+// ---------------------------------------------------------------------------
+//
+// To wire the image service into the game, add this to createServer() or
+// wherever session/game state is initialised:
+//
+//   const { createImageService } = require('./src/image');
+//   const imageService = createImageService();
+//
+//   // Then pass it into your session/adventure/scene handlers:
+//   //   const sceneUrl = await imageService.generateScene({
+//   //     description: scene.text,
+//   //     location: scene.location,
+//   //     mood: scene.mood,
+//   //   });
+//   //
+//   //   // For character portraits during creation or key moments:
+//   //   const portrait = await imageService.generateCharacter({
+//   //     name: character.name,
+//   //     race: character.race,
+//   //     classType: character.class,
+//   //     appearance: character.appearance,
+//   //   });
+//   //
+//   //   // For combat scene art on critical hits/kills:
+//   //   const combatArt = await imageService.generateCombat({
+//   //     attacker: combatState.attacker.name,
+//   //     defender: combatState.defender.name,
+//   //     weapon: combatState.weapon,
+//   //     outcome: combatState.lastOutcome,
+//   //   });
+//   //
+//   // The service auto-detects XAI_API_KEY or OPENAI_API_KEY.
+//   // When neither is set, all generate*() calls return null gracefully.
+//   // Images are cached (LRU, 100 entries default) to avoid re-generating
+//   // the same scene/character art.
+//
+// Environment variables:
+//   XAI_API_KEY         — Enables Grok Imagine (xAI) as image provider
+//   XAI_BASE_URL        — Override xAI API base URL (default: https://api.x.ai)
+//   XAI_IMAGE_MODEL     — Override xAI image model (default: grok-2-image)
+//   OPENAI_API_KEY      — Enables DALL-E (OpenAI) as image provider
+//   OPENAI_BASE_URL     — Override OpenAI base URL (default: https://api.openai.com)
+//   OPENAI_IMAGE_MODEL  — Override OpenAI image model (default: dall-e-3)
+// ---------------------------------------------------------------------------
