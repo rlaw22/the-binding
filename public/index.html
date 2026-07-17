@@ -31,15 +31,25 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #rejoin-bar{display:flex;align-items:center;gap:8px;padding:8px 14px;background:#E8A83815;border:1px solid #E8A83833;border-radius:6px;margin-bottom:12px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;}
 #rejoin-bar .code{color:#C9A84C;font-weight:700;font-size:1em;letter-spacing:2px;}
 #rejoin-bar .copy-btn{background:#C9A84C;border:none;color:#1A1A2E;padding:5px 12px;border-radius:4px;cursor:pointer;font-size:0.85em;font-weight:600;}
-#messages{flex:1;overflow-y:auto;padding:8px 0;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
-.msg{padding:14px 18px;border-radius:8px;line-height:1.7;font-size:1.05em;white-space:pre-wrap;word-wrap:break-word;}
-.msg.dm{background:#C9A84C0d;border:1px solid #C9A84C22;}
-.msg.player{background:#E8A83815;border:1px solid #E8A83833;align-self:flex-end;max-width:85%;}
-.msg.system{color:#F5F0E166;font-size:0.85em;text-align:center;font-style:italic;}
-.msg.coin{color:#C9A84C;font-size:0.9em;text-align:center;font-weight:600;}
-.msg.error{color:#ff6b6b;font-size:0.9em;text-align:center;}
-.msg.spectator_suggestion{background:#6B5CE710;border:1px solid #6B5CE744;border-left:3px solid #6B5CE7;font-size:0.95em;}
-#actions{display:flex;flex-direction:column;gap:10px;padding:12px 0;border-top:1px solid #C9A84C22;}
+/* ── Split Scroll Layout: Narrative (top) + Actions (bottom) ── */
+#messages{flex:7;overflow-y:auto;padding:12px 4px 12px 0;display:flex;flex-direction:column;gap:16px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;position:relative;min-height:0;}
+.msg{padding:0;line-height:1.8;font-size:1.1em;white-space:pre-wrap;word-wrap:break-word;}
+.msg.dm{color:#F5F0E1ee;font-size:1.1em;line-height:1.85;padding:0 4px;border:none;background:none;border-left:2px solid #C9A84C44;padding-left:16px;}
+.msg.player{color:#E8A838;font-size:0.95em;font-style:italic;padding:4px 4px 4px 20px;opacity:0.85;border:none;background:none;}
+.msg.system{color:#F5F0E166;font-size:0.85em;text-align:center;font-style:italic;padding:8px 0;}
+.msg.coin{color:#C9A84C;font-size:0.9em;text-align:center;font-weight:600;padding:8px 0;}
+.msg.error{color:#ff6b6b;font-size:0.9em;text-align:center;padding:8px 0;}
+.msg.spectator_suggestion{color:#6B5CE7;font-size:0.95em;padding:4px 4px 4px 20px;border:none;background:none;border-left:2px solid #6B5CE744;}
+
+#split-divider{height:14px;min-height:14px;cursor:row-resize;display:flex;align-items:center;justify-content:center;background:#1A1A2E;border-top:1px solid #C9A84C22;border-bottom:1px solid #C9A84C22;user-select:none;touch-action:none;flex-shrink:0;}
+#split-divider .divider-handle{width:40px;height:4px;background:#C9A84C44;border-radius:2px;transition:background 0.2s,width 0.2s;}
+#split-divider:hover .divider-handle,#split-divider.dragging .divider-handle{background:#C9A84C;width:56px;}
+
+#jump-latest-btn{position:absolute;bottom:12px;right:12px;background:#C9A84C;border:none;color:#1A1A2E;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.8em;font-weight:600;box-shadow:0 2px 12px #0008;opacity:0;pointer-events:none;transition:opacity 0.25s,transform 0.25s;z-index:10;}
+#jump-latest-btn.visible{opacity:1;pointer-events:auto;}
+#jump-latest-btn:hover{transform:scale(1.05);}
+
+#actions{display:flex;flex-direction:column;gap:10px;padding:10px 4px 8px 0;overflow-y:auto;flex:3;flex-shrink:0;-webkit-overflow-scrolling:touch;min-height:0;}
 .action-btn{background:#C9A84C15;border:1px solid #C9A84C44;color:#C9A84C;padding:14px 18px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:1em;text-align:left;transition:all 0.2s;line-height:1.4;}
 .action-btn:hover,.action-btn:active{background:#C9A84C33;border-color:#C9A84C;}
 #input-row{display:flex;gap:10px;margin-top:10px;}
@@ -116,8 +126,8 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
   #app{padding:8px 24px;}
   #header{margin-bottom:8px;}
   #header h1{font-size:1.3em;}
-  #messages{gap:8px;}
-  .msg{padding:10px 14px;font-size:0.95em;line-height:1.6;}
+  #messages{gap:12px;}
+  .msg.dm{font-size:1.05em;}
   #action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .action-btn{padding:10px 14px;font-size:0.9em;}
   #input-row{gap:8px;margin-top:6px;}
@@ -130,7 +140,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 @media (max-width: 380px) {
   #app{padding:10px;}
   #header h1{font-size:1.3em;letter-spacing:2px;}
-  .msg{padding:10px 12px;font-size:0.95em;}
+  .msg.dm{font-size:1em;}
   .action-btn{padding:12px 14px;font-size:0.9em;}
 }
 
@@ -436,7 +446,13 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     <button class="reconnect-btn" onclick="reconnect()">Reconnect</button>
   </div>
 
-  <div id="messages" class="hidden"></div>
+  <div id="messages" class="hidden">
+    <button id="jump-latest-btn" onclick="jumpToLatest()">↓ Latest</button>
+  </div>
+
+  <div id="split-divider" class="hidden">
+    <div class="divider-handle"></div>
+  </div>
 
   <!-- Host actions panel -->
   <div id="actions" class="hidden">
@@ -585,6 +601,7 @@ function joinSession(sid, name) {
 
 function showGameUI(character, code, isSpectator) {
   document.getElementById('messages').classList.remove('hidden');
+  document.getElementById('split-divider').classList.remove('hidden');
 
   if (isSpectator) {
     // Spectator mode
@@ -961,7 +978,7 @@ function addMessage(type, text) {
   el.textContent = text;
   var container = document.getElementById('messages');
   container.appendChild(el);
-  container.scrollTop = container.scrollHeight;
+  // Auto-scroll handled by split-scroll wrapper below
 }
 
 function showActions(actions) {
@@ -1582,6 +1599,97 @@ function reconnect() {
   pollOnce();
   startPolling();
 }
+
+// ── Split Scroll: Divider Drag ──────────────────────────────────────────
+(function() {
+  var divider = document.getElementById('split-divider');
+  var messagesPane = document.getElementById('messages');
+  var actionsPane = document.getElementById('actions');
+  if (!divider || !messagesPane || !actionsPane) return;
+
+  var dragging = false;
+  var startY = 0;
+  var startMsgFlex = 7;
+  var startActFlex = 3;
+  var appEl = document.getElementById('app');
+
+  function onDragStart(e) {
+    dragging = true;
+    divider.classList.add('dragging');
+    startY = (e.touches ? e.touches[0].clientY : e.clientY);
+    startMsgFlex = parseFloat(messagesPane.style.flexGrow || 7);
+    startActFlex = parseFloat(actionsPane.style.flexGrow || 3);
+    e.preventDefault();
+  }
+
+  function onDragMove(e) {
+    if (!dragging) return;
+    var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    var appRect = appEl.getBoundingClientRect();
+    var totalH = appRect.height - divider.offsetHeight;
+    var delta = clientY - startY;
+    var deltaRatio = delta / totalH * 10;
+    var newMsg = Math.max(3, Math.min(9, startMsgFlex + deltaRatio));
+    var newAct = Math.max(1, Math.min(7, startActFlex - deltaRatio));
+    messagesPane.style.flexGrow = newMsg;
+    actionsPane.style.flexGrow = newAct;
+    e.preventDefault();
+  }
+
+  function onDragEnd() {
+    if (!dragging) return;
+    dragging = false;
+    divider.classList.remove('dragging');
+  }
+
+  divider.addEventListener('mousedown', onDragStart);
+  divider.addEventListener('touchstart', onDragStart, { passive: false });
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('mouseup', onDragEnd);
+  document.addEventListener('touchend', onDragEnd);
+})();
+
+// ── Split Scroll: Jump-to-Latest Button ─────────────────────────────────
+(function() {
+  var messagesPane = document.getElementById('messages');
+  var jumpBtn = document.getElementById('jump-latest-btn');
+  if (!messagesPane || !jumpBtn) return;
+
+  var userScrolledUp = false;
+
+  function checkScroll() {
+    var distFromBottom = messagesPane.scrollHeight - messagesPane.scrollTop - messagesPane.clientHeight;
+    userScrolledUp = distFromBottom > 120;
+    if (userScrolledUp) {
+      jumpBtn.classList.add('visible');
+    } else {
+      jumpBtn.classList.remove('visible');
+    }
+  }
+
+  messagesPane.addEventListener('scroll', checkScroll);
+
+  window.jumpToLatest = function() {
+    messagesPane.scrollTop = messagesPane.scrollHeight;
+    jumpBtn.classList.remove('visible');
+    userScrolledUp = false;
+  };
+
+  // Override addMessage auto-scroll: only auto-scroll if user hasn't scrolled up
+  var origAddMsg = window.addMessage;
+  if (origAddMsg) {
+    window.addMessage = function() {
+      var result = origAddMsg.apply(this, arguments);
+      if (!userScrolledUp) {
+        messagesPane.scrollTop = messagesPane.scrollHeight;
+      } else {
+        checkScroll();
+      }
+      return result;
+    };
+  }
+})();
 </script>
 </body>
 </html>
