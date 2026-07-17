@@ -28,7 +28,7 @@ const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
 const TokenStore = require('../auth/token-store');
-const { createVoiceService, getCachedAudio } = require('../voice');
+const { createVoiceService, getCachedAudio, detectProvider } = require('../voice');
 const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
 const CombatManager = require('../combat/combat-manager');
 const Inventory = require('../inventory/inventory');
@@ -36,6 +36,9 @@ const Inventory = require('../inventory/inventory');
 // In-memory session store
 const sessions = new Map();
 const rejoinCodes = new Map(); // code -> sessionId
+
+// Voice toggle — module-level, persists across requests within a server instance
+let voiceToggleEnabled = true;
 
 /**
  * Generate a short human-readable rejoin code like "DRAC-7A3K".
@@ -188,14 +191,75 @@ async function createServer(options = {}) {
     return { ready: false, reason: 'TTS disabled' };
   });
 
-  // Get voice service status
-  app.get('/api/voice/status', async () => {
+  // POST /api/voice/generate — Generate TTS audio from text
+  app.post('/api/voice/generate', async (request, reply) => {
+    if (!voiceToggleEnabled) {
+      return reply.status(403).send({ error: 'Voice is disabled via toggle' });
+    }
+
+    const { text, voice, speed } = request.body || {};
+    if (!text || !text.trim()) {
+      return reply.status(400).send({ error: 'text is required' });
+    }
+
+    try {
+      // If caller wants custom voice/speed, create a one-off service; otherwise reuse the main one
+      let service = voiceService;
+      if (voice || speed) {
+        service = createVoiceService({ voice, speed });
+      }
+
+      const result = await service.generate(text);
+      return {
+        taskId: result.taskId,
+        status: result.status,
+        audioUrl: result.audioUrl || null,
+        audioBase64: result.audioBase64 || null,
+        audioType: result.audioType || null
+      };
+    } catch (err) {
+      request.log.error(err, 'Voice generation failed');
+      return reply.status(500).send({ error: 'Voice generation failed', detail: err.message });
+    }
+  });
+
+  // GET /api/voice/audio/:taskId — Return cached audio for a task ID
+  app.get('/api/voice/audio/:taskId', async (request, reply) => {
+    const { taskId } = request.params;
+    if (!taskId) return reply.status(400).send({ error: 'taskId required' });
+
+    const cached = getCachedAudio(taskId);
+    if (!cached) {
+      return reply.status(404).send({ error: 'Audio not found or expired', taskId });
+    }
+
     return {
-      enabled: voiceEnabled,
-      provider: voiceService.provider,
-      voice: voiceService.voice,
-      speed: voiceService.speed
+      taskId,
+      audioUrl: cached.audioUrl || null,
+      audioBase64: cached.audioBase64 || null,
+      audioType: cached.audioType || null
     };
+  });
+
+  // GET /api/voice/status — Return voice service configuration
+  app.get('/api/voice/status', async () => {
+    const provider = detectProvider();
+    return {
+      configured: !!provider,
+      provider: provider || null,
+      voice: voiceService.voice || null,
+      enabled: voiceToggleEnabled
+    };
+  });
+
+  // POST /api/voice/toggle — Enable or disable voice generation
+  app.post('/api/voice/toggle', async (request, reply) => {
+    const { enabled } = request.body || {};
+    if (typeof enabled !== 'boolean') {
+      return reply.status(400).send({ error: 'enabled (boolean) is required' });
+    }
+    voiceToggleEnabled = enabled;
+    return { enabled: voiceToggleEnabled };
   });
 
   // --- BETA TOKEN ENDPOINTS ---
