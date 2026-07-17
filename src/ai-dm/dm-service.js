@@ -14,6 +14,7 @@ const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
+const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary } = require('../coin-engine');
 
 // Player profile tracking for adaptive replayability
 
@@ -149,6 +150,8 @@ function createGame(options) {
     ruleEngine: options.ruleEngine || null,   // injected
     diceService: options.diceService || null, // injected
     coinEngine: options.coinEngine || null,   // injected
+    coinPool: null,       // initialized when adventure starts
+    sceneScores: [],      // accumulated turn scores for current scene
     sceneState: null, // scene engine state — initialized when first scene starts
     validator: null // continuity validator — initialized with first scene
   };
@@ -173,6 +176,16 @@ async function processAction(game, playerAction, character) {
       // Set warm context so the LLM knows what scene we're in
       updateScene(game.contextManager, manifest.sceneName, []);
     }
+  }
+
+  // Initialize coin pool if not yet created and adventure is available
+  if (!game.coinPool && adventure && game.sceneState) {
+    game.coinPool = createCoinPool({
+      adventureId: game.adventureId,
+      storyLength: adventure.scenes ? adventure.scenes.length : 10,
+      difficulty: adventure.difficulty || 'medium',
+      totalScenes: adventure.scenes ? adventure.scenes.length : 10
+    });
   }
 
   // Add player action to context
@@ -239,6 +252,18 @@ async function processAction(game, playerAction, character) {
     }
 
     if (shouldTransition) {
+      // Complete the current scene in the coin engine before transitioning
+      if (game.coinPool && game.sceneScores.length > 0) {
+        const currentSceneIndex = game.coinPool.scenePools.findIndex(sp => !sp.earned);
+        if (currentSceneIndex >= 0) {
+          const sceneResult = completeScene(currentSceneIndex, game.sceneScores, game.coinPool);
+          if (sceneResult) {
+            parsed.chapterSummary = formatChapterSummary(sceneResult);
+          }
+        }
+        game.sceneScores = []; // reset for next scene
+      }
+
       parsed.narrative = transitionNarration;
       const openingNarration = transitionScene(game, parsed.narrative);
       if (openingNarration) {
@@ -260,8 +285,28 @@ async function processAction(game, playerAction, character) {
     parsed.suggestedActions = generateSceneActions(game.sceneState, aiSuggestedActions);
   }
 
-  // Score the player's action for coins
-  const coinScores = scoreAction(playerAction, parsed.narrative);
+  // Score the player's action for coins — use LLM when available, heuristic fallback
+  let coinScores;
+  if (game.llmProvider && game.coinPool) {
+    try {
+      coinScores = await scoreActionWithLLM(game.llmProvider, playerAction, parsed.narrative);
+    } catch (err) {
+      console.warn('[CoinEngine] LLM scoring failed, falling back to heuristic:', err.message);
+      coinScores = scoreAction(playerAction, parsed.narrative);
+    }
+  } else {
+    coinScores = scoreAction(playerAction, parsed.narrative);
+  }
+
+  // Wire coin engine: score the turn into the pool
+  if (game.coinPool && game.sceneState) {
+    const sceneIndex = game.coinPool.scenePools.findIndex(sp => !sp.earned);
+    if (sceneIndex >= 0) {
+      const turnResult = scoreTurn(game.coinPool, sceneIndex, coinScores);
+      game.sceneScores.push(turnResult);
+    }
+  }
+
   game.playerProfile = updatePlayerProfile(game.playerProfile, playerAction, coinScores);
 
   // Track in history
@@ -410,6 +455,30 @@ function parseDMResponse(response) {
 }
 
 /**
+ * Score a player action using the LLM for nuanced creativity assessment.
+ * Falls back to heuristic scoring if LLM returns invalid JSON.
+ */
+async function scoreActionWithLLM(llmProvider, playerAction, narrativeContext) {
+  const prompt = buildCoinScoringPrompt(playerAction, narrativeContext);
+  const messages = [{ role: 'system', content: prompt }];
+  const response = await llmProvider(messages);
+
+  // Parse JSON from LLM response
+  const jsonMatch = response.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error('LLM did not return valid JSON for coin scoring');
+
+  const parsed = JSON.parse(jsonMatch[0]);
+  return {
+    creativity: Math.min(10, Math.max(0, parseInt(parsed.creativity) || 0)),
+    investigation: Math.min(10, Math.max(0, parseInt(parsed.investigation) || 0)),
+    roleplay: Math.min(10, Math.max(0, parseInt(parsed.roleplay) || 0)),
+    combat: Math.min(10, Math.max(0, parseInt(parsed.combat) || 0)),
+    exploration: Math.min(10, Math.max(0, parseInt(parsed.exploration) || 0)),
+    reasoning: parsed.reasoning || ''
+  };
+}
+
+/**
  * Score a player action for coin rewards (deterministic + heuristic).
  * Full AI scoring happens when the LLM provider is available.
  */
@@ -479,5 +548,6 @@ module.exports = {
   updatePlayerProfile,
   parseDMResponse,
   scoreAction,
+  scoreActionWithLLM,
   generateSceneActions
 };
