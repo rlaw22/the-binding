@@ -667,20 +667,40 @@ async function validateBetaToken() {
   }
 }
 
-// Auto-login: if we have a saved token, skip to the right screen
-if (betaToken) {
-  document.getElementById('gate-screen').classList.add('hidden');
-  if (localStorage.getItem('ndaAccepted_' + betaToken)) {
-    if (localStorage.getItem('questionnaireDone_' + betaToken)) {
-      document.getElementById('start-screen').classList.remove('hidden');
-      loadAdventures();
-    } else {
-      document.getElementById('questionnaire-screen').classList.remove('hidden');
+// Auto-login: if we have a saved token, re-validate it before trusting it
+(async function() {
+  if (betaToken) {
+    try {
+      var check = await fetch('/api/beta/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: betaToken })
+      });
+      if (!check.ok) {
+        // Stored token is stale or revoked — clear it and show gate
+        localStorage.removeItem('betaToken');
+        betaToken = null;
+        return; // gate-screen stays visible
+      }
+    } catch(e) {
+      // Network error — clear token and show gate to be safe
+      localStorage.removeItem('betaToken');
+      betaToken = null;
+      return;
     }
-  } else {
-    document.getElementById('nda-screen').classList.remove('hidden');
+    document.getElementById('gate-screen').classList.add('hidden');
+    if (localStorage.getItem('ndaAccepted_' + betaToken)) {
+      if (localStorage.getItem('questionnaireDone_' + betaToken)) {
+        document.getElementById('start-screen').classList.remove('hidden');
+        loadAdventures();
+      } else {
+        document.getElementById('questionnaire-screen').classList.remove('hidden');
+      }
+    } else {
+      document.getElementById('nda-screen').classList.remove('hidden');
+    }
   }
-}
+})();
 
 // Allow Enter key on the beta token input
 
@@ -786,7 +806,19 @@ async function startGame() {
       })
     });
     var data = await resp.json();
-    if (data.error) { alert(data.error); return; }
+    if (data.error) {
+      if (resp.status === 401) {
+        // Token rejected by server — clear it and go back to gate screen
+        localStorage.removeItem('betaToken');
+        betaToken = null;
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('gate-screen').classList.remove('hidden');
+        document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
+      } else {
+        alert(data.error);
+      }
+      return;
+    }
 
     sessionId = data.sessionId;
     playerId = data.playerId;
