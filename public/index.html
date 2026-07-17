@@ -144,6 +144,102 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
   .action-btn{padding:12px 14px;font-size:0.9em;}
 }
 
+/* ── Mobile Responsive: screens < 768px ────────────────────────────────────── */
+@media (max-width: 768px) {
+  #app{padding:10px 12px;padding-top:env(safe-area-inset-top,10px);padding-bottom:env(safe-area-inset-bottom,10px);}
+  #header{padding:8px 0;margin-bottom:8px;}
+  #header h1{font-size:1.3em;letter-spacing:2px;}
+  #header .subtitle{font-size:0.78em;}
+
+  /* Narrative area: proper scroll on mobile */
+  #messages{flex:1;min-height:0;padding:8px 2px 8px 0;gap:12px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+  .msg{font-size:1em;line-height:1.7;}
+  .msg.dm{font-size:1em;line-height:1.75;padding-left:12px;}
+  .msg.player{font-size:0.88em;padding:4px 4px 4px 14px;}
+  .msg.system{font-size:0.8em;padding:6px 0;}
+  .msg.coin{font-size:0.85em;padding:6px 0;}
+
+  /* Actions panel: touch-friendly */
+  #actions{gap:8px;padding:8px 2px 6px 0;flex-shrink:0;}
+  .action-btn{padding:14px 16px;font-size:0.95em;min-height:48px;line-height:1.4;border-radius:8px;touch-action:manipulation;}
+  .action-btn:active{background:#C9A84C33;border-color:#C9A84C;}
+
+  /* Input row: full-width on mobile */
+  #input-row{flex-direction:column;gap:8px;margin-top:8px;}
+  #free-input{width:100%;min-height:48px;font-size:1em;padding:14px 14px;border-radius:8px;touch-action:manipulation;}
+  #send-btn{width:100%;min-height:48px;font-size:1em;padding:14px 20px;border-radius:8px;touch-action:manipulation;}
+
+  /* Spectator suggestion row: full-width */
+  #suggest-row{flex-direction:column;gap:8px;margin-top:8px;}
+  #suggest-input{width:100%;min-height:48px;font-size:1em;padding:14px 14px;border-radius:8px;}
+  #suggest-btn{width:100%;min-height:48px;font-size:1em;padding:14px 20px;border-radius:8px;}
+
+  /* Character / coin / progress bars: compact */
+  #char-bar{gap:10px;padding:8px 10px;font-size:0.82em;flex-wrap:wrap;}
+  #coin-bar{padding:5px 10px;font-size:0.82em;}
+  #progress-bar{padding:5px 10px;font-size:0.75em;}
+  #rejoin-bar{padding:6px 10px;font-size:0.8em;flex-wrap:wrap;justify-content:center;}
+  #spectator-bar{padding:6px 10px;font-size:0.8em;}
+
+  /* Split divider: larger touch target */
+  #split-divider{height:20px;min-height:20px;}
+  #split-divider .divider-handle{width:50px;height:5px;}
+
+  /* Jump-to-latest button: larger on mobile */
+  #jump-latest-btn{padding:10px 18px;font-size:0.85em;border-radius:20px;}
+
+  /* Voice toggle: reposition for mobile */
+  #voice-toggle{top:8px;right:8px;padding:6px 10px;font-size:0.78em;}
+
+  /* Report button: reposition */
+  #report-btn{bottom:8px;right:8px;padding:6px 10px;font-size:0.75em;}
+
+  /* Inventory toggle: ensure touch-friendly */
+  #inv-toggle{width:48px;height:48px;bottom:12px;right:12px;}
+  #inv-panel{width:85vw;right:-85vw;}
+
+  /* Combat overlay: mobile-friendly */
+  #combat-overlay{padding:12px;}
+  #combat-header h2{font-size:1.1em;}
+  #combat-entities{gap:12px;margin-bottom:12px;}
+  .combat-action-btn{padding:14px 12px;font-size:0.9em;min-height:48px;touch-action:manipulation;}
+  #combat-log{padding:10px 12px;font-size:0.85em;}
+
+  /* Gate / NDA / Questionnaire screens: mobile-friendly */
+  #gate-screen{padding:24px 16px;}
+  #gate-form input{padding:14px 16px;font-size:1.1em;}
+  #gate-submit{padding:14px 24px;}
+  #nda-screen{padding:16px;}
+  #nda-box{max-height:40vh;padding:16px;font-size:0.88em;}
+  #nda-continue{padding:14px 24px;}
+  #questionnaire-screen{padding:16px;}
+  .q-field input,.q-field select,.q-field textarea{padding:12px;font-size:0.92em;}
+  #q-submit{padding:14px 24px;}
+  #start-screen{padding:24px 16px;}
+  #start-form input,#start-form select{padding:12px 14px;font-size:0.95em;}
+  #start-form button{padding:14px 24px;font-size:1em;}
+
+  /* Report modal: mobile-friendly */
+  #report-modal .modal-content{padding:18px;width:94%;}
+  #report-modal textarea{min-height:70px;font-size:0.9em;}
+
+  /* Reconnect banner */
+  #reconnect-banner{padding:10px 12px;}
+  #reconnect-banner .reconnect-btn{padding:10px 14px;font-size:0.85em;}
+}
+
+/* ── Mobile: very small screens (< 400px) ──────────────────────────────────── */
+@media (max-width: 400px) {
+  #app{padding:8px 10px;}
+  #header h1{font-size:1.15em;letter-spacing:1px;}
+  #header .subtitle{font-size:0.72em;}
+  .msg.dm{font-size:0.92em;padding-left:10px;}
+  .msg.player{font-size:0.82em;}
+  .action-btn{padding:12px 14px;font-size:0.88em;}
+  #char-bar{gap:8px;font-size:0.78em;padding:6px 8px;}
+  #coin-bar{font-size:0.78em;padding:4px 8px;}
+}
+
 /* ── Progress Tracker ─────────────────────────────────────────────────────── */
 #progress-bar{display:flex;align-items:center;gap:10px;padding:6px 14px;background:#C9A84C08;border:1px solid #C9A84C22;border-radius:6px;margin-bottom:8px;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.8em;}
 #progress-bar .act-label{color:#C9A84C;font-weight:700;letter-spacing:1px;white-space:nowrap;}
@@ -488,6 +584,288 @@ var lastMsgIndex = 0;
 var sending = false;
 var pollTimer = null;
 var pollErrors = 0;
+
+// ── Session Rejoin: Save sessionId to localStorage on creation ────────
+var REJOIN_STORAGE_KEY = 'binding_session';
+
+function saveSessionToStorage(sid, charName) {
+  try {
+    localStorage.setItem(REJOIN_STORAGE_KEY, JSON.stringify({
+      sessionId: sid,
+      characterName: charName || 'Adventurer',
+      savedAt: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function clearSessionFromStorage() {
+  try {
+    localStorage.removeItem(REJOIN_STORAGE_KEY);
+  } catch(e) {}
+}
+
+function getStoredSession() {
+  try {
+    var raw = localStorage.getItem(REJOIN_STORAGE_KEY);
+    if (!raw) return null;
+    var data = JSON.parse(raw);
+    // Expire after 24 hours
+    if (Date.now() - data.savedAt > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(REJOIN_STORAGE_KEY);
+      return null;
+    }
+    return data;
+  } catch(e) { return null; }
+}
+
+// ── Spectator Mode: URL parameter ?spectator=SESSION_ID ───────────────
+var isSpectatorMode = false;
+
+function initSpectatorMode() {
+  var params = new URLSearchParams(window.location.search);
+  var spectateId = params.get('spectator');
+  if (!spectateId) return false;
+
+  isSpectatorMode = true;
+  sessionId = spectateId;
+  playerRole = 'spectator';
+
+  // Hide all pre-game screens
+  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'start-screen'];
+  screens.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+
+  // Show game UI in spectator mode
+  document.getElementById('messages').classList.remove('hidden');
+  document.getElementById('spectator-bar').classList.remove('hidden');
+  document.getElementById('spectator-label').textContent = 'Spectating';
+
+  // Hide input areas and action buttons
+  document.getElementById('actions').classList.add('hidden');
+  document.getElementById('spectator-actions').classList.add('hidden');
+  document.getElementById('split-divider').classList.add('hidden');
+
+  // Hide voice toggle and report button for spectators
+  var voiceToggle = document.getElementById('voice-toggle');
+  if (voiceToggle) voiceToggle.style.display = 'none';
+  var reportBtn = document.getElementById('report-btn');
+  if (reportBtn) reportBtn.style.display = 'none';
+  var invToggle = document.getElementById('inv-toggle');
+  if (invToggle) invToggle.style.display = 'none';
+
+  // Auto-scroll narrative
+  var messagesPane = document.getElementById('messages');
+  messagesPane.style.flex = '1';
+
+  // Start polling for messages
+  startPolling();
+  return true;
+}
+
+// ── On page load: check for URL params and stored sessions ────────────
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var sid = params.get('session');
+  var spectate = params.get('spectate');
+  var spectatorId = params.get('spectator');
+
+  // Priority 1: ?spectator=SESSION_ID (spectator mode)
+  if (spectatorId) {
+    initSpectatorMode();
+    return;
+  }
+
+  // Priority 2: ?session=ID&spectate=true (existing spectator flow)
+  if (sid && spectate === 'true') {
+    showSpectateForm();
+    document.getElementById('spectate-code-input').value = sid;
+    return;
+  }
+
+  // Priority 3: ?session=ID (reconnect to existing session)
+  if (sid) {
+    reconnectToSession(sid);
+    return;
+  }
+
+  // Priority 4: Check localStorage for saved session
+  var stored = getStoredSession();
+  if (stored && stored.sessionId) {
+    showRejoinBanner(stored);
+  }
+})();
+
+function showRejoinBanner(stored) {
+  // Create rejoin banner if it doesn't exist
+  var banner = document.getElementById('auto-rejoin-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'auto-rejoin-banner';
+    banner.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:12px;padding:12px 16px;background:#E8A83818;border:1px solid #E8A83844;border-radius:8px;margin:12px auto;max-width:500px;font-family:"Helvetica Neue",Arial,sans-serif;';
+    banner.innerHTML = '<span style="color:#E8A838;font-size:0.95em;">⚔️ Rejoin your adventure?</span>' +
+      '<button id="rejoin-yes-btn" style="background:#C9A84C;border:none;color:#1A1A2E;padding:8px 18px;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.9em;font-family:Georgia,serif;">Rejoin</button>' +
+      '<button id="rejoin-no-btn" style="background:transparent;border:1px solid #F5F0E144;color:#F5F0E188;padding:8px 14px;border-radius:6px;cursor:pointer;font-size:0.85em;font-family:Georgia,serif;">Dismiss</button>';
+    // Insert after header
+    var header = document.getElementById('header');
+    if (header && header.nextSibling) {
+      header.parentNode.insertBefore(banner, header.nextSibling);
+    } else {
+      document.getElementById('app').appendChild(banner);
+    }
+
+    document.getElementById('rejoin-yes-btn').onclick = function() {
+      banner.style.display = 'none';
+      reconnectToSession(stored.sessionId);
+    };
+    document.getElementById('rejoin-no-btn').onclick = function() {
+      banner.style.display = 'none';
+      clearSessionFromStorage();
+    };
+  } else {
+    banner.style.display = 'flex';
+  }
+}
+
+// ── Patch startGame to save session to localStorage ───────────────────
+var _originalStartGame = typeof startGame === 'function' ? startGame : null;
+// We'll hook into the existing startGame by wrapping the fetch response
+
+// ── Patch existing functions to integrate session rejoin ───────────────
+// Override reconnectToSession to also save to localStorage
+var _origReconnectToSession = reconnectToSession;
+reconnectToSession = function(sid) {
+  _origReconnectToSession(sid);
+  // Save to localStorage after successful reconnect
+  setTimeout(function() {
+    if (sessionId) {
+      var charName = document.getElementById('char-name');
+      saveSessionToStorage(sessionId, charName ? charName.textContent : 'Adventurer');
+    }
+  }, 500);
+};
+
+// Override rejoinGame to save to localStorage
+var _origRejoinGame = rejoinGame;
+rejoinGame = function() {
+  _origRejoinGame();
+  setTimeout(function() {
+    if (sessionId) {
+      var charName = document.getElementById('char-name');
+      saveSessionToStorage(sessionId, charName ? charName.textContent : 'Adventurer');
+    }
+  }, 500);
+};
+
+// Save session after startGame completes (patch the fetch in startGame)
+var _origStartGameFn = startGame;
+startGame = async function() {
+  var name = document.getElementById('player-name').value.trim() || 'Adventurer';
+  var cls = document.getElementById('player-class').value;
+
+  try {
+    var resp = await fetch('/api/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-beta-token': betaToken || ''
+      },
+      body: JSON.stringify({
+        adventureId: document.getElementById('adventure-select').value,
+        playerName: name,
+        characterClass: cls,
+        characterRace: 'human',
+        betaToken: betaToken
+      })
+    });
+    var data = await resp.json();
+    if (data.error) {
+      if (resp.status === 401) {
+        localStorage.removeItem('betaToken');
+        betaToken = null;
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('gate-screen').classList.remove('hidden');
+        document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
+      } else {
+        alert(data.error);
+      }
+      return;
+    }
+
+    sessionId = data.sessionId;
+    playerId = data.playerId;
+    playerRole = 'host';
+    lastMsgIndex = 0;
+
+    // Save session to localStorage for rejoin
+    saveSessionToStorage(sessionId, name);
+
+    showGameUI(data.character, data.rejoinCode, false);
+    window.history.replaceState({}, '', '?session=' + sessionId);
+    startPolling();
+  } catch(e) {
+    alert('Failed to create session: ' + e.message);
+  }
+};
+
+// ── Clear session on explicit quit ────────────────────────────────────
+// Hook into any quit/leave functionality
+window.addEventListener('beforeunload', function() {
+  // Don't clear on page refresh — only on explicit quit actions
+  // The session will be cleared when the user explicitly quits via UI
+});
+
+// Add quit functionality if not already present
+function quitGame() {
+  if (confirm('Are you sure you want to quit? Your session will be saved for 24 hours.')) {
+    clearSessionFromStorage();
+    sessionId = null;
+    playerId = null;
+    playerRole = null;
+    if (pollTimer) clearInterval(pollTimer);
+    window.location.href = '/';
+  }
+}
+
+// Make quitGame available globally
+window.quitGame = quitGame;
+
+// ── Auto-scroll for spectator mode ────────────────────────────────────
+(function() {
+  var messagesPane = document.getElementById('messages');
+  if (!messagesPane) return;
+
+  // Override addMessage to auto-scroll in spectator mode
+  var origAddMsg = window.addMessage;
+  if (origAddMsg) {
+    window.addMessage = function() {
+      var result = origAddMsg.apply(this, arguments);
+      if (isSpectatorMode) {
+        // Always auto-scroll in spectator mode
+        messagesPane.scrollTop = messagesPane.scrollHeight;
+      }
+      return result;
+    };
+  }
+})();
+
+// ── Patch handleMessage for spectator mode ────────────────────────────
+(function() {
+  var origHandle = window.handleMessage;
+  if (origHandle) {
+    window.handleMessage = function(msg) {
+      origHandle(msg);
+      // In spectator mode, update spectator count if available
+      if (isSpectatorMode && msg.type === 'spectator_update') {
+        var countEl = document.getElementById('spectator-count');
+        if (countEl && msg.metadata && msg.metadata.count) {
+          countEl.textContent = '(' + msg.metadata.count + ' watching)';
+        }
+      }
+    };
+  }
+})();
 
 // --- On page load: check for URL params ---
 (function() {
