@@ -311,7 +311,7 @@ function processPlayerAction(combat, action, options = {}, difficulty) {
   // If combat ended (fled or victory), return early — record outcome if difficulty provided
   if (!combat.active) {
     if (difficulty && combat.outcome !== 'fled') {
-      difficulty.recordOutcome(combat.outcome, combat.player.hp.current, combat.enemies.length);
+      difficulty.recordOutcome(combat.outcome, combat.player.hp.current, combat.player.hp.max, combat.enemies.length);
     }
     combat.log.push(...log);
     return { combat, narrative: log.map(l => l.description).join('\n\n'), diceRolls };
@@ -383,7 +383,7 @@ function processPlayerAction(combat, action, options = {}, difficulty) {
       });
       // Record defeat outcome if difficulty provided
       if (difficulty) {
-        difficulty.recordOutcome('defeat', player.hp.current, combat.enemies.length);
+        difficulty.recordOutcome('defeat', player.hp.current, player.hp.max, combat.enemies.length);
       }
       break;
     }

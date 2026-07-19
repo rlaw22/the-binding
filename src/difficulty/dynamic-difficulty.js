@@ -46,21 +46,37 @@ const NARRATIVE_WRAPPERS = {
 
 // ── DynamicDifficulty Class ──────────────────────────────────────────────────
 
+// ── Action Categorization ─────────────────────────────────────────────────────
+
+/**
+ * Categorize a player action for fatigue detection.
+ */
+function categorizeAction(action) {
+  if (/attack|strike|cast|fight|shoot|stab|slash|punch|kick/.test(action)) return 'combat';
+  if (/search|examine|look|inspect|investigate|check|study|read/.test(action)) return 'investigation';
+  if (/go|walk|run|move|enter|climb|descend|north|south|east|west|open|explore/.test(action)) return 'exploration';
+  if (/say|tell|ask|speak|talk|whisper|shout|negotiate|persuade|intimidate/.test(action)) return 'social';
+  if (/use|combine|try|attempt|craft|make|build/.test(action)) return 'creative';
+  return 'other';
+}
+
 class DynamicDifficulty {
   constructor() {
     this.combatHistory = [];
     this.consecutiveWins = 0;
     this.consecutiveLosses = 0;
     this.totalCombats = 0;
+    this.playerActions = [];  // recent action patterns for fatigue detection
   }
 
   /**
    * Record the outcome of a combat encounter.
    * @param {'victory'|'defeat'|'fled'} outcome
    * @param {number} playerHpRemaining — player HP at end
+   * @param {number} playerHpMax — player max HP
    * @param {number} enemyCount — number of enemies in the encounter
    */
-  recordOutcome(outcome, playerHpRemaining, enemyCount) {
+  recordOutcome(outcome, playerHpRemaining, playerHpMax, enemyCount) {
     const won = outcome === 'victory';
     this.totalCombats++;
 
@@ -72,9 +88,14 @@ class DynamicDifficulty {
       this.consecutiveWins = 0;
     }
 
+    // HP margin — how close the fight was (0 = nearly died, 1 = untouched)
+    const hpMargin = playerHpMax > 0 ? playerHpRemaining / playerHpMax : 0;
+
     this.combatHistory.push({
       outcome,
       playerHpRemaining,
+      playerHpMax,
+      hpMargin,
       enemyCount,
       timestamp: Date.now(),
       consecutiveWins: this.consecutiveWins,
@@ -88,13 +109,77 @@ class DynamicDifficulty {
   }
 
   /**
+   * Record a player action pattern for fatigue detection.
+   * @param {string} action — the player's action text
+   */
+  recordAction(action) {
+    if (!action) return;
+    const normalized = action.toLowerCase().trim();
+    // Extract action category
+    const category = categorizeAction(normalized);
+    this.playerActions.push({ category, action: normalized, timestamp: Date.now() });
+
+    // Keep bounded
+    if (this.playerActions.length > 30) {
+      this.playerActions = this.playerActions.slice(-30);
+    }
+  }
+
+  /**
+   * Detect if the player is fatigued (repetitive actions).
+   * Returns fatigue info: { fatigued: bool, dominantCategory: string, ratio: number }
+   */
+  detectFatigue() {
+    if (this.playerActions.length < 5) {
+      return { fatigued: false, dominantCategory: null, ratio: 0 };
+    }
+
+    const recent = this.playerActions.slice(-10);
+    const counts = {};
+    for (const entry of recent) {
+      counts[entry.category] = (counts[entry.category] || 0) + 1;
+    }
+
+    let dominantCategory = null;
+    let maxCount = 0;
+    for (const [cat, count] of Object.entries(counts)) {
+      if (count > maxCount) {
+        dominantCategory = cat;
+        maxCount = count;
+      }
+    }
+
+    const ratio = maxCount / recent.length;
+    // Fatigued if 70%+ of recent actions are the same category
+    return { fatigued: ratio >= 0.7, dominantCategory, ratio };
+  }
+
+  /**
    * Determine the difficulty tier for the next encounter.
    * Returns: 'fair' | 'power_window' | 'challenge'
+   *
+   * Now considers HP margins and fatigue in addition to win/loss streaks.
    */
   getNextTier() {
     // Rubber-band: after 2+ consecutive losses, force a power window
     if (this.consecutiveLosses >= 2) {
       return TIERS.POWER_WINDOW;
+    }
+
+    // Fatigue detection: if player is doing repetitive actions, ease up
+    const fatigue = this.detectFatigue();
+    if (fatigue.fatigued && this.consecutiveWins < 2) {
+      return TIERS.POWER_WINDOW;
+    }
+
+    // HP margin: if player barely survived recent fights, ease up
+    const recentFights = this.combatHistory.slice(-3);
+    if (recentFights.length >= 2) {
+      const avgMargin = recentFights.reduce((sum, f) => sum + (f.hpMargin || 0.5), 0) / recentFights.length;
+      if (avgMargin < 0.25 && this.consecutiveWins < 3) {
+        // Player barely surviving — give them a break
+        return TIERS.POWER_WINDOW;
+      }
     }
 
     // After 3+ consecutive wins, skew toward challenge
@@ -168,6 +253,12 @@ class DynamicDifficulty {
    */
   getStats() {
     const wins = this.combatHistory.filter(c => c.outcome === 'victory').length;
+    const recentFights = this.combatHistory.slice(-5);
+    const avgHpMargin = recentFights.length > 0
+      ? recentFights.reduce((sum, f) => sum + (f.hpMargin || 0.5), 0) / recentFights.length
+      : 0;
+    const fatigue = this.detectFatigue();
+
     return {
       totalCombats: this.totalCombats,
       wins,
@@ -175,9 +266,12 @@ class DynamicDifficulty {
       consecutiveWins: this.consecutiveWins,
       consecutiveLosses: this.consecutiveLosses,
       winRate: this.totalCombats > 0 ? (wins / this.totalCombats) : 0,
+      avgHpMargin: Math.round(avgHpMargin * 100) / 100,
+      fatigue,
       recentHistory: this.combatHistory.slice(-10).map(h => ({
         outcome: h.outcome,
         hpRemaining: h.playerHpRemaining,
+        hpMargin: h.hpMargin,
         enemies: h.enemyCount
       }))
     };
@@ -191,7 +285,8 @@ class DynamicDifficulty {
       combatHistory: this.combatHistory,
       consecutiveWins: this.consecutiveWins,
       consecutiveLosses: this.consecutiveLosses,
-      totalCombats: this.totalCombats
+      totalCombats: this.totalCombats,
+      playerActions: this.playerActions
     };
   }
 
@@ -207,6 +302,7 @@ class DynamicDifficulty {
       dd.consecutiveWins = data.consecutiveWins || 0;
       dd.consecutiveLosses = data.consecutiveLosses || 0;
       dd.totalCombats = data.totalCombats || 0;
+      dd.playerActions = data.playerActions || [];
     }
     return dd;
   }
@@ -215,5 +311,6 @@ class DynamicDifficulty {
 module.exports = {
   DynamicDifficulty,
   TIERS,
-  NARRATIVE_WRAPPERS
+  NARRATIVE_WRAPPERS,
+  categorizeAction
 };
