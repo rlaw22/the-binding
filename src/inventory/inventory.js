@@ -422,6 +422,91 @@ function getEquippedEffects(inventory) {
   return effects;
 }
 
+// ── Equipped Consumable Use ──────────────────────────────────────────────────
+
+/**
+ * Use a consumable from an equipment slot (consumable_1 or consumable_2).
+ * Decrements uses and unequips if exhausted.
+ * @returns {{ success: boolean, item?: object, effect?: object, consumed?: boolean, reason?: string }}
+ */
+function useEquippedConsumable(inventory, slot) {
+  if (slot !== 'consumable_1' && slot !== 'consumable_2') {
+    return { success: false, reason: 'Not a consumable slot' };
+  }
+
+  const equipped = inventory.equipment[slot];
+  if (!equipped) return { success: false, reason: `Nothing in ${slot}` };
+
+  const template = ITEMS[equipped.id];
+  if (!template) return { success: false, reason: 'Unknown item' };
+  if (!equipped.consumable && !template.consumable) {
+    return { success: false, reason: 'Item is not consumable' };
+  }
+
+  const effect = template.combatEffect || null;
+
+  if (equipped.remainingUses != null) {
+    equipped.remainingUses--;
+    if (equipped.remainingUses <= 0) {
+      inventory.equipment[slot] = null;
+      return { success: true, item: template, effect, consumed: true, remainingUses: 0 };
+    }
+    return { success: true, item: template, effect, consumed: false, remainingUses: equipped.remainingUses };
+  }
+
+  // Non-tracked consumable (shouldn't happen, but safe fallback)
+  inventory.equipment[slot] = null;
+  return { success: true, item: template, effect, consumed: true, remainingUses: 0 };
+}
+
+// ── DM Context Injection ────────────────────────────────────────────────────
+
+/**
+ * Generate a compact text summary of the player's inventory for the AI DM.
+ * Injected into the DM context so it knows what items the player has.
+ * @returns {string} human-readable inventory summary
+ */
+function getInventoryContext(inventory) {
+  if (!inventory || !inventory.slots || inventory.slots.length === 0) {
+    return 'The player carries nothing.';
+  }
+
+  const lines = [];
+
+  // Equipment
+  const equipped = [];
+  for (const slot of EQUIPMENT_SLOTS) {
+    const eq = inventory.equipment[slot];
+    if (eq) {
+      const tmpl = ITEMS[eq.id];
+      const uses = eq.consumable ? ` (${eq.remainingUses}/${eq.uses} uses)` : '';
+      equipped.push(`${slot}: ${eq.name}${uses}`);
+    }
+  }
+  if (equipped.length > 0) {
+    lines.push(`Equipped: ${equipped.join(', ')}`);
+  }
+
+  // Bag items
+  const bag = inventory.slots.map(s => {
+    const tmpl = ITEMS[s.id];
+    const uses = s.consumable ? ` (${s.remainingUses}/${s.uses})` : '';
+    return `${s.name}${uses}`;
+  });
+  if (bag.length > 0) {
+    lines.push(`Carrying: ${bag.join(', ')}`);
+  }
+
+  // Active effects
+  const effects = getEquippedEffects(inventory);
+  if (effects.length > 0) {
+    const fx = effects.map(e => `${e.source}: ${e.type}${e.vsType ? ` vs ${e.vsType}` : ''}${e.acBonus ? ` +${e.acBonus} AC` : ''}`);
+    lines.push(`Active effects: ${fx.join('; ')}`);
+  }
+
+  return lines.join('\n');
+}
+
 // ── Shoppe Economy ──────────────────────────────────────────────────────────
 
 /**
@@ -505,6 +590,8 @@ module.exports = {
   unequipItem,
   getEquipped,
   getEquippedEffects,
+  useEquippedConsumable,
+  getInventoryContext,
   getShoppeCatalog,
   buyItem,
   sellItem
