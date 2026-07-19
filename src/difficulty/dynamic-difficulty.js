@@ -20,6 +20,57 @@ const TIERS = {
   CHALLENGE: 'challenge'
 };
 
+/**
+ * Tunable calibration constants.
+ * Adjust these to shift the feel of combat without touching logic.
+ * All values are ratios or counts, not absolute numbers.
+ */
+const CALIBRATION = {
+  // ── Rubber-band triggers ──
+  lossesToForcePowerWindow: 2,     // consecutive losses before forcing easy fight
+  winsToSkewChallenge: 3,          // consecutive wins before skewing harder
+
+  // ── Win-streak distribution (when player is on a hot streak) ──
+  winStreak: {
+    challenge: 0.40,   // 40% challenge
+    fair: 0.40,        // 40% fair
+    powerWindow: 0.20  // 20% power window (breather)
+  },
+
+  // ── Base distribution (normal play) ──
+  base: {
+    fair: 0.70,        // 70% fair fights (design doc §7)
+    powerWindow: 0.20, // 20% power windows (feel like a badass)
+    challenge: 0.10    // 10% challenge spikes (need creative thinking)
+  },
+
+  // ── Fatigue detection ──
+  fatigueDetection: {
+    recentActionWindow: 10,    // look at last N actions
+    minActionsToDetect: 5,     // need at least this many
+    repetitiveThreshold: 0.7   // 70%+ same category = fatigued
+  },
+
+  // ── HP margin thresholds ──
+  hpMargin: {
+    nearlyDying: 0.25,   // avg margin below this = give a break
+    minRecentFights: 2   // need at least this many recent fights to evaluate
+  },
+
+  // ── Enemy scaling ──
+  scaling: {
+    powerWindowHpMult: 0.80,    // -20% HP
+    powerWindowAtkMod: -2,      // -2 attack bonus
+    challengeHpMult: 1.30,      // +30% HP
+    challengeAtkMod: +2,        // +2 attack bonus
+    challengeAcMod: +1          // +1 AC
+  },
+
+  // ── History bounds ──
+  maxCombatHistory: 50,
+  maxActionHistory: 30
+};
+
 const NARRATIVE_WRAPPERS = {
   fair: [
     'The enemy stands ready — a fair fight awaits.',
@@ -103,8 +154,8 @@ class DynamicDifficulty {
     });
 
     // Keep history bounded
-    if (this.combatHistory.length > 50) {
-      this.combatHistory = this.combatHistory.slice(-50);
+    if (this.combatHistory.length > CALIBRATION.maxCombatHistory) {
+      this.combatHistory = this.combatHistory.slice(-CALIBRATION.maxCombatHistory);
     }
   }
 
