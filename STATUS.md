@@ -3,7 +3,7 @@
 ## Current Status: 🟢 Phase 1 Core Complete                          *July 19, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `4f3cce4` — E2E smoke test (35/35 passing)
+**Latest commit:** `ed09114` — adventure level ranges in dropdown UI
 **Test suite:** 288/288 passing (142 core + 45 coin-v2 + 66 integration + 35 E2E)
 
 ---
