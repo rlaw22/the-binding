@@ -5,115 +5,627 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Binding — Documentation</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #1A1A2E; color: #F5F0E1; font-family: "Georgia", "Times New Roman", serif; line-height: 1.75; }
-  .hero { text-align: center; padding: 80px 24px 40px; }
-  .hero h1 { font-size: 2.8em; color: #C9A84C; font-weight: 400; letter-spacing: 4px; }
-  .hero .tagline { font-size: 1.4em; color: #E8A838; font-style: italic; margin-top: 8px; letter-spacing: 1px; }
-  .container { max-width: 920px; margin: 0 auto; padding: 0 24px 60px; }
-  .nav { display: flex; gap: 12px; justify-content: center; margin: 40px 0 48px; flex-wrap: wrap; }
-  .nav a { background: #C9A84C15; border: 1px solid #C9A84C44; color: #C9A84C; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-family: "Helvetica Neue", Arial, sans-serif; font-size: 0.95em; transition: all 0.2s; cursor: pointer; }
-  .nav a:hover, .nav a.active { background: #C9A84C33; border-color: #C9A84C; }
-  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin: 24px 0; }
-  .card { background: #C9A84C08; border: 1px solid #C9A84C22; border-radius: 10px; padding: 24px; transition: all 0.2s; text-decoration: none; color: #F5F0E1; display: block; }
-  .card:hover { border-color: #C9A84C; background: #C9A84C12; box-shadow: 0 4px 16px #C9A84C15; transform: translateY(-2px); }
-  .card .icon { font-size: 1.6em; margin-bottom: 8px; }
-  .card h2 { color: #C9A84C; font-size: 1.15em; margin-bottom: 6px; }
-  .card p { color: #F5F0E1aa; font-size: 0.9em; line-height: 1.5; }
-  .card .badge { display: inline-block; background: #C9A84C22; color: #C9A84C; padding: 2px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 600; margin-top: 10px; font-family: "Helvetica Neue", Arial, sans-serif; }
-  .footer { text-align: center; padding: 48px 24px; border-top: 1px solid #C9A84C22; margin-top: 40px; }
-  .footer p { color: #F5F0E155; font-size: 0.9em; }
-  .footer .brand { color: #C9A84C88; font-size: 1em; font-style: italic; }
-  .highlight-box { background: #C9A84C0d; border: 1px solid #C9A84C22; border-radius: 8px; padding: 20px 24px; margin: 20px 0; }
-  @media(max-width:600px) { .cards { grid-template-columns: 1fr; } }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;line-height:1.75}
+  .hero{text-align:center;padding:60px 24px 20px}
+  .hero h1{font-size:2.6em;color:#C9A84C;font-weight:400;letter-spacing:4px}
+  .hero .tagline{font-size:1.2em;color:#E8A838;font-style:italic;margin-top:6px}
+  .hero .updated{font-size:0.8em;color:#F5F0E166;margin-top:10px;font-family:sans-serif}
+  .container{max-width:960px;margin:0 auto;padding:0 24px 60px}
+
+  /* Nav tabs */
+  .nav{display:flex;gap:8px;justify-content:center;margin:24px 0 32px;flex-wrap:wrap;position:sticky;top:0;z-index:50;background:#1A1A2E;padding:12px 0}
+  .nav a{background:#C9A84C12;border:1px solid #C9A84C33;color:#C9A84C;padding:10px 22px;border-radius:6px;text-decoration:none;font-family:sans-serif;font-size:0.88em;transition:all 0.2s;cursor:pointer}
+  .nav a:hover,.nav a.active{background:#C9A84C33;border-color:#C9A84C;color:#fff}
+
+  /* Progress bars */
+  .progress-row{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin:20px 0 28px}
+  .progress-card{background:#C9A84C08;border:1px solid #C9A84C22;border-radius:10px;padding:18px 24px;min-width:200px;flex:1;max-width:280px;text-align:center}
+  .progress-card .pct{font-size:2.2em;font-weight:700;color:#C9A84C;font-family:sans-serif}
+  .progress-card .label{font-size:0.85em;color:#F5F0E188;margin-top:4px}
+  .bar-wrap{background:#F5F0E112;border-radius:6px;height:8px;margin-top:10px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#C9A84C,#E8A838);transition:width 0.6s}
+
+  /* Sections - only active visible */
+  .section{display:none}
+  .section.active{display:block}
+
+  /* Typography */
+  .section h2{color:#C9A84C;font-size:1.5em;margin:0 0 6px;letter-spacing:2px}
+  .section h3{color:#E8A838;font-size:1.1em;margin:20px 0 10px}
+  .section h4{color:#C9A84C;font-size:0.95em;margin:14px 0 6px}
+  .section p{margin-bottom:12px;color:#F5F0E1cc}
+  .section .subhead{color:#F5F0E188;font-size:0.88em;margin-bottom:20px}
+
+  /* Tables */
+  table{width:100%;border-collapse:collapse;margin:12px 0 24px;font-family:sans-serif;font-size:0.85em}
+  th{background:#C9A84C18;color:#C9A84C;text-align:left;padding:8px 12px;border:1px solid #C9A84C33;font-weight:600}
+  td{padding:7px 12px;border:1px solid #F5F0E112}
+  tr:nth-child(even) td{background:#F5F0E106}
+  tr:hover td{background:#C9A84C0a}
+
+  /* Status badges */
+  .badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.72em;font-weight:600;font-family:sans-serif;vertical-align:middle}
+  .badge-ok{background:#44ff4418;color:#44ff44}
+  .badge-warn{background:#ffaa0018;color:#ffaa00}
+  .badge-hold{background:#ff444418;color:#ff6666}
+  .badge-building{background:#4488ff18;color:#4488ff}
+
+  /* Cards grid */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:16px 0}
+  .card{background:#C9A84C08;border:1px solid #C9A84C1a;border-radius:10px;padding:20px;transition:all 0.2s}
+  .card:hover{border-color:#C9A84C55;transform:translateY(-2px);box-shadow:0 4px 16px #C9A84C12}
+  .card .icon{font-size:1.4em;margin-bottom:6px}
+  .card h3{color:#C9A84C;font-size:1em;margin:0 0 4px}
+  .card p{color:#F5F0E188;font-size:0.85em;line-height:1.4;margin:0}
+
+  /* Callout boxes */
+  .callout{background:#C9A84C0a;border:1px solid #C9A84C22;border-radius:8px;padding:16px 20px;margin:16px 0}
+  .callout.gold{border-color:#E8A83844;background:#E8A83808}
+  .callout.green{border-color:#44ff4422;background:#44ff4408}
+  .callout h4{margin-top:0}
+
+  /* Key-value pairs */
+  .kv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:12px 0 20px}
+  .kv{background:#C9A84C08;border:1px solid #C9A84C18;border-radius:8px;padding:12px 16px;text-align:center}
+  .kv .val{font-size:1.5em;font-weight:700;color:#C9A84C;font-family:sans-serif}
+  .kv .lbl{font-size:0.78em;color:#F5F0E166;text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+  .highlight{color:#E8A838;font-weight:600}
+  .muted{color:#F5F0E166}
+  code{background:#C9A84C12;padding:1px 6px;border-radius:3px;font-size:0.9em}
+  blockquote{border-left:3px solid #C9A84C;padding:10px 16px;margin:14px 0;color:#F5F0E1aa;font-style:italic;background:#C9A84C06;border-radius:0 6px 6px 0}
+  ul,ol{margin:6px 0 14px 24px}
+  li{margin-bottom:6px}
+
+  /* Action items */
+  .action-item{border-left:4px solid #E8A838;background:#E8A83806;border-radius:0 8px 8px 0;padding:14px 18px;margin:12px 0}
+  .action-item.resolved{border-color:#44ff44;background:#44ff4406}
+  .action-item .ai-tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.7em;font-weight:700;font-family:sans-serif;margin-bottom:6px}
+  .action-item .ai-tag.decision{background:#E8A83822;color:#E8A838}
+  .action-item .ai-tag.done{background:#44ff4422;color:#44ff44}
+
+  .footer{text-align:center;padding:40px 24px;border-top:1px solid #C9A84C22;margin-top:40px}
+  .footer p{color:#F5F0E144;font-size:0.85em}
+  .footer .brand{color:#C9A84C66;font-style:italic}
+
+  @media(max-width:600px){
+    .cards{grid-template-columns:1fr}
+    .progress-row{flex-direction:column;align-items:center}
+    .kv-grid{grid-template-columns:1fr 1fr}
+    table{font-size:0.78em}
+    .nav{gap:6px}
+    .nav a{padding:8px 14px;font-size:0.8em}
+  }
 </style>
 </head>
 <body>
-
 <div class="hero">
   <h1>The Binding</h1>
   <p class="tagline">Enter the books you love.</p>
+  <p class="updated">Documentation Hub &bull; Updated July 19, 2026</p>
 </div>
-
 <div class="container">
-  <div class="nav">
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/">Status Report</a>
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/#synopsis">Synopsis</a>
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/#effort">Effort &amp; Timeline</a>
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/#design">Game Design</a>
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/#architecture">Architecture</a>
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/#dice">Dice Roller</a>
-    <a href="monster-database.html">⚔️ Monster Database</a>
+  <div class="nav" id="mainNav">
+    <a href="#" data-tab="status" class="active">📊 Status</a>
+    <a href="#" data-tab="synopsis">📖 Synopsis</a>
+    <a href="#" data-tab="effort">⏱️ Effort &amp; Timeline</a>
+    <a href="#" data-tab="design">🎲 Game Design</a>
+    <a href="#" data-tab="hardware">💻 Hardware Spec</a>
+    <a href="#" data-tab="actions">⚡ Actions</a>
+    <a href="monster-database.html">⚔️ Monsters</a>
+    <a href="dice-test.html" target="_blank">🎲 Dice Roller</a>
   </div>
 
-  <div class="highlight-box">
-    <p style="color: #E8A838; font-weight: 600; margin-bottom: 4px;">📚 Documentation Hub</p>
-    <p style="color: #F5F0E1aa; font-size: 0.95em;">Design documents, reference materials, and interactive tools that power The Binding. Navigate using the tabs above or the cards below.</p>
+  <!-- ==================== STATUS TAB ==================== -->
+  <div id="tab-status" class="section active">
+    <h2>📊 Project Status</h2>
+    <p class="subhead">Phase 2 at 95% — 274 tests passing · 16 campaign modules (5,197 lines) · 334 SRD monsters · 829KB session data</p>
+
+    <div class="progress-row">
+      <div class="progress-card">
+        <div class="pct">82%</div>
+        <div class="label">Phase 1 Core Engine</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:82%"></div></div>
+      </div>
+      <div class="progress-card">
+        <div class="pct">70%</div>
+        <div class="label">Infrastructure</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:70%"></div></div>
+      </div>
+      <div class="progress-card">
+        <div class="pct">62%</div>
+        <div class="label">Beta Readiness</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:62%"></div></div>
+      </div>
+      <div class="progress-card">
+        <div class="pct" style="color:#ff6666">HELD</div>
+        <div class="label">Telegram Deploy</div>
+        <div class="bar-wrap"><div class="bar-fill" style="width:0%;background:#ff6666"></div></div>
+      </div>
+    </div>
+
+    <h3>Phase 1 — Core Engine</h3>
+    <table>
+      <tr><th>Component</th><th>Status</th><th>%</th><th>Notes</th></tr>
+      <tr><td>AI DM Service</td><td><span class="badge badge-ok">Built</span></td><td>90%</td><td>4 modules, 1,319 lines. Context mgmt, DM orchestration, LLM provider, prompts</td></tr>
+      <tr><td>Rule Engine (D&amp;D 5e)</td><td><span class="badge badge-ok">Built</span></td><td>90%</td><td>7 modules: combat, dice, stats, classes, races, character-sheet</td></tr>
+      <tr><td>Dice Service</td><td><span class="badge badge-ok">Built</span></td><td>90%</td><td>899 lines · 207 tests · 3D physics roller (Three.js + Cannon.js)</td></tr>
+      <tr><td>Character Creation</td><td><span class="badge badge-ok">Built</span></td><td>85%</td><td>Model, service, portrait gen. Portrait gen needs image API wired</td></tr>
+      <tr><td>Scene Engine</td><td><span class="badge badge-ok">Built</span></td><td>80%</td><td>Exit pressure ramps, completion tracking, 4-action system</td></tr>
+      <tr><td>Web App (PWA)</td><td><span class="badge badge-warn">Partial</span></td><td>65%</td><td>Vanilla HTML (70.9KB + 22KB). Dice roller + 3D physics done. Not React yet</td></tr>
+      <tr><td>Adventure Content</td><td><span class="badge badge-ok">Built</span></td><td>90%</td><td>3 books × 25 scenes (75 total) · 101 narrative bugs found &amp; fixed</td></tr>
+      <tr><td>TTS Voice Service</td><td><span class="badge badge-ok">Resolved</span></td><td>75%</td><td>669 lines. Wired to Novita AI. TTS confirmed generating audio. STT endpoint configured.</td></tr>
+      <tr><td>Session + Router</td><td><span class="badge badge-ok">Built</span></td><td>90%</td><td>Persistence + message routing working</td></tr>
+      <tr><td>Auth + API Server</td><td><span class="badge badge-ok">Built</span></td><td>92%</td><td>Fastify (1,026 lines) + campaign routes (253 lines)</td></tr>
+      <tr><td>Test Suites</td><td><span class="badge badge-ok">Built</span></td><td>85%</td><td>3 suites (50KB): phase1 · phase2 · dice (207 tests)</td></tr>
+      <tr><td>Coin/XP Engine</td><td><span class="badge badge-building">Building</span></td><td>40%</td><td>428 lines. Core logic done. Needs AI DM creativity integration</td></tr>
+      <tr><td>Combat Manager</td><td><span class="badge badge-ok">Built</span></td><td>70%</td><td>438 lines. Initiative, multi-foe, action economy</td></tr>
+      <tr><td>Dynamic Difficulty</td><td><span class="badge badge-building">Building</span></td><td>50%</td><td>370 lines. Rubber-band scaling. Needs playtest tuning</td></tr>
+      <tr><td>Inventory System</td><td><span class="badge badge-building">Building</span></td><td>50%</td><td>598 lines. Item tracking, equipment slots, combat effects</td></tr>
+    </table>
+
+    <h3>Infrastructure &amp; Deployment</h3>
+    <table>
+      <tr><th>Component</th><th>Status</th><th>%</th><th>Notes</th></tr>
+      <tr><td>Hosting (Render.com)</td><td><span class="badge badge-ok">Configured</span></td><td>90%</td><td>render.yaml + Dockerfile ready</td></tr>
+      <tr><td>Telegram Bot</td><td><span class="badge badge-hold">HELD</span></td><td>100%</td><td>9KB built. Ready — Lawman to greenlight beta</td></tr>
+      <tr><td>GitHub Repo</td><td><span class="badge badge-ok">Ready</span></td><td>95%</td><td>PAT configured. Code ready to push</td></tr>
+      <tr><td>Image Generation</td><td><span class="badge badge-building">Building</span></td><td>30%</td><td>3 modules (574 lines). Needs provider API key</td></tr>
+      <tr><td>Voice / TTS Infra</td><td><span class="badge badge-ok">Resolved</span></td><td>75%</td><td>TTS + STT (669 lines) wired to Novita AI. Same API key as LLM. TTS confirmed generating audio tasks.</td></tr>
+    </table>
+
+    <h3>Beta Readiness</h3>
+    <table>
+      <tr><th>Component</th><th>Status</th><th>%</th><th>Notes</th></tr>
+      <tr><td>E2E Smoke Test</td><td><span class="badge badge-building">In Progress</span></td><td>35%</td><td>Signup → char creation → Scene 1 works. Need full playthroughs</td></tr>
+      <tr><td>Narrative Bug Hunt</td><td><span class="badge badge-ok">Complete</span></td><td>100%</td><td>75 scenes, 15 acts. 101 bugs found &amp; fixed</td></tr>
+      <tr><td>Beta Signup + Tokens</td><td><span class="badge badge-ok">Built</span></td><td>90%</td><td>Token auth + session data active (829KB)</td></tr>
+      <tr><td>Telegram Deploy</td><td><span class="badge badge-hold">HELD</span></td><td>—</td><td>Waiting for Lawman's go-ahead</td></tr>
+    </table>
+
+    <h3>Not Yet Built</h3>
+    <div class="callout">
+      <ul>
+        <li><code>src/image/</code> — Scaffold only (574 lines). Needs API key.</li>
+        <li><code>src/frontend/</code> — Empty. Current app is vanilla HTML.</li>
+        <li><code>src/blockchain/</code> — Empty. Phase 3 ($BINDING, NFTs).</li>
+        <li><code>src/voice/</code> — Built (669 lines). Needs key to activate.</li>
+      </ul>
+    </div>
+
+    <h3>Phase 2 — Game Modes</h3>
+    <p class="subhead">Three play modes: Storyline, Campaign, and Digital DM — all powered by the same engine.</p>
+    <table>
+      <tr><th>Component</th><th>Status</th><th>%</th><th>Notes</th></tr>
+      <tr><td>Campaign Session Manager</td><td><span class="badge badge-ok">Complete</span></td><td>95%</td><td>480 lines · mode, lobby, turns, world state · 274 tests</td></tr>
+      <tr><td>World Builder</td><td><span class="badge badge-ok">Complete</span></td><td>95%</td><td>308 lines · procedural gen, locations, NPCs, quest hooks</td></tr>
+      <tr><td>Campaign DM Prompts</td><td><span class="badge badge-ok">Complete</span></td><td>95%</td><td>162 lines · open-ended prompts, structured parsing</td></tr>
+      <tr><td>Quest Engine</td><td><span class="badge badge-ok">Complete</span></td><td>95%</td><td>168 lines · creation, tracking, completion</td></tr>
+      <tr><td>Monster Manual + Encounters</td><td><span class="badge badge-ok">Complete</span></td><td>90%</td><td>364 + 260 lines · 334 SRD creatures · CR-balanced</td></tr>
+      <tr><td>Turn Manager (multiplayer)</td><td><span class="badge badge-ok">Complete</span></td><td>90%</td><td>260 lines · initiative, host/spectator, AFK auto-skip</td></tr>
+      <tr><td>NPC + Loot Engine</td><td><span class="badge badge-ok">Complete</span></td><td>90%</td><td>300 + 350 lines · personality, dialogue, treasure tables</td></tr>
+      <tr><td>Campaign UI + Persistence</td><td><span class="badge badge-building">Partial</span></td><td>60%</td><td>Persistence, lobby, whispers, leveling, dungeons built. UI not started</td></tr>
+    </table>
   </div>
 
-  <div class="cards">
-    <a href="monster-database.html" class="card">
-      <div class="icon">⚔️</div>
-      <h2>Monster Database</h2>
-      <p>334 SRD 5.1 creatures from CR 0 to CR 30. Search, filter, and browse full stat blocks. Powers Campaign Mode and Digital DM encounters.</p>
-      <span class="badge">334 Creatures &bull; Interactive Viewer</span>
-    </a>
+  <!-- ==================== SYNOPSIS TAB ==================== -->
+  <div id="tab-synopsis" class="section">
+    <h2>📖 Project Synopsis</h2>
+    <p class="subhead">The Binding transforms any book into a live, playable RPG with an AI Dungeon Master.</p>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">📊</div>
-      <h2>Status Report</h2>
-      <p>Live project status — Phase 1 Core Engine, Infrastructure, and Beta Readiness metrics with completion percentages and task breakdowns.</p>
-      <span class="badge">78% Core Engine &bull; Live Metrics</span>
-    </a>
+    <blockquote>Every book ever written is an unplayed adventure. The Binding makes them playable.</blockquote>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">📖</div>
-      <h2>Project Synopsis</h2>
-      <p>Executive summary, market opportunity, competitive landscape, revenue model, and Paxeer blockchain integration plan.</p>
-      <span class="badge">Business Case &amp; Strategy</span>
-    </a>
+    <h3>What Makes It Different</h3>
+    <div class="cards">
+      <div class="card"><div class="icon">🧠</div><h3>Intelligence-Rewarded</h3><p>Coins earned by <em>how creatively</em> you play, not just whether you win.</p></div>
+      <div class="card"><div class="icon">🔄</div><h3>Adaptive Replayability</h3><p>Every playthrough differs. The AI reshuffles encounters and adapts to your style.</p></div>
+      <div class="card"><div class="icon">💰</div><h3>Real Value from Real Play</h3><p>In-game coins convert to $BINDING. No ICO, no presale — the only way to earn is to play.</p></div>
+      <div class="card"><div class="icon">🏆</div><h3>Seasonal Competition</h3><p>6-month seasons with leaderboard resets, tier badges, and limited-edition items.</p></div>
+    </div>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">⏱️</div>
-      <h2>Effort, Cost &amp; Timeline</h2>
-      <p>Development phases, deliverables, effort estimates, team sizing, and 10–13 month roadmap to full launch.</p>
-      <span class="badge">4 Phases &bull; 10–13 Months</span>
-    </a>
+    <h3>Why This Matters for Paxeer</h3>
+    <div class="kv-grid">
+      <div class="kv"><div class="val">10–50K</div><div class="lbl">New Wallets Year 1</div></div>
+      <div class="kv"><div class="val">On-Chain</div><div class="lbl">NFTs + $BINDING</div></div>
+      <div class="kv"><div class="val">Gas Rev</div><div class="lbl">Minting + Trades</div></div>
+      <div class="kv"><div class="val">Flagship</div><div class="lbl">Consumer App</div></div>
+    </div>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">🎲</div>
-      <h2>Game Design</h2>
-      <p>Confirmed design decisions — 4-action system, coin scoring, intelligence-rewarded gameplay, adaptive difficulty, and seasonal competition.</p>
-      <span class="badge">Design Reference</span>
-    </a>
+    <h3>Revenue Model</h3>
+    <table>
+      <tr><th>Stream</th><th>Model</th></tr>
+      <tr><td>Adventurer's License</td><td>One-time $1.99 after 5-hour free trial</td></tr>
+      <tr><td>Guild Pass</td><td>$9.99/mo — full library, all voices, exclusive cosmetics</td></tr>
+      <tr><td>Shoppe Marketplace</td><td>Platform fee per NFT trade between players</td></tr>
+      <tr><td>Seasonal Cosmetics</td><td>Limited-edition items, dice sets, portraits</td></tr>
+      <tr><td>$BINDING Economy</td><td>0.01% revenue feeds liquidity pool → drives token value</td></tr>
+    </table>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">🏗️</div>
-      <h2>Architecture</h2>
-      <p>Technical architecture — module breakdown, data flows, context management, rule engine, and blockchain integration design.</p>
-      <span class="badge">Technical Design</span>
-    </a>
+    <h3>Revenue Projections (Conservative)</h3>
+    <table>
+      <tr><th>Metric</th><th>Year 1</th><th>Year 2</th><th>Year 3</th></tr>
+      <tr><td>Registered users</td><td>50,000</td><td>200,000</td><td>750,000</td></tr>
+      <tr><td>Guild Pass subs</td><td>5,000</td><td>25,000</td><td>100,000</td></tr>
+      <tr><td>Monthly recurring</td><td>$50K</td><td>$300K</td><td>$1.2M</td></tr>
+      <tr><td><strong>Total annual</strong></td><td><strong>$840K</strong></td><td><strong>$4.8M</strong></td><td><strong>$19.2M</strong></td></tr>
+    </table>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">🎲</div>
-      <h2>Dice Roller</h2>
-      <p>Live 3D physics dice roller — Three.js + Cannon.js with Godot-style settling. All 6 die types verified (327/327 logic tests).</p>
-      <span class="badge">3D Physics &bull; Interactive</span>
-    </a>
+    <h3>The Player Experience</h3>
+    <ol>
+      <li><strong>Voice greeting</strong> — "You're about to enter a world of monsters, magic, and choices that matter."</li>
+      <li><strong>Narrative character creation</strong> — no forms, just dialogue.</li>
+      <li><strong>Pick an adventure</strong> — difficulty auto-calibrates to your level.</li>
+      <li><strong>Each turn:</strong> AI narrates → 4 actions + open text → dice → consequences → scene image → <span class="highlight">coin notification</span>.</li>
+      <li><strong>Chapter ends</strong> with coin breakdown: "You earned 340/500. Creative Problem Solving (+120)…"</li>
+      <li><strong>Adventure ends</strong> — Bronze / Silver / Gold / Platinum tier awarded.</li>
+      <li><strong>Coins → $BINDING</strong> at tier-weighted rates → Paxeer wallet.</li>
+    </ol>
 
-    <a href="https://the-binding-docs.cloud.hyperpaxeer.com/" class="card">
-      <div class="icon">🗺️</div>
-      <h2>Campaign Mode Plan</h2>
-      <p>Full implementation plan for Campaign Mode — AI DM sandbox sessions, world generation, quest engine, and encounter building for 2–6 players.</p>
-      <span class="badge">Architecture &amp; Roadmap</span>
-    </a>
+    <h3>Monetization Philosophy</h3>
+    <div class="callout gold">
+      <h4>"Generous free, irresistible premium."</h4>
+      <p>No paywalls. 5-hour trial, then $1.99. The coin and $BINDING economy creates play-to-earn that doesn't feel like crypto. The only way to get $BINDING is to play.</p>
+    </div>
+
+    <h3>Paxeer On-Chain Components</h3>
+    <table>
+      <tr><th>Component</th><th>Contract Type</th><th>Phase</th></tr>
+      <tr><td>$BINDING Token</td><td>ERC-20 (gameplay-only mint)</td><td>3</td></tr>
+      <tr><td>Character NFTs</td><td>ERC-721 (dynamic metadata)</td><td>3</td></tr>
+      <tr><td>Guild Pass NFT</td><td>ERC-721 (dynamic, tiered)</td><td>3</td></tr>
+      <tr><td>Shoppe Marketplace</td><td>Custom (listings, escrow, royalties)</td><td>3</td></tr>
+      <tr><td>Tier / Achievement Badges</td><td>ERC-1155 (soulbound)</td><td>3</td></tr>
+      <tr><td>$BINDING Liquidity Pool</td><td>DEX pair on Paxeer</td><td>3</td></tr>
+    </table>
+
+    <h3>Summary</h3>
+    <div class="kv-grid">
+      <div class="kv"><div class="val">9–12 mo</div><div class="lbl">Time to Launch</div></div>
+      <div class="kv"><div class="val">~$30–80K</div><div class="lbl">Infra Cost</div></div>
+      <div class="kv"><div class="val">2–6</div><div class="lbl">Team Size</div></div>
+      <div class="kv"><div class="val">$840K</div><div class="lbl">Year 1 Revenue</div></div>
+      <div class="kv"><div class="val">15+</div><div class="lbl">Adventures</div></div>
+      <div class="kv"><div class="val">6 mo</div><div class="lbl">Season Length</div></div>
+    </div>
+  </div>
+
+  <!-- ==================== EFFORT & TIMELINE TAB ==================== -->
+  <div id="tab-effort" class="section">
+    <h2>⏱️ Effort, Cost &amp; Timeline</h2>
+    <p class="subhead">4 phases · 10–13 months to full launch · 2–6 people · ~$30–80K infrastructure</p>
+
+    <div class="kv-grid">
+      <div class="kv"><div class="val">Phase 1</div><div class="lbl">Core Engine · 4–5 mo</div></div>
+      <div class="kv"><div class="val">Phase 2</div><div class="lbl">Full Experience · 3–4 mo</div></div>
+      <div class="kv"><div class="val">Phase 3</div><div class="lbl">Blockchain · 3–4 mo</div></div>
+      <div class="kv"><div class="val">Phase 4</div><div class="lbl">Scale · Ongoing</div></div>
+    </div>
+
+    <h3>Phase 1 — Core Engine (Months 1–4)</h3>
+    <table>
+      <tr><th>Deliverable</th><th>Effort</th><th>Summary</th></tr>
+      <tr><td>AI DM Service</td><td>4–6 wk</td><td>Context management, 4-suggestion gen, NPC dialogue, creative scoring</td></tr>
+      <tr><td>Rule Engine (D&amp;D 5e)</td><td>3–4 wk</td><td>Combat, skill checks, saves, leveling. Rubber-band difficulty</td></tr>
+      <tr><td>Coin/XP Engine</td><td>2–3 wk</td><td>Intelligence-weighted scoring, bell curve, hybrid real-time + chapter rewards</td></tr>
+      <tr><td>Dice Service</td><td>2–3 wk</td><td>7 die types, 30+ animations, shake detection, fair random</td></tr>
+      <tr><td>Character Creation</td><td>2 wk</td><td>Narrative onboarding, stats, inventory, portrait, play-style tracking</td></tr>
+      <tr><td>Adventure Engine</td><td>3–4 wk</td><td>Scene graph, quest tracking, journal, save/load</td></tr>
+      <tr><td>Web App (PWA)</td><td>3–4 wk</td><td>Responsive frontend, WebSocket sync, coin/tier display</td></tr>
+      <tr><td>3 Adventures</td><td>6–8 wk</td><td>Dracula, Frankenstein, Holmes — 75 scenes, 101 narrative bugs fixed</td></tr>
+      <tr><td>Basic Voice</td><td>1 wk</td><td>Single DM TTS voice, text NPCs</td></tr>
+    </table>
+    <div class="callout"><strong>Phase 1 Deliverable:</strong> Working PWA. User signs up, creates character, plays through any of 3 adventures with AI DM, dice, coin scoring, and tier awards.</div>
+
+    <h3>Phase 2 — Full Experience (Months 5–8)</h3>
+    <table>
+      <tr><th>Deliverable</th><th>Effort</th><th>Summary</th></tr>
+      <tr><td>6 DM Voices + NPC Voices</td><td>2–3 wk</td><td>8–10 preset voice profiles, persistent NPC assignments</td></tr>
+      <tr><td>Player Voice Input</td><td>1 wk</td><td>Web Speech API + Whisper fallback</td></tr>
+      <tr><td>Image Pipeline</td><td>3–4 wk</td><td>Adventure art, real-time scene images, caching</td></tr>
+      <tr><td>Replayability Engine</td><td>3–4 wk</td><td>Procedural sub-plots, surface variation, adaptive profiling</td></tr>
+      <tr><td>Storyline Mode</td><td>3–4 wk</td><td>Solo curated adventures — guided vs sandbox sub-modes</td></tr>
+      <tr><td>Campaign Mode</td><td>2–3 wk</td><td>Multiplayer sessions, join codes, lobby, world state</td></tr>
+      <tr><td>Digital DM Mode</td><td>3–4 wk</td><td>Open-ended improvisation, live world-building, no curated adventure</td></tr>
+      <tr><td>Monster Manual + Combat</td><td>2 wk</td><td>Stat blocks, initiative tracker, multi-foe combat</td></tr>
+      <tr><td>The Shoppe (basic)</td><td>2–3 wk</td><td>Treasure drops, in-game coin purchasing, inventory</td></tr>
+      <tr><td>Trial + Payment</td><td>2 wk</td><td>5-hour clock, $1.99 crypto/fiat payment</td></tr>
+      <tr><td>3 More Adventures</td><td>3–4 wk</td><td>Treasure Island, Odyssey, Time Machine</td></tr>
+      <tr><td>Mobile Wrappers</td><td>2 wk</td><td>Capacitor — iOS + Android, App Store prep</td></tr>
+    </table>
+
+    <h3>Phase 3 — Blockchain (Months 8–11)</h3>
+    <table>
+      <tr><th>Deliverable</th><th>Effort</th><th>Summary</th></tr>
+      <tr><td>$BINDING Token</td><td>3–4 wk</td><td>ERC-20, gameplay-only mint, tier-weighted conversion</td></tr>
+      <tr><td>Seasonal Leaderboards</td><td>3–4 wk</td><td>6-month seasons, resets, bonus distribution</td></tr>
+      <tr><td>Shoppe Marketplace</td><td>4–5 wk</td><td>NFT listings, royalties, escrow, seasonal rotation</td></tr>
+      <tr><td>$BINDING Liquidity Pool</td><td>1–2 wk</td><td>DEX integration, revenue-to-pool drip, deflationary curve</td></tr>
+      <tr><td>Guild Pass + NFTs</td><td>3–4 wk</td><td>Dynamic NFT contract, tier progression, minting</td></tr>
+      <tr><td>Character + Tier NFTs</td><td>2–3 wk</td><td>ERC-721 + ERC-1155 soulbound badges</td></tr>
+      <tr><td>Party Multiplayer</td><td>4–6 wk</td><td>Real-time shared sessions, party chat</td></tr>
+      <tr><td>15+ Adventures</td><td>Ongoing</td><td>Content pipeline scaling</td></tr>
+    </table>
+
+    <h3>Infrastructure Costs by Phase</h3>
+    <table>
+      <tr><th>Phase</th><th>Monthly</th><th>Notes</th></tr>
+      <tr><td>Phase 1 (dev)</td><td>$200–500</td><td>API calls for testing, dev hosting</td></tr>
+      <tr><td>Phase 2 (beta, ~1K users)</td><td>$1K–3K</td><td>LLM + image gen + TTS scaling</td></tr>
+      <tr><td>Phase 3 (launch, ~5K)</td><td>$4K–9K</td><td>Full infra + blockchain + $BINDING seeding</td></tr>
+      <tr><td>Phase 4 (growth, 50K+)</td><td>$15K–40K</td><td>Auto-scaling, CDN, DEX liquidity</td></tr>
+      <tr><td><strong>Total to launch</strong></td><td><strong>~$30–80K</strong></td><td>Over 9–12 months</td></tr>
+    </table>
+
+    <h3>Team Requirements</h3>
+    <table>
+      <tr><th>Role</th><th>Ph 1</th><th>Ph 2</th><th>Ph 3</th></tr>
+      <tr><td>Full-stack lead</td><td>1</td><td>1</td><td>1</td></tr>
+      <tr><td>Full-stack engineer</td><td>0–1</td><td>1</td><td>1</td></tr>
+      <tr><td>AI/ML engineer</td><td>0–1</td><td>1</td><td>1</td></tr>
+      <tr><td>Blockchain engineer</td><td>—</td><td>0–1</td><td>1</td></tr>
+      <tr><td>Designer</td><td>contract</td><td>1</td><td>1</td></tr>
+      <tr><td>Content/game designer</td><td>0–1</td><td>0–1</td><td>1</td></tr>
+      <tr><td><strong>Total</strong></td><td><strong>2–3</strong></td><td><strong>3–5</strong></td><td><strong>4–6</strong></td></tr>
+    </table>
+  </div>
+
+  <!-- ==================== GAME DESIGN TAB ==================== -->
+  <div id="tab-design" class="section">
+    <h2>🎲 Game Design Decisions</h2>
+    <p class="subhead">Confirmed design decisions for The Binding's core gameplay systems.</p>
+
+    <h3>1. Coin &amp; XP System</h3>
+    <p>Every adventure has a <strong>theoretical maximum coin pool</strong> — fixed, based on story length and difficulty. Coins are earned by <em>how intelligently</em> you play.</p>
+    <table>
+      <tr><th>Element</th><th>Decision</th></tr>
+      <tr><td>Scoring method</td><td>Hybrid — real-time subtle notifications + full breakdown per chapter</td></tr>
+      <tr><td>What earns coins</td><td>Intelligence-weighted: creativity, problem-solving, investigation, roleplay, combat efficiency</td></tr>
+      <tr><td>Distribution</td><td>Bell curve — only 0.01% of players ever max out a single adventure</td></tr>
+      <tr><td>Post-chapter summary</td><td>"You earned 340/500. Creative Problem Solving (+120), Investigation (+90)…"</td></tr>
+    </table>
+    <blockquote>The scoring rubric must be generous — better to reward too often than too rarely at launch.</blockquote>
+
+    <h3>2. Tier System</h3>
+    <table>
+      <tr><th>Tier</th><th>Requirement</th><th>Rarity</th></tr>
+      <tr><td>Bronze</td><td>Complete the adventure</td><td>~95% of players</td></tr>
+      <tr><td>Silver</td><td>Earn 60%+ of max coins</td><td>~60%</td></tr>
+      <tr><td>Gold</td><td>Earn 85%+ of max coins</td><td>~15%</td></tr>
+      <tr><td>Platinum</td><td>95%+ coins AND top 10% completion time</td><td>~1%</td></tr>
+    </table>
+    <div class="callout gold"><strong>Platinum = Mastery.</strong> Speed requirement only applies to Platinum. It's the screenshot people share — the badge that makes someone ask "how did you do that?"</div>
+
+    <h3>3. Universal Cross-Book Currency</h3>
+    <p>Coins are <strong>fungible</strong> — 1 Dracula coin = 1 Frankenstein coin. Your lifetime balance carries across all adventures, The Shoppe, and $BINDING conversion.</p>
+
+    <h4>Tier-Weighted Conversion to $BINDING</h4>
+    <table>
+      <tr><th>Tier</th><th>Rate</th><th>1,000 coins →</th></tr>
+      <tr><td>Bronze</td><td>1×</td><td>1.00 $BINDING</td></tr>
+      <tr><td>Silver</td><td>1.5×</td><td>1.50 $BINDING</td></tr>
+      <tr><td>Gold</td><td>2.5×</td><td>2.50 $BINDING</td></tr>
+      <tr><td>Platinum</td><td>5×</td><td>5.00 $BINDING</td></tr>
+    </table>
+
+    <h4>Lifetime Shoppe Discounts</h4>
+    <table>
+      <tr><th>Avg Tier</th><th>Discount</th></tr>
+      <tr><td>Bronze</td><td>Full price</td></tr>
+      <tr><td>Silver</td><td>10% off</td></tr>
+      <tr><td>Gold</td><td>25% off</td></tr>
+      <tr><td>Platinum</td><td>40% off + exclusive items</td></tr>
+    </table>
+
+    <h3>4. $BINDING Token &amp; Seasonal Economy</h3>
+    <p><strong>The only way to earn $BINDING is to play well.</strong> No ICO, no presale, no airdrop, no VC allocation.</p>
+
+    <h4>6-Month Season Structure</h4>
+    <table>
+      <tr><th>Component</th><th>What Happens</th></tr>
+      <tr><td>New Adventures</td><td>2–3 new books per season with fresh coin pools</td></tr>
+      <tr><td>Leaderboard</td><td>Resets every 6 months. Top performers get bonus $BINDING + NFT badges</td></tr>
+      <tr><td>Coin Budget</td><td>Defined minting budget per season controls inflation</td></tr>
+      <tr><td>The Shoppe</td><td>Seasonal items rotate — creates scarcity</td></tr>
+      <tr><td>Legacy Bonus</td><td>Earlier players get permanent +% on future conversions</td></tr>
+    </table>
+
+    <h4>Era Structure</h4>
+    <table>
+      <tr><th>Era</th><th>Seasons</th><th>Economy</th></tr>
+      <tr><td>1: Founders</td><td>S1–S5</td><td>Small pool, high value per coin. Best Legacy Bonus</td></tr>
+      <tr><td>2: Growth</td><td>S6–S15</td><td>Growing pool, $BINDING becomes tradeable</td></tr>
+      <tr><td>3: Maturity</td><td>S16–S30</td><td>Stable pool, inflation managed by caps</td></tr>
+      <tr><td>4: Legacy</td><td>S31–S40</td><td>Pool stabilizes, community-driven, potential DAO</td></tr>
+    </table>
+
+    <h4>Deflationary Revenue Curve</h4>
+    <table>
+      <tr><th>Era</th><th>Revenue → Pool</th><th>Why</th></tr>
+      <tr><td>1</td><td>0.05%</td><td>Bootstrap value — early coins need to feel worth earning</td></tr>
+      <tr><td>2</td><td>0.03%</td><td>More players = lower % but higher absolute $</td></tr>
+      <tr><td>3</td><td>0.01%</td><td>Stable, predictable, sustainable</td></tr>
+      <tr><td>4</td><td>0.005%</td><td>Self-sustaining; revenue shifts to operations</td></tr>
+    </table>
+
+    <h3>5. Replayability Engine — Three Layers</h3>
+    <table>
+      <tr><th>Layer</th><th>What Changes</th><th>Quality</th></tr>
+      <tr><td>1: Curated Backbone</td><td>20–30 hand-crafted scenes per adventure</td><td>Guaranteed — the skeleton never breaks</td></tr>
+      <tr><td>2: Procedural Tissue</td><td>AI-generated transitions, side encounters, sub-plots</td><td>Curated templates → free gen over time</td></tr>
+      <tr><td>3: Surface Variation</td><td>NPC personality, dialogue, item descriptions</td><td>Easy for LLMs — always different</td></tr>
+    </table>
+    <p>The AI DM builds a <strong>Player Profile</strong> tracking combat affinity, diplomacy, investigation, creativity, risk tolerance, and compassion — then uses it to stretch weak spots, match style, and escalate challenge. Adaptation is <em>invisible</em>.</p>
+
+    <h3>6. The Shoppe</h3>
+    <p>Three properties per item: <strong>Cosmetic</strong> (profile display), <strong>Gameplay Bonus</strong> (small cross-adventure utility), <strong>Tradeable NFT</strong> (on-chain, sellable).</p>
+    <div class="callout"><strong>Anti-pay-to-win:</strong> No item replaces playing well. The Shoppe rewards <em>collection and curation</em>, not spending power. Seasonal scarcity creates urgency.</div>
+
+    <h3>7. Dynamic Difficulty — Rubber-Band Scaling</h3>
+    <table>
+      <tr><th>Fight Type</th><th>Frequency</th><th>Purpose</th></tr>
+      <tr><td>Standard</td><td>70%</td><td>Scales to your level. Constant engagement</td></tr>
+      <tr><td>Power Window</td><td>20%</td><td>Below your level. You feel like a badass</td></tr>
+      <tr><td>Challenge Spike</td><td>10%</td><td>Above your level. Think creatively or die</td></tr>
+    </table>
+
+    <h3>8. Pre-Adventure Difficulty</h3>
+    <p>Character level sets baseline difficulty before you start. Same story, same beats — but enemies scaled, puzzles harder, DCs higher. <strong>The difficulty is invisible</strong> — narratively explained by the AI DM, never shown as a number.</p>
+    <blockquote>Difficulty is story, not a number. "This Dracula is really hard this time" beats "the game scaled enemies to my level."</blockquote>
+  </div>
+
+  <!-- ==================== HARDWARE SPEC TAB ==================== -->
+  <div id="tab-hardware" class="section">
+    <h2>💻 Hardware &amp; Connectivity</h2>
+    <p class="subhead">Minimum and recommended specs for the PWA — browser-based, no install required.</p>
+
+    <h3>Device Categories</h3>
+    <table>
+      <tr><th>Category</th><th>Minimum</th><th>Recommended</th></tr>
+      <tr><td>Smartphone</td><td>iPhone SE (2020) / Android 10+ 3GB RAM</td><td>iPhone 13+ / Pixel 7+ / S22+</td></tr>
+      <tr><td>Tablet</td><td>iPad 8th gen / Android 4GB RAM</td><td>iPad Air+ / Tab S8+</td></tr>
+      <tr><td>Desktop</td><td>2018+ 4GB RAM</td><td>Modern, 8GB RAM</td></tr>
+      <tr><td>Chromebook</td><td>Chrome 100+</td><td>4GB+ RAM</td></tr>
+    </table>
+
+    <h3>Browser Support</h3>
+    <table>
+      <tr><th>Browser</th><th>Min Version</th><th>Support</th></tr>
+      <tr><td>Chrome / Chromium</td><td>v100+</td><td>Full — primary target</td></tr>
+      <tr><td>Safari (iOS/macOS)</td><td>v16+</td><td>Full — Web Speech API</td></tr>
+      <tr><td>Firefox</td><td>v100+</td><td>Full</td></tr>
+      <tr><td>Edge</td><td>v100+</td><td>Full — Chromium-based</td></tr>
+      <tr><td>Samsung Internet</td><td>v17+</td><td>Full</td></tr>
+      <tr><td>Opera Mini</td><td>—</td><td>Not supported (no WebSocket/SSE)</td></tr>
+    </table>
+
+    <h3>Network &amp; Data Usage (per 1hr session)</h3>
+    <table>
+      <tr><th>Feature</th><th>Min Bandwidth</th><th>Data/hr</th></tr>
+      <tr><td>Text-only</td><td>64 Kbps</td><td>0.5–1 MB</td></tr>
+      <tr><td>+ Voice output</td><td>128 Kbps</td><td>2–5 MB</td></tr>
+      <tr><td>+ Voice input</td><td>256 Kbps</td><td>3–7 MB</td></tr>
+      <tr><td>+ Scene images</td><td>1 Mbps</td><td>10–30 MB</td></tr>
+      <tr><td>Full experience</td><td>2 Mbps</td><td>15–50 MB</td></tr>
+    </table>
+    <div class="callout"><strong>Mobile data note:</strong> Text-only uses ~1 MB/hr — same as loading a news article. Images are heaviest (10–30 MB/hr) but can be disabled in settings.</div>
+
+    <h3>Performance Targets</h3>
+    <table>
+      <tr><th>Metric</th><th>Target</th><th>How</th></tr>
+      <tr><td>First contentful paint</td><td>&lt; 1.5s</td><td>PWA precaching, minimal JS bundle</td></tr>
+      <tr><td>Text response</td><td>&lt; 500ms</td><td>SSE streaming LLM responses</td></tr>
+      <tr><td>Voice response</td><td>&lt; 2s</td><td>Streaming TTS, playback during generation</td></tr>
+      <tr><td>Dice animation</td><td>60fps</td><td>Pre-baked sprites, GPU transforms</td></tr>
+      <tr><td>Image generation</td><td>Non-blocking</td><td>Async — gameplay never waits for art</td></tr>
+      <tr><td>Time to interactive</td><td>&lt; 2s on 3G</td><td>Code splitting, lazy modules</td></tr>
+    </table>
+
+    <h3>Audio &amp; Storage</h3>
+    <table>
+      <tr><th>Item</th><th>Requirement</th></tr>
+      <tr><td>Speaker / headphones</td><td>Required for voice features</td></tr>
+      <tr><td>Microphone</td><td>Optional — for voice input, falls back to text</td></tr>
+      <tr><td>PWA cache (initial)</td><td>5–15 MB (app shell, fonts, dice sprites)</td></tr>
+      <tr><td>Cached scene images</td><td>Up to 100 MB (clearable in settings)</td></tr>
+    </table>
+  </div>
+
+  <!-- ==================== ACTIONS TAB ==================== -->
+  <div id="tab-actions" class="section">
+    <h2>⚡ Phase 2 — Action Items</h2>
+    <p class="subhead">Decisions and inputs needed from Lawman to unblock Phase 2 progress. Updated: July 19, 2026</p>
+
+    <div class="action-item resolved">
+      <span class="ai-tag done">✅ RESOLVED</span> <span class="muted">A1</span>
+      <h4 style="margin:4px 0 6px">Provide LLM API key for campaign testing</h4>
+      <p class="muted" style="font-size:0.88em">Was blocking E2E integration and AI DM prompt testing.</p>
+      <p style="color:#44ff44;font-size:0.85em;font-style:italic">Resolved: Using Novita API key. Model: qwen/qwen3.6-plus (free). E2E tests pass with real LLM.</p>
+    </div>
+
+    <div class="action-item">
+      <span class="ai-tag decision">DECISION</span> <span class="muted">A2</span>
+      <h4 style="margin:4px 0 6px">Pick first campaign theme</h4>
+      <p style="font-size:0.88em"><strong>Options:</strong> Gothic Horror · Sword Coast · Noir Mystery · Wilderness · Custom</p>
+      <p class="highlight" style="font-size:0.85em;font-style:italic">Recommend: Gothic Horror — natural extension of Dracula content.</p>
+    </div>
+
+    <div class="action-item">
+      <span class="ai-tag decision">DECISION</span> <span class="muted">A3</span>
+      <h4 style="margin:4px 0 6px">Storyline vs Adventure Mode naming</h4>
+      <p style="font-size:0.88em"><strong>Options:</strong> Rename now to "Storyline" · Keep "Adventure" for backward compat</p>
+      <p class="highlight" style="font-size:0.85em;font-style:italic">Recommend: Rename now — Phase 2 is the right time.</p>
+    </div>
+
+    <div class="action-item">
+      <span class="ai-tag decision">DECISION</span> <span class="muted">A4</span>
+      <h4 style="margin:4px 0 6px">Digital DM scope for Phase 2</h4>
+      <p style="font-size:0.88em"><strong>Options:</strong> Full implementation · Keep as scaffolding, flesh out in Phase 3</p>
+      <p class="highlight" style="font-size:0.85em;font-style:italic">Recommend: Keep as scaffolding — focus Phase 2 on campaign core.</p>
+    </div>
+
+    <div class="action-item">
+      <span class="ai-tag decision">DECISION</span> <span class="muted">A5</span>
+      <h4 style="margin:4px 0 6px">Campaign API auth</h4>
+      <p style="font-size:0.88em"><strong>Options:</strong> Add beta token validation now · Add later</p>
+      <p class="highlight" style="font-size:0.85em;font-style:italic">Recommend: Add now — consistent with adventure routes.</p>
+    </div>
+
+    <div class="action-item resolved">
+      <span class="ai-tag done">LOW PRIORITY</span> <span class="muted">A6</span>
+      <h4 style="margin:4px 0 6px">Campaign session storage</h4>
+      <p style="font-size:0.88em"><strong>Default:</strong> JSON files (same as Phase 1). No DB migration needed for beta.</p>
+    </div>
+
+    <div class="action-item resolved">
+      <span class="ai-tag done">LOW PRIORITY</span> <span class="muted">A7</span>
+      <h4 style="margin:4px 0 6px">Monster DB path resolution</h4>
+      <p style="font-size:0.88em"><strong>Default:</strong> Copied to <code>src/data/monsters/</code> as temp fix. Approve permanent copy or symlink?</p>
+    </div>
+
+    <h3>Next Steps (Priority Order)</h3>
+    <ol>
+      <li><strong>Full smoke test</strong> — signup → character → adventure end-to-end</li>
+      <li><s>Narrative bug hunt</s> ✅ Done (101 bugs found, 75+ fixed)</li>
+      <li><strong>Wire TTS API key</strong> — voice service built, needs provider key</li>
+      <li><strong>Deploy Telegram beta</strong> — once steps 1–3 are solid</li>
+    </ol>
   </div>
 
   <div class="footer">
     <p class="brand">The Binding — Enter the books you love.</p>
-    <p>Monster data licensed under <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank" style="color:#C9A84C">CC-BY-4.0</a> from the <a href="https://dnd.wizards.com/resources/systems-reference-document" target="_blank" style="color:#C9A84C">D&amp;D 5.1 SRD</a>.</p>
+    <p>Monster data under <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank" style="color:#C9A84C">CC-BY-4.0</a> from <a href="https://dnd.wizards.com/resources/systems-reference-document" target="_blank" style="color:#C9A84C">D&amp;D 5.1 SRD</a>.</p>
   </div>
 </div>
 
+<script>
+(function(){
+  var nav = document.getElementById('mainNav');
+  if (!nav) return;
+  var links = nav.querySelectorAll('a[data-tab]');
+  var sections = document.querySelectorAll('.section');
+
+  function activate(id) {
+    sections.forEach(function(s){ s.classList.remove('active'); });
+    links.forEach(function(l){ l.classList.remove('active'); });
+    var target = document.getElementById('tab-' + id);
+    if (target) target.classList.add('active');
+    links.forEach(function(l){ if (l.dataset.tab === id) l.classList.add('active'); });
+  }
+
+  links.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var tab = this.dataset.tab;
+      activate(tab);
+      history.replaceState(null, '', '#' + tab);
+    });
+  });
+
+  // Deep-link support
+  var hash = location.hash.replace('#', '');
+  if (hash) activate(hash);
+})();
+</script>
 </body>
 </html>

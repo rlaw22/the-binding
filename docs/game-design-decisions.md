@@ -60,7 +60,7 @@ Date: 2026-07-11
 - Same story/beats, but enemies scaled, puzzles harder, DCs higher
 
 ## 9. Campaign Mode (Phase II) — Full DM Replacement
-- Standard D&D 5e open-ended play, multi-player (2-6 players per session)
+- Standard D&D 5e open-ended play, multi-player (1-6 players per session)
 - AI DM acts as full Dungeon Master: rules, narration, pacing, world-building, NPC dialogue
 - Two modes in one app:
   - Adventure Mode (book-based, single-player, curated scene graphs)

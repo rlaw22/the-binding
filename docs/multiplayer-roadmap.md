@@ -39,7 +39,7 @@
 - Need: turn management (whose turn is it?)
 - Need: shared vs private information (whisper system already in MessageRouter)
 - Need: combat encounters with multiple participants
-- Need: co-op specific adventures (written for 2-6 players)
+- Need: co-op specific adventures (written for 1-6 players)
 
 **Why later:** More complex, more engaging, but needs significant design work on how turns work in a narrative context.
 

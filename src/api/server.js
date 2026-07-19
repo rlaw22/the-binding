@@ -1003,6 +1003,15 @@ async function createServer(options = {}) {
     return { suggestions: getPendingSuggestions(data.session) };
   });
 
+  // --- PHASE 2: CAMPAIGN MODE ROUTES ---
+  try {
+    const campaignRoutes = require('./campaign-routes');
+    await app.register(campaignRoutes);
+    console.log('  \u{1f3af} Campaign Mode routes registered (/api/campaigns)');
+  } catch (err) {
+    console.warn('  \u26a0\ufe0f Campaign routes not loaded:', err.message);
+  }
+
   // --- PERSISTENCE: Load saved sessions and start auto-save ---
   const loadedCount = loadSessions(sessions, rejoinCodes, createProvider, llmConfig, RuleEngine, DiceService);
   if (loadedCount > 0) {

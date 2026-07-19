@@ -13,7 +13,11 @@
     ],
     "generated": "2026-07-16",
     "notes": "SRD-only monsters from D&D 5e API. Custom Binding monsters will be added separately.",
-    "errors": []
+    "errors": [],
+    "description_source": "Open5e API + Wikipedia (CC BY-SA)",
+    "description_license": "OGL (Open5e) + CC BY-SA 4.0 (Wikipedia)",
+    "descriptions_count": 161,
+    "descriptions_missing": 173
   },
   "monsters": [
     {
@@ -73,7 +77,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "An **awakened shrub** is an ordinary shrub given sentience and mobility by the awaken spell or similar magic."
     },
     {
       "name": "Baboon",
@@ -127,7 +132,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Howler baboons are territorial primates that claim stretches of forest and hills in large troops. Their presence is usually heard before it’s seen, thanks to the whooping calls they use to communicate danger and call for their troop mates. When angered, they attack in ferocious packs, hurling rocks and pummeling threats en masse."
     },
     {
       "name": "Badger",
@@ -181,7 +187,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Bat",
@@ -239,7 +246,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "This bat has an emaciated, three-foot-long torso and a head that looks like skin stretched over bone. Its jaws are unnaturally distended, and its mouth is full of needle-like teeth. Ghoul bats are popular messengers and pets amongst darakhul and can be found both in colonies and alone throughout the underworld."
     },
     {
       "name": "Cat",
@@ -296,7 +304,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "At the core of its clockwork armor, the creature is a shapeless horror from beyond the stars._  \n**Clockwork Armor.** Weak and easy prey in their natural state, the ahu-nixta long ago mastered the art of clockwork design, building armor that could carry them through the voids between stars and bolster their physical abilities. After mastering clockwork design, the ahu-nixta turned to enhancing themselves to better utilize greater and greater clockwork creations.  \n**Evolved Terrors.** As ahu-nixta age and prove themselves against their people’s enemies, they are forcibly evolved in eugenic chambers and given new armor. The ahu-nixta are comprised of Open Game License"
     },
     {
       "name": "Commoner",
@@ -347,7 +356,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Commoners** include peasants, serfs, slaves, servants, pilgrims, merchants, artisans, and hermits."
     },
     {
       "name": "Crab",
@@ -403,7 +413,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_A bone crab’s cracked skull scurries forward on bone-white legs. These tainted crustaceans make discarded craniums their home._  \n**Skull Shells.** Much like an enormous hermit crab, bone crabs inhabit the remains of large fish, humanoids, and other creatures. A bone crab’s spiny, ivory-white legs blend in perfectly with bones and pale driftwood. When lacking bones, these crabs gnaw cavities into chunks of driftwood or coral to make a shelter, cementing bits of shell and debris to their portable homes. All crabs fight over choice skulls.  \n**Scavengers of Memory.** Bone crabs are voracious scavengers. They live in seaside crags and coves, where they use their specialized chelae to crack open skulls and feast on the brains. Centuries of such feeding have given bone crabs a collective intelligence. Some crabs retain fragments of memory from those they devour, and these crabs recognize friends or attack the foes of those whose skulls they wear.  \nBone crabs hunt in packs, preying on seabirds and creatures stranded in tidal pools. They drag aquatic prey above the high tide line and leave it to fester in the hot sun. They pick corpses clean in a few hours, so their hunting grounds are littered with cracked and sun-bleached bones—the perfect hiding place for these littoral predators.  \n**White Ghost Shivers.** Because they eat carrion, bone crabs carry a dangerous disease—white ghost shivers, which wrack victims with fever and delirium. Sailors and others who eat a bone crab’s unwholesome, diseased flesh rarely survive it. Although bone crabs cannot be domesticated, they can be convinced to nest in particular areas, attacking intruders while ignoring the area’s regulars."
     },
     {
       "name": "Deer",
@@ -451,7 +462,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Eagle",
@@ -507,7 +519,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **giant eagle** is a noble creature that speaks its own language and understands speech in the Common tongue. A mated pair of giant eagles typically has up to four eggs or young in their nest (treat the young as normal eagles)."
     },
     {
       "name": "Frog",
@@ -560,7 +573,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **frog** has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog’s statistics can also be used to represent a **toad**."
     },
     {
       "name": "Giant Fire Beetle",
@@ -613,7 +627,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **giant fire beetle** is a nocturnal creature that takes its name from a pair of glowing glands that give off light. Miners and adventurers prize these creatures, for a giant fire beetle's glands continue to shed light for 1d6 days after the beetle dies. Giant fire beetles are most commonly found underground and in dark forests."
     },
     {
       "name": "Goat",
@@ -670,7 +685,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Cave goats are the size of a spaniel and have dog-like paws rather than hooves. Despite being quadrupeds, they are accomplished climbers of the steep and uneven confines of the Underworld. Cave goats are loyal, if a bit surly, and strong, making them a favorite companion of Underworld travelers."
     },
     {
       "name": "Hawk",
@@ -726,7 +742,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Taking its name from its crimson feathers and aggressive nature, the **blood hawk** fearlessly attacks almost any animal, stabbing it with its daggerlike beak. Blood hawks flock together in large numbers, attacking as a pack to take down prey."
     },
     {
       "name": "Homunculus",
@@ -787,7 +804,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Hyena",
@@ -842,7 +860,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A choking cackle escapes the throat of the hyena. As it steps forward, patches of fur fall off of it, revealing bone and rotting muscle._  \nAs their name implies, emperor’s hyenas are undead hyenas that have been magically enhanced and tied to the emperor. With rotting, matted fur, missing teeth, and baleful yellow eyes, they are easily mistaken for simple undead beasts. Their appearance belies a relentless cunning.  \n**Gifts from the God of Death.** The method of creation of emperor’s hyenas was a gift given directly to the emperor by the god of death and has been entrusted to only a few necromancers. Emperor’s hyenas can be created only from hyenas that were anointed protectors of the god’s holy places when they were alive. Their scarcity means they are primarily used as messengers and guardians for the emperor. The emperor rarely sends them to attack enemies unless the enemy has truly angered him. The emperor is seldom seen without a pair of emperor’s hyenas by his side. When he moves publicly, every available emperor’s hyena is deployed to ensure his safety.  \n**Voice of the Emperor.** Emperor’s hyenas often deliver messages when the emperor needs a messenger hardier than a Open Game License"
     },
     {
       "name": "Jackal",
@@ -901,7 +920,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Lemure",
@@ -970,7 +990,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": ""
     },
     {
       "name": "Lizard",
@@ -1019,7 +1040,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **giant lizard** can be ridden or used as a draft animal. Lizardfolk also keep them as pets, and subterranean giant lizards are used as mounts and pack animals by drow, duergar, and others."
     },
     {
       "name": "Octopus",
@@ -1089,7 +1111,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Eight tentacles reach out from the scorched body of this unusual octopus-like creature. Glowing yellow, orange, and red patches smolder on its skin, like embers flaring to life._  \n**Elemental Bodies.** Magma octopuses are creatures that physically resemble the marine animals for which they are named, but they make their homes in lava, swimming through it as easily as aquatic octopuses swim through water. Born in the fiery seas of the Plane of Fire long ago, many magma octopuses wandered to the Material Plane through various portals and thinned barriers between the planes. They exist throughout the world, particularly in underground caverns with open lava flows, within the craters of some volcanoes, and swimming through underground networks of magma.  \n**Intelligent.** Magma octopuses live simple lives with a quiet intelligence that slightly surpasses that of aquatic octopuses. They have no language and cannot communicate verbally. They are known to recognize individuals from other species and remember individuals that might have caused them pain or helped them out of a bad situation. Magma octopuses only fight others if they are attacked first, but they can become extremely territorial if intruders tread too close to home. They have a fondness for fire-based magic and sometimes can be recruited to serve as guardians for wizards, efreeti, and other powerful, fiery creatures.  \n**Elemental Nature.** A magma octopus doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Owl",
@@ -1150,7 +1173,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "**Giant owls** often befriend fey and other sylvan creatures and are guardians of their woodland realms."
     },
     {
       "name": "Quipper",
@@ -1207,7 +1231,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **quipper** is a carnivorous fish with sharp teeth. Quippers can adapt to any aquatic environment, including cold subterranean lakes. They frequently gather in swarms; the statistics for a swarm of quippers appear later in this appendix."
     },
     {
       "name": "Rat",
@@ -1260,7 +1285,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A portly gentleman with slender arms and legs keeps his face and hands carefully concealed._  \nArachnocrats are spider-like fiends who enjoy masquerading as members of high society. They eat haute cuisine and drink fine wine in the company of humans.  \n**Finer Tastes.** Viewing the wealth and standing of their victims as the greatest measure of taste, these devils delight in aristocratic prey, though they most often feed on the liquefied innards of servants of the aristocracy to avoid detection. They use local spiders as spies and informants to get closer to their quarries or discover dark secrets their quarries would rather keep hidden. Ever patient in their schemes of corruption, arachnocrats often court their quarries over months of theatre, dinner parties, and elaborate balls.  \n**Hidden in Plain Sight.** Arachnocrats are adept at disguising themselves as aristocrats. Their most noticeable features are their clawed hands and their spider-like faces, which they cover with gloves, masks, scarves, voluminous robes, and similar attire. The eccentricities of the well-to-do help to cast off any suspicion over their odd coverings.  \n**As Good As Gold.** The arachnocrat’s preferred prey comes at a high price. Blessed by the Arch-Devil of Greed, Mammon, arachnocrats have a second stomach that can turn common rocks into faux gemstones. The fiends vomit up the gemstones after digesting the rocks for a few months, and they use the gemstones to fund their endeavors. The counterfeit nature of the gems is detectable by only true craftsmen."
     },
     {
       "name": "Raven",
@@ -1316,7 +1342,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_Ravenalas guard tropical forests and watch after local flora and fauna. Their heads are crowned by long-stemmed, green-paddled fronds and spiked seed pods, and their dangling arms end in hooked wooden talons._  \n**Leafy Advisors.** Tribal humanoids respect and venerate ravenelas, and sometimes seek their advice or magical aid at times of great need. Ravenalas seldom interact with other species unless approached and questioned.  \n**Prisoners Lamentation.** Unlike treants, ravenalas avoid physical conflict in favor of magical responses. If annoyed, they imprison hostile creatures within their trunks rather than killing or eating them. Trapped creatures must sing their own lament as they are carried off to a distant, dangerous locale. Ravenalas grow to about 20 feet tall and can weigh 1,800 lb."
     },
     {
       "name": "Scorpion",
@@ -1364,7 +1391,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A common threat in canals, lagoons, bayous, and countless other bodies of water, the giant water scorpion is responsible for the deaths of many adventurers exploring waterways. Like most aquatic monsters, giant water scorpions are seldom at the top of the food chain in their native environment, and black dragons in particular enjoy snacking on them. Swamp and water-dwelling humanoids like lizardfolk have been known to use the giant water scorpion’s carapace to create shields or coverings for their tents. The creature’s long tail acts as a breathing tube for it, which is often harvested and used by intrepid explorers and inventors in the creation of diving bells and other apparatuses for traversing the stygian depths."
     },
     {
       "name": "Sea Horse",
@@ -1409,7 +1437,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Like their smaller kin, **giant sea horses** are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts."
     },
     {
       "name": "Shrieker",
@@ -1463,7 +1492,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Spider",
@@ -1527,7 +1557,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "To snare its prey, a **giant spider** spins elaborate webs or shoots sticky strands of webbing from its abdomen. Giant spiders are most commonly found underground, making their lairs on ceilings or in dark, web-filled crevices. Such lairs are often festooned with web cocoons holding past victims."
     },
     {
       "name": "Vulture",
@@ -1587,7 +1618,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The putrid stench of death wafts off a grotesquely muscled vulture with glowing green eyes. It opens its mouth in a shrill call, rotting meat dripping from its beak._  \nDeath vultures are giant birds transformed by their diet of undead flesh.  \n**Mutated Monstrosities.** When a giant vulture gorges on undead flesh, the necromantic magic suffused in the meal warps and changes the bird’s body. The vulture’s muscles bulge in odd places, making it stronger and tougher, its eyes burn with green fire, and it reeks of rot, earning these mutated monsters the name “death vultures.” The vulture also gains the ability to regurgitate necromantic energy, which can cause the flesh of living creatures to decay and age rapidly.  \n**Massive Meat Appetites.** Death vultures have incredible appetites and are far more willing to attack live prey than other vultures. They have a special taste for rotting flesh, and they use their decaying breath weapon to “season” their foes with necrotic energy before using their talons and beaks to tear apart their quarry.  \n**Necromancer Neighbors.** Death vultures often form kettles near the lairs of necromancers as they feed on their undead creations. While some necromancers find the birds to be a nuisance, many necromancers feed the vultures, encouraging them to stay. Most death vultures are willing to trade service as guardians of the lairs for food."
     },
     {
       "name": "Weasel",
@@ -1643,7 +1675,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Bandit",
@@ -1701,7 +1734,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Bandits** rove in gangs and are sometimes led by thugs, veterans, or spellcasters. Not all bandits are evil. Oppression, drought, disease, or famine can often drive otherwise honest folk to a life of banditry. \n**Pirates** are bandits of the high seas. They might be freebooters interested only in treasure and murder, or they might be privateers sanctioned by the crown to attack and plunder an enemy nation's vessels."
     },
     {
       "name": "Blood Hawk",
@@ -1761,7 +1795,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Taking its name from its crimson feathers and aggressive nature, the **blood hawk** fearlessly attacks almost any animal, stabbing it with its daggerlike beak. Blood hawks flock together in large numbers, attacking as a pack to take down prey."
     },
     {
       "name": "Camel",
@@ -1809,7 +1844,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Cultist",
@@ -1868,7 +1904,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Cultists** swear allegiance to dark powers such as elemental princes, demon lords, or archdevils. Most conceal their loyalties to avoid being ostracized, imprisoned, or executed for their beliefs. Unlike evil acolytes, cultists often show signs of insanity in their beliefs and practices."
     },
     {
       "name": "Flying Snake",
@@ -1923,7 +1960,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **flying snake** is a brightly colored, winged serpent found in remote jungles. Tribespeople and cultists sometimes domesticate flying snakes to serve as messengers that deliver scrolls wrapped in their coils."
     },
     {
       "name": "Giant Crab",
@@ -1979,7 +2017,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Rat",
@@ -2036,7 +2075,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Rat (Diseased)",
@@ -2093,7 +2133,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Weasel",
@@ -2149,7 +2190,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Guard",
@@ -2202,7 +2244,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Guards** include members of a city watch, sentries in a citadel or fortified town, and the bodyguards of merchants and nobles."
     },
     {
       "name": "Kobold",
@@ -2270,7 +2313,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "kobold"
+      "subtype": "kobold",
+      "desc": "More than anything, kobolds are survivors. Their scaly skin and keen night vision as well as their dextrous claws and sensitive snouts make them quick to sense danger, and their clawed feet move them out of danger with cowardly speed. They are small but fierce when fighting on their own terms, and their weight of numbers helps them survive in places where larger but less numerous races can’t sustain a settlement. Kobolds are great miners, good gearsmiths, and modest alchemists, and they have a curiosity about the world that frequently gets them into trouble.  \n_**Underworld Merchants.**_ Kobolds are merchants to both the surface world and the world beneath it, with their greatest cities hidden deep below the earth. Their enemies are the diabolical gnomes, the dwarves, and any other mining races that seek dominance of dark, rich territories.  \nKobolds are closely allied with and related to dragonborn, drakes, and dragons. The kobold kings (and there are oh‑so‑many kobold kings, since no kobold ruler is satisfied with being merely a chieftain) admire dragons as the greatest sources of wisdom, power, and proper behavior.  \n_This slight, reptilian humanoid is bedecked with ceramic flasks and glass vials. An acrid reek follows in the creature’s wake._  \nKobold alchemists are usually smelled before they are seen, thanks to the apothecary’s store of chemicals and poisons they carry. Alchemists often sport mottled and discolored scales and skin, caused by the caustic nature of their obsessions. They raid alchemy shops and magical laboratories to gather more material to fuel their reckless experiments.  \n_**Dangerous Assets.**_ Alchemists can be a great boon to their clan, but at a cost. Not only do the alchemists require rare, expensive, and often dangerous substances to ply their trade, they tend to be a little unhinged. Their experiments yield powerful weapons and defensive concoctions that can save many kobold lives, but the destruction caused by an experiment gone awry can be terrible."
     },
     {
       "name": "Mastiff",
@@ -2325,7 +2369,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "**Mastiffs** are impressive hounds prized by humanoids for their loyalty and keen senses. Mastiffs can be trained as guard dogs, hunting dogs, and war dogs. Halflings and other Small humanoids ride them as mounts."
     },
     {
       "name": "Merfolk",
@@ -2385,7 +2430,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "merfolk"
+      "subtype": "merfolk",
+      "desc": ""
     },
     {
       "name": "Mule",
@@ -2442,7 +2488,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Noble",
@@ -2502,7 +2549,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Nobles** wield great authority and influence as members of the upper class, possessing wealth and connections that can make them as powerful as monarchs and generals. A noble often travels in the company of guards, as well as servants who are commoners.\nThe noble's statistics can also be used to represent **courtiers** who aren't of noble birth."
     },
     {
       "name": "Poisonous Snake",
@@ -2551,7 +2599,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Pony",
@@ -2599,7 +2648,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Stirge",
@@ -2648,7 +2698,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Tribal Warrior",
@@ -2704,7 +2755,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Tribal warriors** live beyond civilization, most often subsisting on fishing and hunting. Each tribe acts in accordance with the wishes of its chief, who is the greatest or oldest warrior of the tribe or a tribe member blessed by the gods."
     },
     {
       "name": "Acolyte",
@@ -2763,7 +2815,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Acolytes** are junior members of a clergy, usually answerable to a priest. They perform a variety of functions in a temple and are granted minor spellcasting power by their deities."
     },
     {
       "name": "Axe Beak",
@@ -2811,7 +2864,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "An **axe beak** is a tall flightless bird with strong legs and a heavy, wedge-shaped beak. It has a nasty disposition and tends to attack any unfamiliar creature that wanders too close."
     },
     {
       "name": "Blink Dog",
@@ -2874,7 +2928,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **blink dog** takes its name from its ability to blink in and out of existence, a talent it uses to aid its attacks and to avoid harm."
     },
     {
       "name": "Boar",
@@ -2931,7 +2986,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A massive, green-scaled boar snorts angrily as tiny bolts of blue lightning ripple over its body._  \n**Accidental Arcane Creations.** An evoker who raised hogs to fund their wild experiments, accidentally blew up their tower years ago. The explosion created a horrific storm that raged for days in the region, causing the locals to take shelter. When the storm dissipated, the wizard and their tower were gone, but the hogs had been transformed into scaled beasts that harnessed the power of lightning and thunder.  \n**Storm’s Fury.** Stormboars embody the fury of the storm. Just as stubborn and ferocious as their more mundane cousins, stormboars let no obstacle get in their way while they look for food or protect their offspring. Seasoned hunters know to drop an offering of metal behind as they leave the area to ensure the boar is too distracted to follow them.  \n**Metal Devourers.** Stormboars crave metal. Prospectors track the boars to find areas rich with precious minerals and ore, and treasure hunters use the creatures to sniff out hidden vaults of wealth. Anyone relying on a stormboar must be careful, however. The boars see any creature wearing or carrying metal as the deliverer of an easy meal. The aggressive creatures won’t stop attacking until they’ve consumed every bit of metal an unfortunate traveler is carrying. Starving stormboars have been known to venture into civilized areas for a meal."
     },
     {
       "name": "Constrictor Snake",
@@ -2987,7 +3043,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Draft Horse",
@@ -3035,7 +3092,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Dretch",
@@ -3110,7 +3168,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Drow",
@@ -3185,7 +3244,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "elf"
+      "subtype": "elf",
+      "desc": "_The drowned maiden is usually found as the corpse of a women floating in the water, her long hair drifting with the current. Occasionally, these are drowned lads rather than maidens, though this is rare._  \n**Raging Romantics.** Drowned maidens are piteous but terrifying undead, created when a woman dies in water due to a doomed romance, whether from unrequited love or whether drowned by a philandering partner. Either way, the drowned maiden awakens from death seeking vengeance. Even as she dishes out retribution, a drowned maiden often anguishes over her doomed existence and tragic fate.  \n**Beckoning for Help.** The maiden lurks in the silent depths where she died—usually deserted docks, bridges, or coastal cliffs. She waits to pull the living to the same watery grave in which she is now condemned. A drowned maiden uses her disguise self ability to appear as in life. She silently beckons victims from afar, as if in danger of drowning. When within range, the maiden uses her hair to pull her victim close enough to kiss it. Victims soon weaken and drown. The victim’s final vision is the drowned maiden’s tearful lament over the loss of life.  \n**Death to Betrayers.** Desperate individuals may bargain with drowned maidens, and they will release pleading victims who promise to return to their lair with the person who caused the maiden’s death. Embracing and drowning her betrayer releases the maiden from undeath."
     },
     {
       "name": "Elk",
@@ -3245,7 +3305,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The majestic **giant elk** is rare to the point that its appearance is often taken as a foreshadowing of an important event, such as the birth of a king. Legends tell of gods that take the form of giant elk when visiting the Material Plane. Many cultures therefore believe that to hunt these creatures is to invite divine wrath."
     },
     {
       "name": "Flying Sword",
@@ -3314,7 +3375,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Badger",
@@ -3379,7 +3441,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Bat",
@@ -3437,7 +3500,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Centipede",
@@ -3486,7 +3550,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Frog",
@@ -3551,7 +3616,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **frog** has no effective attacks. It feeds on small insects and typically dwells near water, in trees, or underground. The frog’s statistics can also be used to represent a **toad**."
     },
     {
       "name": "Giant Lizard",
@@ -3600,7 +3666,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **giant lizard** can be ridden or used as a draft animal. Lizardfolk also keep them as pets, and subterranean giant lizards are used as mounts and pack animals by drow, duergar, and others."
     },
     {
       "name": "Giant Owl",
@@ -3666,7 +3733,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "**Giant owls** often befriend fey and other sylvan creatures and are guardians of their woodland realms."
     },
     {
       "name": "Giant Poisonous Snake",
@@ -3717,7 +3785,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Wolf Spider",
@@ -3782,7 +3851,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Smaller than a giant spider, a **giant wolf spider** hunts prey across open ground or hides in a burrow or crevice, or in a hidden cavity beneath debris."
     },
     {
       "name": "Goblin",
@@ -3848,7 +3918,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "goblinoid"
+      "subtype": "goblinoid",
+      "desc": "_A ragged creature emerges from the sand. Its spindly frame is encased in a hodge‑podge of armor scraps and rusted weapons. A long, hooked nose protrudes over a wide mouth filled with sharp teeth._  \nDust goblins vary greatly in size and appearance, although they are universally scrawny, bony, and lanky. They seem to suffer from malnutrition even when in perfect health, a perception reinforced by the way their bellies distend after they’ve gorged themselves on flesh. Their skin is always dry and cracked, ranging from dusky gray to dark green in color.  \n**Rule the Wastelands.** Dust goblins are twisted creatures, tainted by many generations of life in a blasted wasteland. After a magical war devastated the dust goblins’ homeland, they rose to become the most dominant inhabitants. They inhabit ancient ruins and ambush travelers who stray too close to their borders.  \n**Twisted Minds.** The lingering magical energy saturating the wastes of their home, coupled with the harsh conditions in which they scratch out a living, have tainted the minds of all dust goblins. Their thinking is alien and unfathomable to most creatures. Whereas most goblins are cowardly, dust goblins don’t seem to experience fear. To the contrary, they enjoy wearing skull helmets and using ghostly whistles to frighten foes. Owing to this alien mindset, dust goblins get along disturbingly well with aberrations. The creatures often forge alliances and work together for mutual benefit, while making their unnerving mark on communal lairs.  \nDust goblins range from 2 to 4 feet tall, and weigh between 20 and 80 pounds."
     },
     {
       "name": "Grimlock",
@@ -3918,7 +3989,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "grimlock"
+      "subtype": "grimlock",
+      "desc": ""
     },
     {
       "name": "Panther",
@@ -3986,7 +4058,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Pseudodragon",
@@ -4060,7 +4133,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Riding Horse",
@@ -4108,7 +4182,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Skeleton",
@@ -4172,7 +4247,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A skeleton is a type of physically manifested undead often found in fantasy, gothic, and horror fiction, as well as mythology, folklore, and various kinds of art. Most are human skeletons, but they can also be from any species."
     },
     {
       "name": "Sprite",
@@ -4243,7 +4319,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The ground seems to crawl with tiny skeletal humanoids. Red pinpricks of baleful light emanate from empty eye sockets. The creatures have bony wings and tiny, vicious-looking teeth._  \n**Punished Fey.** Cadaver sprites are the skeletal remains of sprites that have failed the fey courts. Some of them befriended non-fey and left the forest, others were simply too lazy to complete their duties, and many more were punished for dozens of other reasons. Whatever the case, the fey lords and ladies corrupt the bodies of the sprites so they can accomplish in death what they failed to do in life. As part of this corruption, the sprites’ wings are reduced to bones, which removes their freedom to fly and forces them to stick to bushes and foliage. They typically band together and assault their opponents in large groups.  \n**Retain Elements of Individuality.** Unlike many forms of simple undead, cadaver sprites retain memories of their lives. These memories serve as a constant reminder of their failures. Those who associated with them in life consider them cursed or no longer recognize them. This inability to connect with those they once knew, combined with the compulsion to protect the forest and continue their previous duties, drives many cadaver sprites to madness.  \n**Deathspeakers.** For reasons known only to the sprites and the fey lords and ladies that created them, cadaver sprites are often found in areas occupied by Open Game License"
     },
     {
       "name": "Steam Mephit",
@@ -4315,7 +4392,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Bats",
@@ -4392,7 +4470,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Rats",
@@ -4464,7 +4543,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Ravens",
@@ -4533,7 +4613,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Violet Fungus",
@@ -4594,7 +4675,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Wolf",
@@ -4654,7 +4736,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Smaller than a giant spider, a **giant wolf spider** hunts prey across open ground or hides in a burrow or crevice, or in a hidden cavity beneath debris."
     },
     {
       "name": "Zombie",
@@ -4713,7 +4796,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "This creature looks like a bloated, wet corpse. Its fingers and toes are webbed, and slick, fleshy fins run down its spine and legs, poking through stretches of dead flesh. An overpowering stench of rot surrounds it._  \n**Aquatic Adaptations.** The cavefish zombie is an unusual type of undead that occurs when dark magic permeates a lightless, watery environment, such as in an underground lake or the depths of the ocean. Rather than retain the bodily form it possessed in life, the creature’s skin sloughs off from parts of its body as aquatic features burst through its flesh. Its fingers and toes become webbed, and fins form on its back and down its legs.  \n**Decay.** The cavefish zombie’s dead tissue holds water, causing it to look bloated and loose and afflicting it with a persistent rot. This rot results in a horrific odor, which follows them whether they are in water or on land.  \n**Undead Nature.** A cavefish zombie doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Ape",
@@ -4776,7 +4860,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_Apau Perape Sharp teeth fill this large, demonic ape’s mouth. Its long, muscular arms stretch to the ground, ending in wickedly curved claws._  \n_**Servants of Fire.**_ These black-furred gorilla demons serve only their demon lord. Their final loyalty is unshakable, though sometimes they serve others for a time— and they have no fear of fire, gleefully setting fire to villages and crops if their master is snubbed or insulted.  \n_**Fearless Attackers.**_ The apau perape are fearless and savage, living for battle. Once in combat, their morale never breaks. Like their master, they have an insatiable hunger and do not leave any dead behind, consuming even their bones.  \n_**Eyes of Fire.**_ When this demon is angered, its eyes glow a deep, disturbing red, unlike any natural ape."
     },
     {
       "name": "Black Bear",
@@ -4841,7 +4926,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Cockatrice",
@@ -4890,7 +4976,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Crocodile",
@@ -4946,7 +5033,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Darkmantle",
@@ -5010,7 +5098,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Deep Gnome (Svirfneblin)",
@@ -5087,7 +5176,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "gnome"
+      "subtype": "gnome",
+      "desc": ""
     },
     {
       "name": "Dust Mephit",
@@ -5161,7 +5251,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Goat",
@@ -5218,7 +5309,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Sea Horse",
@@ -5276,7 +5368,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Like their smaller kin, **giant sea horses** are shy, colorful fish with elongated bodies and curled tails. Aquatic elves train them as mounts."
     },
     {
       "name": "Giant Wasp",
@@ -5326,7 +5419,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Gnoll",
@@ -5396,7 +5490,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "gnoll"
+      "subtype": "gnoll",
+      "desc": "_The runner is a mottled blur, a sprinting gnoll laughing as it runs, ax held high. It sprints past, its weapon flashing in the sun._  \nWith the bristly mane and spotted fur characteristic of all gnolls, havoc runners blend into their tribe. Only the canny glint in the eyes hints at the deadly difference before the havoc runner explodes into violence.  \n_**Blinding Raids.**_ Havoc runners are scouring storms across the trade routes that crisscross the tribe’s territory. Like all gnolls, they are deadly in battle. Havoc runners incorporate another quality that makes them the envy of many raiders: they can tell at a glance which pieces of loot from a laden camel or wagon are the most valuable, without spending time rummaging, weighing, or evaluating. Their ability to strike into a caravan, seize the best items, and withdraw quickly is unparalleled."
     },
     {
       "name": "Gray Ooze",
@@ -5471,7 +5566,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Hobgoblin",
@@ -5535,7 +5631,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "goblinoid"
+      "subtype": "goblinoid",
+      "desc": ""
     },
     {
       "name": "Ice Mephit",
@@ -5617,7 +5714,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Lizardfolk",
@@ -5703,7 +5801,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "lizardfolk"
+      "subtype": "lizardfolk",
+      "desc": ""
     },
     {
       "name": "Magma Mephit",
@@ -5783,7 +5882,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Magmin",
@@ -5846,7 +5946,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Orc",
@@ -5912,7 +6013,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "orc"
+      "subtype": "orc",
+      "desc": "A gold-furred, lion-headed angel with white wings gives an intense stare, releasing a roar as it raises a flaming greatsword._  \nAngelic enforcers are lion-headed celestials that hunt rogue angels.  \n**Divine Mission.** Angelic enforcers are made from souls selected for their unwavering adherence to the tenants of law and good. These elite angels have a special task: police other angels that go rogue. If an angel breaks one of its god’s tenets but remains good at heart, the enforcers usually only seek to capture the offending celestial to stand trial in the upper planes. If an angel becomes fully corrupted by evil, one or more enforcers are sent to destroy the fallen celestial.  \n**Nothing Gets in the Way.** Angelic enforcers show no mercy to any creature or obstacle between them and their quarries. Those who obstruct the enforcers stand in the way of divine justice and are therefore considered agents of evil. Any killings or collateral damage done by enforcers are usually seen as the fault of their quarry for stepping out of line in the first place.  \n**Immortal Nature.** An angelic enforcer doesn’t require food, drink, or sleep."
     },
     {
       "name": "Reef Shark",
@@ -5971,7 +6073,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Smaller than giant sharks and hunter sharks, **reef sharks** inhabit shallow waters and coral reefs, gathering in small packs to hunt. A full-grown specimen measures 6 to 10 feet long."
     },
     {
       "name": "Rust Monster",
@@ -6032,7 +6135,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A rust monster is a fictional creature from the Dungeons & Dragons fantasy role-playing game that seeks out and consumes metal, often the armor and weaponry of players' characters."
     },
     {
       "name": "Sahuagin",
@@ -6117,7 +6221,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "sahuagin"
+      "subtype": "sahuagin",
+      "desc": ""
     },
     {
       "name": "Satyr",
@@ -6192,7 +6297,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Scout",
@@ -6264,7 +6370,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Scouts** are skilled hunters and trackers who offer their services for a fee. Most hunt wild game, but a few work as bounty hunters, serve as guides, or provide military reconnaissance."
     },
     {
       "name": "Shadow",
@@ -6348,7 +6455,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_This blue-skinned creature resembles a stunted dwarf. Its eyes are large and its hair wild, and both are colorless. The expression on its face is a terrible rictus of madness and hate._  \nAll derro are mad, but some devote their very souls to the service of insanity. They embrace the powers of darkness and channel shadow through their minds to break the sanity of any creatures they encounter. Derro shadow antipaladins are the elite servants of gods like Nyarlathotep and the Black Goat of the Woods.  \n**Herald of Madness.** The derro shadow antipaladin is insanity personified. Despite being called paladins, these unhinged creatures aren’t swaggering warriors encased in steel or their dark reflections. Instead, a shadow antipaladin serves as a more subtle vector for the madness of its patron. They are masters of shadow magic and stealth who attack the faith of those who believe that goodness can survive the approaching, dark apotheosis. Death, madness, and darkness spread in the shadow antipaladin’s wake."
     },
     {
       "name": "Swarm of Beetles",
@@ -6418,7 +6526,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Centipedes",
@@ -6487,7 +6596,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Insects",
@@ -6556,7 +6666,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Spiders",
@@ -6636,7 +6747,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Swarm of Wasps",
@@ -6705,7 +6817,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Thug",
@@ -6774,7 +6887,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Thugs** are ruthless enforcers skilled at intimidation and violence. They work for money and have few scruples."
     },
     {
       "name": "Warhorse",
@@ -6827,7 +6941,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Warhorse Skeleton",
@@ -6882,7 +6997,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A skeleton is a type of physically manifested undead often found in fantasy, gothic, and horror fiction, as well as mythology, folklore, and various kinds of art. Most are human skeletons, but they can also be from any species."
     },
     {
       "name": "Worg",
@@ -6940,7 +7056,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **worg** is an evil predator that delights in hunting and devouring creatures weaker than itself. Cunning and malevolent, worgs roam across the remote wilderness or are raised by goblins and hobgoblins. Those creatures use worgs as mounts, but a worg will turn on its rider if it feels mistreated or malnourished. Worgs speak in their own language and Goblin, and a few learn to speak Common as well."
     },
     {
       "name": "Animated Armor",
@@ -7013,7 +7130,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Brass Dragon Wyrmling",
@@ -7074,7 +7192,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Brown Bear",
@@ -7141,7 +7260,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Bugbear",
@@ -7212,7 +7332,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "goblinoid"
+      "subtype": "goblinoid",
+      "desc": ""
     },
     {
       "name": "Copper Dragon Wyrmling",
@@ -7273,7 +7394,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Death Dog",
@@ -7333,7 +7455,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **death dog** is an ugly two-headed hound that roams plains, and deserts. Hate burns in a death dog's heart, and a taste for humanoid flesh drives it to attack travelers and explorers. Death dog saliva carries a foul disease that causes a victim's flesh to slowly rot off the bone."
     },
     {
       "name": "Dire Wolf",
@@ -7393,7 +7516,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Dryad",
@@ -7468,7 +7592,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_A duskthorn dryad is a striking woman with obvious fey features and skin the color of slate, often found in the shade of an ancient tree. Clothed in vines and leaves, it can be difficult to tell where one leaves off and the other begins._  \n**Creeper Vine Spirits.** Duskthorn dryads are spirits tied to thorn-bearing creeper vines. They seek out dead trees and use them as a home for their vines to cling to. They can travel through trees to escape their foes but must stay near their vines.  \n**Create Guardians.** Duskthorn dryads use their vines and the plants in their glades to defend themselves, animating enormously strong vine troll skeletons as well as ordinary skeletons, children of the briar, and other horrors. These defenders are linked to the tree and vines that animated them, are controlled by hearts within the tree. If the hearts are destroyed, the servants wither or scatter."
     },
     {
       "name": "Duergar",
@@ -7546,7 +7671,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "dwarf"
+      "subtype": "dwarf",
+      "desc": ""
     },
     {
       "name": "Ghoul",
@@ -7609,7 +7735,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "False"
     },
     {
       "name": "Giant Eagle",
@@ -7679,7 +7806,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **giant eagle** is a noble creature that speaks its own language and understands speech in the Common tongue. A mated pair of giant eagles typically has up to four eggs or young in their nest (treat the young as normal eagles)."
     },
     {
       "name": "Giant Hyena",
@@ -7734,7 +7862,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Octopus",
@@ -7803,7 +7932,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Spider",
@@ -7872,7 +8002,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "To snare its prey, a **giant spider** spins elaborate webs or shoots sticky strands of webbing from its abdomen. Giant spiders are most commonly found underground, making their lairs on ceilings or in dark, web-filled crevices. Such lairs are often festooned with web cocoons holding past victims."
     },
     {
       "name": "Giant Toad",
@@ -7934,7 +8065,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Vulture",
@@ -8007,7 +8139,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Harpy",
@@ -8073,7 +8206,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "This winged female has a short torso and long, gangly legs. Her wingspan is wider than her body is tall. Despite her awkward appearance, she moves with incredible grace._  \n**Protectors of the Marsh.** Egret harpies look after marshland flora and fauna, often allying themselves with druids and rangers who occupy the same area.  \n**Uncommonly Hospitable.** While most harpies have a reputation for sadism and bloodlust, egret harpies are considerably more welcoming. They possess the same alluring song all harpies have, but they can modulate the song to allow their captivated targets safe passage toward them. They often use their songs to prevent intruders from harming their home marshes. They can end their song in a mighty crescendo, imposing their will on those charmed by the song. The harpies typically coerce intruders to repair damages wreaked upon the marsh or to merely leave and never return. If a harpy suspects the intruders are unrepentant, she stops playing nice and allows her victims to fall prey to the marsh’s hazards.  \n**Powerful Yet Graceful.** The wings that hold the egret harpy’s larger frame aloft also serve as weapons. A powerful buffet from the harpy’s wing can knock down weaker foes. The harpy’s gawky build belies a fluidity to her movements, allowing her to balance on one leg even while engaged in battle."
     },
     {
       "name": "Hippogriff",
@@ -8140,7 +8274,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Imp",
@@ -8223,7 +8358,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "The long, serpentine dragon is wingless and possesses shimmering, opalescent scales. Its appearance is at once both serene and majestic._  \n**Dragons of the Spirit World.** Imperial dragons are tied to the world of celestials, fiends, and spirits. They freely parley with such creatures for knowledge about the outer planes or the fundamental mysteries of the universe. Some of the most powerful imperial dragons even become the servants of the gods in exchange for wisdom, acting as intermediaries between the divine and mortal realms.  \n**Colorful and Magical.** Imperial dragons are capable of changing their colors and forms. They are typically a rich, golden-yellow, but azure-, jade-, and vermillion-colored dragons are not unheard of, and even white and black imperial dragons have been reported. A magical organ in their skulls gives them the ability to fly without the aid of wings, and they are often hunted for this organ, which is rumored to grant eternal life if consumed.  \n**Masters of Wind and Rain.** Imperial dragons are creatures of wind and water, and the eldest of their kind exhibit mastery of these elements. They love the seas where they make their homes and sometimes act as guardians for sacred sites or temples near or beneath the waves. This often puts them in conflict with militant aquatic races like the Open Game License"
     },
     {
       "name": "Lion",
@@ -8298,7 +8434,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_These hideous, reeking creatures resemble toothless, cadaverous hags, their large eyes glowing with unearthly green light, and their fingers tipped with ragged claws._  \n**Twisted Nymphs.** Qwyllion (the name means “polluter” in Old Elvish) are nymphs who have been twisted by the corrupted mana of magical wastelands or warped alchemical experiments into baleful versions of their former selves.  \n**Frighten Animals.** Besides making them hideously ugly, the transformation leaves them with a deadly gaze attack and the ability to dominate a living creature with a mere glance. Animals refuse to approach within 20 feet of them.  \n**Goblin Mercenaries.** Qwyllion and their dominated thralls and enslaved specters are sometimes engaged by goblin sorcerers and evil mages to guard desecrated temples and despoiled gardens. The terms and payments for these arrangements vary wildly from one qwyllion to the next. Anyone who dares to employ a qwyllion must be constantly vigilant, because these creatures are prone to renege on any agreement eventually."
     },
     {
       "name": "Quasit",
@@ -8378,7 +8515,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Specter",
@@ -8458,7 +8596,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Spy",
@@ -8536,7 +8675,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "Rulers, nobles, merchants, guildmasters, and other wealthy individuals use **spies** to gain the upper hand in a world of cutthroat politics. A spy is trained to secretly gather information. Loyal spies would rather die than divulge information that could compromise them or their employers."
     },
     {
       "name": "Swarm of Quippers",
@@ -8613,7 +8753,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **quipper** is a carnivorous fish with sharp teeth. Quippers can adapt to any aquatic environment, including cold subterranean lakes. They frequently gather in swarms; the statistics for a swarm of quippers appear later in this appendix."
     },
     {
       "name": "Tiger",
@@ -8680,7 +8821,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The ticking of metal gears is all that hints at the presence of a pair of feline-shaped metal creatures. They are bronze and steel, with sharp metal teeth and razor claws._  \n**Magical Origin.** Clockwork tigers were invented as guardians in times now long forgotten. In spite of their age, they continue to serve their original purpose as guardians, protecting ancient ruins and new masters alike. The number of clockwork tigers in existence is slowly rising, leading many scholars to speculate on the reason. Some suspect the instructions for creating them were finally found, while others surmise a natural phenomenon unearthed a lost vault of clockwork tigers.  \n**Found in Pairs.** Clockwork tigers are almost always found in pairs and almost always guarding a spellcaster or magical object, which they consider their “ward.” The tigers work in tandem to defeat threats and protect their wards, leaping in and out of combat. Their clockwork brains are capable of thought, but they are less interested in communication and wholly devoted to protecting their wards.  \n**Construct Nature.** A clockwork tiger doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Ankheg",
@@ -8735,7 +8877,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Awakened Tree",
@@ -8795,7 +8938,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "An **awakened tree** is an ordinary tree given sentience and mobility by the awaken spell or similar magic."
     },
     {
       "name": "Azer",
@@ -8863,7 +9007,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Bandit Captain",
@@ -8933,7 +9078,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "It takes a strong personality, ruthless cunning, and a silver tongue to keep a gang of bandits in line. The **bandit captain** has these qualities in spades. \nIn addition to managing a crew of selfish malcontents, the **pirate captain** is a variation of the bandit captain, with a ship to protect and command. To keep the crew in line, the captain must mete out rewards and punishment on a regular basis. \nMore than treasure, a bandit captain or pirate captain craves infamy. A prisoner who appeals to the captain's vanity or ego is more likely to be treated fairly than a prisoner who does not or claims not to know anything of the captain's colorful reputation."
     },
     {
       "name": "Berserker",
@@ -8989,7 +9135,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "Hailing from uncivilized lands, unpredictable **berserkers** come together in war parties and seek conflict wherever they can find it."
     },
     {
       "name": "Black Dragon Wyrmling",
@@ -9057,7 +9204,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Bronze Dragon Wyrmling",
@@ -9123,7 +9271,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Centaur",
@@ -9201,7 +9350,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "This composite creature combines a ruddy-skinned gnome’s upper body and a hell hound’s reddish black body. Stitches and glowing runes where the gnome and hell hound are fused demonstrate the creature’s unnaturalness._  \nInfernal centaurs are a response by various cults to the physical might possessed by the centaurs of the nearby plains. Rather than a melding of human and horse, though, these centaurs combine hell-bound gnomes with hell hounds. The composite creature combines gnome cunning with the speed and fiery breath belonging to hell hounds. The ritual that creates an infernal centaur infuses the creature with a peculiar brutality.  \n**Unnatural.** Infernal centaurs are not naturally occurring. However, as the ritual to create these centaurs improves and spreads among cults, more gnomes who desire hellish power submit to the ritual, increasing the number of these centaurs."
     },
     {
       "name": "Cult Fanatic",
@@ -9269,7 +9419,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Fanatics** are often part of a cult's leadership, using their charisma and dogma to influence and prey on those of weak will. Most are interested in personal power above all else."
     },
     {
       "name": "Druid",
@@ -9329,7 +9480,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Druids** dwell in forests and other secluded wilderness locations, where they protect the natural world from monsters and the encroachment of civilization. Some are **tribal shamans** who heal the sick, pray to animal spirits, and provide spiritual guidance."
     },
     {
       "name": "Ettercap",
@@ -9411,7 +9563,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Gargoyle",
@@ -9486,7 +9639,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Gelatinous Cube",
@@ -9556,7 +9710,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A gelatinous cube is a fictional monster from the Dungeons & Dragons fantasy role-playing game. It is described as a ten-foot cube of transparent gelatinous ooze, which is able to absorb and digest organic matter."
     },
     {
       "name": "Ghast",
@@ -9630,7 +9785,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The creature has a maddened expression on its almost featureless face. Its vaguely humanoid body is covered in lumpy, grayish-green skin, and its head sits on a long neck. Its long arms end in vicious claws, and it stands on sharp hooves._  \n**Leaders of Carnivores.** Open Game License"
     },
     {
       "name": "Giant Boar",
@@ -9687,7 +9843,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Constrictor Snake",
@@ -9745,7 +9902,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Elk",
@@ -9812,7 +9970,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The majestic **giant elk** is rare to the point that its appearance is often taken as a foreshadowing of an important event, such as the birth of a king. Legends tell of gods that take the form of giant elk when visiting the Material Plane. Many cultures therefore believe that to hunt these creatures is to invite divine wrath."
     },
     {
       "name": "Gibbering Mouther",
@@ -9880,7 +10039,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Green Dragon Wyrmling",
@@ -9950,7 +10110,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Grick",
@@ -10017,7 +10178,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Griffon",
@@ -10084,7 +10246,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Hunter Shark",
@@ -10143,7 +10306,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Smaller than a giant shark but larger and fiercer than a reef shark, a **hunter shark** haunts deep waters. It usually hunts alone, but multiple hunter sharks might feed in the same area. A fully grown hunter shark is 15 to 20 feet long."
     },
     {
       "name": "Merrow",
@@ -10218,7 +10382,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Mimic",
@@ -10297,7 +10462,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "shapechanger"
+      "subtype": "shapechanger",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, the mimic is a type of fictional monster. It is portrayed as being able to change its shape to disguise its body as an inanimate object, commonly a chest. The mimic uses a powerful adhesive that holds fast to creatures that touch it, allowing the mimic to beat its victims with its powerful pseudopods."
     },
     {
       "name": "Minotaur Skeleton",
@@ -10366,7 +10532,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A skeleton is a type of physically manifested undead often found in fantasy, gothic, and horror fiction, as well as mythology, folklore, and various kinds of art. Most are human skeletons, but they can also be from any species."
     },
     {
       "name": "Ochre Jelly",
@@ -10441,7 +10608,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Ogre",
@@ -10499,7 +10667,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The ogre steps forward with a lop-sided gait. As it approaches, it rises up, revealing it is actually an abomination of ogre torsos held together by necromantic power._  \nSpecial torments await the depraved souls that devised these unholy, undead amalgamations. An ogrepede is comprised of an unknown number of ogre torsos and heads stitched together, with arms erupting from the mass seemingly at random. Watching it skitter haphazardly about a battlefield is almost hypnotic, right until it reaches its prey and rises to attack.  \n**Vicious Louts.** Mixing and animating ogre parts does nothing to improve their legendary tempers. Even more so than ogres, ogrepedes seek out things to destroy. The more beautiful the creature or object, the more satisfaction the ogrepede derives from its destruction. The lair of the rare ogrepede that has slipped its master’s bonds is full of its debased treasures and, in some instances, the mutilated but still-living victims of their assaults.  \n**Noisy Wanderers.** People are rarely surprised by the arrival of an ogrepede. Unless specifically commanded not to by their creator, ogrepedes emit a constant haunting moan, as though the creature laments all it has lost. Even if told to be silent, ogrepedes are not quiet. Their fat fingers drum noisily at the ground and their bodies slam gracelessly into corridor walls as they careen along on their duties.  \n**Poor Allies.** Ogrepedes have difficulty getting along with other creatures, including other ogrepedes. Vestiges of the craven instincts the ogres possessed in life remain after death, causing the ogrepede to lash out at any creature near it, particularly if the target is already wounded. Even when commanded to work with other creatures by their masters, it is merely a matter of when, not if, an ogrepede will attack its companions; the betrayal is inevitable.  \n**Undead Nature.** An ogrepede doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Ogre Zombie",
@@ -10558,7 +10727,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Pegasus",
@@ -10614,7 +10784,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Plesiosaurus",
@@ -10671,7 +10842,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Polar Bear",
@@ -10738,7 +10910,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Priest",
@@ -10802,7 +10975,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Priests** bring the teachings of their gods to the common folk. They are the spiritual leaders of temples and shrines and often hold positions of influence in their communities. Evil priests might work openly under a tyrant, or they might be the leaders of religious sects hidden in the shadows of good society, overseeing depraved rites. \nA priest typically has one or more acolytes to help with religious ceremonies and other sacred duties."
     },
     {
       "name": "Rhinoceros",
@@ -10855,7 +11029,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Rug of Smothering",
@@ -10925,7 +11100,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Saber-Toothed Tiger",
@@ -10992,7 +11168,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Sea Hag",
@@ -11062,7 +11239,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Silver Dragon Wyrmling",
@@ -11122,7 +11300,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Swarm of Poisonous Snakes",
@@ -11191,7 +11370,8 @@
         "swarm of Tiny beasts"
       ],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Wererat, Human Form",
@@ -11267,7 +11447,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Wererat, Hybrid Form",
@@ -11350,7 +11531,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Wererat, Rat Form",
@@ -11413,7 +11595,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "White Dragon Wyrmling",
@@ -11477,7 +11660,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Will-o'-Wisp",
@@ -11567,7 +11751,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Basilisk",
@@ -11620,7 +11805,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Bearded Devil",
@@ -11704,7 +11890,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "A devil, also referred to as a baatezu, is a member of a group of fictional creatures in the Dungeons & Dragons roleplaying game typically presented as formidable opponents for advanced players. Devils are characterized by their Lawful Evil alignment and are depicted as originating from the Nine Hells of Baator."
     },
     {
       "name": "Blue Dragon Wyrmling",
@@ -11767,7 +11954,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Doppelganger",
@@ -11844,7 +12032,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "shapechanger"
+      "subtype": "shapechanger",
+      "desc": ""
     },
     {
       "name": "Giant Scorpion",
@@ -11903,7 +12092,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Gold Dragon Wyrmling",
@@ -11969,7 +12159,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Green Hag",
@@ -12047,7 +12238,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Hell Hound",
@@ -12116,7 +12308,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Killer Whale",
@@ -12179,7 +12372,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Knight",
@@ -12255,7 +12449,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Knights** are warriors who pledge service to rulers, religious orders, and noble causes. A knight's alignment determines the extent to which a pledge is honored. Whether undertaking a quest or patrolling a realm, a knight often travels with an entourage that includes squires and hirelings who are commoners."
     },
     {
       "name": "Manticore",
@@ -12327,7 +12522,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Minotaur",
@@ -12399,7 +12595,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Mummy",
@@ -12470,7 +12667,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Parchment inscribed with arcane writing completely covers this creature, leaving room only for its glowing, purple eyes._  \nA scroll mummy expedites its passage into undeath through an arcane ritual that consumes several scrolls, while incorporating the surviving scrolls into the creature’s body, similarly to burial wrappings for an ordinary mummy.  \n**Curseless.** This alternate Open Game License"
     },
     {
       "name": "Nightmare",
@@ -12538,7 +12736,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Owlbear",
@@ -12604,7 +12803,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "An owlbear is a fictional creature originally created for the Dungeons & Dragons fantasy role-playing game. An owlbear is depicted as a cross between a bear and an owl, which 'hugs' like a bear and attacks with its beak."
     },
     {
       "name": "Phase Spider",
@@ -12668,7 +12868,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **phase spider** possesses the magical ability to phase in and out of the Ethereal Plane. It seems to appear out of nowhere and quickly vanishes after attacking. Its movement on the Ethereal Plane before coming back to the Material Plane makes it seem like it can teleport."
     },
     {
       "name": "Veteran",
@@ -12740,7 +12941,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Veterans** are professional fighters that take up arms for pay or to protect something they believe in or value. Their ranks include soldiers retired from long service and warriors who never served anyone but themselves."
     },
     {
       "name": "Werewolf, Human Form",
@@ -12808,7 +13010,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Werewolf, Hybrid Form",
@@ -12883,7 +13086,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Werewolf, Wolf Form",
@@ -12945,7 +13149,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Wight",
@@ -13029,7 +13234,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_The frame of this withered demon’s corpse barely fills the ash-colored plate armor that encases it. It carries a serrated khopesh sword in spiked gauntlets that hiss with violet smoke, and a horned ivory mask devoid of features is nailed to its face._  \n**Children of Fiends.** Long ago, a demon lord of shadow and deceit fell in love with a demon goddess of destruction. At the base of a crater left by a meteor that destroyed a civilization, the two devised a plan to not merely slay their peers, but wholly expunge them from time itself, leaving only each other. Shortly thereafter, the mask wights were conceived.  \n**Rites of Annihilation.** To create these undead, the lord of shadows stole the bodies of death knights from beneath the necropolis of an arch-lich. Then, the goddess of the underworld sacrificed a million condemned souls and drained their essence into ivory masks—one for each fiend the couple sought to annihilate. Finally, the masks were hammered onto the knights with cold iron nails, and their armored husks were left at the bottom of the memory-draining River Styx for 600 years.  \nWhen they rose, the mask wights marched out into the planes to bury knowledge, conjure secrets, and erase their quarry from memory and history.  \n**Ready for Betrayal.** Kept secret from one another, though, the two each created an additional mask wight, a safeguard for in case betrayal should cross their lover’s mind.  \n**Undead Nature.** A mask wight doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Winter Wolf",
@@ -13105,7 +13311,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The arctic-dwelling **winter wolf** is as large as a dire wolf but has snow-white fur and pale blue eyes. Frost giants use these evil creatures as guards and hunting companions, putting the wolves'deadly breath weapon to use against their foes. Winter wolves communicate with one another using growls and barks, but they speak Common and Giant well enough to follow simple conversations."
     },
     {
       "name": "Black Pudding",
@@ -13183,7 +13390,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Chuul",
@@ -13257,7 +13465,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Couatl",
@@ -13338,7 +13547,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Elephant",
@@ -13398,7 +13608,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Ettin",
@@ -13471,7 +13682,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Ghost",
@@ -13527,7 +13739,7 @@
         },
         {
           "name": "Horrifying Visage",
-          "description": "Each non-undead creature within 60 ft. of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. If the save fails by 5 or more, the target also ages 1d4 \u00d7 10 years. A frightened target can repeat the saving throw at the end of each of its turns, ending the frightened condition on itself on a success. If a target's saving throw is successful or the effect ends for it, the target is immune to this ghost's Horrifying Visage for the next 24 hours. The aging effect can be reversed with a greater restoration spell, but only within 24 hours of it occurring."
+          "description": "Each non-undead creature within 60 ft. of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. If the save fails by 5 or more, the target also ages 1d4 × 10 years. A frightened target can repeat the saving throw at the end of each of its turns, ending the frightened condition on itself on a success. If a target's saving throw is successful or the effect ends for it, the target is immune to this ghost's Horrifying Visage for the next 24 hours. The aging effect can be reversed with a greater restoration spell, but only within 24 hours of it occurring."
         },
         {
           "name": "Possession",
@@ -13563,7 +13775,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "False"
     },
     {
       "name": "Lamia",
@@ -13639,7 +13852,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Red Dragon Wyrmling",
@@ -13702,7 +13916,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Succubus/Incubus",
@@ -13792,7 +14007,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "shapechanger"
+      "subtype": "shapechanger",
+      "desc": ""
     },
     {
       "name": "Wereboar, Boar Form",
@@ -13858,7 +14074,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Wereboar, Human Form",
@@ -13926,7 +14143,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Wereboar, Hybrid Form",
@@ -14005,7 +14223,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Weretiger, Human Form",
@@ -14081,7 +14300,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Weretiger, Hybrid Form",
@@ -14175,7 +14395,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Weretiger, Tiger Form",
@@ -14249,7 +14470,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Air Elemental",
@@ -14327,7 +14549,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Barbed Devil",
@@ -14422,7 +14645,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "A devil, also referred to as a baatezu, is a member of a group of fictional creatures in the Dungeons & Dragons roleplaying game typically presented as formidable opponents for advanced players. Devils are characterized by their Lawful Evil alignment and are depicted as originating from the Nine Hells of Baator."
     },
     {
       "name": "Bulette",
@@ -14482,7 +14706,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Earth Elemental",
@@ -14558,7 +14783,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Fire Elemental",
@@ -14639,7 +14865,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Flesh Golem",
@@ -14729,7 +14956,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A hulking being with a dragon’s head and a patchwork of black, blue, green, red, and white scales for skin lurches forward on two legs, raising clawed fists into the air._  \nDragonflesh golems are rare constructs created from the remains of dead chromatic dragons.  \n**Built from Dragon Corpses.** Dragonflesh golems are powerful, but building such a creature requires great expense beyond the normal costs to create most other golems. The crafter must use the remains of five dragons, one of each color, of adult age or older. Mages looking to construct dragonflesh golems often hire adventurers to acquire the bodies they need.  \n**Powered by Dragon Blood.** Dragonflesh golems require frequent infusions of dragon blood to remain operational. This blood does not need to come from a true dragon; any creature with draconic blood will suffice.  \n**Construct Nature.** The dragonflesh golem doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Giant Crocodile",
@@ -14796,7 +15024,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Giant Shark",
@@ -14855,7 +15084,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **giant shark** is 30 feet long and normally found in deep oceans. Utterly fearless, it preys on anything that crosses its path, including whales and ships."
     },
     {
       "name": "Gladiator",
@@ -14934,7 +15164,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Gladiators** battle for the entertainment of raucous crowds. Some gladiators are brutal pit fighters who treat each match as a life-or-death struggle, while others are professional duelists who command huge fees but rarely fight to the death."
     },
     {
       "name": "Gorgon",
@@ -15002,7 +15233,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Half-Red Dragon Veteran",
@@ -15080,7 +15312,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": "**Veterans** are professional fighters that take up arms for pay or to protect something they believe in or value. Their ranks include soldiers retired from long service and warriors who never served anyone but themselves."
     },
     {
       "name": "Hill Giant",
@@ -15143,7 +15376,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Night Hag",
@@ -15232,7 +15466,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Otyugh",
@@ -15302,7 +15537,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Roper",
@@ -15380,7 +15616,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Salamander",
@@ -15456,7 +15693,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_Alas are born from galls that grow on treant trunks. Within this parasitic pocket, an ala sickens the treant and consumes its life force. When the treant dies, the ala is born in a black whirlwind._  \n**Daughters of the Whirlwind.** Alas have windblown hair and wear smoky black rags, but their true form is that of a whirlwind, which can always be seen by šestaci, those men and women with six digits on each hand. In flight or in battle, an ala takes on a form with the upper body of a hag and a whirling vortex of air in place of hips and legs. When an ala enters a house in human form, the whole building groans in protest, as if it had been struck by a powerful stormwind.  \nAlas live in the hollows of trees that were struck by lightning. They are most active when thunder rocks the forest, and when they travel hail or thunderstorms spawn around them.  \n**Enormous Appetites.**The huge-mouthed alas have voracious appetites. In the wild, they devour wolves, bears, and badgers. They prefer to hunt in settled areas, however, because they favor the taste of innocents above all else. Unsavory tribes of savage humanoids may beg an ala’s favor (or divert its wrath) with gifts of bound captives.  \n**Energized by Storms.** In battle, an ala is constantly on the move, weaving between foes like the wind. It tears at its foes with claws and a poisonous bite, or throws wicked lightning bolts and hailstorms from afar. Woe betides the hero who confronts an ala while a storm rages overhead, because such storms energize the ala and make its lightning stronger. Because alas wield lightning with such mastery, some sages associate them with the god of lightning."
     },
     {
       "name": "Shambling Mound",
@@ -15529,7 +15767,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Triceratops",
@@ -15589,7 +15828,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Troll",
@@ -15661,7 +15901,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "This large, lanky creature has limp, slate-colored hair, a long nose, and dark green, rubbery skin. Its legs are disproportionally larger than its upper body, and its limbs are oddly curved._  \nDeep trolls live far underground in the lightless regions seldom tread by people. An offshoot from their cousins on the surface, they have adapted to their environment in some unusual ways. Although they have eyes that can see light normally, their primary means of navigating the darkness is through vibration sense, which they register on their rubbery, sensitive skin.  \n**Malleable.** After these trolls moved underground, their bodies adapted to surviving in the smaller, often cramped caverns. Their bones became soft and malleable, allowing them to access areas deep beneath the surface world. Deep trolls can elongate their limbs and body or squeeze themselves ooze-like through tiny cracks and openings until they emerge into a place large enough to accommodate their natural size.  \n**Tribal.** Deep trolls live in small tribes of seven to fifteen members. They raid in groups, though they can be found alone when hunting or scavenging. They are intelligent enough to communicate, but they are voracious and can rarely be reasoned with when food is present. They prefer to attack anything potentially edible that isn’t part of the tribe and deal with the repercussions later. In rare cases, when confronted with opponents who are clearly more powerful, they can be persuaded to reason and discuss terms. Deep trolls are likely to agree to mutually beneficial terms, such as helping them deal with a common enemy or providing them with something they value."
     },
     {
       "name": "Unicorn",
@@ -15769,7 +16010,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Vampire Spawn",
@@ -15849,7 +16091,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, a vampire is an undead creature. A humanoid or monstrous humanoid creature can become a vampire, and looks as it did in life, with pale skin, haunting red eyes, and a feral cast to its features."
     },
     {
       "name": "Water Elemental",
@@ -15933,7 +16176,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A pillar of water rises up into a humanoid shape, steam trailing from its boiling form._  \n**Boiling Water.** Fire-infused water elementals are created when water elementals spend great lengths of time in superheated water, such as the borderlands between the Elemental Planes of Fire and Water, or when they are inundated with large amounts of fire magic. The elementals are irreparably changed and exist in a state between fire and water elemental. Too fiery for one and too watery for the other, they often find their way to the Material Plane, where they can carve out their own territory.  \n**Geothermal Dwellers.** Fire-infused water elementals prefer to inhabit areas with water heated by geothermal activity, such as hot springs and geysers. They claim such locations as their homes and grow violent when creatures harm or pollute their claimed waters. Fire-infused water elementals get along well with Open Game License"
     },
     {
       "name": "Werebear, Bear Form",
@@ -16007,7 +16251,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Werebear, Human Form",
@@ -16075,7 +16320,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Werebear, Hybrid Form",
@@ -16158,7 +16404,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "human"
+      "subtype": "human",
+      "desc": ""
     },
     {
       "name": "Wraith",
@@ -16241,7 +16488,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A vaguely humanoid form appears, dim and hazy amid the constant swirl of wind-wracked grit and tainted dust of the magical wasteland._  \nContorted and broken, the boneshard wraith is a ghostly horror, haphazardly assembled from mismatched bones and grave-scavenged shards. Shattered eye sockets burn with the black, icy glow of eternal madness and the spiteful hunger of the Void.  \n**Undead Nature.** A boneshard wraith doesn’t require air, food, drink, or sleep."
     },
     {
       "name": "Xorn",
@@ -16321,7 +16569,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Chimera",
@@ -16398,7 +16647,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Drider",
@@ -16492,7 +16742,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Invisible Stalker",
@@ -16573,7 +16824,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Mage",
@@ -16632,7 +16884,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Mages** spend their lives in the study and practice of magic. Good-aligned mages offer counsel to nobles and others in power, while evil mages dwell in isolated sites to perform unspeakable experiments without interference."
     },
     {
       "name": "Mammoth",
@@ -16692,7 +16945,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A **mammoth** is an elephantine creature with thick fur and long tusks. Stockier and fiercer than normal elephants, mammoths inhabit a wide range of climes, from subarctic to subtropical."
     },
     {
       "name": "Medusa",
@@ -16770,7 +17024,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Vrock",
@@ -16856,7 +17111,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Wyvern",
@@ -16925,7 +17181,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Young Brass Dragon",
@@ -16999,7 +17256,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Young White Dragon",
@@ -17080,7 +17338,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Giant Ape",
@@ -17143,7 +17402,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Oni",
@@ -17227,7 +17487,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "_Deathcap flesh ranges from white to pale gray to a warm yelloworange. Their heads resemble fungal caps, often either red with white spots, red at the center with a brown edge, or a bluish-purple tone. Although deathcaps have vicious-looking fanged mouths, they use them only to ingest earth or mineral nutrients._  \n**Mushroom Farmers.** These sentient mushroom folk tend the white forests of fungi in the underworld and are allies of the darakhul. Despite their ominous name, deathcap myconids are chiefly farmers. They cultivate dozens of species of mushrooms anywhere they have water, dung, and a bit of earth or slime in the underworld deeps. For this reason, other races rarely attack them. The ghouls do not eat them, and they cannot be made into darakhul.  \n**Toxic Spores.** Although deathcaps are mostly peaceful, their spores are toxic and sleep-inducing. They make excellent allies in combat because their abilities tend to punish attackers, but they aren’t especially lethal on their own. They use their poison and slumber spores to full effect against living creatures; they typically flee from constructs and undead. They count on their allies (carrion beetles, darakhul, purple worms, dark creepers, or even various devils) to fend off the most powerful foes.  \n**Clones.** Deathcap myconids live in communal groups of related clones. They reproduce asexually, and an elder and its offspring can be nearly identical in all but age. These clone groups are called deathcap rings.  \nMyconids build no huts or towns, but their groups are defined by their crops and general appearance. Indeed, many sages claim that the deathcaps are merely the fruiting, mobile bodies of the forests they tend, and that this is why they fight so ferociously to defend their forests of giant fungi."
     },
     {
       "name": "Shield Guardian",
@@ -17307,7 +17568,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "**Guards** include members of a city watch, sentries in a citadel or fortified town, and the bodyguards of merchants and nobles."
     },
     {
       "name": "Stone Giant",
@@ -17381,7 +17643,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Young Black Dragon",
@@ -17461,7 +17724,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Young Copper Dragon",
@@ -17535,7 +17799,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Assassin",
@@ -17617,7 +17882,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "Trained in the use of poison, **assassins** are remorseless killers who work for nobles, guildmasters, sovereigns, and anyone else who can afford them."
     },
     {
       "name": "Chain Devil",
@@ -17699,7 +17965,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "A devil, also referred to as a baatezu, is a member of a group of fictional creatures in the Dungeons & Dragons roleplaying game typically presented as formidable opponents for advanced players. Devils are characterized by their Lawful Evil alignment and are depicted as originating from the Nine Hells of Baator."
     },
     {
       "name": "Cloaker",
@@ -17785,7 +18052,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Frost Giant",
@@ -17851,7 +18119,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Hezrou",
@@ -17932,7 +18201,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Hydra",
@@ -18004,7 +18274,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A large chameleon pokes its head below the canopy. Soon, four other identical heads peek below the treetops. A massive body accompanies the heads, revealing they all belong to one creature. The creature’s odd feet and long, curled tail transport it from tree to tree with ease, and its sticky tongues allow it to slurp up prey on the forest floor as it passes._  \nThe chameleon hydra thrives in thick, wooded areas where it makes nests in the canopies of large trees. It feasts on prey both above and below the canopy, using its sticky tongues to snatch unsuspecting prey.  \n**Apex Ambush Predators.** Chameleon hydras have scales that react to light and allow the hydras to blend in with their surroundings. They are extremely patient, waiting until the most opportune time to strike from a safe vantage point. Chameleon hydras primarily eat birds and giant insects, but they are known to dine on unwary travelers if other prey is scarce.  \n**Curious and Colorful.** Study of juvenile chameleon hydras shows they have inquisitive minds and that they alternate their scales in colorful patterns when near others of their kind. Scholars believe they use these color changes as a rudimentary form of communication."
     },
     {
       "name": "Spirit Naga",
@@ -18069,7 +18340,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Tyrannosaurus Rex",
@@ -18130,7 +18402,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Young Bronze Dragon",
@@ -18209,7 +18482,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Young Green Dragon",
@@ -18292,7 +18566,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Bone Devil",
@@ -18376,7 +18651,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "A devil, also referred to as a baatezu, is a member of a group of fictional creatures in the Dungeons & Dragons roleplaying game typically presented as formidable opponents for advanced players. Devils are characterized by their Lawful Evil alignment and are depicted as originating from the Nine Hells of Baator."
     },
     {
       "name": "Clay Golem",
@@ -18467,7 +18743,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Cloud Giant",
@@ -18541,7 +18818,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Fire Giant",
@@ -18607,7 +18885,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Glabrezu",
@@ -18688,7 +18967,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Treant",
@@ -18770,7 +19050,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "Gnarled roots reaching deep into the muck act as legs for this group of trees conjoined into a sentient being._  \n**Ancient Grove Guardians.** Mangrove treants provide shelter and a resource-rich environment for many creatures. They extend their roots into the water, where several species of fish thrive. Biting and stinging insects, most notably mosquitos, dart about in cloud-like formations near the water’s surface. Arboreal animals nest high among the treants’ boughs mostly removed from the depredations of the insects. Unlike their forest cousins, these swampland treants are more concerned with the safety of those under their protection and less concerned with the overall health of the swamp. They decisively react to direct threats to themselves and the creatures within their boughs and roots, but they may not act if something endangers an area outside their immediate groves.  \nMangrove treants continue to grow throughout their extraordinarily long lives, which can reach millennia if they see no external disruptions. The treants also add ordinary mangrove trees into their gestalt, incorporating the trees’ ecosystems into its whole.  \n**Friend to Lizardfolk.** While a mangrove treant is generally wary of civilization, it befriends Open Game License"
     },
     {
       "name": "Young Blue Dragon",
@@ -18845,7 +19126,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Young Silver Dragon",
@@ -18919,7 +19201,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Aboleth",
@@ -19015,7 +19298,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Deva",
@@ -19102,7 +19386,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Guardian Naga",
@@ -19172,7 +19457,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "**Guards** include members of a city watch, sentries in a citadel or fortified town, and the bodyguards of merchants and nobles."
     },
     {
       "name": "Stone Golem",
@@ -19254,7 +19540,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Young Gold Dragon",
@@ -19334,7 +19621,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Young Red Dragon",
@@ -19409,7 +19697,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Behir",
@@ -19488,7 +19777,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Djinni",
@@ -19559,7 +19849,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Efreeti",
@@ -19632,7 +19923,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Gynosphinx",
@@ -19726,7 +20018,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Horned Devil",
@@ -19814,7 +20107,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "A devil, also referred to as a baatezu, is a member of a group of fictional creatures in the Dungeons & Dragons roleplaying game typically presented as formidable opponents for advanced players. Devils are characterized by their Lawful Evil alignment and are depicted as originating from the Nine Hells of Baator."
     },
     {
       "name": "Remorhaz",
@@ -19875,7 +20169,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Roc",
@@ -19942,7 +20237,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "A human voice emanates from a lion-like hyena. As it speaks, its black tongue runs over the many teeth in its unnaturally wide mouth._  \n**Disturbing Grin.** The crocotta’s mouth stretches back to its ears, allowing its powerful jaw to open unnaturally wide. In spite of its large mouth, the crocotta is able to perfectly mimic the sounds of humanoid voices. When hunting, it often mimics the sounds of a person in need, luring in a victim, then pounces on the victim when they investigate the sounds.  \n**Dog Hater.** The crocotta holds particular animosity toward dogs and attacks them before more obvious threats. Dogs innately understand this about crocotta and often purposefully distract an attacking crocotta to allow their humanoid families to escape.  \n**Oracular Eyes.** The gemstone eyes of the crocotta hold its prey captive when the crocotta is alive, but they grant visions of the future after its death. If a crocotta’s eye is placed under a creature’s tongue within five days of the crocotta’s death, the creature experiences omens of the future similar to those produced by the augury spell."
     },
     {
       "name": "Archmage",
@@ -20008,7 +20304,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "any race"
+      "subtype": "any race",
+      "desc": "**Archmages** are powerful (and usually quite old) spellcasters dedicated to the study of the arcane arts. Benevolent ones counsel kings and queens, while evil ones rule as tyrants and pursue lichdom. Those who are neither good nor evil sequester themselves in remote towers to practice their magic without interruption.\nAn archmage typically has one or more apprentice mages, and an archmage's abode has numerous magical wards and guardians to discourage interlopers."
     },
     {
       "name": "Erinyes",
@@ -20094,7 +20391,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": ""
     },
     {
       "name": "Adult Brass Dragon",
@@ -20198,7 +20496,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Adult White Dragon",
@@ -20307,7 +20606,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Nalfeshnee",
@@ -20393,7 +20693,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Rakshasa",
@@ -20464,7 +20765,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Storm Giant",
@@ -20552,7 +20854,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Vampire, Bat Form",
@@ -20656,7 +20959,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "shapechanger"
+      "subtype": "shapechanger",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, a vampire is an undead creature. A humanoid or monstrous humanoid creature can become a vampire, and looks as it did in life, with pale skin, haunting red eyes, and a feral cast to its features."
     },
     {
       "name": "Vampire, Mist Form",
@@ -20743,7 +21047,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "shapechanger"
+      "subtype": "shapechanger",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, a vampire is an undead creature. A humanoid or monstrous humanoid creature can become a vampire, and looks as it did in life, with pale skin, haunting red eyes, and a feral cast to its features."
     },
     {
       "name": "Vampire, Vampire Form",
@@ -20857,7 +21162,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "shapechanger"
+      "subtype": "shapechanger",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, a vampire is an undead creature. A humanoid or monstrous humanoid creature can become a vampire, and looks as it did in life, with pale skin, haunting red eyes, and a feral cast to its features."
     },
     {
       "name": "Adult Black Dragon",
@@ -20965,7 +21271,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Adult Copper Dragon",
@@ -21068,7 +21375,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ice Devil",
@@ -21158,7 +21466,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": "A devil, also referred to as a baatezu, is a member of a group of fictional creatures in the Dungeons & Dragons roleplaying game typically presented as formidable opponents for advanced players. Devils are characterized by their Lawful Evil alignment and are depicted as originating from the Nine Hells of Baator."
     },
     {
       "name": "Adult Bronze Dragon",
@@ -21265,7 +21574,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Adult Green Dragon",
@@ -21378,7 +21688,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Mummy Lord",
@@ -21485,7 +21796,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Purple Worm",
@@ -21550,7 +21862,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Adult Blue Dragon",
@@ -21654,7 +21967,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Adult Silver Dragon",
@@ -21757,7 +22071,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Iron Golem",
@@ -21853,7 +22168,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Marilith",
@@ -21947,7 +22263,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Planetar",
@@ -22033,7 +22350,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Adult Gold Dragon",
@@ -22141,7 +22459,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Adult Red Dragon",
@@ -22245,7 +22564,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Androsphinx",
@@ -22341,7 +22661,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Dragon Turtle",
@@ -22424,7 +22745,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Balor",
@@ -22518,7 +22840,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "demon"
+      "subtype": "demon",
+      "desc": ""
     },
     {
       "name": "Ancient Brass Dragon",
@@ -22626,7 +22949,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ancient White Dragon",
@@ -22735,7 +23059,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Pit Fiend",
@@ -22838,7 +23163,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "devil"
+      "subtype": "devil",
+      "desc": ""
     },
     {
       "name": "Ancient Black Dragon",
@@ -22946,7 +23272,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ancient Copper Dragon",
@@ -23053,7 +23380,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Lich",
@@ -23155,7 +23483,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "The lich is an undead creature found in the Dungeons & Dragons fantasy role-playing game. Liches are spellcasters who seek to defy death by magical means."
     },
     {
       "name": "Solar",
@@ -23269,7 +23598,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": ""
     },
     {
       "name": "Ancient Bronze Dragon",
@@ -23380,7 +23710,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ancient Green Dragon",
@@ -23493,7 +23824,8 @@
       ],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ancient Blue Dragon",
@@ -23597,7 +23929,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ancient Silver Dragon",
@@ -23704,7 +24037,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Kraken",
@@ -23813,7 +24147,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "titan"
+      "subtype": "titan",
+      "desc": ""
     },
     {
       "name": "Ancient Gold Dragon",
@@ -23925,7 +24260,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Ancient Red Dragon",
@@ -24029,7 +24365,8 @@
       "condition_immunities": [],
       "tags": [],
       "environment": [],
-      "tactics": ""
+      "tactics": "",
+      "desc": "In the Dungeons & Dragons fantasy role-playing game, dragons are an iconic type of monstrous creature. D&D dragons are loosely based on dragons from a wide range of fictional and mythological sources. In D&D, dragons are depicted as large, intelligent, magical, reptilian beasts, each typically defined by a combination of their demeanor and either the color of their scales or their elemental affinity."
     },
     {
       "name": "Tarrasque",
@@ -24150,7 +24487,8 @@
       "tags": [],
       "environment": [],
       "tactics": "",
-      "subtype": "titan"
+      "subtype": "titan",
+      "desc": ""
     }
   ]
 }

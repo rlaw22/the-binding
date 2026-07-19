@@ -2,5 +2,19 @@ services:
   - type: web
     name: the-binding
     runtime: docker
-    envVars: []
+    envVars:
+      - key: PORT
+        value: "3000"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: LLM_MOCK
+        value: "false"
+      - key: LLM_BASE_URL
+        value: "https://api.novita.ai/v3/openai"
+      - key: LLM_MODEL
+        value: "qwen/qwen3.6-plus"
+      - key: LLM_API_KEY
+        sync: false
+      - key: NOVITA_API_KEY
+        sync: false
     plan: free

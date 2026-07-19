@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Campaign Mode is The Binding's Phase II: a full AI Dungeon Master that runs open-ended D&D 5e sessions for 2-6 players. Unlike Adventure Mode (curated book-based scenes), Campaign Mode is sandbox — the AI DM creates worlds, NPCs, quests, and combat encounters on the fly, responding to player actions in real time.
+Campaign Mode is The Binding's Phase II: a full AI Dungeon Master that runs open-ended D&D 5e sessions for 1-6 players. Unlike Adventure Mode (curated book-based scenes), Campaign Mode is sandbox — the AI DM creates worlds, NPCs, quests, and combat encounters on the fly, responding to player actions in real time.
 
 The Phase 1 architecture was designed for this from Day 1. The session model, message router, rule engine, and combat manager all accept multi-player inputs already. Campaign Mode is **purely additive** — no rewrites to existing code.
 
@@ -180,7 +180,7 @@ GET    /api/campaigns               — List active campaigns
 
 ### Phase 2B: Multiplayer (Weeks 4-6)
 
-**Goal:** 2-6 players can join a campaign, with host/spectator roles and turn management.
+**Goal:** 1-6 players can join a campaign, with host/spectator roles and turn management.
 
 #### 2B.1 Session Lobby System
 
