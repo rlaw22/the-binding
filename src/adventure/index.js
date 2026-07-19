@@ -9,6 +9,26 @@ const { DraculaAdventure, getScene: draculaGetScene, getStartScene: draculaGetSt
 const { FrankensteinAdventure, getScene: frankGetScene, getStartScene: frankGetStartScene, getDMGuidance: frankGetDMGuidance, getAdventureOutline: frankGetAdventureOutline } = require('./frankenstein');
 const { HolmesAdventure, getScene: holmesGetScene, getStartScene: holmesGetStartScene, getDMGuidance: holmesGetDMGuidance, getAdventureOutline: holmesGetAdventureOutline } = require('./holmes');
 
+// Level ranges for adventures — used in the selection dropdown
+const adventureLevelRanges = {
+  dracula: { min: 1, max: 4, label: 'Levels 1–4' },
+  frankenstein: { min: 3, max: 6, label: 'Levels 3–6' },
+  holmes: { min: 2, max: 5, label: 'Levels 2–5' },
+  // Phase 2 adventures (catalog, pending integration)
+  lost_mine: { min: 1, max: 5, label: 'Levels 1–5' },
+  death_house: { min: 1, max: 3, label: 'Levels 1–3' },
+  frozen_sick: { min: 1, max: 1, label: 'Level 1' },
+  prisoner_13: { min: 4, max: 4, label: 'Level 4' },
+  dues_for_dead: { min: 1, max: 4, label: 'Levels 1–4' },
+  most_potent_brew: { min: 1, max: 1, label: 'Level 1' },
+  wild_sheep_chase: { min: 4, max: 5, label: 'Levels 4–5' },
+  moon_over_graymoor: { min: 1, max: 3, label: 'Levels 1–3' },
+  sunken_temple: { min: 1, max: 4, label: 'Levels 1–4' },
+  army_damned: { min: 1, max: 3, label: 'Levels 1–3' },
+  frog_idol: { min: 1, max: 2, label: 'Levels 1–2' },
+  clam_island: { min: 1, max: 4, label: 'Levels 1–4' }
+};
+
 // Registry of available adventures
 const adventureRegistry = {
   dracula: DraculaAdventure,
@@ -34,14 +54,18 @@ function getAdventure(adventureId) {
  * List all available adventures.
  */
 function listAdventures() {
-  return Object.values(adventureRegistry).map(a => ({
-    id: a.id,
-    name: a.name,
-    author: a.author,
-    description: a.description,
-    difficulty: a.difficulty,
-    estimatedLength: a.estimatedLength
-  }));
+  return Object.values(adventureRegistry).map(a => {
+    const levels = adventureLevelRanges[a.id] || { min: 1, max: 1, label: 'Level 1' };
+    return {
+      id: a.id,
+      name: a.name,
+      author: a.author,
+      description: a.description,
+      difficulty: a.difficulty,
+      estimatedLength: a.estimatedLength,
+      levelRange: levels
+    };
+  });
 }
 
 /**
@@ -136,5 +160,6 @@ module.exports = {
   getScene,
   getDMGuidance,
   getAdventureOutline,
-  getAdventureHelpers
+  getAdventureHelpers,
+  adventureLevelRanges
 };

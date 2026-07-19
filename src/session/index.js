@@ -2,7 +2,7 @@
  * Session Service — Future-proof container for game sessions.
  * 
  * Phase 1: single-player (array length 1)
- * Phase 2: multi-player Campaign Mode (array length 2-6)
+ * Phase 2: multi-player Campaign Mode (array length 1-6)
  * 
  * Key design: sessions are ALWAYS multi-player capable from Day 1.
  * A single-player adventure is just a session with one player.

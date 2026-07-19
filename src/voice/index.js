@@ -11,6 +11,7 @@
  */
 
 const { createTTSService, getCachedAudio, cleanupCache, detectProvider } = require('./tts-service');
+const { createSTTService, detectProvider: detectSTTProvider } = require('./stt-service');
 
 /**
  * Create a voice service with sensible defaults for DM narration.
@@ -34,7 +35,9 @@ function createVoiceService(config = {}) {
 module.exports = {
   createVoiceService,
   createTTSService,
+  createSTTService,
   getCachedAudio,
   cleanupCache,
-  detectProvider
+  detectProvider,
+  detectSTTProvider
 };
