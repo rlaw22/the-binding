@@ -1183,7 +1183,7 @@ async function loadAdventures() {
     for (var i = 0; i < adventures.length; i++) {
       var opt = document.createElement('option');
       opt.value = adventures[i].id;
-      opt.textContent = adventures[i].name;
+      opt.textContent = adventures[i].name + (adventures[i].levelRange ? ' (' + adventures[i].levelRange.label + ')' : '');
       opt.setAttribute('data-description', adventures[i].description || '');
       select.appendChild(opt);
     }
