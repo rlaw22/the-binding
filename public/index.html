@@ -1296,6 +1296,17 @@ function startPolling() {
   }, 2000);
 }
 
+// --- KEEP-ALIVE: ping server every 5 minutes to prevent Render free-tier cold start ---
+var keepAliveTimer = null;
+function startKeepAlive() {
+  if (keepAliveTimer) clearInterval(keepAliveTimer);
+  keepAliveTimer = setInterval(function() {
+    fetch('/api/health').catch(function() {});
+  }, 5 * 60 * 1000);
+}
+// Auto-start on page load
+startKeepAlive();
+
 function pollOnce() {
   if (!sessionId) return;
   fetch('/api/sessions/' + sessionId + '/messages?after=' + lastMsgIndex)
@@ -1418,36 +1429,62 @@ function showSpectatorActions(actions) {
   }
 }
 
+var actionRequestId = 0;  // tracks the current action request to ignore stale responses
+
 function sendAction(text) {
   if (sending) return;
   sending = true;
+  actionRequestId++;
+  var thisRequest = actionRequestId;
   document.getElementById('send-btn').disabled = true;
   document.getElementById('free-input').disabled = true;
   document.getElementById('action-buttons').innerHTML = '';
 
+  // Progressive loading feedback
+  var loadingMsg = addMessage('system', 'The DM is thinking...');
+  var feedbackTimer1 = setTimeout(function() {
+    if (sending && thisRequest === actionRequestId && loadingMsg) loadingMsg.textContent = 'Still preparing your adventure...';
+  }, 12000);
+  var feedbackTimer2 = setTimeout(function() {
+    if (sending && thisRequest === actionRequestId && loadingMsg) loadingMsg.textContent = 'Almost there, the world is loading...';
+  }, 30000);
+
   var sendTimeout = setTimeout(function() {
-    if (sending) {
+    if (sending && thisRequest === actionRequestId) {
       sending = false;
       document.getElementById('send-btn').disabled = false;
       document.getElementById('free-input').disabled = false;
-      addMessage('error', 'Server is taking too long. You can try again.');
+      if (loadingMsg) loadingMsg.textContent = 'The DM is taking longer than expected. The server may be waking up \u2014 try again in a moment.';
+      loadingMsg.className = 'msg error';
     }
-  }, 15000);
+  }, 60000);
 
   fetch('/api/sessions/' + sessionId + '/actions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 'action', content: text, playerId: playerId })
   }).then(function(resp) {
+    clearTimeout(sendTimeout);
+    clearTimeout(feedbackTimer1);
+    clearTimeout(feedbackTimer2);
+    // Remove the loading message on success (the DM response will replace it)
+    if (thisRequest === actionRequestId && loadingMsg && loadingMsg.parentNode) {
+      loadingMsg.parentNode.removeChild(loadingMsg);
+    }
     if (!resp.ok) {
       console.warn('Action POST returned', resp.status);
     }
   }).catch(function(err) {
     clearTimeout(sendTimeout);
-    addMessage('error', 'Connection issue — please try again.');
-    sending = false;
-    document.getElementById('send-btn').disabled = false;
-    document.getElementById('free-input').disabled = false;
+    clearTimeout(feedbackTimer1);
+    clearTimeout(feedbackTimer2);
+    if (thisRequest === actionRequestId) {
+      if (loadingMsg) loadingMsg.textContent = 'Connection issue \u2014 please try again.';
+      if (loadingMsg) loadingMsg.className = 'msg error';
+      sending = false;
+      document.getElementById('send-btn').disabled = false;
+      document.getElementById('free-input').disabled = false;
+    }
   });
 }
 
