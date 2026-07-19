@@ -135,19 +135,51 @@ Return as a JSON array: [{"label": "Action text", "type": "combat|social|investi
  * Build a prompt for coin scoring assessment.
  */
 function buildCoinScoringPrompt(playerAction, narrativeContext) {
-  return `Assess the following player action for creativity and intelligence.
+  return `You are the scoring engine for a narrative RPG. Assess this player action for intelligence, creativity, and engagement.
 
 PLAYER ACTION: "${playerAction}"
-CONTEXT: ${narrativeContext}
+NARRATIVE CONTEXT: ${narrativeContext}
 
-Rate each category 0-10:
-- creativity: Was this a clever or unexpected approach?
-- investigation: Did this show thorough exploration or research?
-- roleplay: Was this good roleplay — in-character, thoughtful?
-- combat: Was this tactically smart (if applicable)?
-- exploration: Did this reveal something hidden or advance discovery?
+Rate each category 0-10 using these rubrics:
 
-Return as JSON: {"creativity": N, "investigation": N, "roleplay": N, "combat": N, "exploration": N, "reasoning": "brief explanation"}`;
+CREATIVITY (weight: 25%):
+  0-2: Generic/repetitive action ("I attack", "I look around")
+  3-4: Slightly adapted to the situation
+  5-6: Smart use of environment, items, or character abilities
+  7-8: Unexpected approach the DM didn't anticipate
+  9-10: Brilliant lateral thinking — combines elements in novel ways
+
+INVESTIGATION (weight: 25%):
+  0-2: No investigative intent
+  3-4: Basic searching or questioning
+  5-6: Thorough examination, connects clues
+  7-8: Deep research, follows leads methodically
+  9-10: Deduces hidden truths from subtle evidence
+
+ROLEPLAY (weight: 20%):
+  0-2: Pure mechanics, no character voice
+  3-4: Occasional character expression
+  5-6: Consistent character voice and motivation
+  7-8: Deep character engagement — shows personality, relationships
+  9-10: Transforms the scene through authentic character choices
+
+COMBAT (weight: 15%): (score 5 if no combat context)
+  0-2: Mindless attacking
+  3-4: Basic tactical awareness
+  5-6: Smart positioning, ability usage, or teamwork
+  7-8: Adapts strategy mid-fight based on enemy behavior
+  9-10: Turns the tide through brilliant tactical play
+
+EXPLORATION (weight: 15%):
+  0-2: Stays in place, no curiosity
+  3-4: Moves to obvious locations
+  5-6: Seeks hidden areas, pushes boundaries
+  7-8: Discovers secrets through methodical exploration
+  9-10: Uncovers critical paths or hidden lore others would miss
+
+IMPORTANT: Use the FULL range. Most actions score 3-6. Only truly exceptional play earns 8+. Boring/repetitive actions should score 1-2.
+
+Return ONLY valid JSON: {"creativity": N, "investigation": N, "roleplay": N, "combat": N, "exploration": N, "reasoning": "one sentence explanation"}`;
 }
 
 module.exports = {
