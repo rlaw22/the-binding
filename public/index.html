@@ -455,7 +455,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
         <option value="cleric">Cleric</option>
         <option value="ranger">Ranger</option>
       </select>
-      <button onclick="startGame()">Begin Adventure</button>
+      <button id="begin-adventure-btn" onclick="this.disabled=true;this.textContent='Starting...';startGame().catch(function(){this.disabled=false;this.textContent='Begin Adventure';}.bind(this))">Begin Adventure</button>
     </div>
     <div class="divider">— or —</div>
     <span class="rejoin-link" onclick="showRejoinForm()">Rejoin from another device</span>
@@ -998,6 +998,9 @@ function joinSession(sid, name) {
 }
 
 function showGameUI(character, code, isSpectator) {
+  // Hide the start screen (critical for iPad Safari where overflow:hidden prevents scrolling past it)
+  var startEl = document.getElementById('start-screen');
+  if (startEl) startEl.classList.add('hidden');
   document.getElementById('messages').classList.remove('hidden');
   document.getElementById('split-divider').classList.remove('hidden');
 
