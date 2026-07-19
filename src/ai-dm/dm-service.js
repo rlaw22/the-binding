@@ -14,7 +14,7 @@ const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
-const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary } = require('../coin-engine');
+const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights } = require('../coin-engine');
 
 // Player profile tracking for adaptive replayability
 
@@ -298,12 +298,19 @@ async function processAction(game, playerAction, character) {
     coinScores = scoreAction(playerAction, parsed.narrative);
   }
 
+  // Apply bell curve normalization — makes high scores harder to achieve
+  coinScores = normalizeScores(coinScores);
+
   // Wire coin engine: score the turn into the pool
   if (game.coinPool && game.sceneState) {
     const sceneIndex = game.coinPool.scenePools.findIndex(sp => !sp.earned);
     if (sceneIndex >= 0) {
       const turnResult = scoreTurn(game.coinPool, sceneIndex, coinScores);
       game.sceneScores.push(turnResult);
+
+      // Build subtle coin notification for frontend
+      const runningTotal = game.sceneScores.reduce((sum, s) => sum + s.turnTotal, 0);
+      parsed.coinNotification = buildCoinNotification(turnResult, runningTotal);
     }
   }
 

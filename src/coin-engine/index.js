@@ -211,6 +211,137 @@ function formatChapterSummary(result) {
   return lines.join('\n');
 }
 
+/**
+ * Generate the end-of-adventure total summary.
+ * Shows all chapters, final tier, $BINDING earnings, and Shoppe discount.
+ */
+function formatAdventureSummary(tierResult, chapterResults, adventureName) {
+  const lines = [];
+  lines.push(`# ⚔️ Adventure Complete: ${adventureName || 'Unknown Adventure'}`);
+  lines.push('');
+  lines.push(`**Final Score: ${tierResult.totalEarned} / ${tierResult.totalMax} coins** (${Math.round(tierResult.percentage * 100)}%)`);
+  lines.push('');
+
+  // Chapter breakdowns
+  lines.push('## Chapter Summary');
+  for (const chapter of chapterResults) {
+    const pct = chapter.maxForScene > 0 ? Math.round((chapter.sceneTotal / chapter.maxForScene) * 100) : 0;
+    const bar = '█'.repeat(Math.round(pct / 10)) + '░'.repeat(10 - Math.round(pct / 10));
+    lines.push(`  Chapter ${chapter.sceneIndex + 1}: ${chapter.sceneTotal}/${chapter.maxForScene} ${bar} ${pct}%`);
+  }
+  lines.push('');
+
+  // Category totals
+  const categoryTotals = {};
+  for (const chapter of chapterResults) {
+    for (const [cat, amount] of Object.entries(chapter.breakdown)) {
+      categoryTotals[cat] = (categoryTotals[cat] || 0) + amount;
+    }
+  }
+  lines.push('## Category Breakdown');
+  for (const [category, amount] of Object.entries(categoryTotals)) {
+    const label = category.charAt(0).toUpperCase() + category.slice(1);
+    lines.push(`  ${label}: ${amount}`);
+  }
+  lines.push('');
+
+  // Tier and rewards
+  const tierEmoji = { bronze: '🥉', silver: '🥈', gold: '🥇', platinum: '💎' };
+  lines.push(`## Tier: ${tierEmoji[tierResult.tier] || '🥉'} ${tierResult.tier.toUpperCase()}`);
+  lines.push(`  $BINDING earned: ${tierResult.bindingCoins} (${tierResult.conversionRate}x conversion)`);
+  lines.push(`  Shoppe discount: ${Math.round(tierResult.shoppeDiscount * 100)}%`);
+  if (tierResult.isTopSpeed) {
+    lines.push(`  ⚡ Speed bonus applied (top 10% completion time)`);
+  }
+  lines.push('');
+
+  return lines.join('\n');
+}
+
+/**
+ * Bell curve normalization for coin scoring.
+ * Applies a soft curve that makes high scores harder to achieve,
+ * ensuring only ~0.01% of players max out.
+ *
+ * Raw score 0-10 maps through a bell curve:
+ *   0→0, 1→0.5, 2→1.5, 3→3, 4→5, 5→7, 6→8.5, 7→9.3, 8→9.7, 9→9.9, 10→10
+ *
+ * This means scores of 1-3 are common (easy), 4-6 are average,
+ * 7-8 are excellent, and 9-10 are truly exceptional.
+ */
+function bellCurveNormalize(rawScore) {
+  const score = Math.max(0, Math.min(10, Math.round(rawScore)));
+  // Lookup table — pre-computed bell curve mapping
+  const CURVE = [0, 0.5, 1.5, 3, 5, 7, 8.5, 9.3, 9.7, 9.9, 10];
+  return CURVE[score];
+}
+
+/**
+ * Apply bell curve normalization to all categories in a score object.
+ */
+function normalizeScores(scores) {
+  const normalized = {};
+  for (const category of Object.values(CoinCategory)) {
+    normalized[category] = bellCurveNormalize(scores[category] || 0);
+  }
+  return normalized;
+}
+
+/**
+ * Build a subtle coin notification payload for the frontend.
+ * Designed to be unobtrusive — small delta shown briefly.
+ */
+function buildCoinNotification(turnResult, runningTotal) {
+  if (!turnResult || turnResult.turnTotal === 0) return null;
+
+  // Find the category with the highest earned coins this turn
+  let topCategory = null;
+  let topAmount = 0;
+  for (const [cat, amount] of Object.entries(turnResult.coins)) {
+    if (amount > topAmount) {
+      topCategory = cat;
+      topAmount = amount;
+    }
+  }
+
+  return {
+    type: 'coin_earned',
+    delta: turnResult.turnTotal,
+    category: topCategory,
+    runningTotal,
+    isSubtle: true,
+    displayText: `+${turnResult.turnTotal} 🪙`,
+    categoryEmoji: {
+      creativity: '💡',
+      investigation: '🔍',
+      roleplay: '🎭',
+      combat: '⚔️',
+      exploration: '🗺️'
+    }[topCategory] || '🪙'
+  };
+}
+
+/**
+ * Apply custom scene category weights from adventure config.
+ * Overrides the default 25/25/20/15/15 split.
+ *
+ * @param {object} scenePool — the scene pool to modify
+ * @param {object} weights — { creativity: 0.3, investigation: 0.25, ... } (must sum to ~1.0)
+ * @param {number} maxCoins — total max coins for this scene
+ */
+function applyCategoryWeights(scenePool, weights, maxCoins) {
+  if (!weights) return scenePool;
+
+  const total = Object.values(weights).reduce((s, w) => s + w, 0);
+  if (Math.abs(total - 1.0) > 0.05) return scenePool; // weights must sum to ~1.0
+
+  scenePool.categoryBreakdown = {};
+  for (const [category, weight] of Object.entries(weights)) {
+    scenePool.categoryBreakdown[category] = Math.floor(maxCoins * weight);
+  }
+  return scenePool;
+}
+
 module.exports = {
   CoinCategory,
   Tier,
@@ -221,5 +352,10 @@ module.exports = {
   scoreTurn,
   completeScene,
   calculateTier,
-  formatChapterSummary
+  formatChapterSummary,
+  formatAdventureSummary,
+  bellCurveNormalize,
+  normalizeScores,
+  buildCoinNotification,
+  applyCategoryWeights
 };
