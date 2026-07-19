@@ -9,6 +9,47 @@
  * - Speed requirement ONLY for Platinum (top 10% completion time + 95%+ coins)
  */
 
+/**
+ * CALIBRATION — Centralized tuning constants for the coin scoring engine.
+ * All magic numbers live here so designers can tune without touching logic.
+ * Mirrors the pattern in dynamic-difficulty.js.
+ */
+const CALIBRATION = {
+  // Base coins per scene, scaled by difficulty
+  BASE_PER_SCENE: { easy: 40, medium: 60, hard: 80 },
+
+  // Default category weights (must sum to ~1.0)
+  // Override per-adventure with applyCategoryWeights()
+  DEFAULT_CATEGORY_WEIGHTS: {
+    creativity: 0.25,
+    investigation: 0.25,
+    roleplay: 0.20,
+    combat: 0.15,
+    exploration: 0.15
+  },
+
+  // Bell curve lookup — maps raw score 0-10 to normalized value
+  // Makes high scores progressively harder to achieve
+  BELL_CURVE: [0, 0.5, 1.5, 3, 5, 7, 8.5, 9.3, 9.7, 9.9, 10],
+
+  // Subtle notification thresholds — coins below this delta are silent
+  NOTIFICATION_THRESHOLD: 0,
+
+  // Seasonal coin budget — total $BINDING mintable per season (controls inflation)
+  SEASON_COIN_BUDGET: 10_000_000,
+
+  // Speed bonus — top N% of completion time qualifies for Platinum
+  PLATINUM_SPEED_PERCENTILE: 0.10,
+
+  // Adventure-specific category weight presets
+  // Each adventure can emphasize different scoring categories
+  ADVENTURE_PRESETS: {
+    dracula: { creativity: 0.20, investigation: 0.30, roleplay: 0.20, combat: 0.15, exploration: 0.15 },
+    frankenstein: { creativity: 0.30, investigation: 0.20, roleplay: 0.25, combat: 0.10, exploration: 0.15 },
+    holmes: { creativity: 0.15, investigation: 0.35, roleplay: 0.15, combat: 0.10, exploration: 0.25 }
+  }
+};
+
 // Coin categories match what the DM assesses
 const CoinCategory = {
   CREATIVITY: 'creativity',
@@ -52,32 +93,56 @@ const TIER_SHOPPE_DISCOUNT = {
  * Theoretical max = sum of all possible coins across all scenes.
  */
 function createCoinPool(adventureConfig) {
-  const { storyLength, difficulty, totalScenes } = adventureConfig;
+  const { storyLength, difficulty, totalScenes, adventureId } = adventureConfig;
 
   // Base pool scales with story length and difficulty
-  const basePerScene = difficulty === 'hard' ? 80 : difficulty === 'medium' ? 60 : 40;
+  const basePerScene = CALIBRATION.BASE_PER_SCENE[difficulty] || CALIBRATION.BASE_PER_SCENE.medium;
   const totalPool = totalScenes * basePerScene;
 
+  // Use adventure-specific preset weights if available, otherwise defaults
+  const presetKey = adventureId ? adventureId.toLowerCase().replace(/[^a-z]/g, '') : null;
+  const weights = (presetKey && CALIBRATION.ADVENTURE_PRESETS[presetKey]) || CALIBRATION.DEFAULT_CATEGORY_WEIGHTS;
+
   return {
-    adventureId: adventureConfig.adventureId,
+    adventureId,
     totalPool,
     totalBudget: totalPool,
     totalScenes,
     difficulty,
+    categoryWeights: { ...weights },
+    seasonalBudget: CALIBRATION.SEASON_COIN_BUDGET,
     scenePools: Array.from({ length: totalScenes }, (_, i) => ({
       sceneIndex: i,
       maxCoins: basePerScene,
-      categoryBreakdown: {
-        [CoinCategory.CREATIVITY]: Math.floor(basePerScene * 0.25),
-        [CoinCategory.INVESTIGATION]: Math.floor(basePerScene * 0.25),
-        [CoinCategory.ROLEPLAY]: Math.floor(basePerScene * 0.20),
-        [CoinCategory.COMBAT]: Math.floor(basePerScene * 0.15),
-        [CoinCategory.EXPLORATION]: Math.floor(basePerScene * 0.15)
-      },
+      categoryBreakdown: Object.fromEntries(
+        Object.entries(weights).map(
+          ([cat, weight]) => [cat, Math.floor(basePerScene * weight)]
+        )
+      ),
       earned: false
     })),
     createdAt: Date.now()
   };
+}
+
+/**
+ * Track seasonal coin spend against the budget.
+ * Returns { allowed, remaining, spent, budget }.
+ */
+function checkSeasonalBudget(pool, coinsToSpend) {
+  const budget = pool.seasonalBudget || CALIBRATION.SEASON_COIN_BUDGET;
+  const spent = pool.seasonalSpent || 0;
+  const remaining = Math.max(0, budget - spent);
+  const allowed = coinsToSpend <= remaining;
+  return { allowed, remaining, spent, budget, coinsToSpend };
+}
+
+/**
+ * Record seasonal coin spend. Call after scoring a turn.
+ */
+function recordSeasonalSpend(pool, coinsSpent) {
+  pool.seasonalSpent = (pool.seasonalSpent || 0) + coinsSpent;
+  return checkSeasonalBudget(pool, 0);
 }
 
 /**
@@ -272,8 +337,7 @@ function formatAdventureSummary(tierResult, chapterResults, adventureName) {
 function bellCurveNormalize(rawScore) {
   const score = Math.max(0, Math.min(10, Math.round(rawScore)));
   // Lookup table — pre-computed bell curve mapping
-  const CURVE = [0, 0.5, 1.5, 3, 5, 7, 8.5, 9.3, 9.7, 9.9, 10];
-  return CURVE[score];
+  return CALIBRATION.BELL_CURVE[score];
 }
 
 /**
@@ -343,12 +407,15 @@ function applyCategoryWeights(scenePool, weights, maxCoins) {
 }
 
 module.exports = {
+  CALIBRATION,
   CoinCategory,
   Tier,
   TIER_THRESHOLDS,
   TIER_CONVERSION_RATE,
   TIER_SHOPPE_DISCOUNT,
   createCoinPool,
+  checkSeasonalBudget,
+  recordSeasonalSpend,
   scoreTurn,
   completeScene,
   calculateTier,
