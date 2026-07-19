@@ -15,6 +15,7 @@ const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights } = require('../coin-engine');
+const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
 
 // Player profile tracking for adaptive replayability
 
@@ -152,6 +153,7 @@ function createGame(options) {
     coinEngine: options.coinEngine || null,   // injected
     coinPool: null,       // initialized when adventure starts
     sceneScores: [],      // accumulated turn scores for current scene
+    inventory: createInventory(['torch', 'journal']),  // starting items
     sceneState: null, // scene engine state — initialized when first scene starts
     validator: null // continuity validator — initialized with first scene
   };
@@ -198,7 +200,24 @@ async function processAction(game, playerAction, character) {
     tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
     sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
   });
-  const messages = buildContext(contextManager, systemPrompt);
+
+  // Append inventory context so the DM knows what the player is carrying
+  let fullSystemPrompt = systemPrompt;
+  if (game.inventory) {
+    const items = listItems(game.inventory);
+    if (items.length > 0) {
+      const itemList = items.map(i => `${i.name}${i.consumable ? ` (${i.uses})` : ''}`).join(', ');
+      const equipped = Object.entries(game.inventory.equipment)
+        .filter(([_, v]) => v !== null)
+        .map(([slot, v]) => `${slot}: ${v.name}`)
+        .join(', ');
+      fullSystemPrompt += `\n\nPLAYER INVENTORY: ${itemList}`;
+      if (equipped) fullSystemPrompt += `\nEQUIPPED: ${equipped}`;
+      fullSystemPrompt += `\nNarrate item usage naturally when the player references their gear. If they find a new item, mention it clearly.`;
+    }
+  }
+
+  const messages = buildContext(contextManager, fullSystemPrompt);
 
   // Call LLM for narrative response
   const dmResponse = await llmProvider(messages);
