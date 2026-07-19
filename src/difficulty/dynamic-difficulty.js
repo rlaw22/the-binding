@@ -171,8 +171,8 @@ class DynamicDifficulty {
     this.playerActions.push({ category, action: normalized, timestamp: Date.now() });
 
     // Keep bounded
-    if (this.playerActions.length > 30) {
-      this.playerActions = this.playerActions.slice(-30);
+    if (this.playerActions.length > CALIBRATION.maxActionHistory) {
+      this.playerActions = this.playerActions.slice(-CALIBRATION.maxActionHistory);
     }
   }
 
@@ -181,11 +181,11 @@ class DynamicDifficulty {
    * Returns fatigue info: { fatigued: bool, dominantCategory: string, ratio: number }
    */
   detectFatigue() {
-    if (this.playerActions.length < 5) {
+    if (this.playerActions.length < CALIBRATION.fatigueDetection.minActionsToDetect) {
       return { fatigued: false, dominantCategory: null, ratio: 0 };
     }
 
-    const recent = this.playerActions.slice(-10);
+    const recent = this.playerActions.slice(-CALIBRATION.fatigueDetection.recentActionWindow);
     const counts = {};
     for (const entry of recent) {
       counts[entry.category] = (counts[entry.category] || 0) + 1;
@@ -201,8 +201,8 @@ class DynamicDifficulty {
     }
 
     const ratio = maxCount / recent.length;
-    // Fatigued if 70%+ of recent actions are the same category
-    return { fatigued: ratio >= 0.7, dominantCategory, ratio };
+    // Fatigued if threshold of recent actions are the same category
+    return { fatigued: ratio >= CALIBRATION.fatigueDetection.repetitiveThreshold, dominantCategory, ratio };
   }
 
   /**
@@ -212,39 +212,41 @@ class DynamicDifficulty {
    * Now considers HP margins and fatigue in addition to win/loss streaks.
    */
   getNextTier() {
-    // Rubber-band: after 2+ consecutive losses, force a power window
-    if (this.consecutiveLosses >= 2) {
+    // Rubber-band: after N+ consecutive losses, force a power window
+    if (this.consecutiveLosses >= CALIBRATION.lossesToForcePowerWindow) {
       return TIERS.POWER_WINDOW;
     }
 
     // Fatigue detection: if player is doing repetitive actions, ease up
     const fatigue = this.detectFatigue();
-    if (fatigue.fatigued && this.consecutiveWins < 2) {
+    if (fatigue.fatigued && this.consecutiveWins < CALIBRATION.winsToSkewChallenge) {
       return TIERS.POWER_WINDOW;
     }
 
     // HP margin: if player barely survived recent fights, ease up
     const recentFights = this.combatHistory.slice(-3);
-    if (recentFights.length >= 2) {
+    if (recentFights.length >= CALIBRATION.hpMargin.minRecentFights) {
       const avgMargin = recentFights.reduce((sum, f) => sum + (f.hpMargin || 0.5), 0) / recentFights.length;
-      if (avgMargin < 0.25 && this.consecutiveWins < 3) {
+      if (avgMargin < CALIBRATION.hpMargin.nearlyDying && this.consecutiveWins < CALIBRATION.winsToSkewChallenge) {
         // Player barely surviving — give them a break
         return TIERS.POWER_WINDOW;
       }
     }
 
-    // After 3+ consecutive wins, skew toward challenge
-    if (this.consecutiveWins >= 3) {
+    // After N+ consecutive wins, skew toward challenge
+    if (this.consecutiveWins >= CALIBRATION.winsToSkewChallenge) {
       const roll = Math.random();
-      if (roll < 0.40) return TIERS.CHALLENGE;  // 40% challenge
-      if (roll < 0.80) return TIERS.FAIR;         // 40% fair
-      return TIERS.POWER_WINDOW;                   // 20% power window
+      const ws = CALIBRATION.winStreak;
+      if (roll < ws.challenge) return TIERS.CHALLENGE;
+      if (roll < ws.challenge + ws.fair) return TIERS.FAIR;
+      return TIERS.POWER_WINDOW;
     }
 
-    // Standard distribution: 70% fair, 20% power window, 10% challenge
+    // Standard distribution from calibration
     const roll = Math.random();
-    if (roll < 0.70) return TIERS.FAIR;
-    if (roll < 0.90) return TIERS.POWER_WINDOW;
+    const b = CALIBRATION.base;
+    if (roll < b.fair) return TIERS.FAIR;
+    if (roll < b.fair + b.powerWindow) return TIERS.POWER_WINDOW;
     return TIERS.CHALLENGE;
   }
 
@@ -262,17 +264,17 @@ class DynamicDifficulty {
 
       switch (tier) {
         case TIERS.POWER_WINDOW:
-          // Weaken: -20% HP, -2 attack bonus, min 1 hp / 0 bonus
-          if (scaled.hp) scaled.hp = Math.max(1, Math.floor(scaled.hp * 0.8));
-          if (scaled.attackBonus != null) scaled.attackBonus = Math.max(0, scaled.attackBonus - 2);
+          // Weaken per calibration
+          if (scaled.hp) scaled.hp = Math.max(1, Math.floor(scaled.hp * CALIBRATION.scaling.powerWindowHpMult));
+          if (scaled.attackBonus != null) scaled.attackBonus = Math.max(0, scaled.attackBonus + CALIBRATION.scaling.powerWindowAtkMod);
           scaled._difficultyTier = 'power_window';
           break;
 
         case TIERS.CHALLENGE:
-          // Strengthen: +30% HP, +2 attack bonus, +1 AC
-          if (scaled.hp) scaled.hp = Math.floor(scaled.hp * 1.3);
-          if (scaled.attackBonus != null) scaled.attackBonus = scaled.attackBonus + 2;
-          if (scaled.ac) scaled.ac = scaled.ac + 1;
+          // Strengthen per calibration
+          if (scaled.hp) scaled.hp = Math.floor(scaled.hp * CALIBRATION.scaling.challengeHpMult);
+          if (scaled.attackBonus != null) scaled.attackBonus = scaled.attackBonus + CALIBRATION.scaling.challengeAtkMod;
+          if (scaled.ac) scaled.ac = scaled.ac + CALIBRATION.scaling.challengeAcMod;
           scaled._difficultyTier = 'challenge';
           break;
 
@@ -362,6 +364,7 @@ class DynamicDifficulty {
 module.exports = {
   DynamicDifficulty,
   TIERS,
+  CALIBRATION,
   NARRATIVE_WRAPPERS,
   categorizeAction
 };
