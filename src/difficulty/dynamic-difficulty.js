@@ -441,6 +441,203 @@ class DynamicDifficulty {
   getEncounterScaling(adventure) {
     return ENCOUNTER_SCALING[adventure] || ENCOUNTER_SCALING.default;
   }
+  /**
+   * Analyze playtest combat history and compare against calibration targets.
+   * Takes an array of combat outcomes and returns a calibration report.
+   *
+   * @param {Array} combatHistory — [{ tier, outcome, playerHP, enemyHP, rounds }]
+   * @returns {{ actualDistribution, targetDistribution, deviation, recommendations[] }}
+   */
+  calibrateFromPlaytest(combatHistory) {
+    if (!combatHistory || combatHistory.length === 0) {
+      return {
+        actualDistribution: { fair: 0, power_window: 0, challenge: 0 },
+        targetDistribution: CALIBRATION.base,
+        deviation: { fair: 0, power_window: 0, challenge: 0 },
+        recommendations: ['No combat history provided. Run battles first.']
+      };
+    }
+
+    const total = combatHistory.length;
+    const counts = { fair: 0, power_window: 0, challenge: 0 };
+    let totalRounds = 0;
+    let totalPlayerHP = 0;
+    let totalEnemyHP = 0;
+    let victories = 0;
+
+    for (const entry of combatHistory) {
+      const tier = entry.tier || 'fair';
+      if (counts[tier] !== undefined) {
+        counts[tier]++;
+      } else {
+        counts.fair++; // default unknown tiers to fair
+      }
+      totalRounds += entry.rounds || 0;
+      totalPlayerHP += entry.playerHP || 0;
+      totalEnemyHP += entry.enemyHP || 0;
+      if (entry.outcome === 'victory') victories++;
+    }
+
+    const actualDistribution = {
+      fair: Math.round((counts.fair / total) * 1000) / 1000,
+      power_window: Math.round((counts.power_window / total) * 1000) / 1000,
+      challenge: Math.round((counts.challenge / total) * 1000) / 1000
+    };
+
+    const targetDistribution = { ...CALIBRATION.base };
+
+    const deviation = {
+      fair: Math.round((actualDistribution.fair - targetDistribution.fair) * 1000) / 1000,
+      power_window: Math.round((actualDistribution.power_window - targetDistribution.power_window) * 1000) / 1000,
+      challenge: Math.round((actualDistribution.challenge - targetDistribution.challenge) * 1000) / 1000
+    };
+
+    // Generate recommendations based on deviation
+    const recommendations = [];
+    const DEVIATION_THRESHOLD = 0.08; // 8% deviation triggers a recommendation
+
+    if (Math.abs(deviation.fair) > DEVIATION_THRESHOLD) {
+      if (deviation.fair > 0) {
+        recommendations.push(
+          `Fair fights are over-represented by ${Math.round(deviation.fair * 100)}%. ` +
+          `Reduce fair probability from ${Math.round(targetDistribution.fair * 100)}% to ${Math.round((targetDistribution.fair - deviation.fair * 0.5) * 100)}%.`
+        );
+      } else {
+        recommendations.push(
+          `Fair fights are under-represented by ${Math.round(Math.abs(deviation.fair) * 100)}%. ` +
+          `Increase fair probability from ${Math.round(targetDistribution.fair * 100)}% to ${Math.round((targetDistribution.fair - deviation.fair * 0.5) * 100)}%.`
+        );
+      }
+    }
+
+    if (Math.abs(deviation.power_window) > DEVIATION_THRESHOLD) {
+      if (deviation.power_window > 0) {
+        recommendations.push(
+          `Power windows are over-represented by ${Math.round(deviation.power_window * 100)}%. ` +
+          `Consider increasing lossesToForcePowerWindow from ${CALIBRATION.lossesToForcePowerWindow} to ${CALIBRATION.lossesToForcePowerWindow + 1}.`
+        );
+      } else {
+        recommendations.push(
+          `Power windows are under-represented by ${Math.round(Math.abs(deviation.power_window) * 100)}%. ` +
+          `Consider decreasing lossesToForcePowerWindow from ${CALIBRATION.lossesToForcePowerWindow} to ${Math.max(1, CALIBRATION.lossesToForcePowerWindow - 1)}.`
+        );
+      }
+    }
+
+    if (Math.abs(deviation.challenge) > DEVIATION_THRESHOLD) {
+      if (deviation.challenge > 0) {
+        recommendations.push(
+          `Challenge spikes are over-represented by ${Math.round(deviation.challenge * 100)}%. ` +
+          `Consider increasing winsToSkewChallenge from ${CALIBRATION.winsToSkewChallenge} to ${CALIBRATION.winsToSkewChallenge + 1}.`
+        );
+      } else {
+        recommendations.push(
+          `Challenge spikes are under-represented by ${Math.round(Math.abs(deviation.challenge) * 100)}%. ` +
+          `Consider decreasing winsToSkewChallenge from ${CALIBRATION.winsToSkewChallenge} to ${Math.max(2, CALIBRATION.winsToSkewChallenge - 1)}.`
+        );
+      }
+    }
+
+    // Win rate analysis
+    const winRate = total > 0 ? victories / total : 0;
+    if (winRate > 0.85) {
+      recommendations.push(
+        `Win rate is very high (${Math.round(winRate * 100)}%). Consider increasing challenge scaling (challengeHpMult or challengeAtkMod).`
+      );
+    } else if (winRate < 0.40) {
+      recommendations.push(
+        `Win rate is very low (${Math.round(winRate * 100)}%). Consider reducing challenge scaling or increasing power window frequency.`
+      );
+    }
+
+    // Round analysis
+    const avgRounds = total > 0 ? totalRounds / total : 0;
+    if (avgRounds > 8) {
+      recommendations.push(
+        `Average combat length is high (${avgRounds.toFixed(1)} rounds). Consider reducing enemy HP scaling.`
+      );
+    } else if (avgRounds < 2) {
+      recommendations.push(
+        `Average combat length is very short (${avgRounds.toFixed(1)} rounds). Consider increasing enemy HP scaling.`
+      );
+    }
+
+    if (recommendations.length === 0) {
+      recommendations.push('Distribution is within acceptable bounds. No calibration changes needed.');
+    }
+
+    return {
+      actualDistribution,
+      targetDistribution,
+      deviation,
+      recommendations,
+      meta: {
+        totalBattles: total,
+        victories,
+        winRate: Math.round(winRate * 1000) / 1000,
+        avgRounds: Math.round(avgRounds * 10) / 10
+      }
+    };
+  }
+
+  /**
+   * Simulate N battles at a given skill level and return a calibration report.
+   * Static method — creates its own DynamicDifficulty instance internally.
+   *
+   * @param {number} numBattles — number of battles to simulate
+   * @param {number} playerSkill — 0.0 (terrible) to 1.0 (perfect)
+   * @returns {{ actualDistribution, targetDistribution, deviation, recommendations[], meta }}
+   */
+  static runSimulation(numBattles, playerSkill) {
+    const dd = new DynamicDifficulty();
+    const skill = Math.max(0, Math.min(1, playerSkill));
+    const combatHistory = [];
+
+    // Seed some actions so fatigue detection has data
+    const actionPool = [
+      'I attack the goblin with my sword',
+      'I search the room for clues',
+      'I ask the guard about the passage',
+      'I cast fireball at the enemy',
+      'I examine the ancient runes on the wall'
+    ];
+    for (let i = 0; i < 6; i++) {
+      dd.recordAction(actionPool[i % actionPool.length]);
+    }
+
+    for (let i = 0; i < numBattles; i++) {
+      // Determine tier via the real difficulty system
+      const tier = dd.getNextTier();
+
+      // Simulate outcome based on skill + tier modifier
+      let winChance = skill;
+      if (tier === TIERS.POWER_WINDOW) winChance = Math.min(1, skill + 0.3);
+      if (tier === TIERS.CHALLENGE) winChance = Math.max(0, skill - 0.3);
+
+      const won = Math.random() < winChance;
+      const outcome = won ? 'victory' : 'defeat';
+
+      // Simulate HP margins
+      const playerHpMax = 50;
+      let playerHP;
+      if (won) {
+        playerHP = Math.floor(playerHpMax * (0.3 + Math.random() * 0.7 * skill));
+      } else {
+        playerHP = Math.floor(playerHpMax * Math.random() * 0.3);
+      }
+      const enemyHP = Math.floor(30 * (0.8 + Math.random() * 0.4));
+      const rounds = Math.floor(2 + Math.random() * 6);
+
+      // Record in the difficulty system
+      dd.recordOutcome(outcome, playerHP, playerHpMax, 2);
+
+      // Track for calibration
+      combatHistory.push({ tier, outcome, playerHP, enemyHP, rounds });
+    }
+
+    return dd.calibrateFromPlaytest(combatHistory);
+  }
+
   serialize() {
     return {
       combatHistory: this.combatHistory,

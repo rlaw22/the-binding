@@ -318,7 +318,165 @@ function createImageService(opts = {}) {
 }
 
 // ---------------------------------------------------------------------------
+// Standalone Image Cache with TTL + LRU
+//
+// Used by generateAndCache() and getImageCacheStats().
+// Separate from the per-service ImageCache above (which is prompt-keyed,
+// no TTL).  This one is content-addressed by a hash of prompt + provider +
+// style, stores structured entries, and expires them after 60 min.
+// ---------------------------------------------------------------------------
+
+const crypto = require('crypto');
+
+const IMAGE_CACHE_TTL_MS = 60 * 60 * 1000; // 60 minutes
+const IMAGE_CACHE_MAX = 50;
+
+class ImageCacheStore {
+  constructor(maxEntries = IMAGE_CACHE_MAX, ttlMs = IMAGE_CACHE_TTL_MS) {
+    this._map = new Map();       // key → { imageUrl, prompt, generatedAt, expiresAt }
+    this._max = maxEntries;
+    this._ttl = ttlMs;
+    this._hits = 0;
+    this._misses = 0;
+  }
+
+  /**
+   * Build a deterministic cache key from prompt + provider + style.
+   */
+  static makeKey(prompt, providerName, style) {
+    const raw = `${providerName || 'unknown'}|${style || ''}|${prompt}`;
+    return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 32);
+  }
+
+  get(key) {
+    const entry = this._map.get(key);
+    if (!entry) { this._misses++; return undefined; }
+    // Check TTL
+    if (Date.now() > entry.expiresAt) {
+      this._map.delete(key);
+      this._misses++;
+      return undefined;
+    }
+    // Move to end (most-recently used)
+    this._map.delete(key);
+    this._map.set(key, entry);
+    this._hits++;
+    return entry;
+  }
+
+  set(key, entry) {
+    if (this._map.has(key)) this._map.delete(key);
+    this._map.set(key, entry);
+    // LRU eviction
+    while (this._map.size > this._max) {
+      const oldest = this._map.keys().next().value;
+      this._map.delete(oldest);
+    }
+  }
+
+  has(key) {
+    const entry = this._map.get(key);
+    if (!entry) return false;
+    if (Date.now() > entry.expiresAt) { this._map.delete(key); return false; }
+    return true;
+  }
+
+  clear() {
+    this._map.clear();
+    this._hits = 0;
+    this._misses = 0;
+  }
+
+  get size() { return this._map.size; }
+
+  stats() {
+    const total = this._hits + this._misses;
+    return {
+      size: this._map.size,
+      maxSize: this._max,
+      ttlMs: this._ttl,
+      hits: this._hits,
+      misses: this._misses,
+      hitRate: total > 0 ? Math.round((this._hits / total) * 10000) / 100 : 0,
+      entries: Array.from(this._map.entries()).map(([key, val]) => ({
+        key,
+        prompt: val.prompt.slice(0, 120),
+        generatedAt: val.generatedAt,
+        expiresAt: val.expiresAt,
+      })),
+    };
+  }
+}
+
+// Module-level singleton cache
+const _imageCacheStore = new ImageCacheStore();
+
+/**
+ * Generate an image with caching.
+ *
+ * @param {object} service   - An image service instance (from createImageService)
+ * @param {string} prompt    - The generation prompt
+ * @param {object} [options] - { provider, style }
+ * @returns {Promise<{ imageUrl: string|null, cached: boolean, prompt: string }>}
+ */
+async function generateAndCache(service, prompt, options = {}) {
+  if (!service || !service.isEnabled) {
+    return { imageUrl: null, cached: false, prompt };
+  }
+
+  const providerName = options.provider || service.providerName || 'unknown';
+  const style = options.style || '';
+  const key = ImageCacheStore.makeKey(prompt, providerName, style);
+
+  // Check cache
+  const cached = _imageCacheStore.get(key);
+  if (cached) {
+    return { imageUrl: cached.imageUrl, cached: true, prompt: cached.prompt };
+  }
+
+  // Generate
+  const imageUrl = await service.generateRaw(prompt);
+  if (!imageUrl) {
+    return { imageUrl: null, cached: false, prompt };
+  }
+
+  // Store
+  const now = Date.now();
+  _imageCacheStore.set(key, {
+    imageUrl,
+    prompt,
+    generatedAt: now,
+    expiresAt: now + IMAGE_CACHE_TTL_MS,
+  });
+
+  return { imageUrl, cached: false, prompt };
+}
+
+/**
+ * Return cache statistics.
+ */
+function getImageCacheStats() {
+  return _imageCacheStore.stats();
+}
+
+/**
+ * Clear the standalone image cache.
+ */
+function clearImageCache() {
+  _imageCacheStore.clear();
+}
+
+// ---------------------------------------------------------------------------
 // Exports
 // ---------------------------------------------------------------------------
 
-module.exports = { createImageService };
+module.exports = {
+  createImageService,
+  generateAndCache,
+  getImageCacheStats,
+  clearImageCache,
+  // Expose for testing
+  ImageCacheStore,
+  IMAGE_CACHE_TTL_MS,
+  IMAGE_CACHE_MAX,
+};

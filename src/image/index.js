@@ -42,7 +42,15 @@
 
 'use strict';
 
-const { createImageService } = require('./image-service');
+const {
+  createImageService,
+  generateAndCache,
+  getImageCacheStats,
+  clearImageCache,
+  ImageCacheStore,
+  IMAGE_CACHE_TTL_MS,
+  IMAGE_CACHE_MAX,
+} = require('./image-service');
 const {
   buildScenePrompt,
   buildCharacterPrompt,
@@ -56,6 +64,10 @@ const {
 module.exports = {
   // Service factory
   createImageService,
+  // Cache helpers
+  generateAndCache,
+  getImageCacheStats,
+  clearImageCache,
   // Prompt builders (for direct use or testing)
   buildScenePrompt,
   buildCharacterPrompt,
@@ -65,4 +77,8 @@ module.exports = {
   _moodDirection,
   STYLE_PREFIX,
   STYLE_SUFFIX,
+  // Cache internals (for testing)
+  ImageCacheStore,
+  IMAGE_CACHE_TTL_MS,
+  IMAGE_CACHE_MAX,
 };

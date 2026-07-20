@@ -298,6 +298,18 @@ const ITEMS = {
     combatEffect: { type: 'damage', dice: '4d8', damageType: 'lightning', condition: 'storm' },
     flavor: 'It hums when raised toward thunderclouds, as if eager.'
   },
+  repair_kit: {
+    id: 'repair_kit',
+    name: 'Repair Kit',
+    description: 'A small leather pouch of hammers, nails, and spare parts. Used to restore damaged equipment.',
+    type: 'consumable',
+    subtype: 'tool',
+    consumable: true,
+    uses: 3,
+    rarity: 'common',
+    price: 15,
+    flavor: 'A small leather pouch of hammers, nails, and spare parts.'
+  },
 
   // ── Holmes Items ───────────────────────────────────────────────────────────
 
@@ -464,7 +476,9 @@ function createInventory(startingItems = []) {
         type: template.type,
         consumable: template.consumable,
         uses: template.uses || null,
-        remainingUses: template.uses || null
+        remainingUses: template.uses || null,
+        durability: template.consumable ? null : (template.maxDurability || 100),
+        maxDurability: template.maxDurability || 100
       });
     }
   }
@@ -502,7 +516,9 @@ function addItem(inventory, itemId) {
     type: template.type,
     consumable: template.consumable,
     uses: template.uses || null,
-    remainingUses: template.uses || null
+    remainingUses: template.uses || null,
+    durability: template.consumable ? null : (template.maxDurability || 100),
+    maxDurability: template.maxDurability || 100
   };
   inventory.slots.push(slot);
   return slot;
@@ -637,7 +653,9 @@ function equipItem(inventory, itemId, slot) {
     type: invSlot.type,
     consumable: invSlot.consumable,
     uses: invSlot.uses,
-    remainingUses: invSlot.remainingUses
+    remainingUses: invSlot.remainingUses,
+    durability: invSlot.durability,
+    maxDurability: invSlot.maxDurability
   };
 
   return { success: true, unequipped };
@@ -734,7 +752,12 @@ function useEquippedConsumable(inventory, slot) {
  * @returns {string} human-readable inventory summary
  */
 function getInventoryContext(inventory) {
-  if (!inventory || !inventory.slots || inventory.slots.length === 0) {
+  if (!inventory) {
+    return 'The player carries nothing.';
+  }
+  const hasEquipment = inventory.equipment && EQUIPMENT_SLOTS.some(s => inventory.equipment[s]);
+  const hasSlots = inventory.slots && inventory.slots.length > 0;
+  if (!hasSlots && !hasEquipment) {
     return 'The player carries nothing.';
   }
 
@@ -747,7 +770,8 @@ function getInventoryContext(inventory) {
     if (eq) {
       const tmpl = ITEMS[eq.id];
       const uses = eq.consumable ? ` (${eq.remainingUses}/${eq.uses} uses)` : '';
-      equipped.push(`${slot}: ${eq.name}${uses}`);
+      const dur = (!eq.consumable && eq.durability != null) ? ` [${eq.durability}/${eq.maxDurability || 100}]` : '';
+      equipped.push(`${slot}: ${eq.name}${uses}${dur}`);
     }
   }
   if (equipped.length > 0) {
@@ -916,14 +940,20 @@ function damageDurability(inventory, itemId, amount = 1) {
   for (const slot of EQUIPMENT_SLOTS) {
     const equipped = inventory.equipment[slot];
     if (equipped && equipped.id === itemId) {
+      // Consumables can't be durability-damaged
+      if (equipped.consumable || equipped.durability === null) return null;
       const template = ITEMS[itemId];
       const maxDurability = template?.maxDurability || 100;
       if (equipped.durability === undefined) {
         equipped.durability = maxDurability;
       }
       equipped.durability = Math.max(0, equipped.durability - amount);
+      const broke = equipped.durability <= 0;
+      if (broke) {
+        inventory.equipment[slot] = null;
+      }
       return {
-        broken: equipped.durability <= 0,
+        broken: broke,
         current: equipped.durability,
         max: maxDurability,
         name: equipped.name
@@ -933,14 +963,21 @@ function damageDurability(inventory, itemId, amount = 1) {
   // Check inventory slots
   const invSlot = inventory.slots.find(s => s.id === itemId);
   if (invSlot) {
+    // Consumables can't be durability-damaged
+    if (invSlot.consumable || invSlot.durability === null) return null;
     const template = ITEMS[itemId];
     const maxDurability = template?.maxDurability || 100;
     if (invSlot.durability === undefined) {
       invSlot.durability = maxDurability;
     }
     invSlot.durability = Math.max(0, invSlot.durability - amount);
+    const broke = invSlot.durability <= 0;
+    if (broke) {
+      const idx = inventory.slots.indexOf(invSlot);
+      if (idx !== -1) inventory.slots.splice(idx, 1);
+    }
     return {
-      broken: invSlot.durability <= 0,
+      broken: broke,
       current: invSlot.durability,
       max: maxDurability,
       name: invSlot.name
@@ -964,8 +1001,12 @@ function damageEquippedDurability(inventory, slot, amount = 1) {
     equipped.durability = maxDurability;
   }
   equipped.durability = Math.max(0, equipped.durability - amount);
+  const broke = equipped.durability <= 0;
+  if (broke) {
+    inventory.equipment[slot] = null;
+  }
   return {
-    broken: equipped.durability <= 0,
+    broken: broke,
     current: equipped.durability,
     max: maxDurability,
     name: equipped.name,
@@ -977,7 +1018,7 @@ function damageEquippedDurability(inventory, slot, amount = 1) {
  * Repair an item by ID, restoring durability.
  * Returns { current: number, max: number, name: string } or null if not found.
  */
-function repairItem(inventory, itemId, amount = 10) {
+function repairItem(inventory, itemId, amount = -1) {
   // Check equipment slots first
   for (const slot of EQUIPMENT_SLOTS) {
     const equipped = inventory.equipment[slot];
@@ -999,12 +1040,14 @@ function repairItem(inventory, itemId, amount = 10) {
   // Check inventory slots
   const invSlot = inventory.slots.find(s => s.id === itemId);
   if (invSlot) {
+    if (invSlot.consumable || invSlot.durability === null) return null;
     const template = ITEMS[itemId];
     const maxDurability = template?.maxDurability || 100;
     if (invSlot.durability === undefined) {
       invSlot.durability = maxDurability;
     }
-    invSlot.durability = Math.min(maxDurability, invSlot.durability + amount);
+    const repairAmt = amount < 0 ? (maxDurability - invSlot.durability) : amount;
+    invSlot.durability = Math.min(maxDurability, invSlot.durability + repairAmt);
     return {
       current: invSlot.durability,
       max: maxDurability,
@@ -1026,6 +1069,154 @@ function removeBrokenItem(inventory, slot) {
   const removed = { ...equipped };
   inventory.equipment[slot] = null;
   return removed;
+}
+
+// ── Slot-Based Durability API ───────────────────────────────────────────────
+
+/**
+ * Damage an equipped item's durability by slot name.
+ * If the item has maxDurability, reduces currentDurability by amount (default 1).
+ * If currentDurability reaches 0, the item breaks.
+ * If the item has no maxDurability (e.g. consumables), does nothing.
+ * @param {object} inventory
+ * @param {string} slotName — equipment slot (weapon, armor, accessory, etc.)
+ * @param {number} [amount=1] — damage to apply
+ * @returns {{ item: object|null, currentDurability: number|null, maxDurability: number|null, broken: boolean, message?: string }}
+ */
+function damageEquipment(inventory, slotName, amount = 1) {
+  if (!EQUIPMENT_SLOTS.includes(slotName)) {
+    return { item: null, currentDurability: null, maxDurability: null, broken: false };
+  }
+
+  const equipped = inventory.equipment[slotName];
+  if (!equipped) {
+    return { item: null, currentDurability: null, maxDurability: null, broken: false };
+  }
+
+  const template = ITEMS[equipped.id];
+  if (!template || !template.maxDurability) {
+    // No durability field — consumables and non-degradable items don't degrade
+    return { item: equipped, currentDurability: null, maxDurability: null, broken: false };
+  }
+
+  const maxDurability = template.maxDurability;
+  if (equipped.durability === undefined) {
+    equipped.durability = maxDurability;
+  }
+
+  equipped.durability = Math.max(0, equipped.durability - amount);
+  const broken = equipped.durability <= 0;
+
+  let message;
+  if (broken) {
+    equipped.broken = true;
+    message = `Your ${equipped.name} has broken!`;
+  } else if (equipped.durability <= maxDurability * 0.25) {
+    message = `Your ${equipped.name} is in critical condition (${equipped.durability}/${maxDurability}).`;
+  } else if (equipped.durability <= maxDurability * 0.5) {
+    message = `Your ${equipped.name} is showing wear (${equipped.durability}/${maxDurability}).`;
+  }
+
+  return {
+    item: equipped,
+    currentDurability: equipped.durability,
+    maxDurability,
+    broken,
+    ...(message ? { message } : {})
+  };
+}
+
+/**
+ * Repair an equipped item using a repair kit from inventory.
+ * Restores currentDurability to maxDurability.
+ * Consumes one repair kit use (or removes it if no uses field).
+ * @param {object} inventory
+ * @param {string} slotName — equipment slot to repair
+ * @param {number} repairKitItemIndex — index of the repair kit in inventory.slots
+ * @returns {{ item: object|null, repaired: boolean, reason?: string }}
+ */
+function repairEquipment(inventory, slotName, repairKitItemIndex) {
+  if (!EQUIPMENT_SLOTS.includes(slotName)) {
+    return { item: null, repaired: false, reason: `Invalid slot: ${slotName}` };
+  }
+
+  const equipped = inventory.equipment[slotName];
+  if (!equipped) {
+    return { item: null, repaired: false, reason: `Nothing equipped in ${slotName}` };
+  }
+
+  const template = ITEMS[equipped.id];
+  if (!template || !template.maxDurability) {
+    return { item: equipped, repaired: false, reason: 'Item has no durability to repair' };
+  }
+
+  // Validate repair kit
+  if (repairKitItemIndex < 0 || repairKitItemIndex >= inventory.slots.length) {
+    return { item: equipped, repaired: false, reason: 'Invalid repair kit index' };
+  }
+
+  const kitSlot = inventory.slots[repairKitItemIndex];
+  if (!kitSlot || kitSlot.id !== 'repair_kit') {
+    return { item: equipped, repaired: false, reason: 'No repair kit at that index' };
+  }
+
+  // Restore durability
+  equipped.durability = template.maxDurability;
+  if (equipped.broken) {
+    delete equipped.broken;
+  }
+
+  // Consume one repair kit use
+  if (kitSlot.remainingUses != null && kitSlot.remainingUses > 1) {
+    kitSlot.remainingUses--;
+  } else {
+    // Remove the kit entirely (last use or no uses field)
+    inventory.slots.splice(repairKitItemIndex, 1);
+  }
+
+  return { item: equipped, repaired: true };
+}
+
+/**
+ * Get durability status for all equipped items.
+ * @param {object} inventory
+ * @returns {Array<{ slot: string, itemName: string, currentDurability: number, maxDurability: number, condition: 'good'|'worn'|'critical'|'broken' }>}
+ */
+function getDurabilityStatus(inventory) {
+  const results = [];
+
+  for (const slot of EQUIPMENT_SLOTS) {
+    const equipped = inventory.equipment[slot];
+    if (!equipped) continue;
+
+    const template = ITEMS[equipped.id];
+    if (!template || !template.maxDurability) continue;
+
+    const maxDurability = template.maxDurability;
+    const currentDurability = equipped.durability ?? maxDurability;
+    const pct = currentDurability / maxDurability;
+
+    let condition;
+    if (currentDurability <= 0) {
+      condition = 'broken';
+    } else if (pct <= 0.25) {
+      condition = 'critical';
+    } else if (pct <= 0.5) {
+      condition = 'worn';
+    } else {
+      condition = 'good';
+    }
+
+    results.push({
+      slot,
+      itemName: equipped.name,
+      currentDurability,
+      maxDurability,
+      condition
+    });
+  }
+
+  return results;
 }
 
 module.exports = {
@@ -1052,5 +1243,8 @@ module.exports = {
   damageDurability,
   damageEquippedDurability,
   repairItem,
-  removeBrokenItem
+  removeBrokenItem,
+  damageEquipment,
+  repairEquipment,
+  getDurabilityStatus
 };

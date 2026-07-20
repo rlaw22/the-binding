@@ -52,7 +52,7 @@ assert(fs.existsSync(swPath), 'sw.js exists');
 const swContent = fs.readFileSync(swPath, 'utf8');
 
 // Version-based cache busting
-assert(swContent.includes("CACHE_VERSION = 'v2'"), 'SW uses cache version v2');
+assert(swContent.includes("CACHE_VERSION = 'v4'"), 'SW uses cache version v4');
 assert(swContent.includes('the-binding-${CACHE_VERSION}'), 'SW uses versioned cache names');
 
 // Pre-cached static assets include key pages
@@ -74,7 +74,7 @@ assert(swContent.includes("event.request.mode === 'navigate'"), 'SW handles navi
 assert(swContent.includes('/offline.html'), 'SW serves offline.html as fallback');
 
 // Cache cleanup on activate
-assert(swContent.includes('keepCaches'), 'SW keeps only current caches on activate');
+assert(swContent.includes('ALL_CACHES'), 'SW keeps only current caches on activate via ALL_CACHES');
 assert(swContent.includes('clients.claim()'), 'SW claims clients immediately');
 
 // ─── Offline Fallback Page ────────────────────────────────────────────
@@ -145,8 +145,8 @@ assert(swContent.includes('SOUNDS_CACHE'), 'SW defines sounds cache name');
 assert(swContent.includes('OFFLINE_CACHE'), 'SW defines offline cache name');
 
 // Verify API calls use network-first
-assert(swContent.includes("/api/'"), 'SW has API route pattern');
-assert(swContent.includes('fetch(event.request).catch'), 'SW uses network-first for API');
+assert(swContent.includes("API_CACHE"), 'SW has API cache for network-first API calls');
+assert(swContent.includes('REALTIME_API_PATTERNS'), 'SW has realtime API patterns for network-first');
 
 // Verify stale-while-revalidate pattern for docs
 const swrPattern = swContent.includes('return cached || networkFetch');

@@ -51,13 +51,13 @@ console.log('\n═══ Inventory Durability ═══');
   assert(slot.durability === 100, 'Silver dagger starts at 100 durability');
 
   const result = damageDurability(inv, 'silver_dagger', 25);
-  assert(result.success === true, 'Damage durability succeeds');
-  assert(result.broke === false, 'Item did not break');
-  assertEq(result.remaining, 75, 'Durability reduced to 75');
+  assert(result !== null, 'Damage durability succeeds');
+  assert(result.broken === false, 'Item did not break');
+  assertEq(result.current, 75, 'Durability reduced to 75');
 
   const result2 = damageDurability(inv, 'silver_dagger', 75);
-  assert(result2.success === true, 'Damage again succeeds');
-  assert(result2.broke === true, 'Item breaks at 0 durability');
+  assert(result2 !== null, 'Damage again succeeds');
+  assert(result2.broken === true, 'Item breaks at 0 durability');
   assert(!hasItem(inv, 'silver_dagger'), 'Item removed from inventory when broken');
 })();
 
@@ -69,14 +69,14 @@ console.log('\n═══ Inventory Durability ═══');
   assert(equipped.armor.durability === 80, 'Leather armor starts at 80 durability');
 
   const result = damageEquippedDurability(inv, 'armor', 20);
-  assert(result.success === true, 'Damage equipped durability succeeds');
-  assert(result.broke === false, 'Armor did not break');
-  assertEq(result.remaining, 60, 'Armor durability reduced to 60');
+  assert(result !== null, 'Damage equipped durability succeeds');
+  assert(result.broken === false, 'Armor did not break');
+  assertEq(result.current, 60, 'Armor durability reduced to 60');
 
   // Break it
   const result2 = damageEquippedDurability(inv, 'armor', 60);
-  assert(result2.success === true, 'Final armor damage succeeds');
-  assert(result2.broke === true, 'Armor breaks at 0');
+  assert(result2 !== null, 'Final armor damage succeeds');
+  assert(result2.broken === true, 'Armor breaks at 0');
   const eq2 = getEquipped(inv);
   assert(eq2.armor === null, 'Armor slot cleared after break');
 })();
@@ -88,31 +88,32 @@ console.log('\n═══ Inventory Durability ═══');
   assertEq(before.durability, 50, 'Dagger at 50 after 50 damage');
 
   const result = repairItem(inv, 'silver_dagger', 30);
-  assert(result.success === true, 'Repair succeeds');
-  assertEq(result.durability, 80, 'Durability restored to 80');
+  assert(result !== null, 'Repair succeeds');
+  assertEq(result.current, 80, 'Durability restored to 80');
 
   const result2 = repairItem(inv, 'silver_dagger'); // full repair
-  assert(result2.success === true, 'Full repair succeeds');
-  assertEq(result2.durability, 100, 'Durability restored to 100');
+  assert(result2 !== null, 'Full repair succeeds');
+  assertEq(result2.current, 100, 'Durability restored to 100');
 })();
 
 (function testDurabilityEdgeCases() {
   // Consumables can't be durability-damaged
   const inv = createInventory(['garlic']);
   const result = damageDurability(inv, 'garlic', 1);
-  assert(result.success === false, 'Cannot damage durability of consumable');
+  assert(result === null, 'Cannot damage durability of consumable');
 
   // Item not in inventory
-  const result2 = damageDurability(inv, 'silver_dagger', 1);
-  assert(result2.success === false, 'Cannot damage item not in inventory');
+  const result2 = damageDurability(inv, 'silver_dagger', 1);  // silver_dagger not in this inv
+  // Item not in inventory returns null — guard against it
+  assert(result2 === null, 'Cannot damage item not in inventory');
 
   // Invalid equipment slot
   const result3 = damageEquippedDurability(inv, 'helmet', 1);
-  assert(result3.success === false, 'Cannot damage invalid equipment slot');
+  assert(result3 === null, 'Cannot damage invalid equipment slot');
 
   // Empty slot
   const result4 = damageEquippedDurability(inv, 'weapon', 1);
-  assert(result4.success === false, 'Cannot damage empty equipment slot');
+  assert(result4 === null, 'Cannot damage empty equipment slot');
 })();
 
 // ── Combat Durability Integration Tests ─────────────────────────────────────
@@ -181,7 +182,7 @@ console.log('\n═══ Combat Durability Integration ═══');
 
   // Now damage it one more — should break
   const result = damageEquippedDurability(inv, 'accessory', 1);
-  assert(result.broke === true, 'Mirror breaks on final damage point');
+  assert(result.broken === true, 'Mirror breaks on final damage point');
   const eq2 = getEquipped(inv);
   assert(eq2.accessory === null, 'Accessory slot cleared after mirror breaks');
 })();

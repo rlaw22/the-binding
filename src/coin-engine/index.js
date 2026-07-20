@@ -573,6 +573,195 @@ function detectStreak(analytics) {
   return { streak: 'none', count: 0, avgDuringStreak: 0 };
 }
 
+// ── AI DM Scoring Rubric & Prompt Builder ────────────────────────────────────
+
+/**
+ * Return the full scoring rubric as a structured object.
+ * Each category (0-10) has: name, description, criteria[], examples { excellent, poor }.
+ * Used by the AI DM to assess player actions consistently.
+ */
+function getScoringRubric() {
+  return {
+    creativity: {
+      name: 'Creativity',
+      description: 'Originality of approach and unexpected solutions to challenges.',
+      criteria: [
+        'Uses items or abilities in unconventional ways',
+        'Proposes solutions not obvious from the scene description',
+        'Combines multiple elements in novel ways',
+        'Approaches problems from unexpected angles',
+        'Adds narrative flair or improvisation to actions'
+      ],
+      examples: {
+        excellent: [
+          'Using a mirror to redirect sunlight into a vampire\'s eyes instead of fighting',
+          'Convincing a guard they\'re being haunted by dressing up as a ghost',
+          'Using a fishing rod to retrieve an item from across a chasm'
+        ],
+        poor: [
+          'I attack the enemy with my sword (generic, no creativity)',
+          'I search the room (standard action, no originality)',
+          'I ask the NPC for the quest reward (expected, mechanical)'        ]
+      }
+    },
+    investigation: {
+      name: 'Investigation',
+      description: 'Thoroughness of searching, questioning, and connecting clues.',
+      criteria: [
+        'Examines environment systematically rather than randomly',
+        'Asks NPCs targeted, relevant questions',
+        'Connects disparate pieces of information',
+        'Follows up on leads and inconsistencies',
+        'Documents or remembers important details'
+      ],
+      examples: {
+        excellent: [
+          'Noticing the scratches on the lock match a key found earlier',
+          'Asking the innkeeper about the specific traveler mentioned in the letter',
+          'Comparing the handwriting on two documents to identify the forger'
+        ],
+        poor: [
+          'I look around the room (vague, no specific investigation)',
+          'I ask the NPC what to do (no independent investigation)',
+          'I pick up the first item I see (no systematic search)'
+        ]
+      }
+    },
+    roleplay: {
+      name: 'Roleplay',
+      description: 'Staying in character, narrative consistency, and dialogue quality.',
+      criteria: [
+        'Speaks and acts consistent with character background',
+        'Uses appropriate tone and vocabulary for the character',
+        'Makes decisions based on character motivations, not player knowledge',
+        'Engages with NPCs in character-appropriate ways',
+        'Maintains narrative consistency across scenes'
+      ],
+      examples: {
+        excellent: [
+          'A noble-born character refusing to eat with commoners despite the quest need',
+          'A cowardly character hesitating before entering the dark cave',
+          'Using period-appropriate language and mannerisms'
+        ],
+        poor: [
+          'Breaking character to reference game mechanics',
+          'Acting completely out of character without narrative reason',
+          'Using modern slang in a medieval setting'
+        ]
+      }
+    },
+    combat: {
+      name: 'Combat',
+      description: 'Tactical thinking, resource management, and positioning.',
+      criteria: [
+        'Uses terrain and positioning strategically',
+        'Manages resources (spells, items, abilities) effectively',
+        'Coordinates with allies when applicable',
+        'Targets enemy weaknesses or exploits opportunities',
+        'Makes tactical retreats or defensive choices when appropriate'
+      ],
+      examples: {
+        excellent: [
+          'Using a doorway as a chokepoint against multiple enemies',
+          'Targeting the enemy spellcaster first to disrupt their support',
+          'Using cover and ranged attacks against a melee-focused enemy'
+        ],
+        poor: [
+          'I attack the nearest enemy (no tactical consideration)',
+          'Using all spells immediately without conservation',
+          'Standing in the open against ranged attackers'
+        ]
+      }
+    },
+    exploration: {
+      name: 'Exploration',
+      description: 'Environmental interaction, discovery, and map awareness.',
+      criteria: [
+        'Interacts with environmental features beyond the obvious',
+        'Discovers hidden areas, items, or passages',
+        'Maintains awareness of spatial relationships and map layout',
+        'Uses environment creatively for advantage',
+        'Thoroughly explores before moving to the next area'
+      ],
+      examples: {
+        excellent: [
+          'Checking behind the bookshelf reveals a hidden passage',
+          'Noticing the draft from a secret door in the wall',
+          'Using a rope to explore a vertical shaft safely'
+        ],
+        poor: [
+          'I go to the next room (no exploration of current area)',
+          'I walk through the dungeon without examining anything',
+          'Ignoring obvious environmental features'
+        ]
+      }
+    }
+  };
+}
+
+/**
+ * Build a structured prompt for an LLM to assess a player action.
+ * Returns a string prompt requesting JSON output with scores for all 5 categories.
+ *
+ * @param {string} playerAction — the player's action text
+ * @param {object} narrativeContext — { sceneDescription, questInfo, characterInfo }
+ * @param {object} sceneInfo — { sceneIndex, totalScenes, difficulty, adventureId }
+ * @returns {string} formatted prompt for LLM scoring
+ */
+function buildScoringPrompt(playerAction, narrativeContext, sceneInfo) {
+  const rubric = getScoringRubric();
+  const { sceneDescription, questInfo, characterInfo } = narrativeContext || {};
+  const { sceneIndex, totalScenes, difficulty, adventureId } = sceneInfo || {};
+
+  // Build rubric section
+  let rubricText = '';
+  for (const [key, cat] of Object.entries(rubric)) {
+    rubricText += `\n### ${cat.name} (0-10)\n`;
+    rubricText += `${cat.description}\n`;
+    rubricText += `Criteria:\n`;
+    for (const criterion of cat.criteria) {
+      rubricText += `- ${criterion}\n`;
+    }
+    rubricText += `Excellent example: ${cat.examples.excellent[0]}\n`;
+    rubricText += `Poor example: ${cat.examples.poor[0]}\n`;
+  }
+
+  const prompt = `You are an AI Dungeon Master assessing a player's action in a text-based RPG adventure.
+
+## Scoring Guidelines
+- 0-3: Negative play (disruptive, nonsensical, or harmful to narrative)
+- 4-6: Average play (competent but unremarkable)
+- 6-8: Good play (thoughtful, engaged, effective)
+- 8-10: Exceptional play (creative, immersive, masterful)
+
+## Scoring Rubric${rubricText}
+
+## Scene Context
+${adventureId ? `Adventure: ${adventureId}` : ''}
+${sceneIndex != null && totalScenes ? `Scene: ${sceneIndex + 1} of ${totalScenes}` : ''}
+${difficulty ? `Difficulty: ${difficulty}` : ''}
+${sceneDescription ? `Scene Description: ${sceneDescription}` : ''}
+${questInfo ? `Quest Info: ${questInfo}` : ''}
+${characterInfo ? `Character Info: ${characterInfo}` : ''}
+
+## Player Action
+"${playerAction}"
+
+## Task
+Assess this player action across all 5 categories. Return ONLY a JSON object (no markdown, no explanation outside JSON):
+
+{
+  "creativity": <0-10>,
+  "investigation": <0-10>,
+  "roleplay": <0-10>,
+  "combat": <0-10>,
+  "exploration": <0-10>,
+  "reasoning": "<brief explanation of scores>"
+}`;
+
+  return prompt;
+}
+
 module.exports = {
   CALIBRATION,
   CoinCategory,
@@ -595,5 +784,7 @@ module.exports = {
   createScoringAnalytics,
   recordScore,
   getAnalyticsSummary,
-  detectStreak
+  detectStreak,
+  getScoringRubric,
+  buildScoringPrompt
 };
