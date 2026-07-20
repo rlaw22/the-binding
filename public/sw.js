@@ -1,20 +1,22 @@
 /**
- * The Binding — Service Worker (PWA) v4
+ * The Binding — Service Worker (PWA) v5
  * 
  * Strategies:
  * - Cache-first for static shell (HTML, manifest)
  * - Cache-first for static assets (CSS, JS, images, fonts) with runtime population
  * - Stale-while-revalidate for docs assets (JS, CSS, images)
+ * - Stale-while-revalidate for adventure manifests (manifests-*.js)
  * - Cache-first with runtime caching for dice sounds (mp3)
  * - Stale-while-revalidate for API reads (/api/adventures, /api/sessions/:id)
  * - Network-first for real-time endpoints (/api/sessions/:id/messages, /api/sessions/:id/actions)
  * - Network-first for session rejoin (/api/rejoin/*) with cache fallback
+ * - Network-first with JSON fallback for unmatched API calls
  * - Offline fallback: serve offline.html when navigation fails
  * - IndexedDB session tracking for auto-rejoin on reconnect
  * - Cache versioning and cleanup of old caches on activate
  */
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const CACHE_NAME = `the-binding-${CACHE_VERSION}`;
 const STATIC_CACHE = `the-binding-static-${CACHE_VERSION}`;
 const DOCS_CACHE = `the-binding-docs-${CACHE_VERSION}`;
@@ -135,7 +137,7 @@ function trackSession(url, response) {
 
 // ── Install: pre-cache shell + manifests ────────────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v4...');
+  console.log('[SW] Installing v5...');
   
   event.waitUntil(
     Promise.all([
@@ -181,7 +183,7 @@ self.addEventListener('install', (event) => {
 
 // ── Activate: clean old versioned caches ────────────────────────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v4...');
+  console.log('[SW] Activating v5...');
   
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -332,7 +334,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 5) Docs assets (JS, CSS, images, HTML): stale-while-revalidate
+  // 5) Stale-while-revalidate for adventure manifests (manifests-*.js)
+  if (url.pathname.startsWith('/manifests-') && url.pathname.endsWith('.js')) {
+    event.respondWith(
+      caches.open(MANIFEST_CACHE).then((cache) => {
+        return cache.match(event.request).then((cached) => {
+          const networkFetch = fetch(event.request).then((response) => {
+            if (response.ok) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          }).catch(() => cached);
+
+          return cached || networkFetch;
+        });
+      })
+    );
+    return;
+  }
+
+  // 6) Docs assets (JS, CSS, images, HTML): stale-while-revalidate
   if (url.pathname.startsWith('/docs/')) {
     event.respondWith(
       caches.open(DOCS_CACHE).then((cache) => {
@@ -351,7 +372,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 6) Static assets (CSS, JS, images, fonts): cache-first, populate on miss
+  // 7) Static assets (CSS, JS, images, fonts): cache-first, populate on miss
   if (isStaticAsset(url.pathname)) {
     event.respondWith(
       caches.open(STATIC_CACHE).then((cache) => {
@@ -371,7 +392,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 7) Navigation requests: network-first, offline.html fallback
+  // 8) Navigation requests: network-first, offline.html fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -393,7 +414,33 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 8) Everything else: cache-first, populate on miss
+  // 9) Unmatched API calls: network-first with JSON fallback
+  if (url.pathname.startsWith('/api/')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(API_CACHE).then((cache) => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cached) => {
+            if (cached) return cached;
+            return new Response(
+              JSON.stringify({ error: 'offline', message: 'No cached data available. Reconnect to continue.' }),
+              { status: 503, headers: { 'Content-Type': 'application/json' } }
+            );
+          });
+        })
+    );
+    return;
+  }
+
+  // 10) Everything else: cache-first, populate on miss
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;

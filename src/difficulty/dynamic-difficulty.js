@@ -10,6 +10,15 @@
  *   - After 2+ consecutive losses → force power window (easier fight)
  *   - After 3+ consecutive wins  → skew toward challenge (harder fight)
  *   - Otherwise                  → 70/20/10 distribution
+ *
+ * First-combat safety:
+ *   - With no combat history, always return FAIR tier (no rubber-banding)
+ *   - Rubber-band scaling requires minCombatsBeforeScaling combats before activating
+ *
+ * Adventure-type presets:
+ *   - Dracula: puzzle-heavy (higher investigation weight, gentler scaling)
+ *   - Frankenstein: combat-heavy (higher combat weight, steeper scaling)
+ *   - Holmes: investigation-heavy (higher social/investigation weight, tactical scaling)
  */
 
 // ── Difficulty Tiers ──────────────────────────────────────────────────────────
@@ -29,6 +38,7 @@ const CALIBRATION = {
   // ── Rubber-band triggers ──
   lossesToForcePowerWindow: 2,     // consecutive losses before forcing easy fight
   winsToSkewChallenge: 3,          // consecutive wins before skewing harder
+  minCombatsBeforeScaling: 3,      // minimum combats before rubber-band scaling activates (prevents early oscillation)
 
   // ── Win-streak distribution (when player is on a hot streak) ──
   winStreak: {
@@ -113,6 +123,64 @@ function categorizeAction(action) {
 
 // ── Encounter Scaling Presets (per adventure) ───────────────────────────────
 
+// ── Adventure-Type Calibration Presets ─────────────────────────────────────
+//
+// Each adventure has a distinct combat feel. These presets adjust the base
+// distribution and scaling constants so the rubber-band matches the adventure's
+// design intent.  Call `dd.setAdventureType('dracula')` before play begins.
+//
+// - Dracula:       puzzle-heavy  → fewer forced challenges, more breathing room
+// - Frankenstein:  combat-heavy  → steeper challenge scaling, tighter rubber-band
+// - Holmes:        investigation-heavy → balanced but with higher power-window floor
+
+const ADVENTURE_CALIBRATION_PRESETS = {
+  dracula: {
+    label: 'Puzzle-Heavy (Dracula)',
+    lossesToForcePowerWindow: 2,
+    winsToSkewChallenge: 4,          // more wins needed — puzzles are the focus
+    minCombatsBeforeScaling: 4,
+    base: { fair: 0.65, powerWindow: 0.25, challenge: 0.10 },
+    winStreak: { challenge: 0.30, fair: 0.45, powerWindow: 0.25 },
+    scaling: {
+      powerWindowHpMult: 0.80,
+      powerWindowAtkMod: -2,
+      challengeHpMult: 1.20,         // gentler challenge scaling
+      challengeAtkMod: +1,
+      challengeAcMod: 0
+    }
+  },
+  frankenstein: {
+    label: 'Combat-Heavy (Frankenstein)',
+    lossesToForcePowerWindow: 3,     // more resilient — combat is expected
+    winsToSkewChallenge: 2,          // challenge kicks in sooner
+    minCombatsBeforeScaling: 2,
+    base: { fair: 0.60, powerWindow: 0.15, challenge: 0.25 },
+    winStreak: { challenge: 0.50, fair: 0.35, powerWindow: 0.15 },
+    scaling: {
+      powerWindowHpMult: 0.75,
+      powerWindowAtkMod: -3,
+      challengeHpMult: 1.40,         // steeper challenge scaling
+      challengeAtkMod: +3,
+      challengeAcMod: +2
+    }
+  },
+  holmes: {
+    label: 'Investigation-Heavy (Holmes)',
+    lossesToForcePowerWindow: 2,
+    winsToSkewChallenge: 3,
+    minCombatsBeforeScaling: 3,
+    base: { fair: 0.65, powerWindow: 0.25, challenge: 0.10 },
+    winStreak: { challenge: 0.35, fair: 0.40, powerWindow: 0.25 },
+    scaling: {
+      powerWindowHpMult: 0.85,
+      powerWindowAtkMod: -1,
+      challengeHpMult: 1.25,
+      challengeAtkMod: +2,
+      challengeAcMod: +1
+    }
+  }
+};
+
 const ENCOUNTER_SCALING = {
   dracula: {
     baseEnemyCount: 2,
@@ -145,7 +213,7 @@ const ENCOUNTER_SCALING = {
 };
 
 class DynamicDifficulty {
-  constructor() {
+  constructor(adventureType) {
     this.combatHistory = [];
     this.consecutiveWins = 0;
     this.consecutiveLosses = 0;
@@ -153,6 +221,41 @@ class DynamicDifficulty {
     this.playerActions = [];  // recent action patterns for fatigue detection
     this.deathCount = 0;
     this.sessionStartTime = Date.now();
+    this.adventureType = adventureType || null;
+    this._activeCalibration = null; // lazily resolved
+  }
+
+  /**
+   * Set the adventure type, activating its calibration preset.
+   * Call this before combat begins.
+   * @param {string} type — 'dracula'|'frankenstein'|'holmes'
+   */
+  setAdventureType(type) {
+    this.adventureType = type;
+    this._activeCalibration = ADVENTURE_CALIBRATION_PRESETS[type] || null;
+  }
+
+  /**
+   * Get the effective calibration, merging adventure preset over defaults.
+   * Adventure presets override base distribution, scaling, and rubber-band triggers.
+   * @returns {object} merged CALIBRATION values
+   */
+  getEffectiveCalibration() {
+    if (!this._activeCalibration && this.adventureType) {
+      this._activeCalibration = ADVENTURE_CALIBRATION_PRESETS[this.adventureType] || null;
+    }
+    if (!this._activeCalibration) return CALIBRATION;
+
+    const preset = this._activeCalibration;
+    return {
+      ...CALIBRATION,
+      lossesToForcePowerWindow: preset.lossesToForcePowerWindow,
+      winsToSkewChallenge: preset.winsToSkewChallenge,
+      minCombatsBeforeScaling: preset.minCombatsBeforeScaling,
+      base: preset.base,
+      winStreak: preset.winStreak,
+      scaling: { ...CALIBRATION.scaling, ...preset.scaling }
+    };
   }
 
   /**
@@ -250,31 +353,42 @@ class DynamicDifficulty {
    * Now considers HP margins and fatigue in addition to win/loss streaks.
    */
   getNextTier() {
-    // Rubber-band: after N+ consecutive losses, force a power window
-    if (this.consecutiveLosses >= CALIBRATION.lossesToForcePowerWindow) {
+    const cal = this.getEffectiveCalibration();
+
+    // First-combat safety: no history means no rubber-banding — always FAIR
+    if (this.totalCombats === 0) {
+      return TIERS.FAIR;
+    }
+
+    // Before minimum combat count, only respond to consecutive losses (mercy)
+    // but skip win-streak challenge scaling to prevent early oscillation
+    const scalingActive = this.totalCombats >= cal.minCombatsBeforeScaling;
+
+    // Rubber-band: after N+ consecutive losses, force a power window (always active — mercy rule)
+    if (this.consecutiveLosses >= cal.lossesToForcePowerWindow) {
       return TIERS.POWER_WINDOW;
     }
 
     // Fatigue detection: if player is doing repetitive actions, ease up
     const fatigue = this.detectFatigue();
-    if (fatigue.fatigued && this.consecutiveWins < CALIBRATION.winsToSkewChallenge) {
+    if (fatigue.fatigued && this.consecutiveWins < cal.winsToSkewChallenge) {
       return TIERS.POWER_WINDOW;
     }
 
     // HP margin: if player barely survived recent fights, ease up
     const recentFights = this.combatHistory.slice(-3);
-    if (recentFights.length >= CALIBRATION.hpMargin.minRecentFights) {
+    if (recentFights.length >= cal.hpMargin.minRecentFights) {
       const avgMargin = recentFights.reduce((sum, f) => sum + (f.hpMargin || 0.5), 0) / recentFights.length;
-      if (avgMargin < CALIBRATION.hpMargin.nearlyDying && this.consecutiveWins < CALIBRATION.winsToSkewChallenge) {
+      if (avgMargin < cal.hpMargin.nearlyDying && this.consecutiveWins < cal.winsToSkewChallenge) {
         // Player barely surviving — give them a break
         return TIERS.POWER_WINDOW;
       }
     }
 
-    // After N+ consecutive wins, skew toward challenge
-    if (this.consecutiveWins >= CALIBRATION.winsToSkewChallenge) {
+    // After N+ consecutive wins, skew toward challenge (only after min combats)
+    if (scalingActive && this.consecutiveWins >= cal.winsToSkewChallenge) {
       const roll = Math.random();
-      const ws = CALIBRATION.winStreak;
+      const ws = cal.winStreak;
       if (roll < ws.challenge) return TIERS.CHALLENGE;
       if (roll < ws.challenge + ws.fair) return TIERS.FAIR;
       return TIERS.POWER_WINDOW;
@@ -282,7 +396,7 @@ class DynamicDifficulty {
 
     // Standard distribution from calibration
     const roll = Math.random();
-    const b = CALIBRATION.base;
+    const b = cal.base;
     if (roll < b.fair) return TIERS.FAIR;
     if (roll < b.fair + b.powerWindow) return TIERS.POWER_WINDOW;
     return TIERS.CHALLENGE;
@@ -646,7 +760,8 @@ class DynamicDifficulty {
       totalCombats: this.totalCombats,
       playerActions: this.playerActions,
       deathCount: this.deathCount,
-      sessionStartTime: this.sessionStartTime
+      sessionStartTime: this.sessionStartTime,
+      adventureType: this.adventureType
     };
   }
 
@@ -665,6 +780,9 @@ class DynamicDifficulty {
       dd.playerActions = data.playerActions || [];
       dd.deathCount = data.deathCount || 0;
       dd.sessionStartTime = data.sessionStartTime || Date.now();
+      if (data.adventureType) {
+        dd.setAdventureType(data.adventureType);
+      }
     }
     return dd;
   }
@@ -675,5 +793,6 @@ module.exports = {
   TIERS,
   CALIBRATION,
   NARRATIVE_WRAPPERS,
+  ADVENTURE_CALIBRATION_PRESETS,
   categorizeAction
 };
