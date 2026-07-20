@@ -1,19 +1,30 @@
 /**
- * The Binding — Service Worker (PWA)
+ * The Binding — Service Worker (PWA) v2
  * 
- * Cache-first strategy for static assets, network-first for API calls.
- * Provides offline shell: if the server is down, the app loads from cache
- * and shows a "connection lost" message instead of a blank page.
+ * Strategies:
+ * - Cache-first for static shell (HTML, manifest)
+ * - Stale-while-revalidate for docs assets (JS, CSS, images)
+ * - Cache-first with runtime caching for dice sounds (mp3)
+ * - Network-first for API calls (fall back to cache)
+ * - Offline fallback: serve offline.html when navigation fails
  */
 
-const CACHE_NAME = 'the-binding-v1';
+const CACHE_VERSION = 'v2';
+const CACHE_NAME = `the-binding-${CACHE_VERSION}`;
+const DOCS_CACHE = `the-binding-docs-${CACHE_VERSION}`;
+const SOUNDS_CACHE = `the-binding-sounds-${CACHE_VERSION}`;
+const OFFLINE_CACHE = `the-binding-offline-${CACHE_VERSION}`;
+
+// Shell assets pre-cached on install
 const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/create.html',
+  '/manifest.json',
+  '/offline.html'
 ];
 
-// Install: pre-cache the shell
+// ── Install: pre-cache the shell ────────────────────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -23,45 +34,115 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches
+// ── Activate: clean old versioned caches ────────────────────────────────
 self.addEventListener('activate', (event) => {
+  const keepCaches = [CACHE_NAME, DOCS_CACHE, SOUNDS_CACHE, OFFLINE_CACHE];
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys
+          .filter((key) => !keepCaches.includes(key))
+          .map((key) => caches.delete(key))
       );
     })
   );
   self.clients.claim();
 });
 
-// Fetch: network-first for API, cache-first for static
+// ── Fetch handler ───────────────────────────────────────────────────────
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // API calls: network-first (fall back to cache if offline)
+  // Only handle same-origin GET requests
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) {
+    return;
+  }
+
+  // 1) API calls: network-first, fall back to cache
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match(event.request);
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // 2) Dice sounds: cache-first with runtime population
+  if (url.pathname.startsWith('/docs/assets/dice-box/sounds/')) {
+    event.respondWith(
+      caches.open(SOUNDS_CACHE).then((cache) => {
+        return cache.match(event.request).then((cached) => {
+          if (cached) return cached;
+          return fetch(event.request).then((response) => {
+            if (response.ok) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          });
+        });
       })
     );
     return;
   }
 
-  // Static assets: cache-first
+  // 3) Docs assets (JS, CSS, images, HTML): stale-while-revalidate
+  if (url.pathname.startsWith('/docs/')) {
+    event.respondWith(
+      caches.open(DOCS_CACHE).then((cache) => {
+        return cache.match(event.request).then((cached) => {
+          const networkFetch = fetch(event.request).then((response) => {
+            if (response.ok) {
+              cache.put(event.request, response.clone());
+            }
+            return response;
+          }).catch(() => cached);
+
+          // Return cached immediately if available, update in background
+          return cached || networkFetch;
+        });
+      })
+    );
+    return;
+  }
+
+  // 4) Navigation requests: network-first, offline.html fallback
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          // Cache successful navigation responses
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Try cache first, then offline fallback
+          return caches.match(event.request).then((cached) => {
+            return cached || caches.match('/offline.html');
+          });
+        })
+    );
+    return;
+  }
+
+  // 5) Static assets: cache-first, populate on miss
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
       return fetch(event.request).then((response) => {
-        // Cache successful GET responses
-        if (response.ok && event.request.method === 'GET') {
+        if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, clone);
           });
         }
         return response;
+      }).catch(() => {
+        // For non-navigation requests that fail with no cache, return nothing
+        return new Response('', { status: 503, statusText: 'Offline' });
       });
     })
   );
