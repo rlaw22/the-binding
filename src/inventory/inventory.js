@@ -190,6 +190,195 @@ const ITEMS = {
     price: 100,
     combatEffect: { type: 'defense', acBonus: 1 },
     flavor: 'The runes shimmer faintly in candlelight, as if alive.'
+  },
+
+  // ── Frankenstein Items ─────────────────────────────────────────────────────
+
+  galvanic_battery: {
+    id: 'galvanic_battery',
+    name: 'Galvanic Battery',
+    description: 'A crude voltaic pile wrapped in copper wire. Channels electrical energy for reanimation experiments.',
+    type: 'tool',
+    consumable: false,
+    price: 60,
+    combatEffect: { type: 'bonus_damage', vsType: 'construct', modifier: 2 },
+    flavor: 'The terminals spark when brought close together — a miniature storm in a box.'
+  },
+  reagent_vial: {
+    id: 'reagent_vial',
+    name: 'Chemical Reagent Vial',
+    description: 'A glass vial of volatile alchemical compounds. Useful in experiments and as an improvised acid.',
+    type: 'consumable',
+    consumable: true,
+    uses: 2,
+    price: 15,
+    combatEffect: { type: 'damage', dice: '2d6', damageType: 'acid' },
+    flavor: 'The liquid inside shifts between amber and green, as if undecided.'
+  },
+  rubber_gloves: {
+    id: 'rubber_gloves',
+    name: 'Insulated Rubber Gloves',
+    description: 'Thick rubber gloves that protect against electrical shocks and chemical burns.',
+    type: 'accessory',
+    consumable: false,
+    price: 25,
+    combatEffect: { type: 'resistance', damageType: 'lightning' },
+    flavor: 'They smell of vulcanized rubber and faint ozone.'
+  },
+  lab_journal: {
+    id: 'lab_journal',
+    name: "Victor's Lab Journal",
+    description: 'A battered notebook filled with diagrams of galvanic circuits, anatomical sketches, and feverish marginalia about the nature of life.',
+    type: 'lore',
+    consumable: false,
+    price: null,
+    flavor: 'The handwriting deteriorates toward the later pages, as if the author stopped sleeping.'
+  },
+  surgical_kit: {
+    id: 'surgical_kit',
+    name: 'Surgical Kit',
+    description: 'Scalpels, bone saws, and suturing needles wrapped in oilcloth. Essential for field medicine — or darker work.',
+    type: 'tool',
+    consumable: false,
+    price: 40,
+    combatEffect: { type: 'heal', dice: '1d6', modifier: 2 },
+    flavor: 'The steel is immaculate. Someone cleaned these with obsessive care.'
+  },
+  preservation_fluid: {
+    id: 'preservation_fluid',
+    name: 'Preservation Fluid',
+    description: 'A jar of formaldehyde solution for preserving biological specimens — or keeping tissue viable for reanimation.',
+    type: 'consumable',
+    consumable: true,
+    uses: 3,
+    price: 20,
+    combatEffect: { type: 'preserve', condition: 'biological_decay' },
+    flavor: 'The fumes sting the eyes and cling to everything.'
+  },
+  lightning_rod: {
+    id: 'lightning_rod',
+    name: 'Portable Lightning Rod',
+    description: 'A telescoping copper rod designed to attract and channel atmospheric electricity. Devastating when thrown during a storm.',
+    type: 'weapon',
+    consumable: true,
+    uses: 1,
+    price: 75,
+    combatEffect: { type: 'damage', dice: '4d8', damageType: 'lightning', condition: 'storm' },
+    flavor: 'It hums when raised toward thunderclouds, as if eager.'
+  },
+
+  // ── Holmes Items ───────────────────────────────────────────────────────────
+
+  magnifying_glass: {
+    id: 'magnifying_glass',
+    name: 'Magnifying Glass',
+    description: 'A brass-rimmed magnifying lens. Reveals hidden details, tracks, and clues invisible to the naked eye.',
+    type: 'tool',
+    consumable: false,
+    price: 25,
+    combatEffect: { type: 'reveal', vsType: 'all' },
+    flavor: 'When you have eliminated the impossible, whatever remains must be the truth.'
+  },
+  disguise_kit: {
+    id: 'disguise_kit',
+    name: 'Disguise Kit',
+    description: 'Wigs, theatrical makeup, false beards, and spirit gum. Allows convincing impersonation of others.',
+    type: 'tool',
+    consumable: false,
+    price: 35,
+    flavor: 'The art of disguise is knowing how to hide in plain sight.'
+  },
+  advanced_lockpicks: {
+    id: 'advanced_lockpicks',
+    name: 'Advanced Lockpick Set',
+    description: 'A refined set of skeleton keys, tension wrenches, and diamond-tipped picks. Opens even high-security mechanisms.',
+    type: 'tool',
+    consumable: false,
+    price: 45,
+    combatEffect: { type: 'bypass', vsType: 'lock', modifier: 3 },
+    flavor: 'Every lock is a conversation. These are very persuasive.'
+  },
+  briar_pipe: {
+    id: 'briar_pipe',
+    name: 'Briar Pipe',
+    description: 'A well-seasoned briarwood pipe. Aids concentration and calms the nerves during deduction.',
+    type: 'accessory',
+    consumable: false,
+    price: 15,
+    combatEffect: { type: 'buff', stat: 'intelligence', modifier: 1 },
+    flavor: 'The mind works best when the body is at ease.'
+  },
+  deerstalker_cap: {
+    id: 'deerstalker_cap',
+    name: 'Deerstalker Cap',
+    description: 'A distinctive tweed cap with front and rear brims. Worn by those who pursue truth above all else.',
+    type: 'accessory',
+    consumable: false,
+    price: 20,
+    combatEffect: { type: 'buff', stat: 'perception', modifier: 1 },
+    flavor: 'It is a cap, not a hat. The distinction matters to some.'
+  },
+  violin_case: {
+    id: 'violin_case',
+    name: 'Violin Case',
+    description: 'A battered leather case containing a fine violin. Music soothes the mind — and the case conceals a hidden compartment.',
+    type: 'tool',
+    consumable: false,
+    price: 50,
+    combatEffect: { type: 'buff', stat: 'intelligence', modifier: 1 },
+    flavor: 'The Stradivarius within is worth more than most of the evidence in this case.'
+  },
+  holmes_journal: {
+    id: 'holmes_journal',
+    name: 'Case Notes',
+    description: 'A slim leather notebook filled with meticulous observations, coded shorthand, and cross-references to past cases.',
+    type: 'lore',
+    consumable: false,
+    price: null,
+    flavor: 'Data! Data! Data! I cannot make bricks without clay.'
+  },
+
+  // ── Armor Items ────────────────────────────────────────────────────────────
+
+  leather_armor: {
+    id: 'leather_armor',
+    name: 'Leather Armor',
+    description: 'Cured and hardened leather, stitched into a protective vest. Light and flexible, offering modest protection.',
+    type: 'armor',
+    consumable: false,
+    price: 30,
+    combatEffect: { type: 'defense', acBonus: 1 },
+    flavor: 'Scuffed and worn, but it has turned a blade or two.'
+  },
+  chain_shirt: {
+    id: 'chain_shirt',
+    name: 'Chain Shirt',
+    description: 'A shirt of interlocking iron rings, worn over a padded gambeson. Good protection at the cost of some mobility.',
+    type: 'armor',
+    consumable: false,
+    price: 60,
+    combatEffect: { type: 'defense', acBonus: 2 },
+    flavor: 'Each ring was hammered shut by hand. The craftsmanship is medieval but sound.'
+  },
+  travelers_cloak: {
+    id: 'travelers_cloak',
+    name: "Traveler's Cloak",
+    description: 'A heavy wool cloak treated with lanolin. Keeps out rain, wind, and the chill of the Carpathian passes.',
+    type: 'armor',
+    consumable: false,
+    price: 20,
+    combatEffect: { type: 'defense', acBonus: 1 },
+    flavor: 'The dark fabric is moth-eaten at the hem but still warm.'
+  },
+  detective_coat: {
+    id: 'detective_coat',
+    name: "Detective's Coat",
+    description: 'A long, double-breasted overcoat with deep pockets. Lined with thin steel plates sewn between layers of fabric.',
+    type: 'armor',
+    consumable: false,
+    price: 50,
+    combatEffect: { type: 'defense', acBonus: 2 },
+    flavor: 'The coat is heavier than it looks. Its owner came prepared.'
   }
 };
 
@@ -576,10 +765,44 @@ function sellItem(inventory, itemId) {
   return { success: true, coinsEarned: sellPrice };
 }
 
+// ── Starting Loadouts ──────────────────────────────────────────────────────
+
+/**
+ * Adventure-specific starting loadouts.
+ * Maps adventure IDs to arrays of item IDs that players start with.
+ */
+const STARTING_LOADOUTS = {
+  dracula: [
+    'wooden_stake',
+    'garlic',
+    'holy_water',
+    'torch',
+    'journal',
+    'travelers_cloak'
+  ],
+  frankenstein: [
+    'galvanic_battery',
+    'reagent_vial',
+    'rubber_gloves',
+    'surgical_kit',
+    'lab_journal',
+    'leather_armor'
+  ],
+  holmes: [
+    'magnifying_glass',
+    'advanced_lockpicks',
+    'briar_pipe',
+    'deerstalker_cap',
+    'holmes_journal',
+    'detective_coat'
+  ]
+};
+
 module.exports = {
   ITEMS,
   SLOT_TYPE_MAP,
   EQUIPMENT_SLOTS,
+  STARTING_LOADOUTS,
   createInventory,
   addItem,
   useItem,
