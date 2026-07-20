@@ -43,7 +43,7 @@ function createTTSService(config = {}) {
 
   if (!provider) {
     console.warn('[TTS] No TTS provider configured. Set NOVITA_API_KEY, OPENAI_API_KEY, or ELEVENLABS_API_KEY. Voice disabled.');
-    return createNullTTSService();
+    return createNullTTSService({ speed, language, voice });
   }
 
   console.log(`[TTS] Provider: ${provider}, Voice: ${voice}, Speed: ${speed}`);
@@ -125,14 +125,25 @@ function createTTSService(config = {}) {
  * Null TTS service — used when no provider is configured.
  * All methods are no-ops that return gracefully.
  */
-function createNullTTSService() {
+function createNullTTSService(config = {}) {
+  const speed = config.speed || 1.0;
+  const language = config.language || 'en-US';
+  const voice = config.voice || null;
   return {
     provider: null,
-    voice: null,
-    speed: 1.0,
-    language: 'en-US',
-    async generate() { return { taskId: null, status: 'disabled', reason: 'No TTS provider configured' }; },
-    async getAudio() { return { ready: false, reason: 'TTS disabled' }; },
+    voice,
+    speed,
+    language,
+    async generate(text) {
+      if (!text || (typeof text === 'string' && text.trim().length === 0)) {
+        return { taskId: null, status: 'skipped', reason: 'empty text' };
+      }
+      return { taskId: null, status: 'disabled', reason: 'No TTS provider configured' };
+    },
+    async getAudio(taskId) {
+      if (!taskId) return { ready: false, reason: 'no taskId' };
+      return { ready: false, reason: 'TTS disabled' };
+    },
     isReady() { return false; }
   };
 }

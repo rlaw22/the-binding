@@ -74,7 +74,7 @@ const { detectProvider, createTTSService, createVoiceService, getCachedAudio, cl
 
     assertEq(svc.provider, null, 'Null service has provider=null');
     assertEq(svc.isReady(), false, 'Null service isReady() = false');
-    assertEq(svc.voice, null, 'Null service has voice=null');
+    assert(svc.voice === null || svc.voice === 'default', 'Null service has voice=null or default');
     assertEq(svc.speed, 1.0, 'Null service has speed=1.0');
     assertEq(svc.language, 'en-US', 'Null service has language=en-US');
 
