@@ -406,6 +406,173 @@ function applyCategoryWeights(scenePool, weights, maxCoins) {
   return scenePool;
 }
 
+// ── Scoring Analytics ────────────────────────────────────────────────────────
+
+/**
+ * Create a fresh scoring analytics tracker for a session.
+ * Tracks per-category scores, detects streaks, and computes trends.
+ */
+function createScoringAnalytics() {
+  return {
+    scores: [],          // ordered list of { score, total, categories: {cat: num}, timestamp }
+    categoryTotals: {},  // running totals per category
+    categoryCounts: {},  // how many scores recorded per category
+    totalCoinsEarned: 0,
+    createdAt: Date.now()
+  };
+}
+
+/**
+ * Record a score into the analytics tracker.
+ * @param {object} analytics — from createScoringAnalytics()
+ * @param {object} score — { creativity, investigation, roleplay, combat, exploration } (0-10 each)
+ *   OR a turnResult object with .coins and .turnTotal
+ */
+function recordScore(analytics, score) {
+  if (!analytics || !score) return;
+
+  // Support both raw scores (0-10) and coin results (earned amounts)
+  const categories = {};
+  let total = 0;
+
+  if (score.coins && typeof score.turnTotal === 'number') {
+    // Turn result from scoreTurn — use coin amounts
+    for (const [cat, amount] of Object.entries(score.coins)) {
+      categories[cat] = amount;
+      total += amount;
+    }
+  } else {
+    // Raw scores (0-10 per category)
+    for (const cat of Object.values(CoinCategory)) {
+      const val = score[cat] || 0;
+      categories[cat] = val;
+      total += val;
+    }
+  }
+
+  const entry = {
+    score: total,
+    total,
+    categories,
+    timestamp: Date.now()
+  };
+
+  analytics.scores.push(entry);
+  analytics.totalCoinsEarned += total;
+
+  // Update running category totals
+  for (const [cat, val] of Object.entries(categories)) {
+    analytics.categoryTotals[cat] = (analytics.categoryTotals[cat] || 0) + val;
+    analytics.categoryCounts[cat] = (analytics.categoryCounts[cat] || 0) + 1;
+  }
+}\n
+/**
+ * Get a summary of scoring analytics: averages per category, trend, totals.
+ * @returns {{ avgPerCategory: {}, trend: 'improving'|'declining'|'stable', totalCoinsEarned, scoreCount, topCategory, weakestCategory }}
+ */
+function getAnalyticsSummary(analytics) {
+  if (!analytics || analytics.scores.length === 0) {
+    return {
+      avgPerCategory: {},
+      trend: 'stable',
+      totalCoinsEarned: 0,
+      scoreCount: 0,
+      topCategory: null,
+      weakestCategory: null
+    };
+  }
+
+  // Average per category
+  const avgPerCategory = {};
+  for (const [cat, total] of Object.entries(analytics.categoryTotals)) {
+    const count = analytics.categoryCounts[cat] || 1;
+    avgPerCategory[cat] = Math.round((total / count) * 100) / 100;
+  }
+
+  // Trend: compare first half avg to second half avg
+  const scores = analytics.scores;
+  let trend = 'stable';
+  if (scores.length >= 4) {
+    const mid = Math.floor(scores.length / 2);
+    const firstHalf = scores.slice(0, mid);
+    const secondHalf = scores.slice(mid);
+    const firstAvg = firstHalf.reduce((s, e) => s + e.total, 0) / firstHalf.length;
+    const secondAvg = secondHalf.reduce((s, e) => s + e.total, 0) / secondHalf.length;
+    const diff = secondAvg - firstAvg;
+    // Threshold: 10% of the max possible score shift
+    if (diff > 1.5) trend = 'improving';
+    else if (diff < -1.5) trend = 'declining';
+  }
+
+  // Top and weakest categories
+  let topCategory = null;
+  let weakestCategory = null;
+  let topAvg = -1;
+  let weakestAvg = Infinity;
+  for (const [cat, avg] of Object.entries(avgPerCategory)) {
+    if (avg > topAvg) { topAvg = avg; topCategory = cat; }
+    if (avg < weakestAvg) { weakestAvg = avg; weakestCategory = cat; }
+  }
+
+  return {
+    avgPerCategory,
+    trend,
+    totalCoinsEarned: analytics.totalCoinsEarned,
+    scoreCount: analytics.scores.length,
+    topCategory,
+    weakestCategory
+  };
+}
+
+/**
+ * Detect if the player is on a hot streak (3+ high scores in a row)
+ * or cold streak (3+ low scores in a row).
+ *
+ * "High" = total >= 70th percentile of all recorded scores
+ * "Low"  = total <= 30th percentile of all recorded scores
+ *
+ * @returns {{ streak: 'hot'|'cold'|'none', count: number, avgDuringStreak: number }}
+ */
+function detectStreak(analytics) {
+  if (!analytics || analytics.scores.length < 3) {
+    return { streak: 'none', count: 0, avgDuringStreak: 0 };
+  }
+
+  const scores = analytics.scores;
+  const allTotals = scores.map(s => s.total).sort((a, b) => a - b);
+  const p30 = allTotals[Math.floor(allTotals.length * 0.3)];
+  const p70 = allTotals[Math.floor(allTotals.length * 0.7)];
+
+  // Walk backwards from the most recent score
+  const recent = scores.slice(-10); // look at last 10 max
+
+  // Check for hot streak (consecutive high scores at the end)
+  let hotCount = 0;
+  for (let i = recent.length - 1; i >= 0; i--) {
+    if (recent[i].total >= p70) hotCount++;
+    else break;
+  }
+  if (hotCount >= 3) {
+    const streakScores = recent.slice(-hotCount);
+    const avg = streakScores.reduce((s, e) => s + e.total, 0) / hotCount;
+    return { streak: 'hot', count: hotCount, avgDuringStreak: Math.round(avg * 100) / 100 };
+  }
+
+  // Check for cold streak (consecutive low scores at the end)
+  let coldCount = 0;
+  for (let i = recent.length - 1; i >= 0; i--) {
+    if (recent[i].total <= p30) coldCount++;
+    else break;
+  }
+  if (coldCount >= 3) {
+    const streakScores = recent.slice(-coldCount);
+    const avg = streakScores.reduce((s, e) => s + e.total, 0) / coldCount;
+    return { streak: 'cold', count: coldCount, avgDuringStreak: Math.round(avg * 100) / 100 };
+  }
+
+  return { streak: 'none', count: 0, avgDuringStreak: 0 };
+}
+
 module.exports = {
   CALIBRATION,
   CoinCategory,
@@ -424,5 +591,9 @@ module.exports = {
   bellCurveNormalize,
   normalizeScores,
   buildCoinNotification,
-  applyCategoryWeights
+  applyCategoryWeights,
+  createScoringAnalytics,
+  recordScore,
+  getAnalyticsSummary,
+  detectStreak
 };

@@ -7,6 +7,7 @@
 
 const RuleEngine = require('../rule-engine');
 const { DynamicDifficulty, TIERS, NARRATIVE_WRAPPERS } = require('../difficulty/dynamic-difficulty');
+const { damageDurability, damageEquippedDurability } = require('../inventory/inventory');
 
 // ── Enemy Templates ─────────────────────────────────────────────────────────
 
@@ -31,7 +32,7 @@ const ENEMY_TEMPLATES = {
  * @param {DynamicDifficulty} [difficulty] — optional difficulty instance for rubber-band scaling
  * @returns {object} combat state
  */
-function startCombat(playerChar, enemySpecs, difficulty) {
+function startCombat(playerChar, enemySpecs, difficulty, inventory) {
   const enemies = [];
   let enemyIndex = 0;
 
@@ -141,7 +142,8 @@ function startCombat(playerChar, enemySpecs, difficulty) {
     enemies,
     log: combatLog,
     outcome: null,
-    difficultyTier
+    difficultyTier,
+    inventory: inventory || null
   };
 }
 
@@ -191,6 +193,20 @@ function processPlayerAction(combat, action, options = {}, difficulty) {
         diceRolls.push({ type: 'damage', ...dmg });
         target.hp.current = Math.max(0, target.hp.current - dmg.total);
         if (target.hp.current <= 0) target.alive = false;
+
+        // Damage weapon durability on successful hit
+        if (combat.inventory && combat.inventory.equipment.weapon) {
+          const wpnSlot = combat.inventory.equipment.weapon;
+          const wpnDur = damageDurability(combat.inventory, wpnSlot.id, 1);
+          if (wpnDur.broke) {
+            log.push({
+              actor: 'system',
+              action: 'item_break',
+              target: wpnSlot.name || wpnSlot.id,
+              description: `Your ${wpnSlot.name || wpnSlot.id} shatters from the strain of combat!`
+            });
+          }
+        }
 
         log.push({
           actor: player.name,
@@ -350,6 +366,20 @@ function processPlayerAction(combat, action, options = {}, difficulty) {
       const dmg = RuleEngine.rollDamage({ dice: enemy.damageDice, modifier: enemy.damageMod });
       diceRolls.push({ type: 'enemy_damage', ...dmg });
       player.hp.current = Math.max(0, player.hp.current - dmg.total);
+
+      // Damage armor durability when player is hit
+      if (combat.inventory && combat.inventory.equipment.armor) {
+        const armSlot = combat.inventory.equipment.armor;
+        const armDur = damageEquippedDurability(combat.inventory, 'armor', 1);
+        if (armDur.broke) {
+          log.push({
+            actor: 'system',
+            action: 'item_break',
+            target: armSlot.name || armSlot.id,
+            description: `Your ${armSlot.name || armSlot.id} breaks under the blow!`
+          });
+        }
+      }
 
       log.push({
         actor: enemy.name,
