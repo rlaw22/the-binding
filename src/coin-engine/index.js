@@ -465,7 +465,7 @@ function recordScore(analytics, score) {
     analytics.categoryTotals[cat] = (analytics.categoryTotals[cat] || 0) + val;
     analytics.categoryCounts[cat] = (analytics.categoryCounts[cat] || 0) + 1;
   }
-}\n
+}
 /**
  * Get a summary of scoring analytics: averages per category, trend, totals.
  * @returns {{ avgPerCategory: {}, trend: 'improving'|'declining'|'stable', totalCoinsEarned, scoreCount, topCategory, weakestCategory }}
