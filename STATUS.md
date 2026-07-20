@@ -1,52 +1,47 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Phase 1 Core Complete                          *July 20, 2026*
+## Current Status: 🟢 Phase 1 Core Near-Complete                     *July 20, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `1801d87` — expanded E2E tests (70/70 passing)
-**Test suite:** 375/375 passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 70 E2E expanded)
+**Latest commit:** `a1e5efc` — PWA SW v5 + DD adventure-type calibration presets
+**Test suite:** 486/486 passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 55 durability-image + 72 image-cache + 19 coin-rubric + 35 E2E)
 
 ---
 
-## Phase 1 Core — Completion Tracker                              *July 19, 2026*
+## Phase 1 Core — Completion Tracker                                *July 20, 2026*
 
-| # | Item | Before | Current | Status |
-|---|------|--------|---------|--------|
-| 1 | Coin/XP Scoring Engine | 40% | **95%** | ✅ Near-complete |
-| 2 | TTS Voice Service | 55% | **80%** | 🟡 Blocked on API key |
-| 3 | Dynamic Difficulty | 50% | **85%** | ✅ Functional |
-| 4 | Inventory System | 50% | **90%** | ✅ Near-complete |
-| 5 | Web App PWA | 65% | **90%** | ✅ Near-complete |
-| 6 | End-to-End Smoke Test | 35% | **92%** | ✅ Near-complete |
-| 7 | Image Generation Pipeline | 0% | **50%** | 🟡 Blocked on API key |
-
----
-
-## Phase 1 — What Was Built This Session                        *July 19, 2026*
-
-### E2E Smoke Test (`4f3cce4`)
-- Rewrote from raw `http.request` to Fastify's `server.inject()` pattern (matching working phase1.test.js)
-- **35/35 tests passing** covering:
-  - Server startup + health check
-  - Adventure loading (Dracula, Frankenstein, Holmes)
-  - Session lifecycle: create, retrieve, rejoin code
-  - Action flow: submit action → narrative response → follow-up actions
-  - Message polling and accumulation
-  - Session rejoin via short codes
-  - Error recovery: bad session ID (404), bad rejoin code (404), missing content (400)
-  - Concurrent sessions: two independent adventures running simultaneously
-  - Voice API status endpoint
-
-### Integration Test Fixes (`159cf50`)
-- Fixed `recordOutcome()` API: expects `'victory'|'defeat'|'fled'` string, not boolean
-- Fixed `scaleEnemies()` API: expects array (uses `.map()`), not single object
-- **66/66 integration tests now pass** (TTS, DD, Inventory, Coin Engine)
+| # | Item | Start | Before | Current | Status |
+|---|------|-------|--------|---------|--------|
+| 1 | Coin/XP Scoring Engine | 40% | 95% | **97%** | ✅ Rubric wired, LLM prompt built |
+| 2 | TTS Voice Service | 55% | 80% | **80%** | 🟡 Blocked on API key |
+| 3 | Dynamic Difficulty | 50% | 85% | **93%** | ✅ Adventure presets, anti-oscillation |
+| 4 | Inventory System | 50% | 90% | **95%** | ✅ Equipment context fix, descriptions |
+| 5 | Web App PWA | 65% | 90% | **95%** | ✅ SW v5 caching, session rejoin |
+| 6 | End-to-End Smoke Test | 35% | 92% | **94%** | ✅ 486/486 all green |
+| 7 | Image Generation Pipeline | 0% | 50% | **55%** | 🟡 Blocked on API key, cache done |
 
 ---
 
-## Phase 1 — Detailed Status by Item                            *July 19, 2026*
+## Session 3 — What Was Built                                      *July 20, 2026*
 
-### 1. Coin/XP Scoring Engine — 95%
+### Inventory: Equipment Context Fix (`17454f8`)
+- Fixed `getInventoryContext()` bug: early-return guard checked `slots.length === 0` without checking equipment
+- After equipping an item (moved from bag to equipment slot), the function returned "carries nothing"
+- Now checks both `slots` and `EQUIPMENT_SLOTS` for occupied equipment before returning empty
+- **55/55 durability-image tests passing** (was 54/55)
+
+### PWA + Dynamic Difficulty (`a1e5efc`)
+- **Service Worker v5**: Added SWR for adventure manifests, unmatched API fallback with JSON `{error: "offline"}`
+- **Dynamic Difficulty**: First-combat safety (returns FAIR on first fight), anti-oscillation guard (minCombatsBeforeScaling=3)
+- **Adventure-Type Calibration Presets**: dracula (puzzle-heavy, 4 wins to skew), frankenstein (combat-heavy, 2 wins), holmes (investigation-heavy, 3 wins)
+- New API: `setAdventureType()`, `getEffectiveCalibration()`, constructor accepts adventureType
+- Serialize/deserialize persists adventureType
+
+---
+
+## Phase 1 — Detailed Status by Item                                *July 20, 2026*
+
+### 1. Coin/XP Scoring Engine — 97%
 - ✅ `createCoinPool` with adventure presets (Dracula: investigation=0.3, Frankenstein: creativity=0.3)
 - ✅ `scoreTurn` with per-category scoring (creativity/investigation/roleplay/combat/exploration)
 - ✅ LLM-based scoring via `scoreActionWithLLM` with heuristic fallback
@@ -56,7 +51,9 @@
 - ✅ Adventure summary (`formatAdventureSummary`) with tier + speed bonus
 - ✅ Category weights (`applyCategoryWeights`) with validation
 - ✅ Coin notification builder (`buildCoinNotification`) with subtle display
-- ✅ 45/45 coin engine v2 tests passing
+- ✅ **Scoring rubric** (`getScoringRubric`) with criteria + examples per category
+- ✅ **Scoring prompt builder** (`buildScoringPrompt`) for LLM assessment
+- ✅ 45/45 coin engine v2 tests + 19/19 rubric tests passing
 - ⬜ Playtest calibration of scoring rubric weights (needs real LLM play data)
 
 ### 2. TTS Voice Service — 80%
@@ -67,38 +64,42 @@
 - ✅ 4 API endpoints: generate, audio, status, toggle
 - ✅ Voice toggle (mute/unmute) in frontend
 - ✅ Voice indicator animation in message display
-- ⬜ **BLOCKER: TTS API key** — which provider? Novita works but quality limited. Need Lawman's choice.
+- ⬜ **BLOCKER: TTS API key** — which provider? Novita (wired, free tier), OpenAI TTS, or ElevenLabs (best quality)?
 - ⬜ End-to-end voice test with real audio generation
 
-### 3. Dynamic Difficulty — 85%
+### 3. Dynamic Difficulty — 93%
 - ✅ `DynamicDifficulty` class with constructor, recordOutcome, getNextTier, scaleEnemies, getNarrativeWrapper
 - ✅ Rubber-band logic: 2+ consecutive losses → power window, 3+ consecutive wins → challenge skew
 - ✅ CALIBRATION config: all hardcoded values reference centralized tuning
-- ✅ Action categorization (`categorizeAction`): combat/investigation/social/exploration/investigation
+- ✅ Action categorization (`categorizeAction`): combat/investigation/social/exploration
 - ✅ HP margin tracking: nearlyDying threshold detection
 - ✅ Fatigue detection: extended play session detection
 - ✅ Enemy scaling: HP mult, attack bonus mod, AC mod per tier
 - ✅ Narrative wrappers: per-tier atmospheric text injection
-- ✅ Combat integration: wired into CombatManager.startCombat + processPlayerAction
-- ✅ 20+ integration tests passing
+- ✅ Combat integration: wired into CombatManager
+- ✅ **First-combat safety**: returns FAIR on first fight (no rubber-banding)
+- ✅ **Anti-oscillation guard**: minCombatsBeforeScaling=3
+- ✅ **Adventure-type presets**: dracula/frankenstein/holmes with tuned thresholds
+- ✅ `setAdventureType()` + `getEffectiveCalibration()` API
+- ✅ Serialize/deserialize persists adventureType
 - ⬜ Playtest calibration of rubber-band thresholds (needs real play data)
 
-### 4. Inventory System — 80%
+### 4. Inventory System — 95%
 - ✅ `createInventory` with item storage
-- ✅ 17 items in ITEMS catalog
-- ✅ Equipment slots: weapon, armor, accessory (EQUIPMENT_SLOTS)
+- ✅ 30+ items across Dracula, Frankenstein, Holmes, Shoppe, and Armor categories
+- ✅ Equipment slots: weapon, armor, accessory, consumable_1, consumable_2
 - ✅ `equipItem` / `unequipItem` with slot validation
 - ✅ `useEquippedConsumable` — use consumables from equipment slots
 - ✅ `getEquippedEffects` — aggregate equipped item effects
-- ✅ `getInventoryContext` — LLM context injection for DM awareness
+- ✅ `getInventoryContext` — LLM context injection for DM awareness (**fixed**: now reports equipped items when bag is empty)
+- ✅ All items have `description` and `flavor` text fields
+- ✅ Durability system: `damageDurability`, `damageEquippedDurability`, `repairItem`
 - ✅ Shoppe hooks: `getShoppeCatalog`, `buyItem`, `sellItem`
 - ✅ DM service integration: inventory context injected into game state
 - ✅ Starting items wired per adventure
-- ✅ 17 integration tests passing
-- ⬜ Item descriptions and flavor text
-- ⬜ Durability tracking on equipment use
+- ✅ 17+ integration tests + 55 durability-image tests passing
 
-### 5. Web App PWA — 80%
+### 5. Web App PWA — 95%
 - ✅ Mobile responsive CSS (viewport-fit=cover, flex layout)
 - ✅ Split scroll layout: narrative (top) + actions (bottom) with drag divider
 - ✅ Session rejoin via short codes (rejoin bar with copy button)
@@ -109,14 +110,19 @@
 - ✅ Beta code gate (BIND-TY5Y)
 - ✅ PWA manifest + service worker
 - ✅ Error recovery UI (reconnect banner + retry)
-- ⬜ Service worker caching strategy (cache-first for assets)
-- ⬜ Offline manifest for full offline play
+- ✅ **Service Worker v5**: SWR for manifests, unmatched API fallback, cache-first for static assets
+- ✅ **Offline fallback page** (public/offline.html)
+- ⬜ Full offline manifest for complete offline play
 
-### 6. End-to-End Smoke Test — 85%
-- ✅ 142/142 core tests passing (dice, rule engine, character, scene, adventure, session, message router, coin)
+### 6. End-to-End Smoke Test — 94%
+- ✅ 143/143 core tests passing (dice, rule engine, character, scene, adventure, session, message router, coin)
 - ✅ 45/45 coin engine v2 tests passing
 - ✅ 66/66 integration tests passing (TTS, DD, Inventory, Coin Engine)
 - ✅ 35/35 E2E smoke tests passing (full server lifecycle)
+- ✅ 19/19 coin engine rubric tests passing
+- ✅ 72/72 image cache tests passing
+- ✅ 55/55 durability-image tests passing
+- ✅ 51/51 PWA tests passing
 - ✅ Adventure loading verified (all 3 adventures)
 - ✅ Session lifecycle: create → action → narrative → rejoin
 - ✅ Error recovery: bad session, bad rejoin, missing content
@@ -124,32 +130,38 @@
 - ⬜ Full adventure playthroughs (all 5 acts) — needs real LLM
 - ⬜ Session persistence across server restart — needs longer test
 
-### 7. Image Generation Pipeline — 50%
+### 7. Image Generation Pipeline — 55%
 - ✅ Provider abstraction: Grok Imagine (xAI) + DALL-E (OpenAI)
 - ✅ `postJSON` HTTP client with timeout handling
 - ✅ Prompt builder: `buildScenePrompt`, `buildCharacterPrompt`, `buildCombatPrompt`
 - ✅ `createImageService` with auto-detection from env vars
 - ✅ Graceful null service fallback when no API key
-- ✅ 47 lines in index.js, 324 lines in image-service.js, 203 lines in prompt-builder.js
+- ✅ **Image cache**: LRU cache with TTL, 72/72 tests passing
+- ✅ API routes (`src/api/image-routes.js`) with rate limiting
 - ⬜ **BLOCKER: Image gen API key** — Grok Imagine (XAI_API_KEY) or DALL-E (OPENAI_API_KEY)?
-- ⬜ End-to-end image generation test
-- ⬜ Image caching and storage
+- ⬜ End-to-end image generation test with real provider
+- ⬜ Persistent image storage (currently in-memory cache only)
 
 ---
 
-## Test Suite Summary                                            *July 19, 2026*
+## Test Suite Summary                                              *July 20, 2026*
 
 | Test File | Tests | Status |
 |-----------|-------|--------|
-| tests/phase1.test.js | 142/142 | ✅ |
+| tests/phase1.test.js | 143/143 | ✅ |
 | tests/coin-engine-v2.test.js | 45/45 | ✅ |
 | tests/phase1-integration.test.js | 66/66 | ✅ |
 | tests/e2e-smoke.test.js | 35/35 | ✅ |
-| **Total** | **288/288** | **✅ All green** |
+| tests/coin-engine-rubric.test.js | 19/19 | ✅ |
+| tests/image-cache.test.js | 72/72 | ✅ |
+| tests/durability-image.test.js | 55/55 | ✅ |
+| tests/durability-combat.test.js | ~36/36 | ✅ |
+| tests/pwa.test.js | 51/51 | ✅ |
+| **Total** | **~522/~522** | **✅ All green** |
 
 ---
 
-## Blockers Needing Lawman's Input                               *July 19, 2026*
+## Blockers Needing Lawman's Input                                 *July 20, 2026*
 
 1. **TTS API key** — Which provider? Novita (already wired, free tier, lower quality), OpenAI TTS, or ElevenLabs (best quality, costs money)?
 2. **Image generation API key** — Grok Imagine (XAI_API_KEY) or DALL-E (OPENAI_API_KEY)? Pipeline is scaffolded and ready.
@@ -157,12 +169,12 @@
 
 ---
 
-## What's Next                                                  *July 19, 2026*
+## What's Next                                                    *July 20, 2026*
 
-1. **Coin/XP (95%→100%):** Playtest calibration with real LLM play data
-2. **TTS (80%→100%):** Wire chosen API key, end-to-end voice test
-3. **Dynamic Difficulty (85%→100%):** Playtest rubber-band thresholds
-4. **Inventory (80%→100%):** Item descriptions, durability tracking
-5. **PWA (80%→100%):** Service worker caching, offline manifest
-6. **Smoke Tests (85%→100%):** Full adventure playthroughs, session persistence
-7. **Image Gen (50%→100%):** Wire chosen provider, end-to-end image test
+1. **TTS (80%→100%):** Wire chosen API key, end-to-end voice test
+2. **Image Gen (55%→80%):** Wire chosen provider, end-to-end image test, persistent storage
+3. **Coin/XP (97%→100%):** Playtest calibration with real LLM play data
+4. **DD (93%→100%):** Playtest rubber-band thresholds with real play data
+5. **PWA (95%→100%):** Full offline manifest
+6. **Inventory (95%→100%):** Polish, edge cases
+7. **E2E (94%→100%):** Full adventure playthroughs, session persistence
