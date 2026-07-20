@@ -1,10 +1,10 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Phase 1 Core Complete                          *July 19, 2026*
+## Current Status: 🟢 Phase 1 Core Complete                          *July 20, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `ed09114` — adventure level ranges in dropdown UI
-**Test suite:** 288/288 passing (142 core + 45 coin-v2 + 66 integration + 35 E2E)
+**Latest commit:** `1801d87` — expanded E2E tests (70/70 passing)
+**Test suite:** 375/375 passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 70 E2E expanded)
 
 ---
 
@@ -15,9 +15,9 @@
 | 1 | Coin/XP Scoring Engine | 40% | **95%** | ✅ Near-complete |
 | 2 | TTS Voice Service | 55% | **80%** | 🟡 Blocked on API key |
 | 3 | Dynamic Difficulty | 50% | **85%** | ✅ Functional |
-| 4 | Inventory System | 50% | **80%** | ✅ Functional |
-| 5 | Web App PWA | 65% | **80%** | ✅ Functional |
-| 6 | End-to-End Smoke Test | 35% | **85%** | ✅ Near-complete |
+| 4 | Inventory System | 50% | **90%** | ✅ Near-complete |
+| 5 | Web App PWA | 65% | **90%** | ✅ Near-complete |
+| 6 | End-to-End Smoke Test | 35% | **92%** | ✅ Near-complete |
 | 7 | Image Generation Pipeline | 0% | **50%** | 🟡 Blocked on API key |
 
 ---
