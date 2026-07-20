@@ -19,6 +19,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 30,
+    maxDurability: 100,
     combatEffect: { type: 'defense', vsType: 'undead', acBonus: 2 },
     flavor: 'The figure of Christ is worn smooth from years of faithful hands.'
   },
@@ -62,6 +63,7 @@ const ITEMS = {
     type: 'weapon',
     consumable: false,
     price: 45,
+    maxDurability: 100,
     combatEffect: { type: 'bonus_damage', vsType: 'undead', modifier: 2 },
     flavor: 'The blade catches moonlight and holds it.'
   },
@@ -81,6 +83,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 15,
+    maxDurability: 40,
     combatEffect: { type: 'reveal', vsType: 'undead' },
     flavor: 'The glass is old and spotted, but still clear enough.'
   },
@@ -113,6 +116,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 20,
+    maxDurability: 50,
     combatEffect: { type: 'ward', vsType: 'undead', aura: 5 },
     flavor: 'Old fashioned, but effective.'
   },
@@ -188,6 +192,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 100,
+    maxDurability: 100,
     combatEffect: { type: 'defense', acBonus: 1 },
     flavor: 'The runes shimmer faintly in candlelight, as if alive.'
   },
@@ -201,6 +206,7 @@ const ITEMS = {
     type: 'tool',
     consumable: false,
     price: 60,
+    maxDurability: 80,
     combatEffect: { type: 'bonus_damage', vsType: 'construct', modifier: 2 },
     flavor: 'The terminals spark when brought close together — a miniature storm in a box.'
   },
@@ -222,6 +228,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 25,
+    maxDurability: 60,
     combatEffect: { type: 'resistance', damageType: 'lightning' },
     flavor: 'They smell of vulcanized rubber and faint ozone.'
   },
@@ -241,6 +248,7 @@ const ITEMS = {
     type: 'tool',
     consumable: false,
     price: 40,
+    maxDurability: 60,
     combatEffect: { type: 'heal', dice: '1d6', modifier: 2 },
     flavor: 'The steel is immaculate. Someone cleaned these with obsessive care.'
   },
@@ -276,6 +284,7 @@ const ITEMS = {
     type: 'tool',
     consumable: false,
     price: 25,
+    maxDurability: 50,
     combatEffect: { type: 'reveal', vsType: 'all' },
     flavor: 'When you have eliminated the impossible, whatever remains must be the truth.'
   },
@@ -295,6 +304,7 @@ const ITEMS = {
     type: 'tool',
     consumable: false,
     price: 45,
+    maxDurability: 40,
     combatEffect: { type: 'bypass', vsType: 'lock', modifier: 3 },
     flavor: 'Every lock is a conversation. These are very persuasive.'
   },
@@ -305,6 +315,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 15,
+    maxDurability: 80,
     combatEffect: { type: 'buff', stat: 'intelligence', modifier: 1 },
     flavor: 'The mind works best when the body is at ease.'
   },
@@ -315,6 +326,7 @@ const ITEMS = {
     type: 'accessory',
     consumable: false,
     price: 20,
+    maxDurability: 70,
     combatEffect: { type: 'buff', stat: 'perception', modifier: 1 },
     flavor: 'It is a cap, not a hat. The distinction matters to some.'
   },
@@ -325,6 +337,7 @@ const ITEMS = {
     type: 'tool',
     consumable: false,
     price: 50,
+    maxDurability: 70,
     combatEffect: { type: 'buff', stat: 'intelligence', modifier: 1 },
     flavor: 'The Stradivarius within is worth more than most of the evidence in this case.'
   },
@@ -347,6 +360,7 @@ const ITEMS = {
     type: 'armor',
     consumable: false,
     price: 30,
+    maxDurability: 80,
     combatEffect: { type: 'defense', acBonus: 1 },
     flavor: 'Scuffed and worn, but it has turned a blade or two.'
   },
@@ -357,6 +371,7 @@ const ITEMS = {
     type: 'armor',
     consumable: false,
     price: 60,
+    maxDurability: 120,
     combatEffect: { type: 'defense', acBonus: 2 },
     flavor: 'Each ring was hammered shut by hand. The craftsmanship is medieval but sound.'
   },
@@ -367,6 +382,7 @@ const ITEMS = {
     type: 'armor',
     consumable: false,
     price: 20,
+    maxDurability: 60,
     combatEffect: { type: 'defense', acBonus: 1 },
     flavor: 'The dark fabric is moth-eaten at the hem but still warm.'
   },
@@ -377,6 +393,7 @@ const ITEMS = {
     type: 'armor',
     consumable: false,
     price: 50,
+    maxDurability: 100,
     combatEffect: { type: 'defense', acBonus: 2 },
     flavor: 'The coat is heavier than it looks. Its owner came prepared.'
   }
