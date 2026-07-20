@@ -8,16 +8,12 @@
  *   const { createImageService } = require('./src/image');
  *   const images = createImageService();
  *
- *   // Scene illustration (returns metadata object)
- *   const result = await images.generateScene({
+ *   // Scene illustration
+ *   const url = await images.generateScene({
  *     description: 'A vast crypt beneath the castle, stone coffins lining the walls.',
  *     location: 'Beneath Castle Dracula',
  *     mood: 'dread',
  *   });
- *   // result = { url, cached, provider, timestamp } or null
- *
- *   // Simple URL-only generation (backward-compatible)
- *   const url = await images.generateSimple('A dark castle at night');
  *
  *   // Character portrait
  *   const portrait = await images.generateCharacter({
@@ -36,37 +32,37 @@
  *     outcome: 'critical',
  *   });
  *
- *   // Cache stats
- *   const stats = images.cacheStats;
- *   // { size, max, diskSize, cacheDir }
- *
  * Environment variables (auto-detects provider):
  *   XAI_API_KEY       — Enables Grok Imagine (xAI)
  *   OPENAI_API_KEY    — Enables DALL-E (OpenAI)
  *
- * Options:
- *   cacheDir   — Directory for disk-persistent image cache
- *   rateLimit  — Max requests per rate window (default 5)
- *   rateWindow — Rate window in ms (default 10000)
- *
- * When no key is set, all generate* methods return null gracefully —
+ * When no key is set, all generate*() calls return null gracefully —
  * the game continues without images.
  */
 
 'use strict';
 
+const { createImageService } = require('./image-service');
 const {
-  createImageService,
-  ImageCache,
-  RateLimiter,
-  withRetry,
-  hashPrompt,
-} = require('./image-service');
+  buildScenePrompt,
+  buildCharacterPrompt,
+  buildCombatPrompt,
+  _sanitise,
+  _moodDirection,
+  STYLE_PREFIX,
+  STYLE_SUFFIX,
+} = require('./prompt-builder');
 
 module.exports = {
+  // Service factory
   createImageService,
-  ImageCache,
-  RateLimiter,
-  withRetry,
-  hashPrompt,
+  // Prompt builders (for direct use or testing)
+  buildScenePrompt,
+  buildCharacterPrompt,
+  buildCombatPrompt,
+  // Prompt internals (for testing)
+  _sanitise,
+  _moodDirection,
+  STYLE_PREFIX,
+  STYLE_SUFFIX,
 };
