@@ -482,26 +482,80 @@ function parseDMResponse(response) {
 
 /**
  * Score a player action using the LLM for nuanced creativity assessment.
- * Falls back to heuristic scoring if LLM returns invalid JSON.
+ * Falls back to heuristic scoring if LLM returns invalid JSON after retry.
+ *
+ * Fix history:
+ *   - v2: Added code-fence stripping, robust JSON extraction, retry with
+ *         explicit JSON-only instruction, and numeric clamping.
  */
 async function scoreActionWithLLM(llmProvider, playerAction, narrativeContext) {
   const prompt = buildCoinScoringPrompt(playerAction, narrativeContext);
-  const messages = [{ role: 'system', content: prompt }];
+
+  /**
+   * Extract JSON object from an LLM response that may contain markdown
+   * code fences, explanatory text, or trailing garbage.
+   */
+  function extractJson(text) {
+    // Strip markdown code fences (```json ... ``` or ``` ... ```)
+    let cleaned = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '').trim();
+    // Try the cleaned text first
+    const braceMatch = cleaned.match(/\{[^\0]*\}/);
+    if (braceMatch) return braceMatch[0];
+    // Fallback: try the original text
+    const origMatch = text.match(/\{[^\0]*\}/);
+    return origMatch ? origMatch[0] : null;
+  }
+
+  /**
+   * Clamp a score to 0-10 integer range.
+   */
+  function clampScore(val) {
+    const n = parseInt(val, 10);
+    return Math.min(10, Math.max(0, isNaN(n) ? 0 : n));
+  }
+
+  /**
+   * Parse and validate a coin scoring response.
+   * Returns normalized scores or null if unparseable.
+   */
+  function parseScores(text) {
+    const jsonStr = extractJson(text);
+    if (!jsonStr) return null;
+    try {
+      const parsed = JSON.parse(jsonStr);
+      // Must have at least one recognized category
+      const categories = ['creativity', 'investigation', 'roleplay', 'combat', 'exploration'];
+      const hasScores = categories.some(c => parsed[c] !== undefined);
+      if (!hasScores) return null;
+      return {
+        creativity: clampScore(parsed.creativity),
+        investigation: clampScore(parsed.investigation),
+        roleplay: clampScore(parsed.roleplay),
+        combat: clampScore(parsed.combat),
+        exploration: clampScore(parsed.exploration),
+        reasoning: parsed.reasoning || ''
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  // --- Attempt 1: standard prompt ---
+  const messages = [{ role: 'system', content: prompt + '\n\nRESPOND WITH ONLY A JSON OBJECT. No markdown fences, no explanation before or after.' }];
   const response = await llmProvider(messages);
+  const scores1 = parseScores(response);
+  if (scores1) return scores1;
 
-  // Parse JSON from LLM response
-  const jsonMatch = response.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('LLM did not return valid JSON for coin scoring');
+  // --- Attempt 2: retry with stronger JSON-only instruction ---
+  const retryMessages = [
+    { role: 'system', content: 'You must respond with ONLY valid JSON. No text, no code fences, no explanation.\n\n' + prompt },
+    { role: 'user', content: `Score this action. Return ONLY JSON like {"creativity":5,"investigation":3,"roleplay":4,"combat":0,"exploration":2,"reasoning":"brief note"}.\n\nAction: "${playerAction}"\nContext: ${typeof narrativeContext === 'string' ? narrativeContext.slice(0, 500) : 'N/A'}` }
+  ];
+  const retryResponse = await llmProvider(retryMessages);
+  const scores2 = parseScores(retryResponse);
+  if (scores2) return scores2;
 
-  const parsed = JSON.parse(jsonMatch[0]);
-  return {
-    creativity: Math.min(10, Math.max(0, parseInt(parsed.creativity) || 0)),
-    investigation: Math.min(10, Math.max(0, parseInt(parsed.investigation) || 0)),
-    roleplay: Math.min(10, Math.max(0, parseInt(parsed.roleplay) || 0)),
-    combat: Math.min(10, Math.max(0, parseInt(parsed.combat) || 0)),
-    exploration: Math.min(10, Math.max(0, parseInt(parsed.exploration) || 0)),
-    reasoning: parsed.reasoning || ''
-  };
+  throw new Error('LLM did not return valid JSON for coin scoring (tried twice)');
 }
 
 /**
