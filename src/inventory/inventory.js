@@ -18,6 +18,7 @@ const ITEMS = {
     description: 'An old silver crucifix. It emanates a faint warmth in the presence of the undead.',
     type: 'accessory',
     consumable: false,
+    rarity: 'uncommon',
     price: 30,
     maxDurability: 100,
     combatEffect: { type: 'defense', vsType: 'undead', acBonus: 2 },
@@ -30,6 +31,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 3,
+    rarity: 'common',
     price: 10,
     combatEffect: { type: 'repel', vsType: 'undead', radius: 10 },
     flavor: 'The innkeeper pressed this into your hands with a warning.'
@@ -41,6 +43,7 @@ const ITEMS = {
     type: 'weapon',
     consumable: true,
     uses: 1,
+    rarity: 'common',
     price: 5,
     combatEffect: { type: 'execute', vsType: 'undead', condition: 'target_hp_0' },
     flavor: 'Carved from the wood of a church pew, consecrated and sharp.'
@@ -52,6 +55,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 1,
+    rarity: 'uncommon',
     price: 20,
     combatEffect: { type: 'damage', vsType: 'undead', dice: '2d6', damageType: 'radiant' },
     flavor: 'The glass vial is cool to the touch, even near fire.'
@@ -62,6 +66,7 @@ const ITEMS = {
     description: 'A dagger forged from silver. Bypasses the resistance of lycanthropes and some undead.',
     type: 'weapon',
     consumable: false,
+    rarity: 'rare',
     price: 45,
     maxDurability: 100,
     combatEffect: { type: 'bonus_damage', vsType: 'undead', modifier: 2 },
@@ -73,6 +78,7 @@ const ITEMS = {
     description: 'A leather-bound journal filled with frantic handwriting. Contains crucial information about Castle Dracula.',
     type: 'lore',
     consumable: false,
+    rarity: 'rare',
     price: null,
     flavor: 'The pages are stained with ink and something darker.'
   },
@@ -82,6 +88,7 @@ const ITEMS = {
     description: 'A small silver-backed mirror. Useful for detecting vampires — they cast no reflection.',
     type: 'accessory',
     consumable: false,
+    rarity: 'common',
     price: 15,
     maxDurability: 40,
     combatEffect: { type: 'reveal', vsType: 'undead' },
@@ -94,6 +101,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 2,
+    rarity: 'common',
     price: 12,
     combatEffect: { type: 'repel', vsType: 'beast', radius: 15 },
     flavor: 'Handle with care — it is as dangerous to you as to them.'
@@ -105,6 +113,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 1,
+    rarity: 'uncommon',
     price: 30,
     combatEffect: { type: 'heal', dice: '2d4', modifier: 2 },
     flavor: 'Dr. Seward packed this with meticulous care.'
@@ -115,6 +124,7 @@ const ITEMS = {
     description: 'Strung garlic bulbs worn around the neck. Continuous ward against vampires.',
     type: 'accessory',
     consumable: false,
+    rarity: 'uncommon',
     price: 20,
     maxDurability: 50,
     combatEffect: { type: 'ward', vsType: 'undead', aura: 5 },
@@ -127,6 +137,7 @@ const ITEMS = {
     type: 'weapon',
     consumable: true,
     uses: 1,
+    rarity: 'rare',
     price: 50,
     combatEffect: { type: 'damage', vsType: 'undead', dice: '4d6', damageType: 'radiant' },
     flavor: 'You have one shot. Make it count.'
@@ -141,6 +152,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 1,
+    rarity: 'uncommon',
     price: 25,
     combatEffect: { type: 'heal', dice: '2d4', modifier: 2 },
     flavor: 'The liquid glows faintly red, like a sunset trapped in glass.'
@@ -152,6 +164,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 1,
+    rarity: 'common',
     price: 15,
     combatEffect: { type: 'cure', condition: 'poison' },
     flavor: 'It tastes like boiled roots and regret, but it works.'
@@ -163,6 +176,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 5,
+    rarity: 'common',
     price: 5,
     combatEffect: { type: 'illuminate', radius: 20 },
     flavor: 'The pitch-soaked head crackles with promise of light.'
@@ -173,6 +187,7 @@ const ITEMS = {
     description: 'Fifty feet of sturdy hemp rope. Useful for climbing, binding, and improvisation.',
     type: 'tool',
     consumable: false,
+    rarity: 'common',
     price: 10,
     flavor: 'Every adventurer carries rope. The smart ones carry extra.'
   },
@@ -182,6 +197,7 @@ const ITEMS = {
     description: 'A set of fine steel picks and tension wrenches. Opens doors that keys cannot.',
     type: 'tool',
     consumable: false,
+    rarity: 'uncommon',
     price: 20,
     flavor: 'The tools of a burglar — or a very determined investigator.'
   },
@@ -191,6 +207,7 @@ const ITEMS = {
     description: 'A silver ring inscribed with protective runes. Grants +1 AC while worn.',
     type: 'accessory',
     consumable: false,
+    rarity: 'legendary',
     price: 100,
     maxDurability: 100,
     combatEffect: { type: 'defense', acBonus: 1 },
@@ -205,6 +222,7 @@ const ITEMS = {
     description: 'A crude voltaic pile wrapped in copper wire. Channels electrical energy for reanimation experiments.',
     type: 'tool',
     consumable: false,
+    rarity: 'rare',
     price: 60,
     maxDurability: 80,
     combatEffect: { type: 'bonus_damage', vsType: 'construct', modifier: 2 },
@@ -217,6 +235,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 2,
+    rarity: 'common',
     price: 15,
     combatEffect: { type: 'damage', dice: '2d6', damageType: 'acid' },
     flavor: 'The liquid inside shifts between amber and green, as if undecided.'
@@ -227,6 +246,7 @@ const ITEMS = {
     description: 'Thick rubber gloves that protect against electrical shocks and chemical burns.',
     type: 'accessory',
     consumable: false,
+    rarity: 'uncommon',
     price: 25,
     maxDurability: 60,
     combatEffect: { type: 'resistance', damageType: 'lightning' },
@@ -238,6 +258,7 @@ const ITEMS = {
     description: 'A battered notebook filled with diagrams of galvanic circuits, anatomical sketches, and feverish marginalia about the nature of life.',
     type: 'lore',
     consumable: false,
+    rarity: 'rare',
     price: null,
     flavor: 'The handwriting deteriorates toward the later pages, as if the author stopped sleeping.'
   },
@@ -247,6 +268,7 @@ const ITEMS = {
     description: 'Scalpels, bone saws, and suturing needles wrapped in oilcloth. Essential for field medicine — or darker work.',
     type: 'tool',
     consumable: false,
+    rarity: 'uncommon',
     price: 40,
     maxDurability: 60,
     combatEffect: { type: 'heal', dice: '1d6', modifier: 2 },
@@ -259,6 +281,7 @@ const ITEMS = {
     type: 'consumable',
     consumable: true,
     uses: 3,
+    rarity: 'uncommon',
     price: 20,
     combatEffect: { type: 'preserve', condition: 'biological_decay' },
     flavor: 'The fumes sting the eyes and cling to everything.'
@@ -270,6 +293,7 @@ const ITEMS = {
     type: 'weapon',
     consumable: true,
     uses: 1,
+    rarity: 'rare',
     price: 75,
     combatEffect: { type: 'damage', dice: '4d8', damageType: 'lightning', condition: 'storm' },
     flavor: 'It hums when raised toward thunderclouds, as if eager.'
@@ -283,6 +307,7 @@ const ITEMS = {
     description: 'A brass-rimmed magnifying lens. Reveals hidden details, tracks, and clues invisible to the naked eye.',
     type: 'tool',
     consumable: false,
+    rarity: 'uncommon',
     price: 25,
     maxDurability: 50,
     combatEffect: { type: 'reveal', vsType: 'all' },
@@ -294,6 +319,7 @@ const ITEMS = {
     description: 'Wigs, theatrical makeup, false beards, and spirit gum. Allows convincing impersonation of others.',
     type: 'tool',
     consumable: false,
+    rarity: 'uncommon',
     price: 35,
     flavor: 'The art of disguise is knowing how to hide in plain sight.'
   },
@@ -303,6 +329,7 @@ const ITEMS = {
     description: 'A refined set of skeleton keys, tension wrenches, and diamond-tipped picks. Opens even high-security mechanisms.',
     type: 'tool',
     consumable: false,
+    rarity: 'rare',
     price: 45,
     maxDurability: 40,
     combatEffect: { type: 'bypass', vsType: 'lock', modifier: 3 },
@@ -314,6 +341,7 @@ const ITEMS = {
     description: 'A well-seasoned briarwood pipe. Aids concentration and calms the nerves during deduction.',
     type: 'accessory',
     consumable: false,
+    rarity: 'common',
     price: 15,
     maxDurability: 80,
     combatEffect: { type: 'buff', stat: 'intelligence', modifier: 1 },
@@ -325,6 +353,7 @@ const ITEMS = {
     description: 'A distinctive tweed cap with front and rear brims. Worn by those who pursue truth above all else.',
     type: 'accessory',
     consumable: false,
+    rarity: 'uncommon',
     price: 20,
     maxDurability: 70,
     combatEffect: { type: 'buff', stat: 'perception', modifier: 1 },
@@ -336,6 +365,7 @@ const ITEMS = {
     description: 'A battered leather case containing a fine violin. Music soothes the mind — and the case conceals a hidden compartment.',
     type: 'tool',
     consumable: false,
+    rarity: 'rare',
     price: 50,
     maxDurability: 70,
     combatEffect: { type: 'buff', stat: 'intelligence', modifier: 1 },
@@ -347,6 +377,7 @@ const ITEMS = {
     description: 'A slim leather notebook filled with meticulous observations, coded shorthand, and cross-references to past cases.',
     type: 'lore',
     consumable: false,
+    rarity: 'rare',
     price: null,
     flavor: 'Data! Data! Data! I cannot make bricks without clay.'
   },
@@ -359,6 +390,7 @@ const ITEMS = {
     description: 'Cured and hardened leather, stitched into a protective vest. Light and flexible, offering modest protection.',
     type: 'armor',
     consumable: false,
+    rarity: 'uncommon',
     price: 30,
     maxDurability: 80,
     combatEffect: { type: 'defense', acBonus: 1 },
@@ -370,6 +402,7 @@ const ITEMS = {
     description: 'A shirt of interlocking iron rings, worn over a padded gambeson. Good protection at the cost of some mobility.',
     type: 'armor',
     consumable: false,
+    rarity: 'rare',
     price: 60,
     maxDurability: 120,
     combatEffect: { type: 'defense', acBonus: 2 },
@@ -381,6 +414,7 @@ const ITEMS = {
     description: 'A heavy wool cloak treated with lanolin. Keeps out rain, wind, and the chill of the Carpathian passes.',
     type: 'armor',
     consumable: false,
+    rarity: 'uncommon',
     price: 20,
     maxDurability: 60,
     combatEffect: { type: 'defense', acBonus: 1 },
@@ -392,6 +426,7 @@ const ITEMS = {
     description: 'A long, double-breasted overcoat with deep pockets. Lined with thin steel plates sewn between layers of fabric.',
     type: 'armor',
     consumable: false,
+    rarity: 'rare',
     price: 50,
     maxDurability: 100,
     combatEffect: { type: 'defense', acBonus: 2 },
@@ -498,6 +533,32 @@ function useItem(inventory, itemId) {
 
   // Non-consumable: just return the effect
   return { item: template, effect, consumed: false };
+}
+
+/**
+ * Use a non-equipped consumable from inventory by item ID.
+ * Decrements remainingUses, removes the item slot when exhausted.
+ * Returns { item, effect, consumed, remainingUses } or null if not found / not consumable / no uses left.
+ */
+function useItemFromInventory(inventory, itemId) {
+  const slot = inventory.slots.find(s => s.id === itemId);
+  if (!slot) return null;
+
+  const template = ITEMS[itemId];
+  if (!template) return null;
+  if (!template.consumable) return null;
+
+  if (slot.remainingUses <= 0) return null;
+
+  slot.remainingUses--;
+  const effect = template.combatEffect || null;
+
+  if (slot.remainingUses <= 0) {
+    inventory.slots = inventory.slots.filter(s => s !== slot);
+    return { item: template, effect, consumed: true, remainingUses: 0 };
+  }
+
+  return { item: template, effect, consumed: false, remainingUses: slot.remainingUses };
 }
 
 /**
@@ -815,28 +876,6 @@ const STARTING_LOADOUTS = {
   ]
 };
 
-module.exports = {
-  ITEMS,
-  SLOT_TYPE_MAP,
-  EQUIPMENT_SLOTS,
-  STARTING_LOADOUTS,
-  createInventory,
-  addItem,
-  useItem,
-  removeItem,
-  listItems,
-  hasItem,
-  equipItem,
-  unequipItem,
-  getEquipped,
-  getEquippedEffects,
-  useEquippedConsumable,
-  getInventoryContext,
-  getShoppeCatalog,
-  buyItem,
-  sellItem
-};
-
 // ── Durability System ──────────────────────────────────────────────────────
 
 /**
@@ -988,3 +1027,30 @@ function removeBrokenItem(inventory, slot) {
   inventory.equipment[slot] = null;
   return removed;
 }
+
+module.exports = {
+  ITEMS,
+  SLOT_TYPE_MAP,
+  EQUIPMENT_SLOTS,
+  STARTING_LOADOUTS,
+  createInventory,
+  addItem,
+  useItem,
+  removeItem,
+  listItems,
+  hasItem,
+  equipItem,
+  unequipItem,
+  getEquipped,
+  getEquippedEffects,
+  useEquippedConsumable,
+  getInventoryContext,
+  getShoppeCatalog,
+  buyItem,
+  sellItem,
+  getDurability,
+  damageDurability,
+  damageEquippedDurability,
+  repairItem,
+  removeBrokenItem
+};
