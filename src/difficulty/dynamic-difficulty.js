@@ -111,6 +111,39 @@ function categorizeAction(action) {
   return 'other';
 }
 
+// ── Encounter Scaling Presets (per adventure) ───────────────────────────────
+
+const ENCOUNTER_SCALING = {
+  dracula: {
+    baseEnemyCount: 2,
+    hpMultiplierRange: [0.9, 1.3],
+    specialAbilityThreshold: 0.6,
+    flavor: "undead",
+    notes: "More undead enemies, higher HP variance. Night encounters favored."
+  },
+  frankenstein: {
+    baseEnemyCount: 1,
+    hpMultiplierRange: [1.2, 1.8],
+    specialAbilityThreshold: 0.4,
+    flavor: "construct",
+    notes: "Fewer but much tougher enemies. Laboratory and wilderness settings."
+  },
+  holmes: {
+    baseEnemyCount: 3,
+    hpMultiplierRange: [0.7, 1.1],
+    specialAbilityThreshold: 0.7,
+    flavor: "human",
+    notes: "More human enemies, tactical combat. Urban and investigative settings."
+  },
+  default: {
+    baseEnemyCount: 2,
+    hpMultiplierRange: [0.8, 1.2],
+    specialAbilityThreshold: 0.5,
+    flavor: "mixed",
+    notes: "Balanced encounter scaling for unspecified adventures."
+  }
+};
+
 class DynamicDifficulty {
   constructor() {
     this.combatHistory = [];
@@ -118,6 +151,8 @@ class DynamicDifficulty {
     this.consecutiveLosses = 0;
     this.totalCombats = 0;
     this.playerActions = [];  // recent action patterns for fatigue detection
+    this.deathCount = 0;
+    this.sessionStartTime = Date.now();
   }
 
   /**
@@ -137,6 +172,9 @@ class DynamicDifficulty {
     } else {
       this.consecutiveLosses++;
       this.consecutiveWins = 0;
+      if (outcome === 'defeat') {
+        this.deathCount++;
+      }
     }
 
     // HP margin — how close the fight was (0 = nearly died, 1 = untouched)
@@ -333,13 +371,85 @@ class DynamicDifficulty {
   /**
    * Serialize for persistence (save to session).
    */
+
+  // ── Momentum Detection ────────────────────────────────────────────────────
+
+  /**
+   * Detect player momentum state based on recent combat performance.
+   * @returns {'hot_streak'|'struggling'|'stable'}
+   */
+  getMomentumState() {
+    const recent = this.combatHistory.slice(-5);
+    if (recent.length < 2) return 'stable';
+
+    const recentWins = recent.filter(c => c.outcome === 'victory').length;
+    const recentLosses = recent.filter(c => c.outcome === 'defeat').length;
+    const avgHpMargin = recent.reduce((s, c) => s + (c.hpMargin || 0.5), 0) / recent.length;
+
+    // Hot streak: 3+ wins in last 5 with comfortable HP margins
+    if (recentWins >= 3 && avgHpMargin > 0.6) return 'hot_streak';
+    // Struggling: 2+ losses in last 5, or low HP margins, or 3+ deaths total
+    if (recentLosses >= 2 || avgHpMargin < 0.25 || this.deathCount >= 3) return 'struggling';
+    return 'stable';
+  }
+
+  /**
+   * Get player performance summary from recent combat history.
+   * @returns {{ rollingWinRate, avgHpMargin, deathCount, momentum, sessionDurationMin, fatigueState }}
+   */
+  getPlayerPerformance() {
+    const recent = this.combatHistory.slice(-10);
+    const wins = recent.filter(c => c.outcome === 'victory').length;
+    const avgHp = recent.length > 0
+      ? recent.reduce((s, c) => s + (c.hpMargin || 0.5), 0) / recent.length
+      : 0;
+    const sessionMs = this.sessionStartTime ? Date.now() - this.sessionStartTime : 0;
+    const sessionMin = Math.round(sessionMs / 60000);
+
+    return {
+      rollingWinRate: recent.length > 0 ? Math.round((wins / recent.length) * 100) / 100 : 0,
+      avgHpMargin: Math.round(avgHp * 100) / 100,
+      deathCount: this.deathCount || 0,
+      momentum: this.getMomentumState(),
+      sessionDurationMin: sessionMin,
+      fatigueState: this.getSessionFatigue()
+    };
+  }
+
+  /**
+   * Detect session-duration fatigue (time-based, not action-based).
+   * @returns {{ level: 'fresh'|'tired'|'exhausted', sessionMin, suggestion: string }}
+   */
+  getSessionFatigue() {
+    const sessionMs = this.sessionStartTime ? Date.now() - this.sessionStartTime : 0;
+    const sessionMin = Math.round(sessionMs / 60000);
+
+    if (sessionMin >= 90) {
+      return { level: 'exhausted', sessionMin, suggestion: 'Consider saving your progress and resting.' };
+    }
+    if (sessionMin >= 60) {
+      return { level: 'tired', sessionMin, suggestion: 'Your adventures are wearing on you. A rest might help.' };
+    }
+    return { level: 'fresh', sessionMin, suggestion: '' };
+  }
+
+  /**
+   * Get encounter scaling for a specific adventure.
+   * @param {string} adventure — 'dracula'|'frankenstein'|'holmes'
+   * @returns {object} scaling preset
+   */
+  getEncounterScaling(adventure) {
+    return ENCOUNTER_SCALING[adventure] || ENCOUNTER_SCALING.default;
+  }
   serialize() {
     return {
       combatHistory: this.combatHistory,
       consecutiveWins: this.consecutiveWins,
       consecutiveLosses: this.consecutiveLosses,
       totalCombats: this.totalCombats,
-      playerActions: this.playerActions
+      playerActions: this.playerActions,
+      deathCount: this.deathCount,
+      sessionStartTime: this.sessionStartTime
     };
   }
 
@@ -356,6 +466,8 @@ class DynamicDifficulty {
       dd.consecutiveLosses = data.consecutiveLosses || 0;
       dd.totalCombats = data.totalCombats || 0;
       dd.playerActions = data.playerActions || [];
+      dd.deathCount = data.deathCount || 0;
+      dd.sessionStartTime = data.sessionStartTime || Date.now();
     }
     return dd;
   }
