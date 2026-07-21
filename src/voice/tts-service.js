@@ -989,9 +989,207 @@ function buildSSML(text, params = {}) {
   return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${language}">${inner}</speak>`;
 }
 
+// ─── TTS Error Recovery ──────────────────────────────────────────────────────
+
+/**
+ * Failure logger for TTS generation errors.
+ * Tracks failures with context for debugging and circuit breaker decisions.
+ */
+class TTSFailureLogger {
+  constructor(maxEntries = 100) {
+    this._failures = [];
+    this._maxEntries = maxEntries;
+  }
+
+  log(ctx) {
+    const entry = {
+      timestamp: Date.now(),
+      provider: ctx.provider,
+      error: ctx.error.message,
+      attempt: ctx.attempt,
+      textPreview: (ctx.text || '').slice(0, 120),
+    };
+    this._failures.push(entry);
+    if (this._failures.length > this._maxEntries) {
+      this._failures = this._failures.slice(-this._maxEntries);
+    }
+    console.warn(
+      `[TTSRecovery] ${ctx.provider} failed (attempt ${ctx.attempt}): ${ctx.error.message}`
+    );
+  }
+
+  getRecent(limit = 20) { return this._failures.slice(-limit); }
+  getCounts() {
+    const counts = {};
+    for (const f of this._failures) counts[f.provider] = (counts[f.provider] || 0) + 1;
+    return counts;
+  }
+  clear() { this._failures = []; }
+}
+
+/**
+ * Create a TTS service wrapped with error recovery.
+ * Adds retry with exponential backoff, provider fallback chain,
+ * circuit breaker protection, and structured failure logging.
+ *
+ * @param {Object} config — Same config passed to createTTSService
+ * @param {Object} [opts] — Error recovery options
+ * @param {number} [opts.maxRetries] — Max retries per provider (default 2)
+ * @param {number} [opts.baseDelayMs] — Base delay for backoff (default 1000)
+ * @param {number} [opts.maxDelayMs] — Max delay cap (default 10000)
+ * @param {string[]} [opts.fallbackChain] — Provider fallback order (default: primary, mock)
+ * @param {number} [opts.cbThreshold] — Circuit breaker failure threshold (default 3)
+ * @param {number} [opts.cbWindowMs] — Circuit breaker window in ms (default 60000)
+ * @returns {Object} Wrapped TTS service with error recovery
+ */
+function createTTSWithRecovery(config = {}, opts = {}) {
+  const maxRetries = opts.maxRetries !== undefined ? opts.maxRetries : 2;
+  const baseDelayMs = opts.baseDelayMs || 1000;
+  const maxDelayMs = opts.maxDelayMs || 10000;
+  const cbThreshold = opts.cbThreshold || 3;
+  const cbWindowMs = opts.cbWindowMs || 60000;
+
+  const failureLogger = new TTSFailureLogger();
+  const circuitBreaker = new CircuitBreaker({ threshold: cbThreshold, windowMs: cbWindowMs });
+
+  // Build the provider chain: [primary, fallback1, ..., mock]
+  const primaryProvider = config.provider || detectProvider();
+  const fallbackChain = opts.fallbackChain || [primaryProvider, 'mock'];
+  // Dedupe while preserving order, always end with mock
+  const seen = new Set();
+  const uniqueChain = [];
+  for (const p of fallbackChain) {
+    if (!seen.has(p)) { seen.add(p); uniqueChain.push(p); }
+  }
+  if (!seen.has('mock')) uniqueChain.push('mock');
+
+  /**
+   * Try a single provider with retry + exponential backoff.
+   */
+  async function tryWithRetry(svc, text, options, providerName) {
+    let lastErr;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const result = await svc.generate(text, options);
+        if (result && result.status === 'error') {
+          throw new Error(result.reason || 'Generation returned error status');
+        }
+        circuitBreaker.recordSuccess();
+        return result;
+      } catch (err) {
+        lastErr = err;
+        if (attempt < maxRetries) {
+          const delay = Math.min(
+            baseDelayMs * Math.pow(2, attempt) + Math.random() * baseDelayMs,
+            maxDelayMs
+          );
+          console.log(
+            `[TTSRecovery] Retrying ${providerName} (attempt ${attempt + 2}/${maxRetries + 1}) ` +
+            `after ${Math.round(delay)}ms: ${err.message}`
+          );
+          await sleep(Math.round(delay));
+        }
+      }
+    }
+    throw lastErr;
+  }
+
+  // Create the primary TTS service
+  const primarySvc = createTTSService(config);
+
+  return {
+    provider: primarySvc.provider,
+    voice: primarySvc.voice,
+    speed: primarySvc.speed,
+    language: primarySvc.language,
+
+    /**
+     * Generate TTS with error recovery.
+     * Tries the primary provider with retries, then falls back through the chain.
+     */
+    async generate(text, options = {}) {
+      if (!text || text.trim().length === 0) {
+        return { taskId: null, status: 'skipped', reason: 'empty text' };
+      }
+
+      // Check circuit breaker for primary
+      if (!circuitBreaker.isClosed) {
+        console.log('[TTSRecovery] Circuit breaker open — skipping to fallback');
+      }
+
+      for (let i = 0; i < uniqueChain.length; i++) {
+        const providerName = uniqueChain[i];
+
+        // Skip the primary if circuit breaker is open (unless it's the last resort)
+        if (i === 0 && !circuitBreaker.isClosed && uniqueChain.length > 1) {
+          console.log(`[TTSRecovery] Circuit breaker open for ${providerName}, trying next`);
+          continue;
+        }
+
+        try {
+          const svcConfig = { ...config, provider: providerName };
+          const svc = createTTSService(svcConfig);
+
+          const result = await tryWithRetry(svc, text, options, providerName);
+
+          if (i > 0) {
+            failureLogger.log({
+              provider: `Fallback to ${providerName} (primary failed)`,
+              error: new Error('Used fallback provider'),
+              attempt: 0,
+              text,
+            });
+          }
+
+          return result;
+        } catch (err) {
+          failureLogger.log({
+            provider: providerName,
+            error: err,
+            attempt: maxRetries + 1,
+            text,
+          });
+          circuitBreaker.recordFailure();
+
+          if (i < uniqueChain.length - 1) {
+            console.log(`[TTSRecovery] ${providerName} exhausted — trying next in chain`);
+          }
+        }
+      }
+
+      return {
+        taskId: null,
+        status: 'error',
+        reason: 'All TTS providers in fallback chain exhausted',
+      };
+    },
+
+    async getAudio(taskId) {
+      return primarySvc.getAudio(taskId);
+    },
+
+    isReady() { return primarySvc.isReady(); },
+
+    get failureLogger() { return failureLogger; },
+    get circuitBreaker() { return circuitBreaker; },
+    getRecoveryStats() {
+      return {
+        failures: failureLogger.getCounts(),
+        recentFailures: failureLogger.getRecent(10),
+        circuitBreaker: {
+          state: circuitBreaker.state,
+          failureCount: circuitBreaker.failureCount,
+        },
+        fallbackChain: uniqueChain,
+      };
+    },
+  };
+}
+
 module.exports = {
   // Core
   createTTSService,
+  createTTSWithRecovery,
   getCachedAudio,
   cleanupCache,
   detectProvider,
@@ -1000,6 +1198,8 @@ module.exports = {
   buildSSML,
   // Circuit Breaker
   CircuitBreaker,
+  // Error Recovery
+  TTSFailureLogger,
   // Voice Profiles
   VOICE_PROFILES,
   getVoiceProfile,
