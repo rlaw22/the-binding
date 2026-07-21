@@ -34,7 +34,9 @@ const STATIC_ASSETS = [
   '/index.html',
   '/create.html',
   '/manifest.json',
-  '/offline.html'
+  '/offline.html',
+  '/dice-box-threejs.umd.js',
+  '/dice-roller.js'
 ];
 
 // Adventure manifest files to pre-cache for offline play
@@ -171,7 +173,9 @@ self.addEventListener('install', (event) => {
 
       // Cache offline page in its own cache
       caches.open(OFFLINE_CACHE).then((cache) => {
-        return cache.add('/offline.html');
+        return cache.add('/offline.html',
+  '/dice-box-threejs.umd.js',
+  '/dice-roller.js');
       })
     ]).then(() => {
       console.log('[SW] Install complete — all caches populated');
@@ -317,7 +321,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 4) Dice sounds: cache-first with runtime population
-  if (url.pathname.startsWith('/docs/assets/dice-box/sounds/')) {
+  if (url.pathname.startsWith('/assets/dice-box/sounds/') || url.pathname.startsWith('/docs/assets/dice-box/sounds/')) {
     event.respondWith(
       caches.open(SOUNDS_CACHE).then((cache) => {
         return cache.match(event.request).then((cached) => {
@@ -407,7 +411,9 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => {
           return caches.match(event.request).then((cached) => {
-            return cached || caches.match('/offline.html');
+            return cached || caches.match('/offline.html',
+  '/dice-box-threejs.umd.js',
+  '/dice-roller.js');
           });
         })
     );
