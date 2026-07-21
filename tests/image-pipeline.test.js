@@ -63,7 +63,8 @@ const { createImageService, generateAndCache, clearImageCache } = require('../sr
   const svc = createImageService({ cacheDir: path.join(TEST_DIR, 'mock-test') });
   const url = await svc.generateRaw('A dark castle at midnight');
   assert(url !== null, 'generateRaw returns non-null');
-  assert(url.startsWith('data:image/png;base64,'), 'Returns a PNG data URI');
+  assert(url.startsWith('data:image/'), 'Returns an image data URI');
+  assert(url.includes('base64,'), 'Data URI is base64 encoded');
   assert(url.length > 50, 'Data URI has reasonable length');
 
   // Scene generation
@@ -73,7 +74,8 @@ const { createImageService, generateAndCache, clearImageCache } = require('../sr
     mood: 'dread',
   });
   assert(sceneUrl !== null, 'generateScene returns non-null');
-  assert(sceneUrl.startsWith('data:image/png;base64,'), 'Scene returns PNG data URI');
+  assert(sceneUrl.startsWith('data:image/'), 'Scene returns image data URI');
+  assert(sceneUrl.includes('base64,'), 'Scene data URI is base64 encoded');
 
   // Character generation
   const charUrl = await svc.generateCharacter({

@@ -82,10 +82,55 @@ function postJSON(urlStr, body, headers = {}) {
  * Uses a tiny valid 1x1 red PNG as a data URI.
  */
 async function generateWithMock(prompt, config) {
-  // 1x1 red PNG (smallest valid PNG)
-  // 1x1 red PNG as data URI — persistent-store handles data: URIs natively
-    const placeholder = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
-  console.log('  🖼️  [MOCK] Generating placeholder for: ' + (prompt || '').slice(0, 80) + '...');
+  // Generate an adventure-themed SVG placeholder based on prompt content
+  const p = (prompt || '').toLowerCase();
+
+  // Detect adventure type and mood from prompt
+  let bg = '#1a1028'; let accent = '#8b0000'; let icon = '🕯️'; let border = '#3d2b5a';
+  if (p.includes('dracula') || p.includes('vampire') || p.includes('castle') || p.includes('crypt')) {
+    bg = '#0d0a1a'; accent = '#8b0000'; icon = '🦇'; border = '#4a1a2e';
+  } else if (p.includes('frankenstein') || p.includes('laboratory') || p.includes('creature') || p.includes('alpine')) {
+    bg = '#0f1a0f'; accent = '#2d5a2d'; icon = '⚡'; border = '#2a3d2a';
+  } else if (p.includes('holmes') || p.includes('baker') || p.includes('moor') || p.includes('baskerville') || p.includes('hound')) {
+    bg = '#1a1a1a'; accent = '#4a4a4a'; icon = '🔍'; border = '#3a3a3a';
+  } else if (p.includes('combat') || p.includes('attack') || p.includes('weapon') || p.includes('fight')) {
+    bg = '#1a0a0a'; accent = '#8b0000'; icon = '⚔️'; border = '#5a1a1a';
+  } else if (p.includes('portrait') || p.includes('character')) {
+    bg = '#1a1028'; accent = '#5a3d7a'; icon = '👤'; border = '#3d2b5a';
+  }
+
+  // Extract key text for display (sanitized, truncated)
+  const displayText = (prompt || '')
+    .replace(/A dark gothic literary illustration[^.]*\.\s*/i, '')
+    .replace(/Dramatic chiaroscuro[^.]*\.\s*/i, '')
+    .replace(/Inspired by[^.]*\.\s*/i, '')
+    .replace(/Muted palette[^.]*\.\s*/i, '')
+    .replace(/Heavy cross-hatching[^.]*\.\s*/i, '')
+    .replace(/No modern elements[^.]*\.\s*/i, '')
+    .replace(/The overall mood[^.]*\.\s*/i, '')
+    .replace(/Painterly brush[^.]*\.\s*/i, '')
+    .trim()
+    .slice(0, 120);
+
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384" viewBox="0 0 512 384">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="${accent}" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="${bg}" stop-opacity="1"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="384" fill="${bg}"/>
+  <rect x="2" y="2" width="508" height="380" fill="none" stroke="${border}" stroke-width="2" rx="4"/>
+  <rect x="8" y="8" width="496" height="368" fill="url(#glow)"/>
+  <text x="256" y="160" text-anchor="middle" font-size="64" fill="${accent}" opacity="0.3">${icon}</text>
+  <text x="256" y="220" text-anchor="middle" font-family="Georgia, serif" font-size="14" fill="#a89cc8" opacity="0.7">${displayText.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}</text>
+  <text x="256" y="250" text-anchor="middle" font-family="Georgia, serif" font-size="11" fill="#6a5f82" opacity="0.5">[Placeholder — awaiting API key]</text>
+  <line x1="40" y1="340" x2="472" y2="340" stroke="${border}" stroke-width="1" opacity="0.3"/>
+  <text x="256" y="365" text-anchor="middle" font-family="Georgia, serif" font-size="10" fill="#5a4f72" opacity="0.4">THE BINDING</text>
+</svg>`;
+
+  const placeholder = 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+  console.log('  🖼️  [MOCK] Generated themed placeholder for: ' + (prompt || '').slice(0, 80) + '...');
   return placeholder;
 }
 
