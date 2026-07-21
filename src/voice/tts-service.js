@@ -333,7 +333,7 @@ async function generateNovita(text, voice, speed, language) {
   throw new Error(`Novita TTS error: ${result}`);
 }
 
-async function pollNovitaTask(taskId, maxAttempts = 15, intervalMs = 2000) {
+async function pollNovitaTask(taskId, maxAttempts = 25, intervalMs = 2500) {
   const apiKey = process.env.NOVITA_API_KEY;
 
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
