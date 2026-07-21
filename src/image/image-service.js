@@ -268,6 +268,101 @@ class ImageCache {
 }
 
 // ---------------------------------------------------------------------------
+// Session-level rate limiter
+// ---------------------------------------------------------------------------
+
+/**
+ * Rate limiter for image generation per session.
+ * Limits to maxImages per windowMs (default: 3 images per 5 minutes).
+ */
+class SessionRateLimiter {
+  constructor(maxImages = 3, windowMs = 5 * 60 * 1000) {
+    this._max = maxImages;
+    this._window = windowMs;
+    this._sessions = new Map(); // sessionId → { timestamps: [] }
+  }
+
+  /**
+   * Check if a session can generate an image.
+   * @param {string} sessionId
+   * @returns {boolean} true if allowed, false if rate limited
+   */
+  canGenerate(sessionId) {
+    if (!sessionId) return true; // No session = no rate limiting
+
+    const now = Date.now();
+    const session = this._sessions.get(sessionId);
+    if (!session) return true;
+
+    // Clean up old timestamps outside the window
+    session.timestamps = session.timestamps.filter(t => now - t < this._window);
+    this._sessions.set(sessionId, session);
+
+    return session.timestamps.length < this._max;
+  }
+
+  /**
+   * Record an image generation for a session.
+   * @param {string} sessionId
+   */
+  recordGeneration(sessionId) {
+    if (!sessionId) return;
+
+    const now = Date.now();
+    let session = this._sessions.get(sessionId);
+    if (!session) {
+      session = { timestamps: [] };
+      this._sessions.set(sessionId, session);
+    }
+
+    // Clean up old timestamps
+    session.timestamps = session.timestamps.filter(t => now - t < this._window);
+    session.timestamps.push(now);
+  }
+
+  /**
+   * Get remaining generations for a session.
+   * @param {string} sessionId
+   * @returns {number}
+   */
+  getRemaining(sessionId) {
+    if (!sessionId) return this._max;
+
+    const now = Date.now();
+    const session = this._sessions.get(sessionId);
+    if (!session) return this._max;
+
+    session.timestamps = session.timestamps.filter(t => now - t < this._window);
+    return Math.max(0, this._max - session.timestamps.length);
+  }
+
+  /**
+   * Clear rate limit state for a session.
+   * @param {string} sessionId
+   */
+  clearSession(sessionId) {
+    this._sessions.delete(sessionId);
+  }
+
+  /**
+   * Get stats for all sessions.
+   */
+  stats() {
+    const now = Date.now();
+    const sessions = {};
+    for (const [sessionId, session] of this._sessions) {
+      session.timestamps = session.timestamps.filter(t => now - t < this._window);
+      sessions[sessionId] = {
+        used: session.timestamps.length,
+        remaining: Math.max(0, this._max - session.timestamps.length),
+        windowMs: this._window,
+      };
+    }
+    return { maxPerWindow: this._max, windowMs: this._window, sessions };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Image Service
 // ---------------------------------------------------------------------------
 
@@ -278,6 +373,8 @@ class ImageCache {
  * @param {object} [opts.provider]  - Override auto-detected provider
  * @param {number} [opts.cacheSize] - Max cached images (default 100)
  * @param {boolean} [opts.enabled]  - Force enable/disable (default: auto-detect)
+ * @param {number} [opts.rateLimitMax] - Max images per session per window (default 3)
+ * @param {number} [opts.rateLimitWindowMs] - Rate limit window in ms (default 5 min)
  * @returns {object} Image service API
  */
 function createImageService(opts = {}) {
@@ -290,6 +387,12 @@ function createImageService(opts = {}) {
     dir: opts.cacheDir || 'data/images',
     max: opts.maxStoredImages || 500,
   });
+
+  // Session-level rate limiter
+  const rateLimiter = new SessionRateLimiter(
+    opts.rateLimitMax || 3,
+    opts.rateLimitWindowMs || 5 * 60 * 1000
+  );
 
   if (!enabled) {
     console.log('  🖼️  Image service: DISABLED (no XAI_API_KEY or OPENAI_API_KEY set)');
@@ -304,6 +407,14 @@ function createImageService(opts = {}) {
   async function generate(prompt, context = {}) {
     if (!enabled || !provider) return null;
     if (!prompt || typeof prompt !== 'string') return null;
+
+    // Check rate limit if sessionId provided
+    if (context.sessionId && !rateLimiter.canGenerate(context.sessionId)) {
+      console.log(`  🖼️  Rate limited: session ${context.sessionId} exceeded ${rateLimiter._max} images per ${rateLimiter._window / 1000}s`);
+      // Return cached version if available, otherwise null
+      const cached = cache.get(prompt);
+      return cached !== undefined ? cached : null;
+    }
 
     // In-memory LRU cache (fast path)
     const cached = cache.get(prompt);
@@ -322,6 +433,11 @@ function createImageService(opts = {}) {
     try {
       const remoteUrl = await provider.generate(prompt, provider);
       if (!remoteUrl) return null;
+
+      // Record generation for rate limiting
+      if (context.sessionId) {
+        rateLimiter.recordGeneration(context.sessionId);
+      }
 
       // Data URIs (mock provider) are self-contained — cache in memory only
       if (remoteUrl.startsWith('data:')) {
@@ -595,4 +711,5 @@ module.exports = {
   ImageCacheStore,
   IMAGE_CACHE_TTL_MS,
   IMAGE_CACHE_MAX,
+  SessionRateLimiter,
 };

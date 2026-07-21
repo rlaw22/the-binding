@@ -709,6 +709,52 @@ function useItemFromInventory(inventory, itemId) {
 }
 
 /**
+ * Use a consumable from the inventory bag (not equipped) by item name or ID.
+ * Finds the first matching consumable in bag slots, applies its effect,
+ * decrements uses, and removes it when exhausted.
+ * Skips equipped items — only uses items sitting in the bag.
+ *
+ * @param {object} inventory
+ * @param {string} itemName — item ID or display name
+ * @returns {{ success: boolean, item?: object, effect?: object, consumed?: boolean, remainingUses?: number, reason?: string }}
+ */
+function useInventoryItem(inventory, itemName) {
+  if (!inventory || !itemName) return { success: false, reason: 'Invalid arguments' };
+
+  // Normalize: accept either item ID or display name
+  const byId = ITEMS[itemName];
+  const itemId = byId ? itemName : null;
+  const byName = itemId ? null : Object.values(ITEMS).find(t => t.name.toLowerCase() === itemName.toLowerCase());
+  const template = byId || byName;
+  const resolvedId = itemId || (byName ? byName.id : null);
+
+  if (!template) return { success: false, reason: `Unknown item: ${itemName}` };
+  if (!template.consumable) return { success: false, reason: `${template.name} is not consumable` };
+
+  // Find in bag slots (not equipped)
+  const slot = inventory.slots.find(s => s.id === resolvedId);
+  if (!slot) return { success: false, reason: `${template.name} not found in inventory bag` };
+  if (slot.remainingUses != null && slot.remainingUses <= 0) {
+    return { success: false, reason: `${template.name} has no uses remaining` };
+  }
+
+  const effect = template.combatEffect || null;
+
+  if (slot.remainingUses != null) {
+    slot.remainingUses--;
+    if (slot.remainingUses <= 0) {
+      inventory.slots = inventory.slots.filter(s => s !== slot);
+      return { success: true, item: template, effect, consumed: true, remainingUses: 0 };
+    }
+    return { success: true, item: template, effect, consumed: false, remainingUses: slot.remainingUses };
+  }
+
+  // No tracked uses — treat as single-use and remove
+  inventory.slots = inventory.slots.filter(s => s !== slot);
+  return { success: true, item: template, effect, consumed: true, remainingUses: 0 };
+}
+
+/**
  * Remove an item from inventory.
  */
 function removeItem(inventory, itemId) {
@@ -1366,6 +1412,7 @@ module.exports = {
   getEquipped,
   getEquippedEffects,
   useEquippedConsumable,
+  useInventoryItem,
   getInventoryContext,
   getShoppeCatalog,
   buyItem,

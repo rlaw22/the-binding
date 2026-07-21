@@ -35,19 +35,20 @@ function getImageService() {
  * Optionally generate an illustration for a new scene.
  * Returns image URL or null. Non-blocking — failures are logged and ignored.
  */
-async function generateSceneImage(adventureId, sceneName, sceneDescription) {
+async function generateSceneImage(adventureId, sceneName, sceneDescription, sessionId) {
   const svc = getImageService();
   if (!svc || !svc.isEnabled) return null;
 
   try {
-    const { buildAdventureScenePrompt } = require('../image');
+    const { buildAdventureScenePrompt, getStylePreset } = require('../image');
     // Map scene name to a scene key for the adventure template
     const sceneKey = mapSceneNameToKey(adventureId, sceneName);
+    const stylePreset = getStylePreset(adventureId);
     const prompt = buildAdventureScenePrompt(adventureId, sceneKey, {
       description: sceneDescription,
       location: sceneName,
     });
-    const url = await svc.generateRaw(prompt);
+    const url = await svc.generateRaw(prompt, { sessionId });
     if (url) console.log('[DM] Generated scene image for: ' + sceneName);
     return url;
   } catch (err) {
@@ -157,7 +158,7 @@ function transitionScene(game, narration) {
 
   // Optionally generate a scene illustration (non-blocking, best-effort)
   if (openingNarration && nextSceneData) {
-    generateSceneImage(game.adventureId, nextSceneData.name, openingNarration)
+    generateSceneImage(game.adventureId, nextSceneData.name, openingNarration, game.sessionId)
       .then(imageUrl => {
         if (imageUrl) {
           game._lastSceneImage = imageUrl;

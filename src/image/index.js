@@ -61,6 +61,7 @@ const {
   buildCombatPrompt,
   buildAdventureScenePrompt,
   buildAdventureCharacterPrompt,
+  getStylePreset,
   ADVENTURE_TEMPLATES,
   _sanitise,
   _moodDirection,
@@ -81,6 +82,7 @@ module.exports = {
   buildCombatPrompt,
   buildAdventureScenePrompt,
   buildAdventureCharacterPrompt,
+  getStylePreset,
   ADVENTURE_TEMPLATES,
   // Prompt internals (for testing)
   _sanitise,

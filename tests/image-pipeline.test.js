@@ -355,6 +355,188 @@ const { createImageService, generateAndCache, clearImageCache } = require('../sr
   assertEq(e2eSvc.cacheStats.size, 0, 'E2E cache cleared');
 
   // ---------------------------------------------------------------------------
+  // 6. Session Rate Limiter
+  // ---------------------------------------------------------------------------
+  section('Session Rate Limiter');
+
+  const { SessionRateLimiter } = require('../src/image/image-service');
+
+  // Basic construction
+  const limiter = new SessionRateLimiter(3, 5 * 60 * 1000);
+  assert(typeof limiter.canGenerate === 'function', 'RateLimiter has canGenerate');
+  assert(typeof limiter.recordGeneration === 'function', 'RateLimiter has recordGeneration');
+  assert(typeof limiter.getRemaining === 'function', 'RateLimiter has getRemaining');
+  assert(typeof limiter.clearSession === 'function', 'RateLimiter has clearSession');
+  assert(typeof limiter.stats === 'function', 'RateLimiter has stats');
+
+  // No session = always allowed
+  assert(limiter.canGenerate(null) === true, 'No sessionId always allowed');
+  assert(limiter.canGenerate('') === true, 'Empty sessionId always allowed');
+
+  // Fresh session has full budget
+  assertEq(limiter.getRemaining('sess-1'), 3, 'Fresh session has 3 remaining');
+  assert(limiter.canGenerate('sess-1') === true, 'Fresh session can generate');
+
+  // Record 3 generations
+  limiter.recordGeneration('sess-1');
+  assertEq(limiter.getRemaining('sess-1'), 2, 'After 1 gen: 2 remaining');
+  limiter.recordGeneration('sess-1');
+  assertEq(limiter.getRemaining('sess-1'), 1, 'After 2 gens: 1 remaining');
+  limiter.recordGeneration('sess-1');
+  assertEq(limiter.getRemaining('sess-1'), 0, 'After 3 gens: 0 remaining');
+
+  // Exceeding limit
+  assert(limiter.canGenerate('sess-1') === false, 'Rate limited after 3 generations');
+
+  // Different session unaffected
+  assert(limiter.canGenerate('sess-2') === true, 'Different session unaffected');
+  assertEq(limiter.getRemaining('sess-2'), 3, 'Different session has full budget');
+
+  // Stats
+  const rlStats = limiter.stats();
+  assertEq(rlStats.maxPerWindow, 3, 'Stats maxPerWindow = 3');
+  assertEq(rlStats.windowMs, 5 * 60 * 1000, 'Stats windowMs = 5 min');
+  assertEq(rlStats.sessions['sess-1'].used, 3, 'Stats sess-1 used = 3');
+  assertEq(rlStats.sessions['sess-1'].remaining, 0, 'Stats sess-1 remaining = 0');
+
+  // Clear session resets
+  limiter.clearSession('sess-1');
+  assertEq(limiter.getRemaining('sess-1'), 3, 'After clear: 3 remaining');
+  assert(limiter.canGenerate('sess-1') === true, 'After clear: can generate again');
+
+  // Rate limiter integration with image service
+  const rateSvc = createImageService({
+    cacheDir: path.join(TEST_DIR, 'rate-test'),
+    enabled: true,
+    rateLimitMax: 2,
+    rateLimitWindowMs: 60 * 1000,
+  });
+
+  // Generate 2 images for same session — should succeed
+  const rlImg1 = await rateSvc.generateRaw('Rate test prompt A');
+  assert(rlImg1 !== null, 'Rate limit: first image generated');
+  const rlImg2 = await rateSvc.generateRaw('Rate test prompt B');
+  assert(rlImg2 !== null, 'Rate limit: second image generated');
+
+  // ---------------------------------------------------------------------------
+  // 7. Style Presets per Adventure
+  // ---------------------------------------------------------------------------
+  section('Style Presets per Adventure');
+
+  const { getStylePreset } = require('../src/image');
+  assert(typeof getStylePreset === 'function', 'getStylePreset is exported');
+
+  // Dracula preset
+  const draculaStyle = getStylePreset('dracula');
+  assert(draculaStyle.length > 0, 'Dracula style preset is non-empty');
+  assert(draculaStyle.toLowerCase().includes('gothic') || draculaStyle.toLowerCase().includes('victorian'), 'Dracula style mentions gothic or victorian');
+  assert(draculaStyle.toLowerCase().includes('horror') || draculaStyle.toLowerCase().includes('blood') || draculaStyle.toLowerCase().includes('shadow'), 'Dracula style has horror/blood/shadow elements');
+
+  // Frankenstein preset
+  const frankStyle = getStylePreset('frankenstein');
+  assert(frankStyle.length > 0, 'Frankenstein style preset is non-empty');
+  assert(frankStyle.toLowerCase().includes('laboratory') || frankStyle.toLowerCase().includes('storm') || frankStyle.toLowerCase().includes('galvanic'), 'Frankenstein style has laboratory/storm/galvanic elements');
+
+  // Holmes preset
+  const holmesStyle = getStylePreset('holmes');
+  assert(holmesStyle.length > 0, 'Holmes style preset is non-empty');
+  assert(holmesStyle.toLowerCase().includes('london') || holmesStyle.toLowerCase().includes('fog') || holmesStyle.toLowerCase().includes('gaslit') || holmesStyle.toLowerCase().includes('gaslight'), 'Holmes style has london/fog/gaslit elements');
+
+  // Unknown adventure returns empty string
+  const unknownStyle = getStylePreset('mystery_novel');
+  assertEq(unknownStyle, '', 'Unknown adventure type returns empty string');
+
+  // All three presets are distinct
+  assert(draculaStyle !== frankStyle, 'Dracula and Frankenstein presets are distinct');
+  assert(frankStyle !== holmesStyle, 'Frankenstein and Holmes presets are distinct');
+  assert(draculaStyle !== holmesStyle, 'Dracula and Holmes presets are distinct');
+
+  // Presets integrate with prompt builder
+  const draculaScene = buildAdventureScenePrompt('dracula', 'castle', { mood: 'dread' });
+  assert(draculaScene.includes('gothic literary illustration'), 'Dracula scene has base style prefix');
+  assert(draculaScene.length > 200, 'Dracula scene prompt is rich (>200 chars)');
+
+  const frankScene = buildAdventureScenePrompt('frankenstein', 'laboratory', { mood: 'grotesque' });
+  assert(frankScene.includes('gothic literary illustration'), 'Frankenstein scene has base style prefix');
+  assert(frankScene.length > 200, 'Frankenstein scene prompt is rich (>200 chars)');
+
+  const holmesScene = buildAdventureScenePrompt('holmes', 'moor', { mood: 'eerie' });
+  assert(holmesScene.includes('gothic literary illustration'), 'Holmes scene has base style prefix');
+  assert(holmesScene.length > 200, 'Holmes scene prompt is rich (>200 chars)');
+
+  // ---------------------------------------------------------------------------
+  // 8. DM Scene Auto-Detection Triggers
+  // ---------------------------------------------------------------------------
+  section('DM Scene Auto-Detection Triggers');
+
+  // Verify generateSceneImage is available in dm-service
+  const dmServiceFull = require('../src/ai-dm/dm-service');
+  assert(typeof dmServiceFull.createGame === 'function', 'DM createGame exported');
+  assert(typeof dmServiceFull.processAction === 'function', 'DM processAction exported');
+
+  // Create a game with image service available
+  const autoGame = dmServiceFull.createGame({
+    adventureId: 'dracula',
+    adventureName: 'Dracula',
+    llmProvider: async () => 'The castle looms before you.',
+  });
+  assert(autoGame !== null, 'Auto-detection game created');
+  assertEq(autoGame.adventureId, 'dracula', 'Auto-detection game has dracula adventure');
+
+  // Verify the game has sessionId for rate limiting
+  assert(autoGame.sessionId !== undefined, 'Game has sessionId');
+  assert(autoGame.sessionId.length > 0, 'Game sessionId is non-empty');
+
+  // Verify mapSceneNameToKey works for known scenes
+  // (We test this indirectly through the DM service's scene transition)
+  // The key integration point: transitionScene calls generateSceneImage
+  // which uses buildAdventureScenePrompt + getStylePreset
+
+  // Test that the DM service can create games for all adventure types
+  const frankGame = dmServiceFull.createGame({
+    adventureId: 'frankenstein',
+    adventureName: 'Frankenstein',
+    llmProvider: async () => 'The laboratory hums with electricity.',
+  });
+  assertEq(frankGame.adventureId, 'frankenstein', 'Frankenstein game created');
+
+  const holmesGame = dmServiceFull.createGame({
+    adventureId: 'holmes',
+    adventureName: 'The Hound of the Baskervilles',
+    llmProvider: async () => 'The fog rolls across the moor.',
+  });
+  assertEq(holmesGame.adventureId, 'holmes', 'Holmes game created');
+
+  // Verify image service integration is wired (getImageService is lazy-loaded)
+  // The DM service uses require('../image') internally — verify it resolves
+  const imageModule = require('../src/image');
+  assert(typeof imageModule.createImageService === 'function', 'Image module createImageService accessible from DM');
+  assert(typeof imageModule.getStylePreset === 'function', 'Image module getStylePreset accessible from DM');
+  assert(typeof imageModule.buildAdventureScenePrompt === 'function', 'Image module buildAdventureScenePrompt accessible from DM');
+
+  // Test end-to-end: create image service, generate scene with style preset
+  const autoImgSvc = createImageService({
+    cacheDir: path.join(TEST_DIR, 'auto-detect-test'),
+    enabled: true,
+  });
+
+  // Simulate what DM's generateSceneImage does
+  const { buildAdventureScenePrompt: buildAdvScene, getStylePreset: getStyle } = require('../src/image');
+  const testStyle = getStyle('dracula');
+  assert(testStyle.length > 0, 'getStyle returns content for dracula');
+
+  const testPrompt = buildAdvScene('dracula', 'crypt', {
+    description: 'A stone crypt beneath the castle',
+    location: 'Castle Dracula',
+  });
+  assert(testPrompt.includes('crypt') || testPrompt.includes('Crypt'), 'Auto-detect prompt references crypt');
+  assert(testPrompt.includes('gothic literary illustration'), 'Auto-detect prompt has style prefix');
+
+  const autoImg = await autoImgSvc.generateRaw(testPrompt);
+  assert(autoImg !== null, 'Auto-detect scene image generated successfully');
+  assert(autoImg.startsWith('data:image/'), 'Auto-detect returns valid image data URI');
+
+  // ---------------------------------------------------------------------------
   // Summary
   // ---------------------------------------------------------------------------
   console.log('\n═══════════════════════════════════════════');

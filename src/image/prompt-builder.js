@@ -298,12 +298,42 @@ function buildAdventureCharacterPrompt(adventureId, characterKey, extra = {}) {
   });
 }
 
+// ---------------------------------------------------------------------------
+// Adventure-specific style presets
+// ---------------------------------------------------------------------------
+
+/**
+ * Get style preset modifiers for a specific adventure type.
+ * Returns additional style text to append to the base STYLE_PREFIX.
+ *
+ * @param {string} adventureType - 'dracula', 'frankenstein', or 'holmes'
+ * @returns {string} Style modifier text, or empty string for unknown types
+ */
+function getStylePreset(adventureType) {
+  const presets = {
+    dracula: 'Gothic horror aesthetic. Dark Victorian atmosphere with blood-red accents, ' +
+      'heavy shadows from candlelight, stone castle interiors, iron fixtures, ' +
+      'velvet drapes, and religious iconography. Inspired by 1897 Stoker illustrations and Victorian gothic engravings.',
+
+    frankenstein: 'Gothic laboratory aesthetic. Stormy nights with lightning illumination, ' +
+      'galvanic apparatus, copper electrodes, glass retorts, anatomical sketches, ' +
+      'alpine landscapes under turbulent skies. Inspired by 1818 Shelley illustrations and Romantic-era scientific imagery.',
+
+    holmes: 'Gaslit London detective aesthetic. Fog-shrouded streets, warm gaslight glow, ' +
+      'cluttered Baker Street interiors, desolate Dartmoor moors, stone manors, ' +
+      'deerstalker caps and Inverness capes. Inspired by Strand Magazine illustrations and Sidney Paget engravings.',
+  };
+
+  return presets[adventureType] || '';
+}
+
 module.exports = {
   buildScenePrompt,
   buildCharacterPrompt,
   buildCombatPrompt,
   buildAdventureScenePrompt,
   buildAdventureCharacterPrompt,
+  getStylePreset,
   ADVENTURE_TEMPLATES,
   // Expose for testing
   _sanitise: sanitise,
