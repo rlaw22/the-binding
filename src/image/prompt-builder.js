@@ -484,12 +484,76 @@ function buildDetailedCombatPrompt(ctx = {}) {
   return parts.join(' ');
 }
 
+/**
+ * Build an image prompt for a scene background — an atmospheric location
+ * backdrop without characters. Suitable for location cards, map screens,
+ * or ambient scene-setting imagery.
+ *
+ * @param {object} ctx
+ * @param {string} [ctx.location]    - Location name
+ * @param {string} [ctx.description] - Description of the environment
+ * @param {string} [ctx.timeOfDay]   - Time of day (dawn, dusk, midnight, noon…)
+ * @param {string} [ctx.weather]     - Weather condition (fog, rain, storm, clear…)
+ * @param {string} [ctx.mood]        - Mood tag
+ * @param {string[]} [ctx.details]   - Extra visual details
+ * @returns {string} Full prompt string
+ */
+function buildSceneBackgroundPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  if (ctx.location) {
+    parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  }
+
+  parts.push(sanitise(ctx.description) || 'An atmospheric landscape or interior.');
+
+  if (ctx.timeOfDay) {
+    const timeMap = {
+      dawn:    'The first pale light of dawn creeps across the horizon.',
+      morning: 'Weak morning light filters through clouds.',
+      noon:    'Harsh overhead light casting sharp shadows.',
+      dusk:    'The dying light of dusk paints everything in amber and violet.',
+      evening: 'Deep twilight, the last traces of color fading from the sky.',
+      midnight: 'Total darkness broken only by moonlight or artificial light.',
+      night:   'Deep night — stars and moonlight provide the only illumination.',
+    };
+    const tod = (ctx.timeOfDay || '').toLowerCase();
+    if (timeMap[tod]) parts.push(timeMap[tod]);
+  }
+
+  if (ctx.weather) {
+    const weatherMap = {
+      fog:    'Thick fog obscures distant details, creating layers of mystery.',
+      rain:   'Rain streaks across the scene, surfaces glistening and dark.',
+      storm:  'A violent storm — lightning flashes, wind-whipped rain, dramatic clouds.',
+      snow:   'A blanket of snow muffles everything, the world reduced to white and grey.',
+      clear:  'Unusually clear visibility, every detail sharp and present.',
+      overcast: 'Heavy overcast sky pressing down, diffusing all light.',
+    };
+    const w = (ctx.weather || '').toLowerCase();
+    if (weatherMap[w]) parts.push(weatherMap[w]);
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  if (ctx.details && ctx.details.length) {
+    parts.push('Additional details: ' + ctx.details.map(sanitise).filter(Boolean).join(', ') + '.');
+  }
+
+  parts.push('Empty of figures — the environment itself is the subject. Wide composition showing depth and atmosphere.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
 module.exports = {
   buildScenePrompt,
   buildCharacterPrompt,
   buildCombatPrompt,
   buildNPCPortraitPrompt,
   buildItemPrompt,
+  buildSceneBackgroundPrompt,
   buildDetailedCombatPrompt,
   buildAdventureScenePrompt,
   buildAdventureCharacterPrompt,

@@ -52,7 +52,7 @@ assert(fs.existsSync(swPath), 'sw.js exists');
 const swContent = fs.readFileSync(swPath, 'utf8');
 
 // Version-based cache busting
-assert(swContent.includes("CACHE_VERSION = 'v5'"), 'SW uses cache version v5');
+assert(swContent.includes("CACHE_VERSION = 'v6'"), 'SW uses cache version v5');
 assert(swContent.includes('the-binding-${CACHE_VERSION}'), 'SW uses versioned cache names');
 
 // Pre-cached static assets include key pages

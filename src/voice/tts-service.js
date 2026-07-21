@@ -18,6 +18,357 @@ const http = require('http');
 const audioCache = new Map();
 const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
+// ─── Circuit Breaker ────────────────────────────────────────────────────────
+
+/**
+ * Circuit breaker pattern for TTS providers.
+ * If a provider fails `threshold` times within `windowMs`, the circuit opens
+ * and all requests auto-failover to mock for the remainder of the window.
+ * After the window expires, the circuit resets (half-open → closed).
+ *
+ * States:
+ *   closed  — normal operation, requests go to the real provider
+ *   open    — provider is down, all requests go to mock immediately
+ *   half-open — window expired, one probe request allowed through
+ */
+class CircuitBreaker {
+  /**
+   * @param {Object} opts
+   * @param {number} [opts.threshold=3] — failures before opening
+   * @param {number} [opts.windowMs=60000] — rolling window in ms
+   */
+  constructor(opts = {}) {
+    this._threshold = opts.threshold || 3;
+    this._windowMs = opts.windowMs || 60_000;
+    this._failures = [];       // timestamps of recent failures
+    this._state = 'closed';    // 'closed' | 'open' | 'half-open'
+    this._openedAt = 0;        // when the circuit opened
+  }
+
+  /** Current state string. */
+  get state() { return this._state; }
+
+  /** Number of failures in the current window. */
+  get failureCount() { return this._pruneFailures(); }
+
+  /** Is the circuit allowing requests through to the real provider? */
+  get isClosed() { return this._state === 'closed' || this._state === 'half-open'; }
+
+  /**
+   * Record a successful call. Resets failure count and closes the circuit.
+   */
+  recordSuccess() {
+    this._failures = [];
+    this._state = 'closed';
+    this._openedAt = 0;
+  }
+
+  /**
+   * Record a failed call. If threshold is reached within the window, opens the circuit.
+   */
+  recordFailure() {
+    const now = Date.now();
+    this._failures.push(now);
+    this._pruneFailures();
+
+    if (this._failures.length >= this._threshold) {
+      this._state = 'open';
+      this._openedAt = now;
+    }
+  }
+
+  /**
+   * Check whether a request should be allowed through.
+   * Returns true if the request should go to the real provider.
+   */
+  allowRequest() {
+    if (this._state === 'closed') return true;
+
+    if (this._state === 'open') {
+      // Check if the window has expired
+      if (Date.now() - this._openedAt >= this._windowMs) {
+        this._state = 'half-open';
+        return true; // Allow one probe request
+      }
+      return false;
+    }
+
+    // half-open — allow the probe
+    return true;
+  }
+
+  /**
+   * Force-reset the breaker to closed state (e.g. for testing).
+   */
+  reset() {
+    this._failures = [];
+    this._state = 'closed';
+    this._openedAt = 0;
+  }
+
+  /**
+   * Prune failures outside the rolling window. Returns current count.
+   * @private
+   */
+  _pruneFailures() {
+    const cutoff = Date.now() - this._windowMs;
+    this._failures = this._failures.filter(t => t > cutoff);
+    return this._failures.length;
+  }
+}
+
+// ─── Voice Profile System ───────────────────────────────────────────────────
+
+/**
+ * Generic NPC voice archetypes for game characters.
+ * These are adventure-agnostic profiles that map character *types*
+ * (villain, merchant, guard, etc.) to voice settings.
+ * Adventure-specific presets in voice-presets.js take priority;
+ * these are the fallback when no adventure preset exists.
+ *
+ * Each profile: { voiceId, pitch, rate, volume, description }
+ */
+const VOICE_PROFILES = {
+  narrator: {
+    voiceId: 'onyx',
+    pitch: '-10%',
+    rate: '90%',
+    volume: 'medium',
+    description: 'Deep, omniscient narrator — measured and atmospheric'
+  },
+  villain: {
+    voiceId: 'nova',
+    pitch: '-20%',
+    rate: '85%',
+    volume: 'soft',
+    description: 'Smooth, menacing antagonist — low and deliberate'
+  },
+  merchant: {
+    voiceId: 'alloy',
+    pitch: '+5%',
+    rate: '105%',
+    volume: 'medium',
+    description: 'Friendly, slightly fast-talking shopkeeper — eager to sell'
+  },
+  innkeeper: {
+    voiceId: 'echo',
+    pitch: '+0%',
+    rate: '90%',
+    volume: 'soft',
+    description: 'Warm, hospitable, slightly worried — knows local gossip'
+  },
+  guard: {
+    voiceId: 'onyx',
+    pitch: '-5%',
+    rate: '100%',
+    volume: 'loud',
+    description: 'Authoritative, clipped, no-nonsense — speaks in short commands'
+  },
+  mysterious_figure: {
+    voiceId: 'fable',
+    pitch: '-15%',
+    rate: '80%',
+    volume: 'soft',
+    description: 'Ethereal, whispering, otherworldly — pauses between phrases'
+  },
+  elder: {
+    voiceId: 'echo',
+    pitch: '-10%',
+    rate: '80%',
+    volume: 'soft',
+    description: 'Wise, slow, deliberate — speaks with ancient authority'
+  },
+  child: {
+    voiceId: 'shimmer',
+    pitch: '+20%',
+    rate: '115%',
+    volume: 'medium',
+    description: 'High-pitched, quick, innocent — curious and excitable'
+  },
+  scholar: {
+    voiceId: 'nova',
+    pitch: '+0%',
+    rate: '95%',
+    volume: 'medium',
+    description: 'Precise, articulate, slightly pedantic — loves big words'
+  },
+  ghost: {
+    voiceId: 'fable',
+    pitch: '-20%',
+    rate: '70%',
+    volume: 'x-soft',
+    description: 'Fading, spectral, barely-there — words dissolve into silence'
+  }
+};
+
+/**
+ * Get a voice profile by archetype name.
+ * @param {string} profileName — e.g. 'villain', 'merchant', 'narrator'
+ * @returns {Object|null} Voice profile or null if not found
+ */
+function getVoiceProfile(profileName) {
+  if (!profileName) return null;
+  return VOICE_PROFILES[profileName.toLowerCase()] || null;
+}
+
+/**
+ * List all available voice profile names.
+ * @returns {string[]}
+ */
+function listVoiceProfiles() {
+  return Object.keys(VOICE_PROFILES);
+}
+
+/**
+ * Resolve voice settings for a character, checking (in order):
+ *   1. Explicit overrides passed in options
+n *   2. Adventure-specific preset (from voice-presets.js)
+ *   3. Generic voice profile (VOICE_PROFILES)
+ *   4. Defaults
+ *
+ * @param {Object} opts
+n * @param {string} [opts.adventureId] — Adventure ID for preset lookup
+ * @param {string} [opts.characterId] — Character ID for preset lookup
+ * @param {string} [opts.profile] — Generic profile name (e.g. 'villain')
+ * @param {Object} [opts.overrides] — Explicit overrides { voiceId, pitch, rate, volume }
+ * @returns {Object} Resolved voice settings { voiceId, pitch, rate, volume }
+ */
+function resolveVoiceSettings(opts = {}) {
+  const { adventureId, characterId, profile, overrides = {} } = opts;
+
+  // Start with defaults
+  let settings = {
+    voiceId: 'nova',
+    pitch: '+0%',
+    rate: '100%',
+    volume: 'medium'
+  };
+
+  // Layer 1: Generic voice profile
+  if (profile) {
+    const prof = getVoiceProfile(profile);
+    if (prof) settings = { ...settings, ...prof };
+  }
+
+  // Layer 2: Adventure-specific preset (takes priority over profile)
+  if (adventureId) {
+    try {
+      const { getVoicePreset } = require('./voice-presets');
+      const preset = getVoicePreset(adventureId, characterId);
+      if (preset) settings = { ...settings, ...preset };
+    } catch (e) { /* voice-presets not available */ }
+  }
+
+  // Layer 3: Explicit overrides (highest priority)
+  if (overrides.voiceId) settings.voiceId = overrides.voiceId;
+  if (overrides.pitch) settings.pitch = overrides.pitch;
+  if (overrides.rate) settings.rate = overrides.rate;
+  if (overrides.volume) settings.volume = overrides.volume;
+
+  return settings;
+}
+
+// ─── SSML Dramatic Helpers ──────────────────────────────────────────────────
+
+/**
+ * SSML helper functions for dramatic text effects.
+ * These produce SSML fragments that can be embedded in text.
+ * All functions return plain text if the input is empty.
+ */
+const ssml = {
+  /**
+   * Insert a dramatic pause.
+   * @param {number} [ms=800] — Pause duration in milliseconds
+   * @returns {string} SSML break tag
+   */
+  pause(ms = 800) {
+    return `<break time="${ms}ms"/>`;
+  },
+
+  /**
+   * Add emphasis to a word or phrase.
+   * @param {string} text — Text to emphasize
+   * @param {string} [level='strong'] — 'strong' | 'moderate' | 'reduced'
+   * @returns {string} SSML emphasis-wrapped text
+   */
+  emphasize(text, level = 'strong') {
+    if (!text) return '';
+    return `<emphasis level="${level}">${text}</emphasis>`;
+  },
+
+  /**
+   * Whisper text — very soft, slow, low volume.
+   * Perfect for spooky moments, secrets, ghosts.
+   * @param {string} text — Text to whisper
+   * @returns {string} SSML prosody-wrapped whisper
+   */
+  whisper(text) {
+    if (!text) return '';
+    return `<prosody rate="slow" volume="x-soft" pitch="low">${text}</prosody>`;
+  },
+
+  /**
+   * Shout or exclaim text — loud, fast, high pitch.
+   * @param {string} text — Text to shout
+   * @returns {string} SSML prosody-wrapped shout
+   */
+  shout(text) {
+    if (!text) return '';
+    return `<prosody rate="fast" volume="x-loud" pitch="high">${text}</prosody>`;
+  },
+
+  /**
+   * Slow, ominous delivery — for dread and tension.
+   * @param {string} text — Text to deliver ominously
+   * @returns {string} SSML prosody-wrapped ominous text
+   */
+  ominous(text) {
+    if (!text) return '';
+    return `<prosody rate="x-slow" volume="soft" pitch="x-low">${text}</prosody>`;
+  },
+
+  /**
+   * Say text as a specific character voice (using prosody).
+   * @param {string} text — Text to speak
+   * @param {Object} voice — Voice settings { pitch, rate, volume }
+   * @returns {string} SSML prosody-wrapped text
+   */
+  asCharacter(text, voice = {}) {
+    if (!text) return '';
+    const attrs = [];
+    if (voice.pitch) attrs.push(`pitch="${voice.pitch}"`);
+    if (voice.rate) attrs.push(`rate="${voice.rate}"`);
+    if (voice.volume) attrs.push(`volume="${voice.volume}"`);
+    if (attrs.length === 0) return text;
+    return `<prosody ${attrs.join(' ')}>${text}</prosody>`;
+  },
+
+  /**
+   * Build a dramatic sequence: text with pauses between sentences.
+   * Splits on sentence boundaries and inserts pauses.
+   * @param {string} text — Full text with sentences
+   * @param {number} [pauseMs=600] — Pause between sentences in ms
+   * @returns {string} SSML with breaks between sentences
+   */
+  dramaticSequence(text, pauseMs = 600) {
+    if (!text) return '';
+    const sentences = text.split(/(?<=[.!?])\s+/);
+    const breakTag = `<break time="${pauseMs}ms"/>`;
+    return sentences.map(s => s.trim()).filter(Boolean).join(` ${breakTag} `);
+  },
+
+  /**
+   * Wrap text in SSML speak tags (convenience).
+   * @param {string} inner — SSML content
+   * @param {string} [lang='en-US'] — Language code
+   * @returns {string} Full SSML document
+   */
+  wrap(inner, lang = 'en-US') {
+    if (!inner) return '';
+    return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${lang}">${inner}</speak>`;
+  }
+};
+
 /**
  * Detect which TTS provider is available based on env vars.
  * Priority: explicit TTS_PROVIDER > Novita > OpenAI > ElevenLabs > mock
@@ -603,11 +954,21 @@ function buildSSML(text, params = {}) {
 }
 
 module.exports = {
+  // Core
   createTTSService,
   getCachedAudio,
   cleanupCache,
   detectProvider,
   generateSilenceWav,
   wrapSSML,
-  buildSSML
+  buildSSML,
+  // Circuit Breaker
+  CircuitBreaker,
+  // Voice Profiles
+  VOICE_PROFILES,
+  getVoiceProfile,
+  listVoiceProfiles,
+  resolveVoiceSettings,
+  // SSML Dramatic Helpers
+  ssml
 };

@@ -22,6 +22,10 @@ const {
   buildScenePrompt,
   buildCharacterPrompt,
   buildCombatPrompt,
+  buildNPCPortraitPrompt,
+  buildItemPrompt,
+  buildSceneBackgroundPrompt,
+  buildDetailedCombatPrompt,
 } = require('./prompt-builder');
 const { createPersistentStore, makeKey: persistentMakeKey } = require('./persistent-store');
 
@@ -286,49 +290,182 @@ async function generateWithReplicate(prompt, config) {
 // Provider detection
 // ---------------------------------------------------------------------------
 
+/**
+ * Build a single provider config object from env vars.
+ * Returns null if the required env var is not set.
+ */
+function _buildProvider(name) {
+  switch (name) {
+    case 'mock':
+      return {
+        name: 'Mock',
+        apiKey: 'mock',
+        baseUrl: '',
+        model: 'mock-v1',
+        generate: generateWithMock,
+      };
+    case 'xai':
+      if (!process.env.XAI_API_KEY) return null;
+      return {
+        name: 'xAI',
+        apiKey: process.env.XAI_API_KEY,
+        baseUrl: process.env.XAI_BASE_URL || 'https://api.x.ai',
+        model: process.env.XAI_IMAGE_MODEL || 'grok-2-image',
+        generate: generateWithXAI,
+      };
+    case 'openai':
+      if (!process.env.OPENAI_API_KEY) return null;
+      return {
+        name: 'OpenAI',
+        apiKey: process.env.OPENAI_API_KEY,
+        baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com',
+        model: process.env.OPENAI_IMAGE_MODEL || 'dall-e-3',
+        generate: generateWithOpenAI,
+      };
+    case 'replicate':
+      if (!process.env.REPLICATE_API_TOKEN) return null;
+      return {
+        name: 'Replicate',
+        apiKey: process.env.REPLICATE_API_TOKEN,
+        baseUrl: process.env.REPLICATE_BASE_URL || 'https://api.replicate.com',
+        model: process.env.REPLICATE_MODEL || 'stability-ai/sdxl:latest',
+        generate: generateWithReplicate,
+      };
+    default:
+      return null;
+  }
+}
+
+/**
+ * Detect the primary provider from environment variables.
+ * Returns a single provider config or null.
+ */
 function detectProvider() {
-  // Mock provider — works without any API key, for testing and development
   if (process.env.IMAGE_MOCK === 'true' || process.env.IMAGE_PROVIDER === 'mock') {
-    return {
-      name: 'Mock',
-      apiKey: 'mock',
-      baseUrl: '',
-      model: 'mock-v1',
-      generate: generateWithMock,
-    };
+    return _buildProvider('mock');
+  }
+  if (process.env.XAI_API_KEY) return _buildProvider('xai');
+  if (process.env.OPENAI_API_KEY) return _buildProvider('openai');
+  if (process.env.REPLICATE_API_TOKEN) return _buildProvider('replicate');
+  return null;
+}
+
+/**
+ * Build the failover chain: primary provider first, then fallbacks.
+ * Default chain: [primary] → [mock]. Configurable via opts.failoverChain.
+ *
+ * @param {object|null} primary - The primary provider (from detectProvider or opts.provider)
+ * @param {object} opts - Options
+n * @param {string[]} [opts.failoverChain] - Ordered list of provider names to try as fallbacks
+ * @returns {object[]} Array of provider configs to try in order
+ */
+function buildFailoverChain(primary, opts = {}) {
+  const chain = [];
+
+  // Add primary if available
+  if (primary) {
+    chain.push(primary);
   }
 
-  if (process.env.XAI_API_KEY) {
-    return {
-      name: 'xAI',
-      apiKey: process.env.XAI_API_KEY,
-      baseUrl: process.env.XAI_BASE_URL || 'https://api.x.ai',
-      model: process.env.XAI_IMAGE_MODEL || 'grok-2-image',
-      generate: generateWithXAI,
-    };
+  // Build fallback list
+  const fallbackNames = opts.failoverChain || ['mock'];
+
+  for (const name of fallbackNames) {
+    const fb = _buildProvider(name);
+    if (fb && (!primary || fb.name !== primary.name)) {
+      chain.push(fb);
+    }
   }
 
-  if (process.env.OPENAI_API_KEY) {
-    return {
-      name: 'OpenAI',
-      apiKey: process.env.OPENAI_API_KEY,
-      baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com',
-      model: process.env.OPENAI_IMAGE_MODEL || 'dall-e-3',
-      generate: generateWithOpenAI,
-    };
+  return chain;
+}
+
+// ---------------------------------------------------------------------------
+// Retry with exponential backoff
+// ---------------------------------------------------------------------------
+
+/**
+ * HTTP status codes considered transient (worth retrying).
+ */
+const TRANSIENT_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+
+/**
+ * Classify an error as transient (retryable) or permanent (not retryable).
+ *
+ * @param {Error} err
+n * @returns {boolean} true if the error is transient
+n */
+function isTransientError(err) {
+  if (!err) return false;
+  const msg = (err.message || '').toLowerCase();
+
+  // Check for HTTP status in error message
+  const statusMatch = msg.match(/(?:error|status)\s*(\d{3})/);
+  if (statusMatch) {
+    const status = parseInt(statusMatch[1], 10);
+    return TRANSIENT_STATUS_CODES.has(status);
   }
 
-  if (process.env.REPLICATE_API_TOKEN) {
-    return {
-      name: 'Replicate',
-      apiKey: process.env.REPLICATE_API_TOKEN,
-      baseUrl: process.env.REPLICATE_BASE_URL || 'https://api.replicate.com',
-      model: process.env.REPLICATE_MODEL || 'stability-ai/sdxl:latest',
-      generate: generateWithReplicate,
-    };
+  // Network / timeout errors are transient
+  if (msg.includes('timed out') || msg.includes('timeout')) return true;
+  if (msg.includes('econnreset') || msg.includes('econnrefused')) return true;
+  if (msg.includes('socket hang up') || msg.includes('etimedout')) return true;
+  if (msg.includes('enotfound') || msg.includes('network')) return true;
+
+  return false;
+}
+
+/**
+ * Sleep for a given number of milliseconds.
+ */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/**
+ * Execute an async function with exponential backoff retry.
+ *
+ * @param {Function} fn - Async function to execute
+n * @param {object} [opts]
+ * @param {number} [opts.maxRetries] - Max retry attempts (default 3)
+ * @param {number} [opts.baseDelayMs] - Base delay in ms (default 1000)
+ * @param {number} [opts.maxDelayMs] - Max delay cap in ms (default 30000)
+ * @param {Function} [opts.shouldRetry] - Custom predicate (err) => boolean (default: isTransientError)
+ * @param {Function} [opts.onRetry] - Callback (err, attempt) called before each retry
+ * @returns {Promise<*>} Result of fn()
+ * @throws {Error} If all retries exhausted or error is not transient
+ */
+async function withRetry(fn, opts = {}) {
+  const maxRetries = opts.maxRetries !== undefined ? opts.maxRetries : 3;
+  const baseDelayMs = opts.baseDelayMs || 1000;
+  const maxDelayMs = opts.maxDelayMs || 30000;
+  const shouldRetry = opts.shouldRetry || isTransientError;
+  const onRetry = opts.onRetry || null;
+
+  let lastErr;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+
+      // Don't retry on last attempt or non-transient errors
+      if (attempt >= maxRetries || !shouldRetry(err)) {
+        throw err;
+      }
+
+      // Exponential backoff with jitter
+      const delay = Math.min(
+        baseDelayMs * Math.pow(2, attempt) + Math.random() * baseDelayMs,
+        maxDelayMs
+      );
+
+      if (onRetry) onRetry(err, attempt + 1);
+      await sleep(delay);
+    }
   }
 
-  return null; // No provider available
+  throw lastErr; // Should not reach here
 }
 
 // ---------------------------------------------------------------------------
@@ -484,8 +621,9 @@ class SessionRateLimiter {
  * @returns {object} Image service API
  */
 function createImageService(opts = {}) {
-  const provider = opts.provider || detectProvider();
-  const enabled = opts.enabled !== undefined ? opts.enabled : !!provider;
+  const primaryProvider = opts.provider || detectProvider();
+  const providerChain = buildFailoverChain(primaryProvider, opts);
+  const enabled = opts.enabled !== undefined ? opts.enabled : providerChain.length > 0;
   const cache = new ImageCache(opts.cacheSize || 100);
 
   // Persistent disk store — survives restarts
@@ -516,15 +654,17 @@ function createImageService(opts = {}) {
   if (!enabled) {
     console.log('  🖼️  Image service: DISABLED (no XAI_API_KEY or OPENAI_API_KEY set)');
   } else {
-    console.log(`  🖼️  Image service: ${provider.name} (${provider.model})`);
+    const chainNames = providerChain.map(p => p.name).join(' → ');
+    console.log(`  🖼️  Image service: ${chainNames}`);
   }
 
   /**
-   * Internal: generate a single image from a prompt, with caching.
+   * Internal: generate a single image from a prompt, with caching,
+   * failover chain, and retry with exponential backoff.
    * Returns image URL string or null on failure.
    */
   async function generate(prompt, context = {}) {
-    if (!enabled || !provider) return null;
+    if (!enabled || !providerChain.length) return null;
     if (!prompt || typeof prompt !== 'string') return null;
 
     // Check rate limit if sessionId provided
@@ -540,50 +680,72 @@ function createImageService(opts = {}) {
     if (cached !== undefined) return cached;
 
     // Persistent disk cache (survives restart)
-    const persistKey = persistentMakeKey(prompt, provider ? provider.name : 'unknown', context.style || '');
+    const primaryName = providerChain[0] ? providerChain[0].name : 'unknown';
+    const persistKey = persistentMakeKey(prompt, primaryName, context.style || '');
     if (persistentStore.has(persistKey)) {
       const entry = persistentStore.get(persistKey);
-      // Serve via the API endpoint
       const localUrl = `/api/image/stored/${persistKey}`;
       cache.set(prompt, localUrl);
       return localUrl;
     }
 
-    try {
-      const remoteUrl = await provider.generate(prompt, provider);
-      if (!remoteUrl) return null;
+    // Try each provider in the failover chain
+    for (let i = 0; i < providerChain.length; i++) {
+      const currentProvider = providerChain[i];
+      try {
+        const remoteUrl = await withRetry(
+          () => currentProvider.generate(prompt, currentProvider),
+          {
+            maxRetries: opts.retryMaxRetries !== undefined ? opts.retryMaxRetries : 3,
+            baseDelayMs: opts.retryBaseDelayMs || 1000,
+            maxDelayMs: opts.retryMaxDelayMs || 30000,
+            onRetry: (err, attempt) => {
+              console.log(`  🖼️  Retry ${attempt}/${opts.retryMaxRetries || 3} for ${currentProvider.name}: ${err.message}`);
+            },
+          }
+        );
 
-      // Record generation for rate limiting
-      if (context.sessionId) {
-        rateLimiter.recordGeneration(context.sessionId);
-      }
+        if (!remoteUrl) continue; // Try next provider
 
-      // Data URIs (mock provider) are self-contained — cache in memory only
-      if (remoteUrl.startsWith('data:')) {
+        // Record generation for rate limiting
+        if (context.sessionId) {
+          rateLimiter.recordGeneration(context.sessionId);
+        }
+
+        // Data URIs (mock provider) are self-contained — cache in memory only
+        if (remoteUrl.startsWith('data:')) {
+          cache.set(prompt, remoteUrl);
+          return remoteUrl;
+        }
+
+        // Download and persist to disk
+        const stored = await persistentStore.store(persistKey, remoteUrl, {
+          prompt,
+          provider: currentProvider.name,
+          style: context.style || '',
+        });
+
+        if (stored) {
+          const localUrl = `/api/image/stored/${persistKey}`;
+          cache.set(prompt, localUrl);
+          return localUrl;
+        }
+
+        // Fallback: use remote URL directly (may expire)
         cache.set(prompt, remoteUrl);
         return remoteUrl;
+      } catch (err) {
+        console.error(`  🖼️  Image generation failed (${currentProvider.name}):`, err.message);
+        // If this was the last provider in the chain, we're done
+        if (i === providerChain.length - 1) {
+          return null;
+        }
+        // Otherwise, try the next provider
+        console.log(`  🖼️  Failing over to next provider in chain...`);
       }
-
-      // Download and persist to disk
-      const stored = await persistentStore.store(persistKey, remoteUrl, {
-        prompt,
-        provider: provider.name,
-        style: context.style || '',
-      });
-
-      if (stored) {
-        const localUrl = `/api/image/stored/${persistKey}`;
-        cache.set(prompt, localUrl);
-        return localUrl;
-      }
-
-      // Fallback: use remote URL directly (may expire)
-      cache.set(prompt, remoteUrl);
-      return remoteUrl;
-    } catch (err) {
-      console.error(`  🖼️  Image generation failed (${provider.name}):`, err.message);
-      return null;
     }
+
+    return null;
   }
 
   // -----------------------------------------------------------------------
@@ -602,7 +764,7 @@ function createImageService(opts = {}) {
      * Which provider is active (or null).
      */
     get providerName() {
-      return provider ? provider.name : null;
+      return primaryProvider ? primaryProvider.name : null;
     },
 
     /**
@@ -699,6 +861,46 @@ function createImageService(opts = {}) {
      */
     listStoredImages(opts = {}) {
       return persistentStore.listEntries(opts);
+    },
+
+    /**
+     * Generate an NPC portrait from character data.
+     * @param {object} npcCtx - NPC context (name, role, personality, appearance)
+     * @returns {Promise<string|null>} Image URL or null
+     */
+    async generateNpcPortrait(npcCtx) {
+      const prompt = buildNPCPortraitPrompt(npcCtx);
+      return generate(prompt, { style: 'npc-portrait', sessionId: npcCtx.sessionId });
+    },
+
+    /**
+     * Generate an item illustration (weapon, potion, artifact, etc.).
+     * @param {object} itemCtx - Item context (name, type, description, magical)
+     * @returns {Promise<string|null>} Image URL or null
+     */
+    async generateItemIllustration(itemCtx) {
+      const prompt = buildItemPrompt(itemCtx);
+      return generate(prompt, { style: 'item', sessionId: itemCtx.sessionId });
+    },
+
+    /**
+     * Generate a scene background / atmosphere illustration.
+     * @param {object} sceneCtx - Scene context (location, mood, weather, time)
+     * @returns {Promise<string|null>} Image URL or null
+     */
+    async generateSceneBackground(sceneCtx) {
+      const prompt = buildSceneBackgroundPrompt(sceneCtx);
+      return generate(prompt, { style: 'scene-background', sessionId: sceneCtx.sessionId });
+    },
+
+    /**
+     * Generate a detailed combat illustration with richer visual narrative.
+     * @param {object} combatCtx - Combat context (attacker, defender, weapon, location, outcome)
+     * @returns {Promise<string|null>} Image URL or null
+     */
+    async generateDetailedCombat(combatCtx) {
+      const prompt = buildDetailedCombatPrompt(combatCtx);
+      return generate(prompt, { style: 'detailed-combat', sessionId: combatCtx.sessionId });
     },
   };
 }
