@@ -1,24 +1,42 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Phase 1 Core Near-Complete                     *July 22, 2026*
+## Current Status: 🟢 Phase 1 Core Near-Complete                     *July 23, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `df2269a` — feat(image): add queue manager with concurrency, fallback, dedup, priority ordering (24/24 tests)
-**Test suite:** 638+/638+ passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 55 durability-image + 72 image-cache + 19 coin-rubric + 35 E2E + 13 E2E-extended + 72 shoppe + 44 DD-tuning + 24 image-queue + 23 voice-profiles)
+**Latest commit:** `786085f` — test(e2e): add voice & image integration E2E tests (13/13 passing)
+**Test suite:** 676+/676+ passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 55 durability-image + 72 image-cache + 19 coin-rubric + 35 E2E + 13 E2E-extended + 13 E2E-voice-image + 72 shoppe + 44 DD-tuning + 24 image-queue + 23 voice-profiles + 25 image-dm-integration + 24 tts-error-recovery)
 
 ---
 
-## Phase 1 Core — Completion Tracker                                *July 22, 2026*
+## Phase 1 Core — Completion Tracker                                *July 23, 2026*
 
 | # | Item | Start | Before | Current | Status |
 |---|------|-------|--------|---------|--------|
 | 1 | Coin/XP Scoring Engine | 40% | 97% | **98%** | ✅ Enhanced heuristic rubric (regex, tiered, context bonus) |
-| 2 | TTS Voice Service | 55% | 85% | **90%** | ✅ Voice profiles (5 presets, 23/23 tests), still needs API key for live E2E |
+| 2 | TTS Voice Service | 55% | 90% | **92%** | ✅ Error recovery (retry+fallback+CB, 24/24 tests), still needs API key for live E2E |
 | 3 | Dynamic Difficulty | 50% | 96% | **97%** | ✅ Momentum detection, session fatigue, scene-based pickDifficultyTier |
 | 4 | Inventory System | 50% | 97% | **97%** | ✅ Shoppe txn log, haggle pricing, recommendations |
 | 5 | Web App PWA | 65% | 97% | **97%** | ✅ Spectator mode skeleton, SW v5 caching |
-| 6 | End-to-End Smoke Test | 35% | 94% | **97%** | ✅ E2E extended 13/13 green (was 10/13) |
-| 7 | Image Generation Pipeline | 0% | 55% | **75%** | ✅ Queue manager (concurrency, fallback, dedup, priority, 24/24 tests) |
+| 6 | End-to-End Smoke Test | 35% | 97% | **98%** | ✅ Voice+image E2E 13/13 green, DM image hooks confirmed |
+| 7 | Image Generation Pipeline | 0% | 75% | **82%** | ✅ DM integration tests (25/25), error recovery wired, queue manager |
+
+---
+
+## Session 7 — What Was Built                                      *July 23, 2026*
+
+### TTS Error Recovery (`c734833`)
+- New `createTTSWithRecovery()` in `src/voice/tts-service.js`: wraps any TTS service with exponential backoff retry, provider fallback chain (primary → mock), circuit breaker, and failure logging
+- New `TTSFailureLogger`: tracks failures with provider/attempt/text context for debugging
+- Circuit breaker integration: auto-skips failing providers after threshold, recovers on success
+- New `tests/tts-error-recovery.test.js` (24/24 passing): covers happy path, retry, circuit breaker, edge cases, fallback chain dedup
+
+### DM ↔ Image Pipeline Integration (`4ff9fba`)
+- New `tests/image-dm-integration.test.js` (25/25 passing): confirms DM service correctly wires scene/combat/NPC/item image hooks through error-recovery layer
+- Verifies all 4 image generation hooks are accessible from DM service and produce results via mock provider
+
+### E2E Voice & Image Integration (`786085f`)
+- New `tests/e2e-voice-image.test.js` (13/13 passing): end-to-end API tests for voice generation, image list, DM image hooks (scene/combat/NPC/item), and TTS error recovery integration
+- Covers: Voice API (status, generate, empty text, character options, invalid audio), Image API (list), DM image hooks, TTS recovery (fallback, stats, circuit breaker)
 
 ---
 
