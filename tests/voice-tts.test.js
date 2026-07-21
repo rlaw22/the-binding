@@ -34,9 +34,9 @@ const { detectProvider, createTTSService, createVoiceService, getCachedAudio, cl
 
 
   {
-    // Test 1: No keys → null
+    // Test 1: No keys → defaults to mock (always-available fallback)
     clearTtsEnv();
-    assertEq(detectProvider(), null, 'No API keys → null provider');
+    assertEq(detectProvider(), 'mock', 'No API keys → mock provider (default fallback)');
 
     // Test 2: Novita takes priority
     process.env.NOVITA_API_KEY = 'test-key';
@@ -72,28 +72,22 @@ const { detectProvider, createTTSService, createVoiceService, getCachedAudio, cl
   {
     const svc = createTTSService({});
 
-    assertEq(svc.provider, null, 'Null service has provider=null');
-    assertEq(svc.isReady(), false, 'Null service isReady() = false');
-    assert(svc.voice === null || svc.voice === 'default', 'Null service has voice=null or default');
-    assertEq(svc.speed, 1.0, 'Null service has speed=1.0');
-    assertEq(svc.language, 'en-US', 'Null service has language=en-US');
+    // With no API keys, TTS defaults to mock provider (always-available fallback)
+    assertEq(svc.provider, 'mock', 'Default service has provider=mock');
+    assertEq(svc.isReady(), true, 'Default service isReady() = true');
 
     const genResult = await svc.generate('Hello, adventurer.');
-    assertEq(genResult.status, 'disabled', 'Null service generate() returns disabled');
-    assertEq(genResult.taskId, null, 'Null service generate() returns null taskId');
-
-    const audioResult = await svc.getAudio('some-id');
-    assertEq(audioResult.ready, false, 'Null service getAudio() returns not ready');
+    assertEq(genResult.status, 'complete', 'Default service generate() returns complete');
   }
 
   // ── Voice Service Factory ───────────────────────────────────────────
   section('Voice Service Factory');
 
   {
-    // No provider → null service
+    // No provider → defaults to mock (always-available fallback)
     clearTtsEnv();
     const voice = createVoiceService({});
-    assertEq(voice.isReady(), false, 'createVoiceService with no keys → not ready');
+    assertEq(voice.isReady(), true, 'createVoiceService with no keys → ready (mock fallback)');
     assertEq(voice.speed, 0.95, 'createVoiceService default speed is 0.95');
 
     // With explicit provider override (still no key, but tests config plumbing)

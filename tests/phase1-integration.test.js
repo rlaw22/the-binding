@@ -24,7 +24,7 @@ section('TTS Service');
   assertEq(ttsNovita.voice, 'Emily', 'voice is Emily');
   assertEq(ttsNovita.speed, 0.95, 'speed is 0.95');
 
-  // Auto-detect with no env vars — should return null provider gracefully
+  // Auto-detect with no env vars — defaults to mock (always-available fallback)
   const oldNovita = process.env.NOVITA_API_KEY;
   const oldOpenai = process.env.OPENAI_API_KEY;
   const oldEleven = process.env.ELEVENLABS_API_KEY;
@@ -32,7 +32,7 @@ section('TTS Service');
   delete process.env.OPENAI_API_KEY;
   delete process.env.ELEVENLABS_API_KEY;
   const detected = detectProvider();
-  assertEq(detected, null, 'detectProvider returns null with no env vars');
+  assertEq(detected, 'mock', 'detectProvider defaults to mock with no env vars');
   if (oldNovita) process.env.NOVITA_API_KEY = oldNovita;
   if (oldOpenai) process.env.OPENAI_API_KEY = oldOpenai;
   if (oldEleven) process.env.ELEVENLABS_API_KEY = oldEleven;

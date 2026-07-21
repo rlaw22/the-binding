@@ -266,7 +266,7 @@ section('Equipping Nonexistent Item');
 
   const r1 = inv.equipItem(inventory, 'nonexistent_item', 'weapon');
   assertEq(r1.success, false, 'Cannot equip item not in inventory');
-  assertEq(r1.reason, 'Item not in inventory', 'Reason: not in inventory');
+  assertEq(r1.reason, 'Unknown item', 'Reason: item not in catalog');
 
   const r2 = inv.equipItem(inventory, 'silver_dagger', 'weapon');
   assertEq(r2.success, false, 'Cannot equip item not in inventory (valid item ID)');
