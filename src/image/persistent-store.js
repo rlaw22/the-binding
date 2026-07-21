@@ -215,7 +215,7 @@ function createPersistentStore(opts = {}) {
         prompt: (meta.prompt || '').slice(0, 500),
         provider: meta.provider || 'unknown',
         style: meta.style || '',
-        generatedAt: new Date().toISOString(),
+        generatedAt: meta.generatedAt || new Date().toISOString(),
         sourceUrl: imageUrl,
       };
 
