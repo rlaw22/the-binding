@@ -293,11 +293,24 @@ function wrapSSML(text, options = {}, provider) {
 
 // ─── Provider: Novita AI (async) ────────────────────────────────────────────
 
+// OpenAI voice names → Novita voice IDs
+// Novita uses its own voice identifiers, not OpenAI names
+const OPENAI_TO_NOVITA_VOICE_MAP = {
+  'nova': 'Emily',
+  'onyx': 'Adam',
+  'echo': 'Antoni',
+  'shimmer': 'Bella',
+  'alloy': 'Elli',
+  'fable': 'Josh',
+};
+
 async function generateNovita(text, voice, speed, language) {
   const apiKey = process.env.NOVITA_API_KEY;
+  // Map OpenAI voice names to Novita voice IDs if needed
+  const novitaVoice = OPENAI_TO_NOVITA_VOICE_MAP[voice] || voice || 'Emily';
   const body = JSON.stringify({
     request: {
-      voice_id: voice,
+      voice_id: novitaVoice,
       language: language,
       texts: [text],
       volume: 1.0,
