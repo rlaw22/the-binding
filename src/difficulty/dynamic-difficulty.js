@@ -244,10 +244,10 @@ class DynamicDifficulty {
     if (!this._activeCalibration && this.adventureType) {
       this._activeCalibration = ADVENTURE_CALIBRATION_PRESETS[this.adventureType] || null;
     }
-    if (!this._activeCalibration) return CALIBRATION;
+    if (!this._activeCalibration) return this._applyCustomCalibration(CALIBRATION);
 
     const preset = this._activeCalibration;
-    return {
+    return this._applyCustomCalibration({
       ...CALIBRATION,
       lossesToForcePowerWindow: preset.lossesToForcePowerWindow,
       winsToSkewChallenge: preset.winsToSkewChallenge,
@@ -255,7 +255,16 @@ class DynamicDifficulty {
       base: preset.base,
       winStreak: preset.winStreak,
       scaling: { ...CALIBRATION.scaling, ...preset.scaling }
-    };
+    });
+  }
+
+  /**
+   * Apply any runtime tuning overrides on top of a calibration object.
+   * @private
+   */
+  _applyCustomCalibration(cal) {
+    if (!this._customCalibration) return cal;
+    return { ...cal, ...this._customCalibration };
   }
 
   /**
@@ -451,6 +460,107 @@ class DynamicDifficulty {
   getNarrativeWrapper(tier) {
     const options = NARRATIVE_WRAPPERS[tier] || NARRATIVE_WRAPPERS.fair;
     return options[Math.floor(Math.random() * options.length)];
+  }
+
+  /**
+   * Get a calibration report exporting the current difficulty state.
+   * Useful for debugging, analytics, and live-tuning UIs.
+   * @returns {{ currentTier, consecutiveWins, consecutiveLosses, totalCombats, combatsSinceScaling, adventureType, effectiveCalibration }}
+   */
+  getCalibrationReport() {
+    const cal = this.getEffectiveCalibration();
+    const currentTier = this.totalCombats === 0 ? TIERS.FAIR : this.getNextTier();
+    const combatsSinceScaling = Math.max(0, this.totalCombats - cal.minCombatsBeforeScaling);
+
+    return {
+      currentTier,
+      consecutiveWins: this.consecutiveWins,
+      consecutiveLosses: this.consecutiveLosses,
+      totalCombats: this.totalCombats,
+      combatsSinceScaling,
+      adventureType: this.adventureType || null,
+      effectiveCalibration: cal
+    };
+  }
+
+  /**
+   * Tune calibration values at runtime.
+   * Merges overrides into the active calibration (adventure preset or base CALIBRATION).
+   * Validates types: numeric keys must be numbers, nested objects must be objects.
+   *
+   * @param {object} overrides — partial calibration values to merge
+   * @returns {{ applied: object, errors: string[] }}
+   */
+  tuneCalibration(overrides) {
+    if (!overrides || typeof overrides !== 'object') {
+      return { applied: {}, errors: ['overrides must be a non-null object'] };
+    }
+
+    const errors = [];
+    const applied = {};
+
+    // Numeric top-level keys
+    const NUMERIC_KEYS = [
+      'lossesToForcePowerWindow',
+      'winsToSkewChallenge',
+      'minCombatsBeforeScaling',
+      'maxCombatHistory',
+      'maxActionHistory'
+    ];
+
+    for (const key of NUMERIC_KEYS) {
+      if (overrides[key] !== undefined) {
+        if (typeof overrides[key] !== 'number') {
+          errors.push(`${key} must be a number, got ${typeof overrides[key]}`);
+        } else {
+          CALIBRATION[key] = overrides[key];
+          applied[key] = overrides[key];
+        }
+      }
+    }
+
+    // Nested object keys
+    const NESTED_KEYS = ['base', 'winStreak', 'scaling', 'fatigueDetection', 'hpMargin'];
+    for (const key of NESTED_KEYS) {
+      if (overrides[key] !== undefined) {
+        if (typeof overrides[key] !== 'object' || overrides[key] === null || Array.isArray(overrides[key])) {
+          errors.push(`${key} must be a plain object, got ${typeof overrides[key]}`);
+        } else {
+          CALIBRATION[key] = { ...CALIBRATION[key], ...overrides[key] };
+          applied[key] = CALIBRATION[key];
+        }
+      }
+    }
+
+    // If adventure preset is active, also merge into it so getEffectiveCalibration stays consistent
+    if (this._activeCalibration && Object.keys(applied).length > 0) {
+      for (const key of Object.keys(applied)) {
+        this._activeCalibration[key] = applied[key];
+      }
+    }
+
+    return { applied, errors };
+  }
+
+  /**
+   * Reset difficulty state for a fresh session.
+   * Clears streaks, combat history, action history, and death count.
+   * Preserves adventure type and its calibration preset.
+   * Returns the tier to FAIR.
+   */
+  resetDifficulty() {
+    this.combatHistory = [];
+    this.consecutiveWins = 0;
+    this.consecutiveLosses = 0;
+    this.totalCombats = 0;
+    this.playerActions = [];
+    this.deathCount = 0;
+    this.sessionStartTime = Date.now();
+    // Preserve adventure type — re-resolve its calibration preset
+    if (this.adventureType) {
+      this.setAdventureType(this.adventureType);
+    }
+    return TIERS.FAIR;
   }
 
   /**
@@ -785,6 +895,84 @@ class DynamicDifficulty {
       }
     }
     return dd;
+  }
+
+  /**
+   * Get a calibration report showing current difficulty state.
+   * Useful for debugging and playtest analysis.
+   * @returns {object} current state snapshot
+   */
+  getCalibrationReport() {
+    const cal = this.getEffectiveCalibration();
+    const recentOutcomes = this.combatHistory.slice(-10).map(c => c.outcome);
+    return {
+      adventureType: this.adventureType || 'default',
+      totalCombats: this.totalCombats,
+      consecutiveWins: this.consecutiveWins,
+      consecutiveLosses: this.consecutiveLosses,
+      deathCount: this.deathCount,
+      recentOutcomes,
+      sessionDurationMin: Math.round((Date.now() - this.sessionStartTime) / 60000),
+      effectiveCalibration: {
+        lossesToForcePowerWindow: cal.lossesToForcePowerWindow,
+        winsToSkewChallenge: cal.winsToSkewChallenge,
+        minCombatsBeforeScaling: cal.minCombatsBeforeScaling,
+        base: cal.base,
+        scaling: cal.scaling
+      }
+    };
+  }
+
+  /**
+   * Tune calibration values at runtime. Merges overrides into effective calibration.
+   * Validates that overrides have correct types.
+   * @param {object} overrides — partial CALIBRATION values to override
+   * @returns {{ success: boolean, applied: string[], errors: string[] }}
+   */
+  tuneCalibration(overrides) {
+    if (!overrides || typeof overrides !== 'object') {
+      return { success: false, applied: [], errors: ['overrides must be an object'] };
+    }
+    const applied = [];
+    const errors = [];
+    const validKeys = [
+      'lossesToForcePowerWindow', 'winsToSkewChallenge',
+      'minCombatsBeforeScaling', 'base'
+    ];
+
+    for (const [key, value] of Object.entries(overrides)) {
+      if (!validKeys.includes(key)) {
+        errors.push('Unknown key: ' + key);
+        continue;
+      }
+      if (typeof value !== 'number' || value < 0) {
+        errors.push(key + ' must be a non-negative number');
+        continue;
+      }
+      if (!this._customCalibration) this._customCalibration = {};
+      this._customCalibration[key] = value;
+      applied.push(key);
+    }
+
+    return { success: applied.length > 0 && errors.length === 0, applied, errors };
+  }
+
+  /**
+   * Reset difficulty to fresh-session state. Preserves adventure type.
+   */
+  resetDifficulty() {
+    const preserveAdventureType = this.adventureType;
+    this.combatHistory = [];
+    this.consecutiveWins = 0;
+    this.consecutiveLosses = 0;
+    this.totalCombats = 0;
+    this.playerActions = [];
+    this.deathCount = 0;
+    this.sessionStartTime = Date.now();
+    this._customCalibration = null;
+    if (preserveAdventureType) {
+      this.setAdventureType(preserveAdventureType);
+    }
   }
 }
 
