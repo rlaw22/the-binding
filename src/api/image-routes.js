@@ -105,6 +105,46 @@ async function imageRoutes(fastify, options) {
     }
   });
 
+  // ── List Stored Images (paginated) ───────────────────────
+  fastify.get('/api/images', async (request, reply) => {
+    const { limit, offset } = request.query || {};
+    const svc = getImageService();
+    const store = svc.persistentStore;
+    if (!store) {
+      return { items: [], total: 0, limit: 20, offset: 0 };
+    }
+    return store.listEntries({
+      limit: limit ? parseInt(limit, 10) : 20,
+      offset: offset ? parseInt(offset, 10) : 0,
+    });
+  });
+
+  // ── Get Single Stored Image Metadata ──────────────────────
+  fastify.get('/api/images/:key', async (request, reply) => {
+    const { key } = request.params;
+    if (!key || !/^[a-f0-9]{16,64}$/.test(key)) {
+      return reply.code(400).send({ error: 'Invalid image key' });
+    }
+    const svc = getImageService();
+    const stored = svc.getStoredImage ? svc.getStoredImage(key) : null;
+    if (!stored) {
+      return reply.code(404).send({ error: 'Image not found' });
+    }
+    return stored;
+  });
+
+  // ── Cleanup Old Stored Images ─────────────────────────────
+  fastify.post('/api/images/cleanup', async (request, reply) => {
+    const { maxAgeDays } = request.body || {};
+    const svc = getImageService();
+    const store = svc.persistentStore;
+    if (!store) {
+      return { removed: 0, message: 'No persistent store configured' };
+    }
+    const removed = store.cleanupOldEntries(maxAgeDays || 30);
+    return { success: true, removed, maxAgeDays: maxAgeDays || 30 };
+  });
+
   // ── Persistent Store Stats ───────────────────────────────────
   fastify.get('/api/image/store/stats', async (request, reply) => {
     const svc = getImageService();
