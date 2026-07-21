@@ -120,6 +120,42 @@ class CircuitBreaker {
 // ─── Voice Profile System ───────────────────────────────────────────────────
 
 /**
+ * Character type voice presets for TTS.
+ * Maps character archetypes to voice settings with numeric pitch/rate values.
+ * These provide quick voice selection for common character types.
+ *
+ * Each profile: { voice, pitch, rate }
+ *   voice: OpenAI voice name (mapped to Novita via OPENAI_TO_NOVITA_VOICE_MAP)
+ *   pitch: Pitch multiplier (1.0 = normal, <1.0 = lower, >1.0 = higher)
+ *   rate: Speed multiplier (1.0 = normal, <1.0 = slower, >1.0 = faster)
+ */
+const CHARACTER_VOICE_PRESETS = {
+  narrator: { voice: 'nova', pitch: 1.0, rate: 0.9 },
+  villain: { voice: 'onyx', pitch: 0.8, rate: 0.85 },
+  ally: { voice: 'shimmer', pitch: 1.1, rate: 1.0 },
+  merchant: { voice: 'alloy', pitch: 0.95, rate: 1.1 },
+  monster: { voice: 'onyx', pitch: 0.7, rate: 0.8 }
+};
+
+/**
+ * Default voice settings used when a character type is not found.
+ */
+const DEFAULT_VOICE_SETTINGS = { voice: 'nova', pitch: 1.0, rate: 1.0 };
+
+/**
+ * Get voice settings for a character type.
+ * Returns the preset for the given type, or the default if not found.
+ *
+ * @param {string} characterType — e.g. 'narrator', 'villain', 'merchant'
+ * @returns {{ voice: string, pitch: number, rate: number }} Voice settings
+ */
+function getVoiceForCharacter(characterType) {
+  if (!characterType) return { ...DEFAULT_VOICE_SETTINGS };
+  const key = characterType.toLowerCase().trim();
+  return CHARACTER_VOICE_PRESETS[key] || { ...DEFAULT_VOICE_SETTINGS };
+}
+
+/**
  * Generic NPC voice archetypes for game characters.
  * These are adventure-agnostic profiles that map character *types*
  * (villain, merchant, guard, etc.) to voice settings.
@@ -969,6 +1005,10 @@ module.exports = {
   getVoiceProfile,
   listVoiceProfiles,
   resolveVoiceSettings,
+  // Character Voice Presets
+  CHARACTER_VOICE_PRESETS,
+  DEFAULT_VOICE_SETTINGS,
+  getVoiceForCharacter,
   // SSML Dramatic Helpers
   ssml
 };

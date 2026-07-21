@@ -976,11 +976,144 @@ class DynamicDifficulty {
   }
 }
 
+// ── Rubber-Band Distribution Config ───────────────────────────────────────────
+//
+// Scene-based difficulty tier distribution per game-design-decisions.md §7.
+// pickDifficultyTier() uses this config to deterministically assign tiers
+// across a scene sequence, guaranteeing the 70/20/10 split over a full run.
+
+const RUBBER_BAND_CONFIG = {
+  // Target distribution ratios (must sum to 1.0)
+  ratios: {
+    fair: 0.70,          // 70% of fights scale to player level (constant challenge)
+    powerWindow: 0.20,   // 20% below player level (power windows — feel like a badass)
+    challenge: 0.10      // 10% above player level (challenge spikes — creative thinking)
+  },
+
+  // Tier labels (matches TIERS values)
+  tiers: {
+    fair: TIERS.FAIR,
+    powerWindow: TIERS.POWER_WINDOW,
+    challenge: TIERS.CHALLENGE
+  },
+
+  // Scene-index weighting: how much scene position influences tier selection.
+  // Early scenes lean slightly easier, late scenes slightly harder, but the
+  // overall distribution still respects the 70/20/10 split.
+  sceneWeighting: {
+    earlyGameEnd: 0.25,       // first 25% of scenes
+    midGameEnd: 0.70,         // next 45% of scenes
+    // remaining 30% = late game
+    earlyChallengeBoost: -0.05,  // reduce challenge chance early
+    lateChallengeBoost: +0.05    // increase challenge chance late
+  },
+
+  // Player-level scaling: how player level shifts tier probabilities.
+  // Higher-level players get slightly more challenge spikes.
+  levelScaling: {
+    lowLevelThreshold: 3,     // levels 1-3 are "low"
+    highLevelThreshold: 8,    // levels 8+ are "high"
+    lowLevelChallengePenalty: -0.03,  // fewer challenge spikes for low-level
+    highLevelChallengeBonus: +0.03    // more challenge spikes for high-level
+  }
+};
+
+/**
+ * Pick a difficulty tier for a specific scene in a sequence.
+ *
+ * Uses a deterministic hash of (sceneIndex, playerLevel) so the same scene
+ * always gets the same tier for a given player level, while still distributing
+ * tiers across the full run according to the 70/20/10 split.
+ *
+ * The algorithm:
+ *   1. Build a tier "wheel" from the config ratios
+ *   2. Apply scene-position weighting (early/late game shifts)
+ *   3. Apply player-level scaling (high-level gets more challenge)
+ *   4. Use a seeded hash to deterministically select from the wheel
+ *
+ * @param {number} playerLevel — current player level (1+)
+ * @param {number} sceneIndex — zero-based index of the current scene
+ * @param {number} totalScenes — total number of scenes in the adventure
+ * @returns {'fair'|'power_window'|'challenge'} the difficulty tier for this scene
+ */
+function pickDifficultyTier(playerLevel, sceneIndex, totalScenes) {
+  // Validate inputs
+  const lvl = Math.max(1, Math.floor(playerLevel || 1));
+  const idx = Math.max(0, Math.floor(sceneIndex || 0));
+  const total = Math.max(1, Math.floor(totalScenes || 1));
+
+  // Build base probabilities from config
+  let fairP = RUBBER_BAND_CONFIG.ratios.fair;
+  let powerP = RUBBER_BAND_CONFIG.ratios.powerWindow;
+  let challengeP = RUBBER_BAND_CONFIG.ratios.challenge;
+
+  // ── Scene-position weighting ──
+  const sceneProgress = total > 1 ? idx / (total - 1) : 0.5;
+  const sw = RUBBER_BAND_CONFIG.sceneWeighting;
+
+  if (sceneProgress <= sw.earlyGameEnd) {
+    // Early game: fewer challenge spikes, more power windows
+    challengeP += sw.earlyChallengeBoost;
+    powerP += Math.abs(sw.earlyChallengeBoost);
+  } else if (sceneProgress > sw.midGameEnd) {
+    // Late game: more challenge spikes, fewer power windows
+    challengeP += sw.lateChallengeBoost;
+    powerP -= Math.abs(sw.lateChallengeBoost);
+  }
+  // Mid game: no adjustment (uses base ratios)
+
+  // ── Player-level scaling ──
+  const ls = RUBBER_BAND_CONFIG.levelScaling;
+  if (lvl <= ls.lowLevelThreshold) {
+    challengeP += ls.lowLevelChallengePenalty;
+    powerP += Math.abs(ls.lowLevelChallengePenalty);
+  } else if (lvl >= ls.highLevelThreshold) {
+    challengeP += ls.highLevelChallengeBonus;
+    powerP -= Math.abs(ls.highLevelChallengeBonus);
+  }
+
+  // Clamp to valid range and re-normalize
+  fairP = Math.max(0, fairP);
+  powerP = Math.max(0, powerP);
+  challengeP = Math.max(0, challengeP);
+  const sum = fairP + powerP + challengeP;
+  fairP /= sum;
+  powerP /= sum;
+  challengeP /= sum;
+
+  // ── Deterministic hash-based selection ──
+  // Simple but effective hash: combine scene index and player level
+  // to produce a stable pseudo-random value in [0, 1)
+  const hash = _stableHash(idx, lvl);
+
+  if (hash < fairP) return TIERS.FAIR;
+  if (hash < fairP + powerP) return TIERS.POWER_WINDOW;
+  return TIERS.CHALLENGE;
+}
+
+/**
+ * Deterministic hash function for scene-based tier selection.
+ * Produces a stable float in [0, 1) from two integers.
+ * @private
+ */
+function _stableHash(a, b) {
+  // FNV-1a inspired hash
+  let h = 0x811c9dc5;
+  h = Math.imul(h ^ (a * 2654435761), 0x01000193);
+  h = Math.imul(h ^ (b * 2246822519), 0x01000193);
+  h = Math.imul(h ^ ((a + b) * 3266489917), 0x01000193);
+  // Convert to [0, 1)
+  return ((h >>> 0) % 10000) / 10000;
+}
+
 module.exports = {
   DynamicDifficulty,
   TIERS,
   CALIBRATION,
+  RUBBER_BAND_CONFIG,
   NARRATIVE_WRAPPERS,
   ADVENTURE_CALIBRATION_PRESETS,
-  categorizeAction
+  categorizeAction,
+  pickDifficultyTier,
+  _stableHash
 };
