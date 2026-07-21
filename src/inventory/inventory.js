@@ -446,6 +446,137 @@ const ITEMS = {
   }
 };
 
+// ── New Consumable Items ────────────────────────────────────────────────────
+
+ITEMS.bandage = {
+  id: 'bandage',
+  name: 'Bandage',
+  description: 'A clean linen bandage. Stops bleeding and restores 1d4+1 HP when applied.',
+  type: 'consumable',
+  consumable: true,
+  uses: 3,
+  rarity: 'common',
+  price: 8,
+  combatEffect: { type: 'heal', dice: '1d4', modifier: 1 },
+  flavor: 'Torn from a clean sheet — not sterile, but better than nothing.'
+};
+
+ITEMS.smoke_bomb = {
+  id: 'smoke_bomb',
+  name: 'Smoke Bomb',
+  description: 'A small clay pellet filled with sulfur and charcoal. Creates a thick cloud of smoke, granting advantage on escape attempts.',
+  type: 'consumable',
+  consumable: true,
+  uses: 2,
+  rarity: 'uncommon',
+  price: 18,
+  combatEffect: { type: 'escape', modifier: 3, radius: 10 },
+  flavor: 'The acrid smoke stings the eyes and obscures everything.'
+};
+
+ITEMS.flash_powder = {
+  id: 'flash_powder',
+  name: 'Flash Powder',
+  description: 'A pouch of magnesium powder. When thrown, it ignites in a blinding flash, stunning nearby enemies for one round.',
+  type: 'consumable',
+  consumable: true,
+  uses: 2,
+  rarity: 'uncommon',
+  price: 22,
+  combatEffect: { type: 'stun', rounds: 1, radius: 15 },
+  flavor: 'Handle carefully — one spark and you blind yourself.'
+};
+
+// ── Set Bonus Definitions ────────────────────────────────────────────────────
+
+const SET_BONUSES = {
+  full_plate: {
+    id: 'full_plate',
+    name: 'Full Plate',
+    description: 'A complete suit of heavy armor — chain shirt and crucifix ward together.',
+    requires: {
+      armor: 'chain_shirt',
+      accessory: 'crucifix'
+    },
+    bonus: { type: 'defense', acBonus: 2, label: 'Full Plate: +2 AC' }
+  },
+  hunter_kit: {
+    id: 'hunter_kit',
+    name: 'Hunter Kit',
+    description: 'Tools of the supernatural hunter — silver blade and garlic ward.',
+    requires: {
+      weapon: 'silver_dagger',
+      accessory: 'garlic_necklace'
+    },
+    bonus: { type: 'bonus_damage', vsType: 'supernatural', modifier: 3, label: 'Hunter Kit: +3 vs supernatural' }
+  },
+  detective_outfit: {
+    id: 'detective_outfit',
+    name: 'Detective Outfit',
+    description: 'The complete investigative ensemble — coat and cap.',
+    requires: {
+      armor: 'detective_coat',
+      accessory: 'deerstalker_cap'
+    },
+    bonus: { type: 'buff', stat: 'perception', modifier: 2, label: 'Detective Outfit: +2 Perception' }
+  },
+  scholar_set: {
+    id: 'scholar_set',
+    name: 'Scholar Set',
+    description: 'Tools of the learned investigator — lens and pipe.',
+    requires: {
+      weapon: 'magnifying_glass',
+      accessory: 'briar_pipe'
+    },
+    bonus: { type: 'buff', stat: 'intelligence', modifier: 2, label: 'Scholar Set: +2 Intelligence' }
+  },
+  alchemist_kit: {
+    id: 'alchemist_kit',
+    name: 'Alchemist Kit',
+    description: 'Equipment for the modern natural philosopher — battery and insulated gloves.',
+    requires: {
+      weapon: 'galvanic_battery',
+      accessory: 'rubber_gloves'
+    },
+    bonus: { type: 'resistance', damageType: 'lightning', modifier: 2, label: 'Alchemist Kit: Lightning resistance +2' }
+  }
+};
+
+/**
+ * Check equipped items for set bonus matches.
+ * Returns an array of active set bonuses.
+ * @param {object} inventory
+ * @returns {Array<{ id: string, name: string, description: string, bonus: object }>}
+ */
+function getSetBonus(inventory) {
+  if (!inventory || !inventory.equipment) return [];
+
+  const activeSets = [];
+
+  for (const [setId, setDef] of Object.entries(SET_BONUSES)) {
+    let allMatch = true;
+
+    for (const [slot, requiredItemId] of Object.entries(setDef.requires)) {
+      const equipped = inventory.equipment[slot];
+      if (!equipped || equipped.id !== requiredItemId) {
+        allMatch = false;
+        break;
+      }
+    }
+
+    if (allMatch) {
+      activeSets.push({
+        id: setDef.id,
+        name: setDef.name,
+        description: setDef.description,
+        bonus: setDef.bonus
+      });
+    }
+  }
+
+  return activeSets;
+}
+
 // ── Equipment Slots ─────────────────────────────────────────────────────────
 
 /** Valid item types per equipment slot. */

@@ -14,8 +14,9 @@
  *   // DM voice = 'onyx', Dracula NPC = 'nova', Van Helsing = 'echo', etc.
  */
 
-const { createTTSService, getCachedAudio, cleanupCache, detectProvider, wrapSSML } = require('./tts-service');
+const { createTTSService, getCachedAudio, cleanupCache, detectProvider, wrapSSML, buildSSML } = require('./tts-service');
 const { createSTTService, detectProvider: detectSTTProvider } = require('./stt-service');
+const { VOICE_PRESETS, getVoicePreset, getAdventurePresets, listAdventures } = require('./voice-presets');
 
 /**
  * Per-adventure voice mappings.
@@ -146,5 +147,10 @@ module.exports = {
   detectSTTProvider,
   resolveVoice,
   ADVENTURE_VOICE_MAPS,
-  wrapSSML
+  wrapSSML,
+  buildSSML,
+  VOICE_PRESETS,
+  getVoicePreset,
+  getAdventurePresets,
+  listAdventures
 };

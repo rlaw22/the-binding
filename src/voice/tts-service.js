@@ -86,7 +86,13 @@ function createTTSService(config = {}) {
       try {
         switch (provider) {
           case 'mock':
-            return generateMock(inputText, voice, speed);
+            return generateMock(inputText, voice, speed, {
+              characterName: options.characterName,
+              adventureId: options.adventureId,
+              pitch: options.pitch,
+              rate: options.rate,
+              volume: options.volume
+            });
           case 'novita':
             return await generateNovita(truncated, voice, speed, language); // Novita doesn't support SSML
           case 'openai':
@@ -205,10 +211,15 @@ function generateSilenceWav(durationMs = 500) {
   return buf;
 }
 
-function generateMock(text, voice, speed) {
+function generateMock(text, voice, speed, options = {}) {
   console.log(`[TTS:mock] Generating mock audio for voice="${voice}" speed=${speed}: "${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`);
 
-  const wavBuffer = generateSilenceWav(500);
+  // Estimate duration from text length (~150 words/min, ~5 chars/word)
+  const plainText = text.replace(/<[^>]+>/g, ''); // strip SSML tags
+  const charCount = plainText.length;
+  const estimatedDurationMs = Math.max(500, Math.round((charCount / (5 * 150)) * 60 * 1000 / (speed || 1)));
+
+  const wavBuffer = generateSilenceWav(estimatedDurationMs);
   const taskId = 'mock_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
   const base64 = wavBuffer.toString('base64');
   const entry = {
@@ -218,7 +229,26 @@ function generateMock(text, voice, speed) {
   };
   audioCache.set(taskId, entry);
 
-  return { taskId, status: 'complete', audioBase64: base64, audioType: 'wav' };
+  return {
+    taskId,
+    status: 'complete',
+    audioBase64: base64,
+    audioType: 'wav',
+    // Structured metadata for pipeline testing
+    metadata: {
+      provider: 'mock',
+      voice,
+      speed: speed || 1.0,
+      characterName: options.characterName || null,
+      adventureId: options.adventureId || null,
+      pitch: options.pitch || null,
+      rate: options.rate || null,
+      volume: options.volume || null,
+      characterCount: charCount,
+      estimatedDurationMs,
+      ssmlUsed: text.includes('<speak')
+    }
+  };
 }
 
 // ─── SSML Support ────────────────────────────────────────────────────────────
@@ -525,11 +555,46 @@ function cleanupCache() {
 // Run cache cleanup every 5 minutes
 setInterval(cleanupCache, 5 * 60 * 1000).unref();
 
+/**
+ * Build SSML from text and prosody parameters.
+ * Standalone utility — does not depend on a TTS service instance.
+ *
+ * @param {string} text - Plain text to wrap
+ * @param {Object} params - Prosody parameters
+ * @param {string} [params.pitch] - Pitch: 'x-low','low','medium','high','x-high' or relative like '-10%'
+ * @param {string} [params.rate] - Rate: 'x-slow','slow','medium','fast','x-fast' or percentage like '90%'
+ * @param {string} [params.volume] - Volume: 'silent','x-soft','soft','medium','loud','x-loud' or dB like '+6dB'
+ * @param {string} [params.emphasis] - Emphasis level: 'strong','moderate','reduced','none'
+ * @param {string} [params.language] - Language code (default 'en-US')
+ * @returns {string} SSML string
+ */
+function buildSSML(text, params = {}) {
+  if (!text) return '';
+
+  const { pitch, rate, volume, emphasis, language = 'en-US' } = params;
+
+  const prosodyAttrs = [];
+  if (pitch) prosodyAttrs.push(`pitch="${pitch}"`);
+  if (rate) prosodyAttrs.push(`rate="${rate}"`);
+  if (volume) prosodyAttrs.push(`volume="${volume}"`);
+
+  let inner = text;
+  if (emphasis) {
+    inner = `<emphasis level="${emphasis}">${text}</emphasis>`;
+  }
+  if (prosodyAttrs.length > 0) {
+    inner = `<prosody ${prosodyAttrs.join(' ')}>${inner}</prosody>`;
+  }
+
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="${language}">${inner}</speak>`;
+}
+
 module.exports = {
   createTTSService,
   getCachedAudio,
   cleanupCache,
   detectProvider,
   generateSilenceWav,
-  wrapSSML
+  wrapSSML,
+  buildSSML
 };
