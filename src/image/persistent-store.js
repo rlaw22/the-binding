@@ -269,6 +269,49 @@ function createPersistentStore(opts = {}) {
     },
 
     /**
+     * List stored entries with pagination.
+     *
+     * @param {object} [opts]
+     * @param {number} [opts.limit]  — Max entries to return (default: 20)
+     * @param {number} [opts.offset] — Number of entries to skip (default: 0)
+     * @returns {{ items: Array, total: number, limit: number, offset: number }}
+     */
+    listEntries(opts = {}) {
+      const limit = opts.limit || 20;
+      const offset = opts.offset || 0;
+      const all = Array.from(index.entries());
+      const total = all.length;
+      const slice = all.slice(offset, offset + limit).map(([key, val]) => ({
+        key,
+        ...val,
+        filePath: path.join(dir, val.filename),
+      }));
+      return { items: slice, total, limit, offset };
+    },
+
+    /**
+     * Remove entries older than maxAgeDays (based on generatedAt).
+     *
+     * @param {number} [maxAgeDays=30] — Maximum age in days
+     * @returns {number} Number of entries removed
+     */
+    cleanupOldEntries(maxAgeDays = 30) {
+      const cutoff = Date.now() - (maxAgeDays * 24 * 60 * 60 * 1000);
+      let removed = 0;
+      for (const [key, entry] of index.entries()) {
+        const generatedAt = new Date(entry.generatedAt).getTime();
+        if (generatedAt < cutoff) {
+          const filePath = path.join(dir, entry.filename);
+          try { fs.unlinkSync(filePath); } catch (_) { /* ignore */ }
+          index.delete(key);
+          removed++;
+        }
+      }
+      if (removed > 0) saveIndex();
+      return removed;
+    },
+
+    /**
      * Number of stored images.
      */
     get size() { return index.size; },

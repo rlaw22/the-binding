@@ -388,6 +388,19 @@ function createImageService(opts = {}) {
     max: opts.maxStoredImages || 500,
   });
 
+  // Cleanup old entries on init (default: 30 days)
+  const cleanupMaxAgeDays = opts.cleanupMaxAgeDays !== undefined ? opts.cleanupMaxAgeDays : 30;
+  if (cleanupMaxAgeDays > 0) {
+    try {
+      const removed = persistentStore.cleanupOldEntries(cleanupMaxAgeDays);
+      if (removed > 0) {
+        console.log(`  🖼️  Cleaned up ${removed} images older than ${cleanupMaxAgeDays} days`);
+      }
+    } catch (err) {
+      console.warn(`  🖼️  Image cleanup failed: ${err.message}`);
+    }
+  }
+
   // Session-level rate limiter
   const rateLimiter = new SessionRateLimiter(
     opts.rateLimitMax || 3,
@@ -545,6 +558,41 @@ function createImageService(opts = {}) {
      */
     get persistentStore() {
       return persistentStore;
+    },
+
+    /**
+     * Get a stored image by its cache key.
+     * Returns { filePath, metadata } or null if not found.
+     *
+     * @param {string} key — The persistent store cache key
+     * @returns {{ filePath: string, metadata: object }|null}
+     */
+    getStoredImage(key) {
+      if (!key) return null;
+      const entry = persistentStore.get(key);
+      if (!entry) return null;
+      return {
+        filePath: entry.filePath,
+        metadata: {
+          prompt: entry.prompt,
+          provider: entry.provider,
+          style: entry.style,
+          generatedAt: entry.generatedAt,
+          sourceUrl: entry.sourceUrl,
+        },
+      };
+    },
+
+    /**
+     * List stored images with pagination.
+     *
+     * @param {object} [opts]
+     * @param {number} [opts.limit]  — Max entries to return (default: 20)
+     * @param {number} [opts.offset] — Number of entries to skip (default: 0)
+     * @returns {{ items: Array, total: number, limit: number, offset: number }}
+     */
+    listStoredImages(opts = {}) {
+      return persistentStore.listEntries(opts);
     },
   };
 }
