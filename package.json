@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node tests/phase1.test.js",
+    "test": "node tests/phase1.test.js && node tests/image-pipeline.test.js",
     "start": "node server.js"
   },
   "keywords": [],

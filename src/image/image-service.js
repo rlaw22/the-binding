@@ -76,6 +76,19 @@ function postJSON(urlStr, body, headers = {}) {
   });
 }
 
+
+/**
+ * Mock provider — returns a placeholder image without any external API.
+ * Uses a tiny valid 1x1 red PNG as a data URI.
+ */
+async function generateWithMock(prompt, config) {
+  // 1x1 red PNG (smallest valid PNG)
+  // 1x1 red PNG as data URI — persistent-store handles data: URIs natively
+    const placeholder = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==';
+  console.log('  🖼️  [MOCK] Generating placeholder for: ' + (prompt || '').slice(0, 80) + '...');
+  return placeholder;
+}
+
 /**
  * xAI / Grok Imagine provider.
  * Uses the images/generations endpoint.
@@ -133,6 +146,17 @@ async function generateWithOpenAI(prompt, config) {
 // ---------------------------------------------------------------------------
 
 function detectProvider() {
+  // Mock provider — works without any API key, for testing and development
+  if (process.env.IMAGE_MOCK === 'true' || process.env.IMAGE_PROVIDER === 'mock') {
+    return {
+      name: 'Mock',
+      apiKey: 'mock',
+      baseUrl: '',
+      model: 'mock-v1',
+      generate: generateWithMock,
+    };
+  }
+
   if (process.env.XAI_API_KEY) {
     return {
       name: 'xAI',
@@ -253,6 +277,12 @@ function createImageService(opts = {}) {
     try {
       const remoteUrl = await provider.generate(prompt, provider);
       if (!remoteUrl) return null;
+
+      // Data URIs (mock provider) are self-contained — cache in memory only
+      if (remoteUrl.startsWith('data:')) {
+        cache.set(prompt, remoteUrl);
+        return remoteUrl;
+      }
 
       // Download and persist to disk
       const stored = await persistentStore.store(persistKey, remoteUrl, {

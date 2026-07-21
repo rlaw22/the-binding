@@ -21,6 +21,27 @@ const DEFAULT_DIR = 'data/images';
 const INDEX_FILE = 'index.json';
 const MAX_STORED = 500;
 
+
+/**
+ * Write a data URI directly to a file (no network download needed).
+ * Returns the destPath on success.
+ */
+function writeDataUri(dataUri, destPath) {
+  return new Promise((resolve, reject) => {
+    try {
+      const match = dataUri.match(/^data:[^;]+;base64,(.+)$/);
+      if (!match) return reject(new Error('Invalid data URI'));
+      const buf = Buffer.from(match[1], 'base64');
+      fs.writeFile(destPath, buf, (err) => {
+        if (err) return reject(err);
+        resolve(destPath);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
 /**
  * Download a URL to a local file. Returns the local filename on success.
  */
@@ -179,9 +200,13 @@ function createPersistentStore(opts = {}) {
       const filePath = path.join(dir, filename);
 
       try {
-        await downloadFile(imageUrl, filePath);
+        if (imageUrl.startsWith('data:')) {
+          await writeDataUri(imageUrl, filePath);
+        } else {
+          await downloadFile(imageUrl, filePath);
+        }
       } catch (err) {
-        console.error(`  🖼️  Failed to download image: ${err.message}`);
+        console.error(`  🖼️  Failed to store image: ${err.message}`);
         return null;
       }
 

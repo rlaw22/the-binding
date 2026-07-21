@@ -16,6 +16,85 @@ const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
+// Image generation — optional, gracefully disabled when no provider configured
+let _imageService = null;
+function getImageService() {
+  if (_imageService === null) {
+    try {
+      const { createImageService } = require('../image');
+      _imageService = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
+    } catch (err) {
+      console.warn('[DM] Image service not available:', err.message);
+      _imageService = false; // sentinel: don't retry
+    }
+  }
+  return _imageService || null;
+}
+
+/**
+ * Optionally generate an illustration for a new scene.
+ * Returns image URL or null. Non-blocking — failures are logged and ignored.
+ */
+async function generateSceneImage(adventureId, sceneName, sceneDescription) {
+  const svc = getImageService();
+  if (!svc || !svc.isEnabled) return null;
+
+  try {
+    const { buildAdventureScenePrompt } = require('../image');
+    // Map scene name to a scene key for the adventure template
+    const sceneKey = mapSceneNameToKey(adventureId, sceneName);
+    const prompt = buildAdventureScenePrompt(adventureId, sceneKey, {
+      description: sceneDescription,
+      location: sceneName,
+    });
+    const url = await svc.generateRaw(prompt);
+    if (url) console.log('[DM] Generated scene image for: ' + sceneName);
+    return url;
+  } catch (err) {
+    console.warn('[DM] Scene image generation failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Map a scene name to a template key for the adventure.
+ */
+function mapSceneNameToKey(adventureId, sceneName) {
+  const name = (sceneName || '').toLowerCase();
+  const mappings = {
+    dracula: {
+      'inn': 'inn', 'golden krone': 'inn',
+      'coach': 'coach', 'ride': 'coach',
+      'castle': 'castle', 'dracula': 'castle',
+      'crypt': 'crypt', 'tomb': 'crypt',
+      'london': 'london', 'carfax': 'london',
+      'graveyard': 'graveyard', 'cemetery': 'graveyard',
+    },
+    frankenstein: {
+      'geneva': 'geneva', 'home': 'geneva',
+      'university': 'university', 'ingolstadt': 'university',
+      'laboratory': 'laboratory', 'lab': 'laboratory',
+      'forest': 'forest', 'awakening': 'forest',
+      'cottage': 'cottage', 'de lacey': 'cottage',
+      'arctic': 'arctic', 'ice': 'arctic',
+    },
+    holmes: {
+      'baker': 'baker_street', '221b': 'baker_street',
+      'moor': 'moor', 'dartmoor': 'moor',
+      'hall': 'hall', 'baskerville': 'hall',
+      'mire': 'mire', 'grimpen': 'mire',
+      'fog': 'london_fog', 'london': 'london_fog',
+    },
+  };
+
+  const advMappings = mappings[adventureId] || {};
+  for (const [keyword, key] of Object.entries(advMappings)) {
+    if (name.includes(keyword)) return key;
+  }
+  return 'default';
+}
+
+
 
 // Player profile tracking for adaptive replayability
 
@@ -74,7 +153,21 @@ function transitionScene(game, narration) {
   }
 
   // Return the opening narration for the new scene
-  return nextManifest ? nextManifest.description : null;
+  const openingNarration = nextManifest ? nextManifest.description : null;
+
+  // Optionally generate a scene illustration (non-blocking, best-effort)
+  if (openingNarration && nextSceneData) {
+    generateSceneImage(game.adventureId, nextSceneData.name, openingNarration)
+      .then(imageUrl => {
+        if (imageUrl) {
+          game._lastSceneImage = imageUrl;
+          console.log('[DM] Scene image ready: ' + imageUrl.slice(0, 80));
+        }
+      })
+      .catch(() => {}); // silently ignore failures
+  }
+
+  return openingNarration;
 }
 
 /**

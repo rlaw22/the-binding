@@ -1,10 +1,14 @@
 /**
  * TTS Service — Provider-agnostic text-to-speech for The Binding.
  *
- * Supports: Novita AI (async), OpenAI TTS (sync), ElevenLabs (sync).
+ * Supports: Mock (no key), Novita AI (async), OpenAI TTS (sync), ElevenLabs (sync).
  * Falls back gracefully if no provider is configured.
  *
- * Phase 1: Single DM voice, no NPC differentiation.
+ * Mock provider returns a tiny valid WAV buffer for full end-to-end testing
+ * without any API key. Set TTS_PROVIDER=mock or leave all API keys unset.
+ *
+ * SSML support: wrapText() converts plain text to SSML with prosody control
+ * for providers that support it (mock, openai).
  */
 
 const https = require('https');
@@ -16,13 +20,20 @@ const CACHE_TTL_MS = 30 * 60 * 1000; // 30 minutes
 
 /**
  * Detect which TTS provider is available based on env vars.
- * Priority: Novita > OpenAI > ElevenLabs
+ * Priority: explicit TTS_PROVIDER > Novita > OpenAI > ElevenLabs > mock
  */
 function detectProvider() {
+  // Explicit override takes highest priority
+  const explicit = (process.env.TTS_PROVIDER || '').toLowerCase();
+  if (explicit === 'mock') return 'mock';
+  if (explicit === 'novita') return 'novita';
+  if (explicit === 'openai') return 'openai';
+  if (explicit === 'elevenlabs') return 'elevenlabs';
+
   if (process.env.NOVITA_API_KEY) return 'novita';
   if (process.env.OPENAI_API_KEY) return 'openai';
   if (process.env.ELEVENLABS_API_KEY) return 'elevenlabs';
-  return null;
+  return 'mock'; // Default to mock — always works
 }
 
 /**
@@ -41,8 +52,8 @@ function createTTSService(config = {}) {
   const speed = config.speed || 1.0;
   const language = config.language || 'en-US';
 
-  if (!provider) {
-    console.warn('[TTS] No TTS provider configured. Set NOVITA_API_KEY, OPENAI_API_KEY, or ELEVENLABS_API_KEY. Voice disabled.');
+  if (!provider || provider === 'null') {
+    console.warn('[TTS] TTS explicitly disabled. Voice disabled.');
     return createNullTTSService({ speed, language, voice });
   }
 
@@ -60,7 +71,7 @@ function createTTSService(config = {}) {
      * For async providers (Novita), taskId is returned immediately and audio is fetched later.
      * For sync providers (OpenAI, ElevenLabs), audio is returned immediately.
      */
-    async generate(text) {
+    async generate(text, options = {}) {
       if (!text || text.trim().length === 0) {
         return { taskId: null, status: 'skipped', reason: 'empty text' };
       }
@@ -68,14 +79,20 @@ function createTTSService(config = {}) {
       // Truncate very long text — TTS APIs have limits
       const truncated = truncateForTTS(text, 500);
 
+      // Apply SSML wrapping if requested and provider supports it
+      const ssmlEnabled = options.ssml !== false; // default on
+      const inputText = ssmlEnabled ? wrapSSML(truncated, options, provider) : truncated;
+
       try {
         switch (provider) {
+          case 'mock':
+            return generateMock(inputText, voice, speed);
           case 'novita':
-            return await generateNovita(truncated, voice, speed, language);
+            return await generateNovita(truncated, voice, speed, language); // Novita doesn't support SSML
           case 'openai':
-            return await generateOpenAI(truncated, voice, speed);
+            return await generateOpenAI(inputText, voice, speed);
           case 'elevenlabs':
-            return await generateElevenLabs(truncated, voice);
+            return await generateElevenLabs(truncated, voice); // ElevenLabs doesn't support SSML
           default:
             return { taskId: null, status: 'error', reason: `Unknown provider: ${provider}` };
         }
@@ -116,7 +133,7 @@ function createTTSService(config = {}) {
      * Check if the service is configured and ready.
      */
     isReady() {
-      return !!provider;
+      return provider !== 'null';
     }
   };
 }
@@ -146,6 +163,102 @@ function createNullTTSService(config = {}) {
     },
     isReady() { return false; }
   };
+}
+
+// ─── Provider: Mock (no API key needed) ──────────────────────────────────────
+
+/**
+ * Generate a tiny valid WAV file containing 0.5 seconds of silence.
+ * This allows full end-to-end testing without any API key.
+ */
+function generateSilenceWav(durationMs = 500) {
+  const sampleRate = 16000;
+  const numSamples = Math.floor(sampleRate * durationMs / 1000);
+  const bitsPerSample = 16;
+  const numChannels = 1;
+  const byteRate = sampleRate * numChannels * bitsPerSample / 8;
+  const blockAlign = numChannels * bitsPerSample / 8;
+  const dataSize = numSamples * blockAlign;
+  const headerSize = 44;
+  const buf = Buffer.alloc(headerSize + dataSize);
+
+  // RIFF header
+  buf.write('RIFF', 0);
+  buf.writeUInt32LE(36 + dataSize, 4);
+  buf.write('WAVE', 8);
+
+  // fmt sub-chunk
+  buf.write('fmt ', 12);
+  buf.writeUInt32LE(16, 16);        // sub-chunk size
+  buf.writeUInt16LE(1, 20);         // PCM format
+  buf.writeUInt16LE(numChannels, 22);
+  buf.writeUInt32LE(sampleRate, 24);
+  buf.writeUInt32LE(byteRate, 28);
+  buf.writeUInt16LE(blockAlign, 32);
+  buf.writeUInt16LE(bitsPerSample, 34);
+
+  // data sub-chunk (silence = all zeros, already allocated)
+  buf.write('data', 36);
+  buf.writeUInt32LE(dataSize, 40);
+  // samples 44..end are already 0x00 (silence)
+
+  return buf;
+}
+
+function generateMock(text, voice, speed) {
+  console.log(`[TTS:mock] Generating mock audio for voice="${voice}" speed=${speed}: "${text.substring(0, 80)}${text.length > 80 ? '...' : ''}"`);
+
+  const wavBuffer = generateSilenceWav(500);
+  const taskId = 'mock_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 6);
+  const base64 = wavBuffer.toString('base64');
+  const entry = {
+    audioBase64: base64,
+    audioType: 'wav',
+    expiresAt: Date.now() + CACHE_TTL_MS
+  };
+  audioCache.set(taskId, entry);
+
+  return { taskId, status: 'complete', audioBase64: base64, audioType: 'wav' };
+}
+
+// ─── SSML Support ────────────────────────────────────────────────────────────
+
+/**
+ * Wrap plain text in SSML tags for prosody control.
+ * Supported by: mock, openai providers.
+ *
+ * @param {string} text - Plain text to wrap
+ * @param {Object} options - Prosody options
+ * @param {string} [options.rate] - Speech rate: 'x-slow','slow','medium','fast','x-fast' or percentage like '90%'
+ * @param {string} [options.pitch] - Pitch: 'x-low','low','medium','high','x-high' or relative like '+10%'
+ * @param {string} [options.volume] - Volume: 'silent','x-soft','soft','medium','loud','x-loud' or dB like '+6dB'
+ * @param {string} [options.emphasis] - Emphasis level: 'strong','moderate','reduced','none'
+ * @param {string} provider - Current provider name
+ * @returns {string} SSML-wrapped text, or plain text if provider doesn't support SSML
+ */
+function wrapSSML(text, options = {}, provider) {
+  // Only wrap for providers that support SSML
+  const ssmlProviders = ['mock', 'openai'];
+  if (!ssmlProviders.includes(provider)) return text;
+
+  const { rate, pitch, volume, emphasis } = options;
+
+  // If no prosody options, still wrap in speak tags for consistency
+  const prosodyAttrs = [];
+  if (rate) prosodyAttrs.push(`rate="${rate}"`);
+  if (pitch) prosodyAttrs.push(`pitch="${pitch}"`);
+  if (volume) prosodyAttrs.push(`volume="${volume}"`);
+
+  let inner = text;
+  if (emphasis) {
+    inner = `<emphasis level="${emphasis}">${text}</emphasis>`;
+  }
+
+  if (prosodyAttrs.length > 0) {
+    inner = `<prosody ${prosodyAttrs.join(' ')}>${inner}</prosody>`;
+  }
+
+  return `<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="en-US">${inner}</speak>`;
 }
 
 // ─── Provider: Novita AI (async) ────────────────────────────────────────────
@@ -279,6 +392,7 @@ async function generateElevenLabs(text, voice) {
 
 function getDefaultVoice(provider) {
   switch (provider) {
+    case 'mock': return 'mock-default';
     case 'novita': return 'Emily';
     case 'openai': return 'nova';
     case 'elevenlabs': return '21m00Tcm4TlvDq8ikWAM';
@@ -415,5 +529,7 @@ module.exports = {
   createTTSService,
   getCachedAudio,
   cleanupCache,
-  detectProvider
+  detectProvider,
+  generateSilenceWav,
+  wrapSSML
 };
