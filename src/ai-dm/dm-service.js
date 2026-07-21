@@ -655,6 +655,12 @@ async function scoreActionWithLLM(llmProvider, playerAction, narrativeContext) {
 /**
  * Score a player action for coin rewards (deterministic + heuristic).
  * Full AI scoring happens when the LLM provider is available.
+ *
+ * Rubric: each category scored 0-10. Keywords map to tiers:
+ *   Strong match (3pts): direct, unambiguous keyword hit
+ *   Moderate match (2pts): related action verb
+ *   Weak match (1pt): indirect or implied
+ *   Bonus (+1): detail/length, multi-word sophistication
  */
 function scoreAction(playerAction, context) {
   const action = playerAction.toLowerCase();
@@ -666,27 +672,71 @@ function scoreAction(playerAction, context) {
     exploration: 0
   };
 
-  // Creativity heuristics
-  if (action.includes('combine') || action.includes('use') && action.includes('with')) scores.creativity += 3;
-  if (action.includes('try') || action.includes('attempt')) scores.creativity += 1;
-  if (action.length > 50) scores.creativity += 1; // detailed actions show thought
+  // ── Creativity heuristics ──────────────────────────────────────
+  // Strong: combining items, using tools unconventionally, improvising
+  if (/combine|improvis|rig|craft|build|construct/.test(action)) scores.creativity += 3;
+  if (/(?:use|apply|throw|pour|mix).*(?:with|on|at|into)/.test(action)) scores.creativity += 3;
+  // Moderate: attempting novel actions, experimenting
+  if (/try|attempt|experiment|trick|deceiv|distract|disguise/.test(action)) scores.creativity += 2;
+  if (/set a trap|create a diversion|barricad|fortif/.test(action)) scores.creativity += 2;
+  // Weak: some thought behind it
+  if (/careful|clever|carefully|slowly|quietly/.test(action)) scores.creativity += 1;
+  if (action.length > 60) scores.creativity += 1; // detailed actions show thought
+  if (action.split(' ').length > 10) scores.creativity += 1; // multi-clause actions
 
-  // Investigation heuristics
-  if (action.includes('search') || action.includes('examine') || action.includes('look') || action.includes('inspect')) scores.investigation += 3;
-  if (action.includes('ask') || action.includes('question') || action.includes('listen')) scores.investigation += 2;
-  if (action.includes('read') || action.includes('study')) scores.investigation += 2;
+  // ── Investigation heuristics ───────────────────────────────────
+  // Strong: direct examination, searching, evidence-gathering
+  if (/search|examine|inspect|investigate|analy[sz]e|forensic/.test(action)) scores.investigation += 3;
+  if (/look (?:at|for|under|behind|inside|through|around)|check/.test(action)) scores.investigation += 3;
+  // Moderate: asking, listening, reading
+  if (/ask|question|interrogat|listen|eavesdrop|overhear/.test(action)) scores.investigation += 2;
+  if (/read|study|decipher|translat|examin/.test(action)) scores.investigation += 2;
+  // Weak: general awareness
+  if (/observe|watch|notice|scan|survey/.test(action)) scores.investigation += 1;
+  if (/follow|track|trace/.test(action)) scores.investigation += 1;
 
-  // Combat heuristics
-  if (action.includes('attack') || action.includes('strike') || action.includes('cast') || action.includes('fight')) scores.combat += 2;
-  if (action.includes('dodge') || action.includes('parry') || action.includes('block')) scores.combat += 1;
+  // ── Combat heuristics ──────────────────────────────────────────
+  // Strong: direct attack actions
+  if (/attack|strike|slash|thrust|stab|shoot|fire (?:at|upon)/.test(action)) scores.combat += 3;
+  if (/cast (?:a )?(?:spell|fireball|magic missile|lightning)/.test(action)) scores.combat += 3;
+  // Moderate: defensive or tactical combat
+  if (/fight|battle|engage|charge|rush (?:at|toward)/.test(action)) scores.combat += 2;
+  if (/dodge|parry|block|deflect|counter|riposte/.test(action)) scores.combat += 2;
+  if (/draw (?:my |the )?(?:sword|weapon|blade|axe|bow)/.test(action)) scores.combat += 2;
+  // Weak: combat-adjacent
+  if (/aim|ready|brace|flank|retreat|advance/.test(action)) scores.combat += 1;
 
-  // Exploration heuristics
-  if (action.includes('open') || action.includes('enter') || action.includes('climb') || action.includes('go')) scores.exploration += 2;
-  if (action.includes('north') || action.includes('south') || action.includes('east') || action.includes('west')) scores.exploration += 1;
+  // ── Exploration heuristics ─────────────────────────────────────
+  // Strong: directional movement, entering new areas
+  if (/go (?:to|through|into|down|up|inside)|enter|climb|descend/.test(action)) scores.exploration += 3;
+  if (/open (?:the )?(?:door|gate|chest|window|trapdoor|hatch)/.test(action)) scores.exploration += 3;
+  // Moderate: navigation, physical movement
+  if (/walk|run|sneak|creep|crawl|jump|leap|swim/.test(action)) scores.exploration += 2;
+  if (/north|south|east|west|upstairs|downstairs|outside|inside/.test(action)) scores.exploration += 2;
+  // Weak: environmental awareness
+  if (/look (?:around|out|up|down)|map|path|road/.test(action)) scores.exploration += 1;
+  if (/push|pull|lift|move|turn (?:the )?(?:key|handle|lever|wheel)/.test(action)) scores.exploration += 1;
 
-  // Roleplay heuristics
-  if (action.includes('"') || action.includes("'")) scores.roleplay += 2; // quoted speech
-  if (action.includes('i say') || action.includes('i tell') || action.includes('i ask')) scores.roleplay += 2;
+  // ── Roleplay heuristics ────────────────────────────────────────
+  // Strong: direct speech, character voice
+  if (/[""\u201c\u201d].*[""\u201c\u201d]/.test(action)) scores.roleplay += 3; // quoted speech
+  if (/i say|i tell|i ask|i whisper|i shout|i exclaim|i declare|i respond/.test(action)) scores.roleplay += 3;
+  // Moderate: emotional/thematic engagement
+  if (/(?:i feel|i sense|i (?:am|'m) (?:afraid|scared|brave|determined|curious|angry|sad))/.test(action)) scores.roleplay += 2;
+  if (/pray|meditat|swear (?:an? )?oath|honor|pledge|vow/.test(action)) scores.roleplay += 2;
+  // Weak: first-person narration, staying in character
+  if (/^i (?:cautiously|carefully|bravely|hesitantly|reluctantly)/.test(action)) scores.roleplay += 1;
+  if (/in character|i roleplay|speaking as/.test(action)) scores.roleplay += 1;
+
+  // ── Contextual bonus from narrative ────────────────────────────
+  // If the player's action references something from the DM's narration, reward engagement
+  if (context && typeof context === 'string') {
+    const ctxWords = context.toLowerCase().split(/\W+/).filter(w => w.length > 4);
+    const actionWords = action.split(/\W+/).filter(w => w.length > 4);
+    const overlap = actionWords.filter(w => ctxWords.includes(w)).length;
+    if (overlap >= 3) scores.investigation += 1; // references scene details
+    if (overlap >= 5) scores.creativity += 1; // deeply engaged with scene
+  }
 
   // Cap at 10
   for (const key in scores) scores[key] = Math.min(scores[key], 10);
