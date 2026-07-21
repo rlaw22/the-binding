@@ -298,6 +298,42 @@ const ITEMS = {
     combatEffect: { type: 'damage', dice: '4d8', damageType: 'lightning', condition: 'storm' },
     flavor: 'It hums when raised toward thunderclouds, as if eager.'
   },
+  oil_flask: {
+    id: 'oil_flask',
+    name: 'Oil Flask',
+    description: 'A clay flask of volatile lamp oil. Can be thrown to create a burning surface or used to fuel a lantern.',
+    type: 'consumable',
+    consumable: true,
+    uses: 3,
+    rarity: 'common',
+    price: 8,
+    combatEffect: { type: 'damage', dice: '1d6', damageType: 'fire', condition: 'ignited' },
+    flavor: 'The oil sloshes heavily inside the flask, reeking of petroleum.'
+  },
+  parry_elixir: {
+    id: 'parry_elixir',
+    name: 'Parry Elixir',
+    description: 'A shimmering violet tonic that sharpens reflexes. Grants +2 AC for the duration of one encounter.',
+    type: 'consumable',
+    consumable: true,
+    uses: 1,
+    rarity: 'uncommon',
+    price: 28,
+    combatEffect: { type: 'buff', stat: 'ac', modifier: 2, duration: 'encounter' },
+    flavor: 'Your hands tingle after drinking it — every motion feels precise.'
+  },
+  stamina_tonic: {
+    id: 'stamina_tonic',
+    name: 'Stamina Tonic',
+    description: 'A bitter green draught brewed from guarana and ginseng. Restores energy and grants an extra action in combat.',
+    type: 'consumable',
+    consumable: true,
+    uses: 1,
+    rarity: 'uncommon',
+    price: 20,
+    combatEffect: { type: 'buff', stat: 'extra_action', modifier: 1, duration: 'round' },
+    flavor: 'The aftertaste is awful, but the surge of energy is undeniable.'
+  },
   repair_kit: {
     id: 'repair_kit',
     name: 'Repair Kit',
@@ -309,6 +345,18 @@ const ITEMS = {
     rarity: 'common',
     price: 15,
     flavor: 'A small leather pouch of hammers, nails, and spare parts.'
+  },
+  lantern: {
+    id: 'lantern',
+    name: 'Brass Lantern',
+    description: 'A sturdy brass lantern with a hinged glass door. Burns oil slowly, casting steady light far longer than a torch.',
+    type: 'tool',
+    consumable: false,
+    rarity: 'uncommon',
+    price: 18,
+    maxDurability: 80,
+    combatEffect: { type: 'illuminate', radius: 30 },
+    flavor: 'The flame dances behind smoked glass, unwavering even in wind.'
   },
 
   // ── Holmes Items ───────────────────────────────────────────────────────────
@@ -620,7 +668,7 @@ function createInventory(startingItems = []) {
     consumable_1: null,
     consumable_2: null
   };
-  return { slots, maxSize: 20, equipment };
+  return { slots, maxSize: 20, equipment, transactionLog: [] };
 }
 
 /**
@@ -972,6 +1020,13 @@ function getInventoryContext(inventory) {
     lines.push(`Active effects: ${fx.join('; ')}`);
   }
 
+  // Set bonuses
+  const setBonuses = getSetBonus(inventory);
+  if (setBonuses.length > 0) {
+    const sb = setBonuses.map(s => s.bonus.label || s.name);
+    lines.push(`Set bonuses: ${sb.join('; ')}`);
+  }
+
   return lines.join('\n');
 }
 
@@ -1023,6 +1078,17 @@ function buyItem(inventory, itemId, coinBalance) {
   if (!added) return { success: false, reason: 'Could not add item to inventory' };
 
   const remainingCoins = coinBalance - template.price;
+
+  // Log transaction
+  if (!inventory.transactionLog) inventory.transactionLog = [];
+  inventory.transactionLog.push({
+    type: 'buy',
+    itemId: template.id,
+    itemName: template.name,
+    price: template.price,
+    timestamp: new Date().toISOString()
+  });
+
   return { success: true, item: added, remainingCoins };
 }
 
@@ -1038,8 +1104,27 @@ function sellItem(inventory, itemId) {
   const invIndex = inventory.slots.findIndex(s => s.id === itemId);
   if (invIndex === -1) return { success: false, reason: 'Item not in inventory' };
 
-  const sellPrice = template.price ? Math.floor(template.price / 2) : 0;
+  const basePrice = template.price ? Math.floor(template.price / 2) : 0;
+
+  // Discount by durability ratio for non-consumable items with durability
+  const slot = inventory.slots[invIndex];
+  let sellPrice = basePrice;
+  if (!slot.consumable && slot.durability != null && slot.maxDurability) {
+    const ratio = slot.durability / slot.maxDurability;
+    sellPrice = Math.max(1, Math.floor(basePrice * ratio));
+  }
+
   inventory.slots.splice(invIndex, 1);
+
+  // Log transaction
+  if (!inventory.transactionLog) inventory.transactionLog = [];
+  inventory.transactionLog.push({
+    type: 'sell',
+    itemId: template.id,
+    itemName: template.name,
+    price: sellPrice,
+    timestamp: new Date().toISOString()
+  });
 
   return { success: true, coinsEarned: sellPrice };
 }
@@ -1205,7 +1290,8 @@ function repairItem(inventory, itemId, amount = -1) {
       if (equipped.durability === undefined) {
         equipped.durability = maxDurability;
       }
-      equipped.durability = Math.min(maxDurability, equipped.durability + amount);
+      const repairAmt = amount < 0 ? (maxDurability - equipped.durability) : amount;
+      equipped.durability = Math.min(maxDurability, equipped.durability + repairAmt);
       return {
         current: equipped.durability,
         max: maxDurability,
@@ -1286,7 +1372,7 @@ function damageEquipment(inventory, slotName, amount = 1) {
 
   let message;
   if (broken) {
-    equipped.broken = true;
+    inventory.equipment[slotName] = null;
     message = `Your ${equipped.name} has broken!`;
   } else if (equipped.durability <= maxDurability * 0.25) {
     message = `Your ${equipped.name} is in critical condition (${equipped.durability}/${maxDurability}).`;
@@ -1396,14 +1482,77 @@ function getDurabilityStatus(inventory) {
   return results;
 }
 
+/**
+ * Get the shoppe transaction log for an inventory.
+ * @param {object} inventory
+ * @returns {Array<{ type: string, itemId: string, itemName: string, price: number, timestamp: string }>}
+ */
+function getShoppeTransactionLog(inventory) {
+  return inventory.transactionLog || [];
+}
+
+/**
+ * Haggle a price based on charisma modifier.
+ * Returns a price adjusted by ±20% based on charisma (0-1 scale).
+ * @param {number} basePrice
+ * @param {number} charismaModifier — 0 (terrible) to 1 (legendary)
+ * @returns {{ finalPrice: number, roll: number, discount: number }}
+ */
+function hagglePrice(basePrice, charismaModifier = 0.5) {
+  const clamped = Math.max(0, Math.min(1, charismaModifier));
+  // d20-style roll: 1-20, normalized to 0-1
+  const roll = Math.floor(Math.random() * 20) + 1;
+  const rollNorm = roll / 20;
+  // Combined factor: charisma weighted 60%, luck 40%
+  const factor = (clamped * 0.6) + (rollNorm * 0.4);
+  // Map factor (0-1) to discount range (-20% to +20%)
+  const discount = Math.round((factor - 0.5) * 0.4 * basePrice);
+  const finalPrice = Math.max(1, basePrice - discount);
+  return { finalPrice, roll, discount };
+}
+
+/**
+ * Get shoppe recommendations based on what the player lacks and can afford.
+ * @param {object} inventory
+ * @param {number} coinBalance
+ * @returns {Array<{ id: string, name: string, price: number, reason: string }>}
+ */
+function getShoppeRecommendations(inventory, coinBalance) {
+  const catalog = getShoppeCatalog();
+  const owned = new Set(inventory.slots.map(s => s.id));
+  const recommendations = [];
+
+  for (const item of catalog) {
+    if (item.price > coinBalance) continue;
+    if (owned.has(item.id)) continue;
+
+    let reason = 'Available at the Shoppe';
+    if (item.consumable) {
+      reason = 'Consumable — useful in a pinch';
+    } else if (item.type === 'weapon' && !inventory.equipment?.mainHand) {
+      reason = 'No weapon equipped — recommended';
+    } else if (item.type === 'armor' && !inventory.equipment?.armor) {
+      reason = 'No armor equipped — recommended';
+    }
+
+    recommendations.push({ id: item.id, name: item.name, price: item.price, reason });
+  }
+
+  // Sort by price ascending (best value first)
+  recommendations.sort((a, b) => a.price - b.price);
+  return recommendations;
+}
+
 module.exports = {
   ITEMS,
+  SET_BONUSES,
   SLOT_TYPE_MAP,
   EQUIPMENT_SLOTS,
   STARTING_LOADOUTS,
   createInventory,
   addItem,
   useItem,
+  useItemFromInventory,
   removeItem,
   listItems,
   hasItem,
@@ -1417,6 +1566,9 @@ module.exports = {
   getShoppeCatalog,
   buyItem,
   sellItem,
+  getShoppeTransactionLog,
+  hagglePrice,
+  getShoppeRecommendations,
   getDurability,
   damageDurability,
   damageEquippedDurability,
@@ -1424,5 +1576,6 @@ module.exports = {
   removeBrokenItem,
   damageEquipment,
   repairEquipment,
-  getDurabilityStatus
+  getDurabilityStatus,
+  getSetBonus
 };
