@@ -72,10 +72,19 @@ const {
   STYLE_PREFIX,
   STYLE_SUFFIX,
 } = require('./prompt-builder');
+const {
+  createErrorRecovery,
+  ImageFailureLogger,
+  CircuitBreaker,
+} = require('./error-recovery');
 
 module.exports = {
   // Service factory
   createImageService,
+  // Error recovery
+  createErrorRecovery,
+  ImageFailureLogger,
+  CircuitBreaker,
   // Cache helpers
   generateAndCache,
   getImageCacheStats,

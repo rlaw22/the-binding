@@ -58,6 +58,100 @@ async function generateSceneImage(adventureId, sceneName, sceneDescription, sess
 }
 
 /**
+ * Generate a combat scene illustration when combat triggers.
+ * Returns image URL or null. Non-blocking — failures are logged and ignored.
+ *
+ * @param {object} combatCtx - Combat context
+ * @param {string} combatCtx.attacker - Attacker description
+ * @param {string} combatCtx.defender - Defender description
+ * @param {string} [combatCtx.weapon] - Weapon or attack type
+ * @param {string} [combatCtx.location] - Where the fight takes place
+ * @param {string} [combatCtx.outcome] - "hit", "miss", "critical", "kill"
+ * @param {string} [combatCtx.description] - Combat narration
+ * @param {string} [combatCtx.sessionId] - Session ID for rate limiting
+ * @returns {Promise<string|null>} Image URL or null
+ */
+async function generateCombatImage(combatCtx) {
+  const svc = getImageService();
+  if (!svc || !svc.isEnabled) return null;
+
+  try {
+    const { buildCombatPrompt, buildDetailedCombatPrompt } = require('../image');
+    // Use detailed combat prompt if we have enough context, otherwise basic
+    const hasRichContext = combatCtx.environment || combatCtx.stakes;
+    const prompt = hasRichContext
+      ? buildDetailedCombatPrompt(combatCtx)
+      : buildCombatPrompt(combatCtx);
+    const url = await svc.generateRaw(prompt, { sessionId: combatCtx.sessionId });
+    if (url) console.log('[DM] Generated combat image for: ' + (combatCtx.attacker || 'combat scene'));
+    return url;
+  } catch (err) {
+    console.warn('[DM] Combat image generation failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Generate an NPC portrait when players encounter NPCs.
+ * Returns image URL or null. Non-blocking — failures are logged and ignored.
+ *
+ * @param {object} npcCtx - NPC context
+ * @param {string} npcCtx.name - NPC name
+ * @param {string} [npcCtx.role] - Role or occupation (innkeeper, guard, merchant…)
+ * @param {string} [npcCtx.race] - Race or species
+ * @param {string} [npcCtx.appearance] - Appearance description
+ * @param {string} [npcCtx.personality] - Personality hint (gruff, mysterious, warm…)
+ * @param {string} [npcCtx.mood] - Mood tag
+ * @param {string} [npcCtx.sessionId] - Session ID for rate limiting
+ * @returns {Promise<string|null>} Image URL or null
+ */
+async function generateNPCPortrait(npcCtx) {
+  const svc = getImageService();
+  if (!svc || !svc.isEnabled) return null;
+
+  try {
+    const { buildNPCPortraitPrompt } = require('../image');
+    const prompt = buildNPCPortraitPrompt(npcCtx);
+    const url = await svc.generateRaw(prompt, { sessionId: npcCtx.sessionId });
+    if (url) console.log('[DM] Generated NPC portrait for: ' + (npcCtx.name || 'unknown NPC'));
+    return url;
+  } catch (err) {
+    console.warn('[DM] NPC portrait generation failed:', err.message);
+    return null;
+  }
+}
+
+/**
+ * Generate an item illustration when players find items.
+ * Returns image URL or null. Non-blocking — failures are logged and ignored.
+ *
+ * @param {object} itemCtx - Item context
+ * @param {string} itemCtx.name - Item name
+ * @param {string} [itemCtx.type] - Item type (weapon, potion, scroll, artifact…)
+ * @param {string} [itemCtx.description] - Description of the item
+ * @param {string} [itemCtx.material] - Material (silver, iron, crystal, leather…)
+ * @param {string} [itemCtx.enchantment] - Magical property or enchantment hint
+ * @param {string} [itemCtx.mood] - Mood tag
+ * @param {string} [itemCtx.sessionId] - Session ID for rate limiting
+ * @returns {Promise<string|null>} Image URL or null
+ */
+async function generateItemImage(itemCtx) {
+  const svc = getImageService();
+  if (!svc || !svc.isEnabled) return null;
+
+  try {
+    const { buildItemPrompt } = require('../image');
+    const prompt = buildItemPrompt(itemCtx);
+    const url = await svc.generateRaw(prompt, { sessionId: itemCtx.sessionId });
+    if (url) console.log('[DM] Generated item image for: ' + (itemCtx.name || 'unknown item'));
+    return url;
+  } catch (err) {
+    console.warn('[DM] Item image generation failed:', err.message);
+    return null;
+  }
+}
+
+/**
  * Map a scene name to a template key for the adventure.
  */
 function mapSceneNameToKey(adventureId, sceneName) {
@@ -773,5 +867,13 @@ module.exports = {
   parseDMResponse,
   scoreAction,
   scoreActionWithLLM,
-  generateSceneActions
+  generateSceneActions,
+  // Image generation hooks
+  generateSceneImage,
+  generateCombatImage,
+  generateNPCPortrait,
+  generateItemImage,
+  // Expose for testing
+  getImageService,
+  mapSceneNameToKey,
 };
