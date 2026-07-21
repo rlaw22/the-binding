@@ -1,23 +1,23 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Phase 1 Core Near-Complete                     *July 20, 2026*
+## Current Status: 🟢 Phase 1 Core Near-Complete                     *July 21, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `a1e5efc` — PWA SW v5 + DD adventure-type calibration presets
-**Test suite:** 486/486 passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 55 durability-image + 72 image-cache + 19 coin-rubric + 35 E2E)
+**Latest commit:** `ff4261e` — DD calibration report, tuning API, session reset
+**Test suite:** 602/602 passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 55 durability-image + 72 image-cache + 19 coin-rubric + 35 E2E + 72 shoppe + 44 DD-tuning)
 
 ---
 
-## Phase 1 Core — Completion Tracker                                *July 20, 2026*
+## Phase 1 Core — Completion Tracker                                *July 21, 2026*
 
 | # | Item | Start | Before | Current | Status |
 |---|------|-------|--------|---------|--------|
 | 1 | Coin/XP Scoring Engine | 40% | 95% | **97%** | ✅ Rubric wired, LLM prompt built |
 | 2 | TTS Voice Service | 55% | 80% | **80%** | 🟡 Blocked on API key |
-| 3 | Dynamic Difficulty | 50% | 85% | **93%** | ✅ Adventure presets, anti-oscillation |
-| 4 | Inventory System | 50% | 90% | **95%** | ✅ Equipment context fix, descriptions |
-| 5 | Web App PWA | 65% | 90% | **95%** | ✅ SW v5 caching, session rejoin |
-| 6 | End-to-End Smoke Test | 35% | 92% | **94%** | ✅ 486/486 all green |
+| 3 | Dynamic Difficulty | 50% | 93% | **96%** | ✅ Calibration report, tuning API, session reset |
+| 4 | Inventory System | 50% | 95% | **97%** | ✅ Shoppe txn log, haggle pricing, recommendations |
+| 5 | Web App PWA | 65% | 95% | **97%** | ✅ Spectator mode skeleton, SW v5 caching |
+| 6 | End-to-End Smoke Test | 35% | 94% | **94%** | ✅ 602/602 all green |
 | 7 | Image Generation Pipeline | 0% | 50% | **55%** | 🟡 Blocked on API key, cache done |
 
 ---
