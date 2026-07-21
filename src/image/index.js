@@ -52,6 +52,10 @@ const {
   IMAGE_CACHE_MAX,
 } = require('./image-service');
 const {
+  createPersistentStore,
+  makeKey: persistentMakeKey,
+} = require('./persistent-store');
+const {
   buildScenePrompt,
   buildCharacterPrompt,
   buildCombatPrompt,
@@ -81,4 +85,7 @@ module.exports = {
   ImageCacheStore,
   IMAGE_CACHE_TTL_MS,
   IMAGE_CACHE_MAX,
+  // Persistent store
+  createPersistentStore,
+  persistentMakeKey,
 };

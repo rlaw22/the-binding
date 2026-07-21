@@ -1012,6 +1012,16 @@ async function createServer(options = {}) {
     console.warn('  \u26a0\ufe0f Campaign routes not loaded:', err.message);
   }
 
+
+  // --- IMAGE GENERATION ROUTES ---
+  try {
+    const imageRoutes = require('./image-routes');
+    await app.register(imageRoutes);
+    console.log('  🖼️  Image Generation routes registered (/api/image)');
+  } catch (err) {
+    console.warn('  ⚠️ Image routes not loaded:', err.message);
+  }
+
   // --- PERSISTENCE: Load saved sessions and start auto-save ---
   const loadedCount = loadSessions(sessions, rejoinCodes, createProvider, llmConfig, RuleEngine, DiceService);
   if (loadedCount > 0) {

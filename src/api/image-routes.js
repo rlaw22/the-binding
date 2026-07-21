@@ -7,6 +7,8 @@
 
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
 const { createImageService } = require('../image');
 
 // Singleton image service — created once on first route registration
@@ -63,6 +65,56 @@ async function imageRoutes(fastify, options) {
     }
 
     return result;
+  });
+
+  // ── Serve Stored Image ──────────────────────────────────────
+  fastify.get('/api/image/stored/:key', async (request, reply) => {
+    const { key } = request.params;
+    if (!key || !/^[a-f0-9]{16,64}$/.test(key)) {
+      return reply.code(400).send({ error: 'Invalid image key' });
+    }
+
+    const svc = getImageService();
+    const store = svc.persistentStore;
+
+    if (!store || !store.has(key)) {
+      return reply.code(404).send({ error: 'Image not found' });
+    }
+
+    const entry = store.get(key);
+    const filePath = entry.filePath;
+
+    // Determine content type from extension
+    const ext = path.extname(filePath).toLowerCase();
+    const mimeTypes = {
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.webp': 'image/webp',
+      '.gif': 'image/gif',
+    };
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+    try {
+      const data = fs.readFileSync(filePath);
+      reply.header('Content-Type', contentType);
+      reply.header('Cache-Control', 'public, max-age=86400'); // 24h browser cache
+      return reply.send(data);
+    } catch (err) {
+      return reply.code(500).send({ error: 'Failed to read stored image' });
+    }
+  });
+
+  // ── Persistent Store Stats ───────────────────────────────────
+  fastify.get('/api/image/store/stats', async (request, reply) => {
+    const svc = getImageService();
+    const store = svc.persistentStore;
+    return {
+      store: store ? store.stats() : { count: 0, maxEntries: 0, dir: 'N/A', entries: [] },
+      memoryCache: svc.cacheStats,
+      provider: svc.providerName,
+      enabled: svc.isEnabled,
+    };
   });
 
   // ── Cache Stats ──────────────────────────────────────────────

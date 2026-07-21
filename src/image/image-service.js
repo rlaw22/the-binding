@@ -16,12 +16,14 @@
 const https = require('https');
 const http  = require('http');
 const { URL } = require('url');
+const crypto = require('crypto');
 
 const {
   buildScenePrompt,
   buildCharacterPrompt,
   buildCombatPrompt,
 } = require('./prompt-builder');
+const { createPersistentStore, makeKey: persistentMakeKey } = require('./persistent-store');
 
 // ---------------------------------------------------------------------------
 // Provider implementations
@@ -214,6 +216,12 @@ function createImageService(opts = {}) {
   const enabled = opts.enabled !== undefined ? opts.enabled : !!provider;
   const cache = new ImageCache(opts.cacheSize || 100);
 
+  // Persistent disk store — survives restarts
+  const persistentStore = opts.persistentStore || createPersistentStore({
+    dir: opts.cacheDir || 'data/images',
+    max: opts.maxStoredImages || 500,
+  });
+
   if (!enabled) {
     console.log('  🖼️  Image service: DISABLED (no XAI_API_KEY or OPENAI_API_KEY set)');
   } else {
@@ -224,18 +232,44 @@ function createImageService(opts = {}) {
    * Internal: generate a single image from a prompt, with caching.
    * Returns image URL string or null on failure.
    */
-  async function generate(prompt) {
+  async function generate(prompt, context = {}) {
     if (!enabled || !provider) return null;
     if (!prompt || typeof prompt !== 'string') return null;
 
-    // Cache key is the prompt itself (deterministic enough for game art)
+    // In-memory LRU cache (fast path)
     const cached = cache.get(prompt);
     if (cached !== undefined) return cached;
 
+    // Persistent disk cache (survives restart)
+    const persistKey = persistentMakeKey(prompt, provider ? provider.name : 'unknown', context.style || '');
+    if (persistentStore.has(persistKey)) {
+      const entry = persistentStore.get(persistKey);
+      // Serve via the API endpoint
+      const localUrl = `/api/image/stored/${persistKey}`;
+      cache.set(prompt, localUrl);
+      return localUrl;
+    }
+
     try {
-      const url = await provider.generate(prompt, provider);
-      cache.set(prompt, url);
-      return url;
+      const remoteUrl = await provider.generate(prompt, provider);
+      if (!remoteUrl) return null;
+
+      // Download and persist to disk
+      const stored = await persistentStore.store(persistKey, remoteUrl, {
+        prompt,
+        provider: provider.name,
+        style: context.style || '',
+      });
+
+      if (stored) {
+        const localUrl = `/api/image/stored/${persistKey}`;
+        cache.set(prompt, localUrl);
+        return localUrl;
+      }
+
+      // Fallback: use remote URL directly (may expire)
+      cache.set(prompt, remoteUrl);
+      return remoteUrl;
     } catch (err) {
       console.error(`  🖼️  Image generation failed (${provider.name}):`, err.message);
       return null;
@@ -268,7 +302,7 @@ function createImageService(opts = {}) {
      */
     async generateScene(sceneCtx) {
       const prompt = buildScenePrompt(sceneCtx);
-      return generate(prompt);
+      return generate(prompt, { style: 'scene' });
     },
 
     /**
@@ -278,7 +312,7 @@ function createImageService(opts = {}) {
      */
     async generateCharacter(charCtx) {
       const prompt = buildCharacterPrompt(charCtx);
-      return generate(prompt);
+      return generate(prompt, { style: 'character' });
     },
 
     /**
@@ -288,7 +322,7 @@ function createImageService(opts = {}) {
      */
     async generateCombat(combatCtx) {
       const prompt = buildCombatPrompt(combatCtx);
-      return generate(prompt);
+      return generate(prompt, { style: 'combat' });
     },
 
     /**
@@ -298,7 +332,7 @@ function createImageService(opts = {}) {
      * @returns {Promise<string|null>} Image URL or null
      */
     async generateRaw(prompt) {
-      return generate(prompt);
+      return generate(prompt, { style: 'raw' });
     },
 
     /**
@@ -314,6 +348,13 @@ function createImageService(opts = {}) {
     clearCache() {
       cache.clear();
     },
+
+    /**
+     * Get the persistent store (for serving stored images).
+     */
+    get persistentStore() {
+      return persistentStore;
+    },
   };
 }
 
@@ -326,7 +367,7 @@ function createImageService(opts = {}) {
 // style, stores structured entries, and expires them after 60 min.
 // ---------------------------------------------------------------------------
 
-const crypto = require('crypto');
+
 
 const IMAGE_CACHE_TTL_MS = 60 * 60 * 1000; // 60 minutes
 const IMAGE_CACHE_MAX = 50;
