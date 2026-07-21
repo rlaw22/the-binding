@@ -21,8 +21,17 @@ let _imageService = null;
 function getImageService() {
   if (_imageService === null) {
     try {
-      const { createImageService } = require('../image');
-      _imageService = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
+      const { createImageService, createErrorRecovery } = require('../image');
+      const raw = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
+      if (raw && raw.isEnabled) {
+        _imageService = createErrorRecovery(raw, {
+          maxRetries: 2,
+          baseDelayMs: 1000,
+          fallbackToMock: true,
+        });
+      } else {
+        _imageService = raw; // disabled service, no recovery needed
+      }
     } catch (err) {
       console.warn('[DM] Image service not available:', err.message);
       _imageService = false; // sentinel: don't retry
