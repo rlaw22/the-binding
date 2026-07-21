@@ -327,10 +327,170 @@ function getStylePreset(adventureType) {
   return presets[adventureType] || '';
 }
 
+// ---------------------------------------------------------------------------
+// Additional scene templates: combat, NPC portraits, item illustrations
+// ---------------------------------------------------------------------------
+
+/**
+ * Build an image prompt for an NPC portrait — a non-player character the
+ * player encounters during the adventure (innkeeper, guard, merchant, etc.).
+ *
+ * @param {object} ctx
+ * @param {string} ctx.name         - NPC name
+ * @param {string} [ctx.role]       - Role or occupation (innkeeper, guard, merchant…)
+ * @param {string} [ctx.race]       - Race or species
+ * @param {string} [ctx.appearance] - Appearance description
+ * @param {string} [ctx.personality]- Personality hint (gruff, mysterious, warm…)
+ * @param {string} [ctx.mood]       - Mood tag
+ * @returns {string} Full prompt string
+ */
+function buildNPCPortraitPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  const subject = ctx.name
+    ? `A portrait of ${sanitise(ctx.name)}`
+    : 'A portrait of a local figure';
+  parts.push(subject + '.');
+
+  if (ctx.role) {
+    parts.push(`They are a ${sanitise(ctx.role)}.`);
+  }
+
+  if (ctx.race) {
+    parts.push(`Race: ${sanitise(ctx.race)}.`);
+  }
+
+  if (ctx.appearance) {
+    parts.push(sanitise(ctx.appearance));
+  }
+
+  if (ctx.personality) {
+    parts.push(`Demeanor: ${sanitise(ctx.personality)}.`);
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  parts.push('Three-quarter portrait composition, waist-up, against an atmospheric background that hints at their occupation.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for an item illustration — a weapon, artifact,
+ * potion, scroll, or other notable object the player finds or uses.
+ *
+ * @param {object} ctx
+ * @param {string} ctx.name        - Item name
+ * @param {string} [ctx.type]      - Item type (weapon, potion, scroll, artifact…)
+ * @param {string} [ctx.description]- Description of the item
+ * @param {string} [ctx.material]  - Material (silver, iron, crystal, leather…)
+ * @param {string} [ctx.enchantment]- Magical property or enchantment hint
+ * @param {string} [ctx.mood]      - Mood tag
+ * @returns {string} Full prompt string
+ */
+function buildItemPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  const subject = ctx.name
+    ? `An illustration of ${sanitise(ctx.name)}`
+    : 'An illustration of a mysterious object';
+  parts.push(subject + '.');
+
+  if (ctx.type) {
+    parts.push(`Item type: ${sanitise(ctx.type)}.`);
+  }
+
+  if (ctx.description) {
+    parts.push(sanitise(ctx.description));
+  }
+
+  if (ctx.material) {
+    parts.push(`Made of ${sanitise(ctx.material)}.`);
+  }
+
+  if (ctx.enchantment) {
+    parts.push(`Enchantment: ${sanitise(ctx.enchantment)}. A faint magical glow emanates from the object.`);
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  parts.push('Centered composition on a dark surface or held in a hand. Dramatic single-source lighting.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for a detailed combat scene with more context
+ * than the basic buildCombatPrompt — includes environment, stakes, and
+ * tactical positioning.
+ *
+ * @param {object} ctx
+ * @param {string} [ctx.description] - Combat narration
+ * @param {string} [ctx.attacker]    - Attacker description
+ * @param {string} [ctx.defender]    - Defender description
+ * @param {string} [ctx.weapon]      - Weapon or attack type
+ * @param {string} [ctx.location]    - Where the fight takes place
+ * @param {string} [ctx.outcome]     - "hit", "miss", "critical", "kill"
+ * @param {string} [ctx.environment] - Environmental details (torches, pillars, rain…)
+ * @param {string} [ctx.stakes]      - What's at risk (a door, a life, a secret…)
+ * @returns {string} Full prompt string
+ */
+function buildDetailedCombatPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  parts.push('A dramatic and detailed combat illustration.');
+
+  if (ctx.location) {
+    parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  }
+
+  if (ctx.environment) {
+    parts.push(`Environment: ${sanitise(ctx.environment)}.`);
+  }
+
+  if (ctx.attacker && ctx.defender) {
+    parts.push(`${sanitise(ctx.attacker)} clashes with ${sanitise(ctx.defender)}.`);
+  }
+
+  if (ctx.weapon) {
+    parts.push(`Weapon: ${sanitise(ctx.weapon)}.`);
+  }
+
+  if (ctx.description) {
+    parts.push(sanitise(ctx.description));
+  }
+
+  if (ctx.stakes) {
+    parts.push(`The stakes: ${sanitise(ctx.stakes)}.`);
+  }
+
+  // Outcome-specific visual direction
+  const outcomeMap = {
+    hit:      'The moment of impact — ink splatter suggesting violence.',
+    miss:     'A near-miss, the defender recoiling, motion lines in the air.',
+    critical: 'EXPLOSIVE impact — the page itself seems to shatter. Ink flying everywhere.',
+    kill:     'A fatal blow rendered in stark black ink, the victim collapsing.',
+  };
+  if (ctx.outcome && outcomeMap[ctx.outcome]) {
+    parts.push(outcomeMap[ctx.outcome]);
+  }
+
+  parts.push('Dynamic composition with strong diagonal lines suggesting movement. Multiple depth layers — foreground action, mid-ground environment, background atmosphere.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
 module.exports = {
   buildScenePrompt,
   buildCharacterPrompt,
   buildCombatPrompt,
+  buildNPCPortraitPrompt,
+  buildItemPrompt,
+  buildDetailedCombatPrompt,
   buildAdventureScenePrompt,
   buildAdventureCharacterPrompt,
   getStylePreset,

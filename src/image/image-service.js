@@ -186,6 +186,102 @@ async function generateWithOpenAI(prompt, config) {
   return url;
 }
 
+/**
+ * Replicate API provider (fallback).
+ * Uses the /v1/predictions endpoint with a Stable Diffusion model.
+ * Requires REPLICATE_API_TOKEN env var.
+ *
+ * Replicate is async — we create a prediction, then poll until it completes.
+ */
+async function generateWithReplicate(prompt, config) {
+  const baseUrl = config.baseUrl || 'https://api.replicate.com';
+  const model = config.model || 'stability-ai/sdxl:latest';
+
+  // Create prediction
+  const createRes = await postJSON(
+    `${baseUrl}/v1/predictions`,
+    {
+      version: model.includes(':') ? model.split(':')[1] : model,
+      input: {
+        prompt,
+        negative_prompt: 'text, watermark, low quality, blurry, modern elements',
+        width: 1024,
+        height: 1024,
+      },
+    },
+    {
+      Authorization: `Bearer ${config.apiKey}`,
+      'Prefer': 'wait',
+    },
+  );
+
+  if (createRes.status >= 400) {
+    const msg = typeof createRes.body === 'object' ? JSON.stringify(createRes.body.error || createRes.body) : createRes.body;
+    throw new Error(`Replicate API error ${createRes.status}: ${msg}`);
+  }
+
+  let prediction = createRes.body;
+
+  // If the prediction is still processing, poll until done (max 60s)
+  const maxPolls = 30;
+  for (let i = 0; i < maxPolls && prediction && (prediction.status === 'starting' || prediction.status === 'processing'); i++) {
+    await new Promise(r => setTimeout(r, 2000));
+
+    const pollUrl = prediction.urls && prediction.urls.get
+      ? prediction.urls.get
+      : `${baseUrl}/v1/predictions/${prediction.id}`;
+
+    const pollRes = await new Promise((resolve, reject) => {
+      const url = new URL(pollUrl);
+      const transport = url.protocol === 'https:' ? https : http;
+      const req = transport.request(
+        {
+          method: 'GET',
+          hostname: url.hostname,
+          port: url.port || (url.protocol === 'https:' ? 443 : 80),
+          path: url.pathname + url.search,
+          headers: { Authorization: `Bearer ${config.apiKey}` },
+          timeout: 30_000,
+        },
+        (res) => {
+          const chunks = [];
+          res.on('data', (c) => chunks.push(c));
+          res.on('end', () => {
+            const raw = Buffer.concat(chunks).toString('utf8');
+            try {
+              resolve({ status: res.statusCode, body: JSON.parse(raw) });
+            } catch {
+              resolve({ status: res.statusCode, body: raw });
+            }
+          });
+        },
+      );
+      req.on('error', reject);
+      req.on('timeout', () => { req.destroy(); reject(new Error('Replicate poll timed out')); });
+      req.end();
+    });
+
+    if (pollRes.status >= 400) {
+      throw new Error(`Replicate poll error ${pollRes.status}`);
+    }
+
+    prediction = pollRes.body;
+  }
+
+  if (!prediction || prediction.status !== 'succeeded') {
+    const errMsg = prediction && prediction.error ? JSON.stringify(prediction.error) : (prediction && prediction.status || 'unknown');
+    throw new Error(`Replicate prediction failed: ${errMsg}`);
+  }
+
+  // output is typically an array of image URLs
+  const output = prediction.output;
+  const url = Array.isArray(output) ? output[0] : output;
+  if (!url || typeof url !== 'string') {
+    throw new Error('Replicate returned no image URL');
+  }
+  return url;
+}
+
 // ---------------------------------------------------------------------------
 // Provider detection
 // ---------------------------------------------------------------------------
@@ -219,6 +315,16 @@ function detectProvider() {
       baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com',
       model: process.env.OPENAI_IMAGE_MODEL || 'dall-e-3',
       generate: generateWithOpenAI,
+    };
+  }
+
+  if (process.env.REPLICATE_API_TOKEN) {
+    return {
+      name: 'Replicate',
+      apiKey: process.env.REPLICATE_API_TOKEN,
+      baseUrl: process.env.REPLICATE_BASE_URL || 'https://api.replicate.com',
+      model: process.env.REPLICATE_MODEL || 'stability-ai/sdxl:latest',
+      generate: generateWithReplicate,
     };
   }
 

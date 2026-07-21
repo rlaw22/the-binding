@@ -1,5 +1,5 @@
 /**
- * The Binding — Service Worker (PWA) v5
+ * The Binding — Service Worker (PWA) v6
  * 
  * Strategies:
  * - Cache-first for static shell (HTML, manifest)
@@ -16,7 +16,7 @@
  * - Cache versioning and cleanup of old caches on activate
  */
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = `the-binding-${CACHE_VERSION}`;
 const STATIC_CACHE = `the-binding-static-${CACHE_VERSION}`;
 const DOCS_CACHE = `the-binding-docs-${CACHE_VERSION}`;
@@ -139,7 +139,7 @@ function trackSession(url, response) {
 
 // ── Install: pre-cache shell + manifests ────────────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v5...');
+  console.log('[SW] Installing v6...');
   
   event.waitUntil(
     Promise.all([
@@ -187,7 +187,7 @@ self.addEventListener('install', (event) => {
 
 // ── Activate: clean old versioned caches ────────────────────────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v5...');
+  console.log('[SW] Activating v6...');
   
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -226,6 +226,12 @@ self.addEventListener('message', (event) => {
         });
       }
     }).catch(() => {});
+  }
+  
+  // Allow page to trigger immediate activation of new SW
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] SKIP_WAITING received — activating new version');
+    self.skipWaiting();
   }
 });
 
