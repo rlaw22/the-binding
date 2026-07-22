@@ -172,6 +172,48 @@ async function createServer(options = {}) {
     };
   });
 
+  // --- LLM DIAGNOSTIC ENDPOINT ---
+  // Tests the LLM connection with a minimal request. Shows key info without exposing the key.
+  app.get('/api/llm/diag', async () => {
+    const key = llmConfig.apiKey || process.env.LLM_API_KEY || '';
+    const baseUrl = llmConfig.baseUrl || process.env.LLM_BASE_URL || 'https://api.openai.com/v1';
+    const model = llmConfig.model || process.env.LLM_MODEL || 'gpt-4o';
+
+    const diag = {
+      mode: llmConfig.mock ? 'mock' : 'real',
+      baseUrl,
+      model,
+      keyPresent: key.length > 0,
+      keyLength: key.length,
+      keyPrefix: key.length > 8 ? key.slice(0, 7) + '...' : key.length > 0 ? '(short key)' : '(none)',
+      keyLooksLikeOpenAI: key.startsWith('sk-'),
+      keyLooksLikeProject: key.startsWith('sk-proj-')
+    };
+
+    // Try a minimal LLM call to see if the key works
+    if (!llmConfig.mock && key) {
+      try {
+        const { createProvider } = require('./ai-dm/llm-provider');
+        const testProvider = createProvider(llmConfig);
+        const start = Date.now();
+        const response = await testProvider([
+          { role: 'system', content: 'Reply with exactly: ok' },
+          { role: 'user', content: 'ping' }
+        ]);
+        diag.testResult = 'success';
+        diag.testLatencyMs = Date.now() - start;
+        diag.testResponse = (response || '').slice(0, 50);
+      } catch (err) {
+        diag.testResult = 'failed';
+        diag.errorCode = err.code || 'unknown';
+        diag.errorMessage = err.message;
+        diag.userMessage = err.userMessage || null;
+      }
+    }
+
+    return diag;
+  });
+
   // --- TTS VOICE ENDPOINTS ---
 
   // Get TTS audio for a task (polls async providers, returns cached sync results)
