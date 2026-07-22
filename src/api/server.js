@@ -885,12 +885,14 @@ async function createServer(options = {}) {
         suggestedActions: result.suggestedActions || []
       };
     } catch (err) {
-      console.error('[ACTION ERROR]', err.message, err.stack);
+      console.error('[ACTION ERROR]', err.code || '', err.message, err.stack);
       app.log.error(err);
-      recordMessage(sessionId, MessageRouter.error('Something went wrong. Please try again.'));
+      const userMsg = err.userMessage || 'Something went wrong. Please try again.';
+      recordMessage(sessionId, MessageRouter.error(userMsg));
       return reply.status(500).send({
         error: 'Action processing failed',
-        detail: err.message
+        detail: err.message,
+        code: err.code || 'unknown'
       });
     }
   });
@@ -1034,11 +1036,14 @@ async function createServer(options = {}) {
 
       return { ok: true, suggestion, turnNumber: game.turnHistory.length, narrative: result.narrative };
     } catch (err) {
+      console.error('[SUGGESTION ERROR]', err.code || '', err.message);
       app.log.error(err);
-      recordMessage(session.id, MessageRouter.error('Something went wrong processing the suggestion.'));
+      const userMsg = err.userMessage || 'Something went wrong processing the suggestion.';
+      recordMessage(session.id, MessageRouter.error(userMsg));
       return reply.status(500).send({
         error: 'Suggestion processing failed',
-        ...(llmConfig.mock && { detail: err.message })
+        detail: err.message,
+        code: err.code || 'unknown'
       });
     }
   });

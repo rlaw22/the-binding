@@ -11,7 +11,99 @@ const https = require('https');
 const http = require('http');
 
 /**
- * Create an OpenAI-compatible LLM provider.
+ * Classified LLM error with user-facing message and retry metadata.
+ */
+class LLMError extends Error {
+  constructor(message, { code, userMessage, retryable = false, retryAfterMs = 0 }) {
+    super(message);
+    this.name = 'LLMError';
+    this.code = code;           // 'rate_limit' | 'timeout' | 'auth' | 'context_overflow' | 'server_error' | 'network' | 'unknown'
+    this.userMessage = userMessage; // safe to show players
+    this.retryable = retryable;
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+/**
+ * Classify a raw LLM API error into an LLMError with a player-facing message.
+ * Handles HTTP status codes, OpenAI-style error objects, and network errors.
+ */
+function classifyLLMError(err, statusCode, responseBody) {
+  const msg = (err?.message || '').toLowerCase();
+  const body = (responseBody || '').toLowerCase();
+
+  // Rate limit — retryable with backoff
+  if (statusCode === 429 || msg.includes('rate') || msg.includes('too many') || body.includes('rate_limit')) {
+    const retryAfter = err?.retryAfterMs || 5000;
+    return new LLMError(err?.message || 'Rate limited', {
+      code: 'rate_limit',
+      userMessage: 'The storyteller is thinking hard — too many requests right now. Retrying...',
+      retryable: true,
+      retryAfterMs: retryAfter
+    });
+  }
+
+  // Timeout — retryable
+  if (statusCode === 408 || msg.includes('timeout') || msg.includes('timed out') || msg.includes('etimedout') || msg.includes('socket hang up')) {
+    return new LLMError(err?.message || 'Request timed out', {
+      code: 'timeout',
+      userMessage: 'The storyteller took too long to respond. Retrying...',
+      retryable: true,
+      retryAfterMs: 2000
+    });
+  }
+
+  // Auth failure — not retryable
+  if (statusCode === 401 || statusCode === 403 || msg.includes('unauthorized') || msg.includes('invalid') && msg.includes('key') || body.includes('invalid_api_key')) {
+    return new LLMError(err?.message || 'Authentication failed', {
+      code: 'auth',
+      userMessage: 'The storyteller could not be reached — a configuration issue is blocking responses. Please try again later.',
+      retryable: false
+    });
+  }
+
+  // Context length overflow — not retryable (same request would fail again)
+  if (statusCode === 400 && (body.includes('context_length') || body.includes('maximum context') || body.includes('token') && body.includes('limit'))) {
+    return new LLMError(err?.message || 'Context length exceeded', {
+      code: 'context_overflow',
+      userMessage: 'The story has grown too long for the storyteller to hold in memory. This session may need to be shortened.',
+      retryable: false
+    });
+  }
+
+  // Server error (5xx) from the LLM provider — retryable
+  if (statusCode >= 500) {
+    return new LLMError(err?.message || `LLM server error (${statusCode})`, {
+      code: 'server_error',
+      userMessage: 'The storyteller had an internal hiccup. Retrying...',
+      retryable: true,
+      retryAfterMs: 3000
+    });
+  }
+
+  // Network error (ECONNREFUSED, ENOTFOUND, etc.) — retryable
+  if (msg.includes('econnrefused') || msg.includes('enotfound') || msg.includes('econnreset') || msg.includes('enetunreach')) {
+    return new LLMError(err?.message || 'Network error reaching LLM', {
+      code: 'network',
+      userMessage: 'Could not reach the storyteller — network issue. Retrying...',
+      retryable: true,
+      retryAfterMs: 3000
+    });
+  }
+
+  // Fallback — unknown error
+  return new LLMError(err?.message || 'Unknown LLM error', {
+    code: 'unknown',
+    userMessage: 'The storyteller encountered an unexpected issue. Please try again.',
+    retryable: false
+  });
+}
+
+const MAX_RETRIES = 3;
+const BASE_RETRY_DELAY_MS = 1000;
+
+/**
+ * Create an OpenAI-compatible LLM provider with retry logic.
  */
 function createOpenAIProvider(config = {}) {
   const apiKey = config.apiKey || process.env.LLM_API_KEY || '';
@@ -20,7 +112,11 @@ function createOpenAIProvider(config = {}) {
   const maxTokens = config.maxTokens || 2000;
   const temperature = config.temperature || 0.8;
 
-  return async function llmCall(messages) {
+  /**
+   * Single attempt — makes one HTTP request to the LLM API.
+   * On failure, throws an LLMError with classification.
+   */
+  function attempt(messages) {
     const url = new URL(`${baseUrl}/chat/completions`);
     const isHttps = url.protocol === 'https:';
     const httpModule = isHttps ? https : http;
@@ -34,6 +130,7 @@ function createOpenAIProvider(config = {}) {
     });
 
     return new Promise((resolve, reject) => {
+      let statusCode = null;
       const req = httpModule.request({
         hostname: url.hostname,
         port: url.port || (isHttps ? 443 : 80),
@@ -45,31 +142,71 @@ function createOpenAIProvider(config = {}) {
           'Content-Length': Buffer.byteLength(body)
         }
       }, (res) => {
+        statusCode = res.statusCode;
+        // Capture Retry-After header if the LLM provider sends one
+        const retryAfterHeader = res.headers['retry-after'];
         let data = '';
         res.on('data', chunk => data += chunk);
         res.on('end', () => {
           try {
             const json = JSON.parse(data);
             if (json.error) {
-              reject(new Error(`LLM API error: ${json.error.message || JSON.stringify(json.error)}`));
+              const llmErr = classifyLLMError(
+                new Error(json.error.message || JSON.stringify(json.error)),
+                statusCode,
+                data
+              );
+              // Respect Retry-After header if present
+              if (retryAfterHeader && llmErr.retryable) {
+                const parsed = parseInt(retryAfterHeader, 10);
+                if (!isNaN(parsed)) llmErr.retryAfterMs = parsed * 1000;
+              }
+              reject(llmErr);
               return;
             }
             const content = json.choices?.[0]?.message?.content || '';
             resolve(content);
           } catch (e) {
-            reject(new Error(`Failed to parse LLM response: ${e.message}`));
+            reject(classifyLLMError(
+              new Error(`Failed to parse LLM response: ${e.message}`),
+              statusCode,
+              data
+            ));
           }
         });
       });
 
-      req.on('error', reject);
+      req.on('error', (err) => {
+        reject(classifyLLMError(err, statusCode));
+      });
       req.setTimeout(60000, () => {
         req.destroy();
-        reject(new Error('LLM request timed out (60s)'));
+        reject(classifyLLMError(new Error('LLM request timed out (60s)'), 408));
       });
       req.write(body);
       req.end();
     });
+  }
+
+  /**
+   * Main entry — retries on transient failures with exponential backoff.
+   */
+  return async function llmCall(messages) {
+    let lastError;
+    for (let attempt_num = 0; attempt_num <= MAX_RETRIES; attempt_num++) {
+      try {
+        return await attempt(messages);
+      } catch (err) {
+        lastError = err instanceof LLMError ? err : classifyLLMError(err);
+        if (!lastError.retryable || attempt_num >= MAX_RETRIES) {
+          throw lastError;
+        }
+        const delay = lastError.retryAfterMs || (BASE_RETRY_DELAY_MS * Math.pow(2, attempt_num));
+        console.warn(`[LLM] Retry ${attempt_num + 1}/${MAX_RETRIES} after ${delay}ms — ${lastError.code}: ${lastError.message}`);
+        await new Promise(r => setTimeout(r, delay));
+      }
+    }
+    throw lastError;
   };
 }
 
@@ -292,6 +429,8 @@ function createProvider(config) {
 }
 
 module.exports = {
+  LLMError,
+  classifyLLMError,
   createOpenAIProvider,
   createMockProvider,
   createProvider
