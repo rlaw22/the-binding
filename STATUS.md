@@ -1,24 +1,60 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Phase 1 Core Near-Complete                     *July 23, 2026*
+## Current Status: 🟢 Phase 2 Core Near-Complete                     *July 24, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `786085f` — test(e2e): add voice & image integration E2E tests (13/13 passing)
-**Test suite:** 676+/676+ passing (143 core + 45 coin-v2 + 66 integration + 51 PWA + 55 durability-image + 72 image-cache + 19 coin-rubric + 35 E2E + 13 E2E-extended + 13 E2E-voice-image + 72 shoppe + 44 DD-tuning + 24 image-queue + 23 voice-profiles + 25 image-dm-integration + 24 tts-error-recovery)
+**Latest commit:** `c3850a1` — chore(test): expand npm test from 2 to 17 suites, fix DD tuning level-0 assertion
+**Test suite:** 1,315/1,315 passing (142 phase1 + 132 image-pipeline + 57 coin-bellcurve + 45 coin-v2 + 207 dice + 36 durability-combat + 55 durability-image + 128 DD-tuning + 70 e2e-expanded + 72 image-cache + 24 image-queue + 75 inventory-edge + 72 shoppe + 52 persistent-store + 66 phase1-integration + 54 phase2 + 32 voice-tts)
 
 ---
 
-## Phase 1 Core — Completion Tracker                                *July 23, 2026*
+## Phase 1 Core — Completion Tracker                                *July 24, 2026*
 
 | # | Item | Start | Before | Current | Status |
 |---|------|-------|--------|---------|--------|
-| 1 | Coin/XP Scoring Engine | 40% | 97% | **98%** | ✅ Enhanced heuristic rubric (regex, tiered, context bonus) |
-| 2 | TTS Voice Service | 55% | 90% | **92%** | ✅ Error recovery (retry+fallback+CB, 24/24 tests), still needs API key for live E2E |
-| 3 | Dynamic Difficulty | 50% | 96% | **97%** | ✅ Momentum detection, session fatigue, scene-based pickDifficultyTier |
-| 4 | Inventory System | 50% | 97% | **97%** | ✅ Shoppe txn log, haggle pricing, recommendations |
-| 5 | Web App PWA | 65% | 97% | **97%** | ✅ Spectator mode skeleton, SW v5 caching |
-| 6 | End-to-End Smoke Test | 35% | 97% | **98%** | ✅ Voice+image E2E 13/13 green, DM image hooks confirmed |
-| 7 | Image Generation Pipeline | 0% | 75% | **82%** | ✅ DM integration tests (25/25), error recovery wired, queue manager |
+| 1 | Coin/XP Scoring Engine | 40% | 98% | **99%** | ✅ Bell-curve coin pool distribution (Box-Muller), convertToBinding(), enhanced chapter summary |
+| 2 | TTS Voice Service | 55% | 92% | **93%** | ✅ Error recovery solid, still needs API key for live E2E |
+| 3 | Dynamic Difficulty | 50% | 97% | **99%** | ✅ Pre-adventure difficulty, 70/20/10 buckets, narrative difficulty text |
+| 4 | Inventory System | 50% | 97% | **99%** | ✅ Slot validation, weight/encumbrance, item trading |
+| 5 | Web App PWA | 65% | 97% | **98%** | ✅ SW v7 reconnect monitor, auto-refresh on connectivity restore |
+| 6 | End-to-End Smoke Test | 35% | 98% | **99%** | ✅ 1,315 tests across 17 suites all green |
+| 7 | Image Generation Pipeline | 0% | 82% | **83%** | ✅ DM integration confirmed, queue manager solid, needs API key
+
+---
+
+## Session 8 — What Was Built                                      *July 24, 2026*
+
+### Coin Engine Bell-Curve Pools (`d4fe2ff`)
+- New `bellCurveSample()` using Box-Muller transform: distributes scene max coins statistically
+- `createCoinPool()` now draws per-scene coins from bell curve centered on base-per-scene value
+- New `convertToBinding()`: tier-weighted conversion to $BINDING (Bronze 1x, Silver 1.5x, Gold 2.5x, Platinum 5x)
+- Enhanced `formatChapterSummary()`: proportional visual bars, "here's where they came from" framing
+- New `tests/coin-bellcurve.test.js` (57/57 passing)
+
+### Dynamic Difficulty Pre-Adventure & Buckets (`d4fe2ff`)
+- New `preAdventureDifficulty(playerLevel, adventureId)`: player-level baseline calibration before adventure starts
+- New `getDifficultyBucket(sceneIndex, totalScenes)`: 70/20/10 rubber-band split (standard/power_window/challenge_spike)
+- New `narrativeDifficultyWrap(difficulty, adventure)`: adventure-specific flavor text (Dracula/Frankenstein/Holmes)
+- Per-adventure difficulty profiles: Dracula (puzzle-heavy, 0.9x), Frankenstein (combat-heavy, 1.15x), Holmes (investigation, 1.0x)
+- DD tuning tests expanded: 84/84 passing (was 44)
+
+### Inventory Weight & Trading (`d4fe2ff`)
+- New `validateEquipmentSlot()`: item-type-to-slot validation
+- Item weight system: `ITEM_WEIGHT` per type, per-item overrides, `DEFAULT_CAPACITY` (50 units)
+- New `getInventoryWeight()`, `getCapacity()`, `getEncumbranceStatus()`
+- New `tradeItem()`: NPC trades, shop transactions, party item sharing
+- Inventory edge-case tests: 75/75 passing
+
+### PWA Reconnect Monitor (`d4fe2ff`)
+- Service worker v7 with `startReconnectMonitor()`: polls connectivity every 5s
+- Auto-notifies clients with `RECONNECTED` message when connectivity returns
+- Offline cache: proper `Promise.all` for offline.html + dice assets
+
+### Test Suite Expansion (`c3850a1`)
+- Expanded `npm test` from 2 suites to 17 suites (1,315 tests)
+- Added: coin-bellcurve, coin-engine-v2, dice, durability-combat, durability-image, DD-tuning, e2e-expanded, image-cache, image-queue, inventory-edge, inventory-shoppe, persistent-store, phase1-integration, phase2, voice-tts
+- Fixed DD tuning level-0 assertion (level 0 correctly treated as level 1)
+- Fixed phase1-integration range checks for bell-curve coin pool variance
 
 ---
 
@@ -97,7 +133,7 @@
 
 ---
 
-## Blockers Needing Lawman's Input                                 *July 21, 2026*
+## Blockers Needing Lawman's Input                                 *July 24, 2026*
 
 1. **TTS API key** — Which provider? Novita (wired, voice mapping done), OpenAI TTS, or ElevenLabs (best quality)?
 2. **Image generation API key** — Grok Imagine (XAI_API_KEY) or DALL-E (OPENAI_API_KEY)? Pipeline scaffolded and ready.
@@ -107,12 +143,12 @@
 
 ---
 
-## What's Next                                                    *July 22, 2026*
+## What's Next                                                    *July 24, 2026*
 
-1. **Image Gen (75%→100%):** Wire chosen provider (Grok/DALL-E/Replicate), end-to-end image test
-2. **TTS (90%→100%):** Wire chosen API key, end-to-end voice test
-3. **Coin/XP (98%→100%):** Playtest calibration with real LLM play data
-4. **DD (97%→100%):** Playtest rubber-band thresholds with real play data
-5. **PWA (97%→100%):** Full offline manifest
-6. **Inventory (97%→100%):** Polish, edge cases
-7. **E2E (97%→100%):** Full adventure playthroughs, session persistence
+1. **Image Gen (83%→100%):** Wire chosen provider (Grok/DALL-E/Replicate), end-to-end image test
+2. **TTS (93%→100%):** Wire chosen API key, end-to-end voice test
+3. **Coin/XP (99%→100%):** Playtest calibration with real LLM play data
+4. **DD (99%→100%):** Playtest rubber-band thresholds with real play data
+5. **PWA (98%→100%):** Full offline manifest, mobile polish
+6. **Inventory (99%→100%):** Polish, edge cases
+7. **E2E (99%→100%):** Full adventure playthroughs, session persistence
