@@ -16,7 +16,7 @@
  * - Cache versioning and cleanup of old caches on activate
  */
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const CACHE_NAME = `the-binding-${CACHE_VERSION}`;
 const STATIC_CACHE = `the-binding-static-${CACHE_VERSION}`;
 const DOCS_CACHE = `the-binding-docs-${CACHE_VERSION}`;
@@ -171,11 +171,13 @@ self.addEventListener('install', (event) => {
         console.log(`[SW] Manifest pre-cache complete: ${succeeded}/${MANIFEST_ASSETS.length} attempted`);
       }),
 
-      // Cache offline page in its own cache
+      // Cache offline page and key assets in the offline cache
       caches.open(OFFLINE_CACHE).then((cache) => {
-        return cache.add('/offline.html',
-  '/dice-box-threejs.umd.js',
-  '/dice-roller.js');
+        return Promise.all([
+          cache.add('/offline.html'),
+          cache.add('/dice-box-threejs.umd.js'),
+          cache.add('/dice-roller.js'),
+        ]);
       })
     ]).then(() => {
       console.log('[SW] Install complete — all caches populated');
@@ -205,7 +207,43 @@ self.addEventListener('activate', (event) => {
   );
   
   self.clients.claim();
+  initReconnectMonitor();
 });
+
+// ── Reconnect: auto-refresh clients when connectivity returns ───────────
+let wasOffline = false;
+let reconnectCheckInterval = null;
+
+function startReconnectMonitor() {
+  if (reconnectCheckInterval) return;
+  reconnectCheckInterval = setInterval(async () => {
+    try {
+      // Lightweight connectivity probe
+      const res = await fetch('/manifest.json', { method: 'HEAD', cache: 'no-store' });
+      if (res.ok && wasOffline) {
+        wasOffline = false;
+        console.log('[SW] Connectivity restored — notifying clients');
+        const clients = await self.clients.matchAll({ type: 'window' });
+        for (const client of clients) {
+          client.postMessage({ type: 'RECONNECTED' });
+        }
+      } else if (!res.ok) {
+        wasOffline = true;
+      }
+    } catch {
+      wasOffline = true;
+    }
+  }, 5000);
+}
+
+// Start monitoring on activate
+function initReconnectMonitor() {
+  // Check initial state
+  fetch('/manifest.json', { method: 'HEAD', cache: 'no-store' })
+    .then(res => { if (!res.ok) wasOffline = true; })
+    .catch(() => { wasOffline = true; })
+    .finally(() => startReconnectMonitor());
+}
 
 // ── Message handler: allow page to update session tracking ──────────────
 self.addEventListener('message', (event) => {
@@ -232,6 +270,22 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     console.log('[SW] SKIP_WAITING received — activating new version');
     self.skipWaiting();
+  }
+
+  // Allow page to request current session info for rejoin
+  if (event.data && event.data.type === 'CHECK_REJOIN') {
+    Promise.all([
+      dbGet('lastSessionId'),
+      dbGet('lastSessionUrl'),
+    ]).then(([sessionId, sessionUrl]) => {
+      if (event.source) {
+        event.source.postMessage({
+          type: 'REJOIN_INFO',
+          sessionId,
+          sessionUrl,
+        });
+      }
+    }).catch(() => {});
   }
 });
 
@@ -417,9 +471,7 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => {
           return caches.match(event.request).then((cached) => {
-            return cached || caches.match('/offline.html',
-  '/dice-box-threejs.umd.js',
-  '/dice-roller.js');
+            return cached || caches.match('/offline.html');
           });
         })
     );

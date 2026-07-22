@@ -117,3 +117,161 @@ console.log('  DD TUNING RESULTS: ' + passed + '/' + total + ' passed, ' + faile
 console.log('═══════════════════════════════════════════\n');
 
 if (failed > 0) process.exit(1);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NEW FUNCTIONS: preAdventureDifficulty, getDifficultyBucket, narrativeDifficultyWrap
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const {
+  preAdventureDifficulty,
+  getDifficultyBucket,
+  narrativeDifficultyWrap,
+  ADVENTURE_BASE_DIFFICULTY,
+  BUCKET_THRESHOLDS,
+  NARRATIVE_DIFFICULTY_TEXT
+} = require('../src/difficulty/dynamic-difficulty');
+
+// ── preAdventureDifficulty ───────────────────────────────────────────────
+
+section('preAdventureDifficulty');
+
+// Level 5 Dracula player — perfectly matched
+const pad1 = preAdventureDifficulty(5, 'dracula');
+assertEq(pad1.baselineDifficulty, 50, 'Level 5 Dracula = baseline 50 (perfectly matched)');
+assertEq(pad1.tier, 'moderate', 'Level 5 Dracula tier is moderate');
+assertEq(pad1.scalingFactor, 0.9, 'Dracula scaling factor is 0.9');
+assert(typeof pad1.label === 'string' && pad1.label.length > 0, 'Has a label');
+
+// Level 1 Dracula — below base level
+const pad2 = preAdventureDifficulty(1, 'dracula');
+assert(pad2.baselineDifficulty < 50, 'Level 1 Dracula baseline < 50');
+assertEq(pad2.tier, 'easy', 'Level 1 Dracula tier is easy');
+
+// Level 10 Dracula — above base level
+const pad3 = preAdventureDifficulty(10, 'dracula');
+assert(pad3.baselineDifficulty > 50, 'Level 10 Dracula baseline > 50');
+assert(pad3.tier === 'hard' || pad3.tier === 'deadly', 'Level 10 Dracula tier is hard or deadly');
+
+// Level 1 Frankenstein — steeper scaling
+const pad4 = preAdventureDifficulty(1, 'frankenstein');
+assert(pad4.baselineDifficulty < pad2.baselineDifficulty, 'Frankenstein level 1 is harder than Dracula level 1 (steeper scaling)');
+assertEq(pad4.scalingFactor, 1.15, 'Frankenstein scaling factor is 1.15');
+
+// Unknown adventure uses defaults
+const pad5 = preAdventureDifficulty(5, 'unknown_adventure');
+assertEq(pad5.baselineDifficulty, 50, 'Unknown adventure at level 5 = baseline 50');
+assertEq(pad5.scalingFactor, 1.0, 'Unknown adventure uses default scaling 1.0');
+
+// Edge cases
+const pad6 = preAdventureDifficulty(0, 'dracula');
+assertEq(pad6.baselineDifficulty, 1, 'Level 0 clamped to 1 (minimum)');
+assertEq(pad6.tier, 'easy', 'Level 0 tier is easy');
+
+const pad7 = preAdventureDifficulty(null, 'dracula');
+assertEq(pad7.baselineDifficulty, preAdventureDifficulty(1, 'dracula').baselineDifficulty, 'null level treated as 1');
+
+const pad8 = preAdventureDifficulty(100, 'dracula');
+assertEq(pad8.baselineDifficulty, 100, 'Level 100 clamped to 100 (maximum)');
+assertEq(pad8.tier, 'deadly', 'Level 100 tier is deadly');
+
+// Holmes balanced scaling
+const pad9 = preAdventureDifficulty(4, 'holmes');
+assertEq(pad9.baselineDifficulty, 50, 'Level 4 Holmes = baseline 50 (baseLevel=4, scaling=1.0)');
+assertEq(pad9.tier, 'moderate', 'Level 4 Holmes tier is moderate');
+
+// ── getDifficultyBucket ──────────────────────────────────────────────────
+
+section('getDifficultyBucket');
+
+// Basic bucket assignment
+const b1 = getDifficultyBucket(0, 10);
+assert(['standard', 'power_window', 'challenge_spike'].includes(b1), 'Returns a valid bucket');
+
+// Determinism: same inputs → same output
+const b2a = getDifficultyBucket(3, 20);
+const b2b = getDifficultyBucket(3, 20);
+assertEq(b2a, b2b, 'Same inputs produce same bucket (deterministic)');
+
+// Different scenes produce different buckets (statistical over many)
+const buckets = {};
+for (let i = 0; i < 100; i++) {
+  const b = getDifficultyBucket(i, 100);
+  buckets[b] = (buckets[b] || 0) + 1;
+}
+assert(buckets.standard > 0, 'Some scenes are standard');
+assert(buckets.power_window > 0, 'Some scenes are power_window');
+assert(buckets.challenge_spike > 0, 'Some scenes are challenge_spike');
+
+// Distribution roughly matches 70/20/10 (within 20% tolerance for 100 samples)
+const stdPct = (buckets.standard || 0) / 100;
+const pwPct = (buckets.power_window || 0) / 100;
+const csPct = (buckets.challenge_spike || 0) / 100;
+assert(Math.abs(stdPct - 0.70) < 0.20, `Standard ~70% (got ${(stdPct*100).toFixed(0)}%)`);
+assert(Math.abs(pwPct - 0.20) < 0.15, `Power window ~20% (got ${(pwPct*100).toFixed(0)}%)`);
+assert(Math.abs(csPct - 0.10) < 0.15, `Challenge spike ~10% (got ${(csPct*100).toFixed(0)}%)`);
+
+// Edge: scene 0 of 1
+const b3 = getDifficultyBucket(0, 1);
+assert(['standard', 'power_window', 'challenge_spike'].includes(b3), 'Single scene returns valid bucket');
+
+// Edge: null/undefined inputs
+const b4 = getDifficultyBucket(null, null);
+assert(['standard', 'power_window', 'challenge_spike'].includes(b4), 'Null inputs handled gracefully');
+
+// ── narrativeDifficultyWrap ──────────────────────────────────────────────
+
+section('narrativeDifficultyWrap');
+
+// Dracula hard returns a string
+const nw1 = narrativeDifficultyWrap('hard', 'dracula');
+assert(typeof nw1 === 'string' && nw1.length > 0, 'Dracula hard returns non-empty string');
+assert(nw1.includes('shadow') || nw1.includes('dread') || nw1.includes('dark') || nw1.includes('blood') || nw1.includes('ancient'), 'Dracula hard text is thematically appropriate');
+
+// Dracula easy
+const nw2 = narrativeDifficultyWrap('easy', 'dracula');
+assert(typeof nw2 === 'string' && nw2.length > 0, 'Dracula easy returns non-empty string');
+
+// Frankenstein deadly
+const nw3 = narrativeDifficultyWrap('deadly', 'frankenstein');
+assert(typeof nw3 === 'string' && nw3.length > 0, 'Frankenstein deadly returns non-empty string');
+
+// Holmes moderate
+const nw4 = narrativeDifficultyWrap('moderate', 'holmes');
+assert(typeof nw4 === 'string' && nw4.length > 0, 'Holmes moderate returns non-empty string');
+
+// Unknown adventure falls back to _default
+const nw5 = narrativeDifficultyWrap('hard', 'unknown_adventure');
+assert(typeof nw5 === 'string' && nw5.length > 0, 'Unknown adventure falls back to default text');
+assert(NARRATIVE_DIFFICULTY_TEXT._default.hard.includes(nw5), 'Fallback text comes from _default pool');
+
+// Unknown difficulty falls back to moderate
+const nw6 = narrativeDifficultyWrap('nonexistent_tier', 'dracula');
+assert(typeof nw6 === 'string' && nw6.length > 0, 'Unknown tier falls back to moderate');
+assert(NARRATIVE_DIFFICULTY_TEXT.dracula.moderate.includes(nw6), 'Unknown tier returns a moderate line');
+
+// Null adventure
+const nw7 = narrativeDifficultyWrap('easy', null);
+assert(typeof nw7 === 'string' && nw7.length > 0, 'Null adventure uses _default pool');
+
+// All adventure+difficulty combos return valid text
+const adventures = ['dracula', 'frankenstein', 'holmes'];
+const difficulties = ['easy', 'moderate', 'hard', 'deadly'];
+let allCombosValid = true;
+for (const adv of adventures) {
+  for (const diff of difficulties) {
+    const text = narrativeDifficultyWrap(diff, adv);
+    if (typeof text !== 'string' || text.length === 0) {
+      allCombosValid = false;
+      break;
+    }
+  }
+}
+assert(allCombosValid, 'All adventure+difficulty combos return valid text');
+
+// ── Summary ─────────────────────────────────────────────────────────────
+
+console.log('\n═══════════════════════════════════════════');
+console.log('  DD TUNING RESULTS: ' + passed + '/' + total + ' passed, ' + failed + ' failed');
+console.log('═══════════════════════════════════════════\n');
+
+if (failed > 0) process.exit(1);

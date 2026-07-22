@@ -1543,11 +1543,216 @@ function getShoppeRecommendations(inventory, coinBalance) {
   return recommendations;
 }
 
+// ── Enhanced Slot Validation ─────────────────────────────────────────────────
+//
+// Maps item types to the equipment slots they are allowed in.
+// This is the authoritative validation: equipItem() checks this before
+// allowing an item to be placed in a slot.
+
+/**
+ * Validate whether an item can be placed in a specific equipment slot.
+ * Returns { valid: boolean, reason?: string }.
+ *
+ * @param {string} itemId — item ID from ITEMS
+ * @param {string} slot — equipment slot name
+ * @returns {{ valid: boolean, reason?: string }}
+ */
+function validateEquipmentSlot(itemId, slot) {
+  const template = ITEMS[itemId];
+  if (!template) return { valid: false, reason: `Unknown item: ${itemId}` };
+
+  if (!EQUIPMENT_SLOTS.includes(slot)) {
+    return { valid: false, reason: `Invalid equipment slot: ${slot}` };
+  }
+
+  const allowedTypes = SLOT_TYPE_MAP[slot];
+  if (!allowedTypes || !allowedTypes.includes(template.type)) {
+    return {
+      valid: false,
+      reason: `Item type '${template.type}' cannot go in '${slot}' slot (allowed: ${allowedTypes.join(', ')})`
+    };
+  }
+
+  return { valid: true };
+}
+
+// ── Item Weight System ───────────────────────────────────────────────────────
+
+/**
+ * Weight values per item type (in abstract "units").
+ * Consumables are lighter; armor and weapons are heavier.
+ */
+const ITEM_WEIGHT = {
+  weapon: 3,
+  armor: 5,
+  accessory: 1,
+  consumable: 1,
+  tool: 2,
+  lore: 1
+};
+
+/**
+ * Per-item weight overrides for items that don't fit their type default.
+ */
+const ITEM_WEIGHT_OVERRIDES = {
+  chain_shirt: 8,
+  leather_armor: 4,
+  detective_coat: 6,
+  travelers_cloak: 3,
+  galvanic_battery: 6,
+  lightning_rod: 5,
+  rope: 3,
+  oil_flask: 2,
+  lantern: 3,
+  violin_case: 4,
+  surgical_kit: 3
+};
+
+/**
+ * Default inventory capacity (weight units).
+ */
+const DEFAULT_CAPACITY = 50;
+
+/**
+ * Calculate the total weight of all items in an inventory (bag + equipped).
+ * @param {object} inventory
+ * @returns {number} total weight in units
+ */
+function getInventoryWeight(inventory) {
+  if (!inventory) return 0;
+
+  let weight = 0;
+
+  // Bag items
+  for (const slot of inventory.slots) {
+    if (ITEM_WEIGHT_OVERRIDES[slot.id] !== undefined) {
+      weight += ITEM_WEIGHT_OVERRIDES[slot.id];
+    } else {
+      const template = ITEMS[slot.id];
+      const type = template ? template.type : 'consumable';
+      weight += ITEM_WEIGHT[type] || 1;
+    }
+  }
+
+  // Equipped items
+  if (inventory.equipment) {
+    for (const slotName of EQUIPMENT_SLOTS) {
+      const equipped = inventory.equipment[slotName];
+      if (!equipped) continue;
+      if (ITEM_WEIGHT_OVERRIDES[equipped.id] !== undefined) {
+        weight += ITEM_WEIGHT_OVERRIDES[equipped.id];
+      } else {
+        const template = ITEMS[equipped.id];
+        const type = template ? template.type : 'consumable';
+        weight += ITEM_WEIGHT[type] || 1;
+      }
+    }
+  }
+
+  return weight;
+}
+
+/**
+ * Get the weight capacity of an inventory.
+ * @param {object} inventory
+ * @returns {number} max weight capacity
+ */
+function getCapacity(inventory) {
+  if (!inventory) return DEFAULT_CAPACITY;
+  return inventory.capacity || DEFAULT_CAPACITY;
+}
+
+/**
+ * Check if the inventory is over capacity (encumbered).
+ * @param {object} inventory
+ * @returns {{ weight: number, capacity: number, encumbered: boolean, overBy: number }}
+ */
+function getEncumbranceStatus(inventory) {
+  const weight = getInventoryWeight(inventory);
+  const capacity = getCapacity(inventory);
+  return {
+    weight,
+    capacity,
+    encumbered: weight > capacity,
+    overBy: Math.max(0, weight - capacity)
+  };
+}
+
+// ── Item Trading ─────────────────────────────────────────────────────────────
+
+/**
+ * Transfer an item from one inventory to another.
+ * Used for NPC trades, shop transactions, and party item sharing.
+ *
+ * @param {object} fromInventory — source inventory
+ * @param {object} toInventory — destination inventory
+ * @param {string} itemId — item ID to transfer
+ * @returns {{ success: boolean, item?: object, reason?: string }}
+ */
+function tradeItem(fromInventory, toInventory, itemId) {
+  if (!fromInventory || !toInventory) {
+    return { success: false, reason: 'Invalid inventories' };
+  }
+  if (!itemId) {
+    return { success: false, reason: 'No item specified' };
+  }
+
+  // Check destination has space
+  if (toInventory.slots.length >= (toInventory.maxSize || 20)) {
+    return { success: false, reason: 'Destination inventory is full' };
+  }
+
+  // Find item in source inventory bag
+  const invIndex = fromInventory.slots.findIndex(s => s.id === itemId);
+  if (invIndex === -1) {
+    // Check if it's equipped
+    let equippedSlot = null;
+    if (fromInventory.equipment) {
+      for (const slotName of EQUIPMENT_SLOTS) {
+        if (fromInventory.equipment[slotName] && fromInventory.equipment[slotName].id === itemId) {
+          equippedSlot = slotName;
+          break;
+        }
+      }
+    }
+    if (equippedSlot) {
+      return { success: false, reason: `Item is equipped in ${equippedSlot}. Unequip first.` };
+    }
+    return { success: false, reason: 'Item not found in source inventory' };
+  }
+
+  // Validate the item exists in ITEMS
+  const template = ITEMS[itemId];
+  if (!template) {
+    return { success: false, reason: 'Unknown item type' };
+  }
+
+  // Transfer: remove from source, add to destination
+  const itemSlot = fromInventory.slots[invIndex];
+  fromInventory.slots.splice(invIndex, 1);
+
+  toInventory.slots.push({
+    id: itemSlot.id,
+    name: itemSlot.name,
+    type: itemSlot.type,
+    consumable: itemSlot.consumable,
+    uses: itemSlot.uses,
+    remainingUses: itemSlot.remainingUses,
+    durability: itemSlot.durability,
+    maxDurability: itemSlot.maxDurability
+  });
+
+  return { success: true, item: { id: itemId, name: template.name } };
+}
+
 module.exports = {
   ITEMS,
   SET_BONUSES,
   SLOT_TYPE_MAP,
   EQUIPMENT_SLOTS,
+  ITEM_WEIGHT,
+  ITEM_WEIGHT_OVERRIDES,
+  DEFAULT_CAPACITY,
   STARTING_LOADOUTS,
   createInventory,
   addItem,
@@ -1577,5 +1782,10 @@ module.exports = {
   damageEquipment,
   repairEquipment,
   getDurabilityStatus,
-  getSetBonus
+  getSetBonus,
+  validateEquipmentSlot,
+  getInventoryWeight,
+  getCapacity,
+  getEncumbranceStatus,
+  tradeItem
 };

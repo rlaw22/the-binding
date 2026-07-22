@@ -1106,6 +1106,214 @@ function _stableHash(a, b) {
   return ((h >>> 0) % 10000) / 10000;
 }
 
+// ── Pre-Adventure Difficulty (Design Doc #8) ─────────────────────────────────
+//
+// Player level determines adventure baseline difficulty BEFORE starting.
+// No visible difficulty numbers or sliders — the system silently calibrates.
+
+/**
+ * Adventure baseline difficulty multipliers keyed by adventure ID.
+ * Each entry defines how tough the adventure is at its core, independent
+ * of player level.  The player-level factor is applied on top.
+ */
+const ADVENTURE_BASE_DIFFICULTY = {
+  dracula:      { baseLevel: 5, scalingFactor: 0.9, label: 'Puzzle-heavy, gentler scaling' },
+  frankenstein: { baseLevel: 6, scalingFactor: 1.15, label: 'Combat-heavy, steeper scaling' },
+  holmes:       { baseLevel: 4, scalingFactor: 1.0, label: 'Investigation-heavy, balanced' }
+};
+
+const DEFAULT_ADVENTURE_DIFFICULTY = { baseLevel: 5, scalingFactor: 1.0, label: 'Standard adventure' };
+
+/**
+ * Calculate baseline difficulty BEFORE an adventure starts.
+ *
+ * Design doc #8: "Player level determines adventure baseline difficulty
+ * before starting. No visible difficulty numbers or sliders."
+ *
+ * Returns a difficulty profile that the DM uses to calibrate encounters
+ * before the first scene.  Higher playerLevel → higher baseline; adventure
+ * type adjusts the scaling factor.
+ *
+ * @param {number} playerLevel — player's current level (1+)
+ * @param {string} adventureId — 'dracula'|'frankenstein'|'holmes' or any string
+ * @returns {{ baselineDifficulty: number, tier: string, scalingFactor: number, label: string }}
+ */
+function preAdventureDifficulty(playerLevel, adventureId) {
+  const lvl = Math.max(1, Math.floor(playerLevel || 1));
+  const adv = ADVENTURE_BASE_DIFFICULTY[adventureId] || DEFAULT_ADVENTURE_DIFFICULTY;
+
+  // Baseline = how far above or below the adventure's "intended" level the player is.
+  // 0 = perfectly matched, positive = player is stronger, negative = player is weaker.
+  const levelDelta = lvl - adv.baseLevel;
+
+  // Apply scaling factor: adventure-specific tuning
+  // baselineDifficulty is a 0-100 scale where 50 = perfectly matched.
+  const raw = 50 + (levelDelta * 10 * adv.scalingFactor);
+  const baselineDifficulty = Math.max(1, Math.min(100, Math.round(raw)));
+
+  // Derive a qualitative tier (internal only — never shown to player)
+  let tier;
+  if (baselineDifficulty <= 30) tier = 'easy';
+  else if (baselineDifficulty <= 60) tier = 'moderate';
+  else if (baselineDifficulty <= 80) tier = 'hard';
+  else tier = 'deadly';
+
+  return {
+    baselineDifficulty,
+    tier,
+    scalingFactor: adv.scalingFactor,
+    label: adv.label
+  };
+}
+
+// ── Difficulty Bucket (Design Doc #7) ────────────────────────────────────────
+//
+// Rubber-band split: 70% standard, 20% power_window, 10% challenge_spike.
+// getDifficultyBucket() assigns a bucket to a scene deterministically.\n
+const BUCKET_THRESHOLDS = {
+  standard: 0.70,        // 70% of scenes — fights scale to player level
+  powerWindow: 0.20,     // 20% below — power windows
+  challengeSpike: 0.10   // 10% above — challenge spikes
+};
+
+/**
+ * Determine the difficulty bucket for a specific scene in a sequence.
+ *
+ * Returns 'standard' | 'power_window' | 'challenge_spike' based on the
+ * design-doc 70/20/10 split.  Uses a deterministic hash so the same
+ * scene always gets the same bucket.
+ *
+ * @param {number} sceneIndex — zero-based scene index
+ * @param {number} totalScenes — total scenes in the adventure
+ * @returns {'standard'|'power_window'|'challenge_spike'}
+ */
+function getDifficultyBucket(sceneIndex, totalScenes) {
+  const idx = Math.max(0, Math.floor(sceneIndex || 0));
+  const total = Math.max(1, Math.floor(totalScenes || 1));
+
+  // Use the existing deterministic hash (scene index paired with total
+  // to vary across adventures of different lengths)
+  const hash = _stableHash(idx, total);
+
+  if (hash < BUCKET_THRESHOLDS.standard) return 'standard';
+  if (hash < BUCKET_THRESHOLDS.standard + BUCKET_THRESHOLDS.powerWindow) return 'power_window';
+  return 'challenge_spike';
+}
+
+// ── Narrative Difficulty Wrap (Design Doc #8) ────────────────────────────────
+//
+// "AI DM narratively explains why this version is harder"
+// Returns atmospheric text the DM weaves into its narration.
+
+const NARRATIVE_DIFFICULTY_TEXT = {
+  dracula: {
+    easy: [
+      'The castle corridors are quiet — almost peaceful. The torches burn steadily.',
+      'A faint scent of old stone and dust. The undead presence feels distant.',
+      'The shadows here are shallow, the air merely cool rather than cold.'
+    ],
+    moderate: [
+      'The air grows colder as you descend. Something watches from the darkness.',
+      'Cobwebs thick as curtains brush your face. The castle remembers you are here.',
+      'A distant howl echoes through the stone. The undead are stirring.'
+    ],
+    hard: [
+      'The shadows seem thicker here, coiling like living things around your torch.',
+      'An oppressive dread fills the corridor. The walls themselves seem to breathe.',
+      'Blood-red light seeps from beneath a door. Something ancient waits beyond.'
+    ],
+    deadly: [
+      'The darkness is absolute. Your torch gutters and nearly dies. Dracula\'s power is near.',
+      'The castle groans as if alive. Every shadow writhes with malevolent intent.',
+      'You feel the weight of centuries of evil pressing down. This is the heart of darkness.'
+    ]
+  },
+  frankenstein: {
+    easy: [
+      'The laboratory is calm. Equipment hums gently in the background.',
+      'The storm outside has passed. The creature\'s tracks are cold.',
+      'A quiet moment in the wilderness. The air smells of pine and rain.'
+    ],
+    moderate: [
+      'Lightning flickers on the horizon. The creature was here recently.',
+      'The laboratory equipment sparks ominously. Something has been disturbed.',
+      'Broken chains hang from the wall. The creature grows bolder.'
+    ],
+    hard: [
+      'The storm rages overhead. Galvanic energy crackles in the air.',
+      'The creature\'s lair reeks of chemicals and desperation. It knows you\'re coming.',
+      'Lightning strikes nearby, illuminating something massive and fast-moving.'
+    ],
+    deadly: [
+      'The laboratory is destroyed. The creature has turned Victor\'s own weapons against you.',
+      'A wall of lightning blocks the only exit. The creature has you cornered.',
+      'The monster stands revealed in all its terrible power. There is no retreat.'
+    ]
+  },
+  holmes: {
+    easy: [
+      'The London streets are quiet tonight. A light fog drifts past the gas lamps.',
+      'The case seems straightforward. The clues are falling into place.',
+      'A pleasant afternoon at Baker Street. The game is afoot, but gently.'
+    ],
+    moderate: [
+      'The fog thickens. Someone is following you — or are you following them?',
+      'The evidence contradicts itself. Someone has been here before you.',
+      'A shadowy figure ducks into an alley. The game grows more complex.'
+    ],
+    hard: [
+      'The fog is disorienting. Every turn looks the same. You are being watched.',
+      'The criminal mastermind has anticipated your every move. The trap is closing.',
+      'A body in the Thames. The clues point in impossible directions.'
+    ],
+    deadly: [
+      'The fog is a labyrinth. Gas lamps flicker and die one by one.',
+      'You have walked into the villain\'s trap. Every exit is sealed.',
+      'The criminal genius reveals themselves. They have been three steps ahead all along.'
+    ]
+  },
+  _default: {
+    easy: [
+      'The path ahead is clear. Danger feels far away.',
+      'A calm moment to catch your breath and prepare.',
+      'The environment is cooperative — almost welcoming.'
+    ],
+    moderate: [
+      'Tension hangs in the air. Stay alert.',
+      'The path narrows. Something could be waiting around the bend.',
+      'A sense of unease. The easy part is behind you.'
+    ],
+    hard: [
+      'The shadows seem thicker here. Every instinct tells you to be cautious.',
+      'Danger is close. You can feel it in your bones.',
+      'The environment itself seems hostile. Tread carefully.'
+    ],
+    deadly: [
+      'Overwhelming dread. This may be beyond your abilities.',
+      'The air is electric with menace. Prepare for the worst.',
+      'You have entered a place of great peril. Survival is not guaranteed.'
+    ]
+  }
+};
+
+/**
+ * Return narrative framing text for a difficulty level within an adventure.
+ *
+ * Design doc #8: "AI DM narratively explains why this version is harder."
+ * The DM weaves this text into its scene narration so difficulty feels
+ * organic rather than mechanical.
+ *
+ * @param {string} difficulty — 'easy'|'moderate'|'hard'|'deadly' (from preAdventureDifficulty.tier)
+ * @param {string} adventure — 'dracula'|'frankenstein'|'holmes' or any string
+ * @returns {string} narrative text
+ */
+function narrativeDifficultyWrap(difficulty, adventure) {
+  const advKey = adventure || '_default';
+  const advText = NARRATIVE_DIFFICULTY_TEXT[advKey] || NARRATIVE_DIFFICULTY_TEXT._default;
+  const tierText = advText[difficulty] || advText.moderate;
+  return tierText[Math.floor(Math.random() * tierText.length)];
+}
+
 module.exports = {
   DynamicDifficulty,
   TIERS,
@@ -1113,7 +1321,13 @@ module.exports = {
   RUBBER_BAND_CONFIG,
   NARRATIVE_WRAPPERS,
   ADVENTURE_CALIBRATION_PRESETS,
+  ADVENTURE_BASE_DIFFICULTY,
+  BUCKET_THRESHOLDS,
+  NARRATIVE_DIFFICULTY_TEXT,
   categorizeAction,
   pickDifficultyTier,
+  preAdventureDifficulty,
+  getDifficultyBucket,
+  narrativeDifficultyWrap,
   _stableHash
 };

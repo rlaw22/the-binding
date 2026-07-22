@@ -32,6 +32,13 @@ const CALIBRATION = {
   // Makes high scores progressively harder to achieve
   BELL_CURVE: [0, 0.5, 1.5, 3, 5, 7, 8.5, 9.3, 9.7, 9.9, 10],
 
+  // Bell curve sampling — controls coin pool distribution shape
+  // stddev as fraction of mean — tighter = more concentrated, wider = more spread
+  BELL_CURVE_STDDEV_FACTOR: 0.35,
+  // Clamp sampled values to [mean * min, mean * max] to avoid degenerate pools
+  BELL_CURVE_CLAMP_MIN: 0.1,
+  BELL_CURVE_CLAMP_MAX: 2.0,
+
   // Subtle notification thresholds — coins below this delta are silent
   NOTIFICATION_THRESHOLD: 0,
 
@@ -89,19 +96,57 @@ const TIER_SHOPPE_DISCOUNT = {
 };
 
 /**
+ * Generate a bell-curve distributed sample using the Box-Muller transform.
+ * Returns `n` values drawn from N(mean, stddev), clamped to [0, mean * 2].
+ *
+ * Used to distribute the theoretical max coin pool across scenes so that
+ * most scenes award a moderate amount and only ~0.01% of players ever max out.
+ *
+ * @param {number} n — number of samples to generate
+ * @param {number} mean — center of the distribution
+ * @param {number} stddev — standard deviation
+ * @returns {number[]} array of n values, each rounded to nearest integer >= 0
+ */
+function bellCurveSample(n, mean, stddev) {
+  const samples = [];
+  const clampMin = Math.max(0, Math.round(mean * CALIBRATION.BELL_CURVE_CLAMP_MIN));
+  const clampMax = Math.round(mean * CALIBRATION.BELL_CURVE_CLAMP_MAX);
+
+  for (let i = 0; i < n; i++) {
+    // Box-Muller transform: two uniform randoms → one normal sample
+    let u1, u2;
+    do { u1 = Math.random(); } while (u1 === 0); // avoid log(0)
+    u2 = Math.random();
+    const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+    const raw = mean + z * stddev;
+    samples.push(Math.max(clampMin, Math.min(clampMax, Math.round(raw))));
+  }
+  return samples;
+}
+
+/**
  * Create a coin pool for an adventure.
  * Theoretical max = sum of all possible coins across all scenes.
+ *
+ * Scene max coins are drawn from a bell curve centered on the base-per-scene
+ * value so that most scenes award a moderate amount and only exceptional
+ * play across every scene reaches the true theoretical max.
  */
 function createCoinPool(adventureConfig) {
   const { storyLength, difficulty, totalScenes, adventureId } = adventureConfig;
 
   // Base pool scales with story length and difficulty
   const basePerScene = CALIBRATION.BASE_PER_SCENE[difficulty] || CALIBRATION.BASE_PER_SCENE.medium;
-  const totalPool = totalScenes * basePerScene;
 
   // Use adventure-specific preset weights if available, otherwise defaults
   const presetKey = adventureId ? adventureId.toLowerCase().replace(/[^a-z]/g, '') : null;
   const weights = (presetKey && CALIBRATION.ADVENTURE_PRESETS[presetKey]) || CALIBRATION.DEFAULT_CATEGORY_WEIGHTS;
+
+  // Distribute scene max coins via bell curve — most scenes cluster around
+  // basePerScene, a few are easier, a few are harder.
+  const stddev = Math.round(basePerScene * CALIBRATION.BELL_CURVE_STDDEV_FACTOR);
+  const sceneMaxCoins = bellCurveSample(totalScenes, basePerScene, stddev);
+  const totalPool = sceneMaxCoins.reduce((s, v) => s + v, 0);
 
   return {
     adventureId,
@@ -113,10 +158,10 @@ function createCoinPool(adventureConfig) {
     seasonalBudget: CALIBRATION.SEASON_COIN_BUDGET,
     scenePools: Array.from({ length: totalScenes }, (_, i) => ({
       sceneIndex: i,
-      maxCoins: basePerScene,
+      maxCoins: sceneMaxCoins[i],
       categoryBreakdown: Object.fromEntries(
         Object.entries(weights).map(
-          ([cat, weight]) => [cat, Math.floor(basePerScene * weight)]
+          ([cat, weight]) => [cat, Math.floor(sceneMaxCoins[i] * weight)]
         )
       ),
       earned: false
@@ -257,18 +302,39 @@ function calculateTier(pool, completedScenes, completionTimeMs, medianTimeMs) {
 }
 
 /**
+ * Convert earned coins to $BINDING using the tier-weighted conversion rate.
+ *
+ * Per design doc:
+ *   Bronze: 1x, Silver: 1.5x, Gold: 2.5x, Platinum: 5x
+ *
+ * @param {number} coins — total coins earned
+ * @param {string} tier — one of Tier.BRONZE, SILVER, GOLD, PLATINUM
+ * @returns {{ bindingAmount: number, rate: number, tier: string }}
+ */
+function convertToBinding(coins, tier) {
+  const rate = TIER_CONVERSION_RATE[tier] || TIER_CONVERSION_RATE[Tier.BRONZE];
+  const bindingAmount = Math.round(coins * rate * 100) / 100;
+  return { bindingAmount, rate, tier };
+}
+
+/**
  * Generate the end-of-chapter summary text for the player.
+ *
+ * Shows "You earned X/Y coins. Here's where they came from..." with a
+ * per-category breakdown and visual bar chart.
  */
 function formatChapterSummary(result) {
   if (!result) return '';
   const lines = [];
   lines.push(`**Chapter ${result.sceneIndex + 1} Complete!**`);
-  lines.push(`You earned **${result.sceneTotal} / ${result.maxForScene}** coins this chapter.`);
+  lines.push(`You earned **${result.sceneTotal} / ${result.maxForScene}** coins. Here's where they came from...`);
   lines.push('');
   lines.push('**Breakdown:**');
   for (const [category, amount] of Object.entries(result.breakdown)) {
     const label = category.charAt(0).toUpperCase() + category.slice(1);
-    const bar = '█'.repeat(Math.round(amount / (result.maxForScene * 0.25) * 5)) || '░';
+    const maxForCat = result.maxForScene > 0 ? result.maxForScene : 1;
+    const barLen = Math.max(1, Math.round((amount / maxForCat) * 20));
+    const bar = '█'.repeat(barLen);
     lines.push(`  ${label}: +${amount} ${bar}`);
   }
   lines.push('');
@@ -769,12 +835,14 @@ module.exports = {
   TIER_THRESHOLDS,
   TIER_CONVERSION_RATE,
   TIER_SHOPPE_DISCOUNT,
+  bellCurveSample,
   createCoinPool,
   checkSeasonalBudget,
   recordSeasonalSpend,
   scoreTurn,
   completeScene,
   calculateTier,
+  convertToBinding,
   formatChapterSummary,
   formatAdventureSummary,
   bellCurveNormalize,

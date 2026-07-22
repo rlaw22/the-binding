@@ -88,9 +88,63 @@
   <p class="status">Waiting to reconnect...</p>
   <p>Your story will continue once your connection is restored.</p>
   <button id="retryBtn" onclick="window.location.reload()">Retry</button>
+
+  <!-- Session rejoin banner (hidden by default, shown by JS if session found) -->
+  <div id="rejoinBanner" style="display:none; margin-top:1.5rem; padding:1rem 1.5rem; border:1px solid #C9A84C40; border-radius:4px; max-width:400px;">
+    <p style="color:#C9A84C; margin-bottom:0.75rem; font-size:1rem;">You have an active adventure waiting.</p>
+    <div style="display:flex; gap:0.75rem; justify-content:center;">
+      <button id="rejoinBtn" style="background:#C9A84C; color:#1A1A2E; border:none; padding:0.5rem 1.5rem;">Rejoin</button>
+      <button id="dismissBtn" style="background:transparent; border:1px solid #555; color:#888; padding:0.5rem 1.5rem;">Dismiss</button>
+    </div>
+  </div>
   <div class="footer">THE BINDING · A TEXT ADVENTURE</div>
   <script>
-    // Auto-retry on reconnect
+    // ── Session Rejoin ──────────────────────────────────────────────
+    (function() {
+      var rejoinBanner = document.getElementById('rejoinBanner');
+      var rejoinBtn = document.getElementById('rejoinBtn');
+      var dismissBtn = document.getElementById('dismissBtn');
+
+      // Ask the service worker for the last active session
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'CHECK_REJOIN' });
+      }
+
+      // Listen for rejoin info from SW
+      navigator.serviceWorker.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'REJOIN_INFO' && event.data.sessionId) {
+          rejoinBanner.style.display = 'block';
+          rejoinBtn.setAttribute('data-session-id', event.data.sessionId);
+          rejoinBtn.setAttribute('data-session-url', event.data.sessionUrl || '');
+        }
+        // Auto-refresh on reconnect
+        if (event.data && event.data.type === 'RECONNECTED') {
+          window.location.reload();
+        }
+      });
+
+      if (rejoinBtn) {
+        rejoinBtn.addEventListener('click', function() {
+          var sid = rejoinBtn.getAttribute('data-session-id');
+          var surl = rejoinBtn.getAttribute('data-session-url');
+          if (surl) {
+            window.location.href = surl;
+          } else if (sid) {
+            window.location.href = '/?session=' + encodeURIComponent(sid);
+          } else {
+            window.location.reload();
+          }
+        });
+      }
+
+      if (dismissBtn) {
+        dismissBtn.addEventListener('click', function() {
+          rejoinBanner.style.display = 'none';
+        });
+      }
+    })();
+
+    // ── Auto-retry on reconnect ─────────────────────────────────────
     window.addEventListener('online', function() {
       window.location.reload();
     });
