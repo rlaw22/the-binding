@@ -22,7 +22,7 @@ const { createContextManager, addTurn, setCharacterSheet, setAdventureContext, u
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT } = require('../ai-dm/prompts');
 const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions } = require('../ai-dm/dm-service');
 const { createProvider } = require('../ai-dm/llm-provider');
-const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, CoinCategory } = require('../coin-engine');
+const { createCoinPool, scoreTurn, completeScene, calculateTier, convertToBinding, formatChapterSummary, CoinCategory } = require('../coin-engine');
 const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline } = require('../adventure');
 const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
@@ -32,8 +32,9 @@ const AccessControl = require('../auth/access-control');
 const { createVoiceService, getCachedAudio, detectProvider } = require('../voice');
 const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
 const CombatManager = require('../combat/combat-manager');
-const { DynamicDifficulty } = require('../difficulty/dynamic-difficulty');
+const { DynamicDifficulty, preAdventureDifficulty, getDifficultyBucket, narrativeDifficultyWrap } = require('../difficulty/dynamic-difficulty');
 const Inventory = require('../inventory/inventory');
+const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem } = require('../inventory/inventory');
 
 // In-memory session store
 const sessions = new Map();
@@ -486,7 +487,9 @@ async function createServer(options = {}) {
     const rejoinCode = generateRejoinCode(adventureId);
 
     session.state = 'active';
-    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty() });
+    // Pre-adventure difficulty calibration (design doc #8): silently sets baseline
+    const advDiffProfile = preAdventureDifficulty(player.character.level || 1, adventureId);
+    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
     session._rejoinCode = rejoinCode;
@@ -580,12 +583,19 @@ async function createServer(options = {}) {
     const sessionAdv = getAdventure(data.game.adventureId) || getAdventure('dracula');
     const sceneIndex = sessionAdv.scenes.findIndex(s => s.id === currentScene);
 
+    // Calculate $BINDING conversion (tier-weighted)
+    const tierResult = calculateTier(coinPool, sceneCoins.length, 0, 0);
+    const bindingConversion = convertToBinding(totalEarned, tierResult.tier);
+
     return {
       totalEarned,
       totalPool: coinPool.totalPool,
       percentage: coinPool.totalPool > 0 ? Math.round((totalEarned / coinPool.totalPool) * 100) : 0,
       currentScene: sceneIndex,
       totalScenes: coinPool.totalScenes,
+      tier: tierResult.tier,
+      bindingAmount: bindingConversion.bindingAmount,
+      conversionRate: bindingConversion.rate,
       categoryBreakdown: sceneCoins.reduce((acc, sc) => {
         if (sc && sc.coins) {
           for (const [cat, val] of Object.entries(sc.coins)) {
@@ -641,7 +651,11 @@ async function createServer(options = {}) {
   app.get('/api/sessions/:id/inventory', async (request, reply) => {
     const data = sessions.get(request.params.id);
     if (!data) return reply.status(404).send({ error: 'Session not found' });
-    return { items: Inventory.listItems(data.inventory) };
+    const items = Inventory.listItems(data.inventory);
+    const weight = getInventoryWeight(items);
+    const capacity = getCapacity ? getCapacity(data.inventory) : 50;
+    const encumbrance = getEncumbranceStatus(weight, capacity);
+    return { items, weight, capacity, encumbrance };
   });
 
   app.post('/api/sessions/:id/inventory/use', async (request, reply) => {
