@@ -858,10 +858,12 @@ async function createServer(options = {}) {
         suggestedActions: result.suggestedActions || []
       };
     } catch (err) {
+      console.error('[ACTION ERROR]', err.message, err.stack);
       app.log.error(err);
       recordMessage(sessionId, MessageRouter.error('Something went wrong. Please try again.'));
       return reply.status(500).send({
-        error: 'Action processing failed'
+        error: 'Action processing failed',
+        detail: err.message
       });
     }
   });
