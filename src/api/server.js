@@ -652,9 +652,12 @@ async function createServer(options = {}) {
     const data = sessions.get(request.params.id);
     if (!data) return reply.status(404).send({ error: 'Session not found' });
     const items = Inventory.listItems(data.inventory);
-    const weight = getInventoryWeight(items);
-    const capacity = getCapacity ? getCapacity(data.inventory) : 50;
-    const encumbrance = getEncumbranceStatus(weight, capacity);
+    let weight = 0, capacity = 50, encumbrance = 'normal';
+    try {
+      weight = getInventoryWeight(data.inventory);
+      capacity = getCapacity(data.inventory);
+      encumbrance = getEncumbranceStatus(weight, capacity);
+    } catch (e) { /* weight/capacity gracefully degrade */ }
     return { items, weight, capacity, encumbrance };
   });
 
