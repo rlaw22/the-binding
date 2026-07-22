@@ -11,9 +11,34 @@ const {
   applyWorldChanges, saveCampaign, resumeCampaign, getCampaignSummary
 } = require('../campaign');
 const { addPlayer, getPlayer, SessionState } = require('../session');
+const { checkAccess, GameMode } = require('../auth/access-control');
 
 // In-memory campaign store (Phase 1 pattern — JSON persistence, no DB)
 const campaignStore = new Map();
+
+// Admin key — set by the parent server via options or env
+function getAdminKey() { return process.env.ADMIN_KEY || ''; }
+
+/**
+ * Simple admin auth check for campaign routes.
+ */
+function requireBetaOrAdmin(request, reply) {
+  const ADMIN_KEY = getAdminKey();
+  const betaToken = request.body?.betaToken || request.headers['x-beta-token'] || '';
+
+  // If ADMIN_KEY is set, require a valid token
+  if (ADMIN_KEY) {
+    const access = checkAccess(betaToken, GameMode.CAMPAIGN);
+    if (!access.allowed) {
+      reply.code(401).send({ error: 'Valid beta access code required. Please enter your code on the login page.' });
+      return null;
+    }
+    return access;
+  }
+
+  // No ADMIN_KEY = dev mode, allow everything
+  return { allowed: true, source: 'dev', reason: 'Dev mode — no auth required' };
+}
 
 /**
  * Register campaign routes on a Fastify instance.
@@ -22,6 +47,10 @@ async function campaignRoutes(fastify, options) {
 
   // ── Create Campaign ──────────────────────────────────────────
   fastify.post('/api/campaigns', async (request, reply) => {
+    // Require valid beta token when ADMIN_KEY is set
+    const access = requireBetaOrAdmin(request, reply);
+    if (!access) return; // reply already sent by requireBetaOrAdmin
+
     const { theme, sessionName, maxPlayers, customDescription, playerName, characterClass, characterRace } = request.body || {};
 
     const session = createCampaignSession({

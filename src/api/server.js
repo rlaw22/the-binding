@@ -28,6 +28,7 @@ const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
 const TokenStore = require('../auth/token-store');
+const AccessControl = require('../auth/access-control');
 const { createVoiceService, getCachedAudio, detectProvider } = require('../voice');
 const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
 const CombatManager = require('../combat/combat-manager');
@@ -285,14 +286,30 @@ async function createServer(options = {}) {
   }
 
   // Validate a beta token (public — used by the gate page)
+  // Now returns full mode access profile so the frontend knows what modes are unlocked
   app.post('/api/beta/validate', async (request, reply) => {
     const { token } = request.body || {};
     if (!token) return reply.status(400).send({ error: 'token is required' });
 
-    const valid = TokenStore.validateToken(token);
-    if (!valid) return reply.status(401).send({ error: 'Invalid or expired token' });
+    const profile = AccessControl.getAccessProfile(token);
+    if (!profile.valid) {
+      return reply.status(401).send({ error: 'Invalid or expired token' });
+    }
 
-    return { ok: true, label: valid.label };
+    return {
+      ok: true,
+      label: profile.label,
+      source: profile.source,
+      modes: profile.modes
+    };
+  });
+
+  // Get access profile for a token (public — used by frontend to populate mode selection)
+  app.post('/api/beta/access', async (request, reply) => {
+    const { token } = request.body || {};
+    if (!token) return reply.status(400).send({ error: 'token is required' });
+
+    return AccessControl.getAccessProfile(token);
   });
 
   // Record beta signup (NDA acceptance + questionnaire)
@@ -421,12 +438,14 @@ async function createServer(options = {}) {
     const tokenCode = betaToken || betaTokenHeader || '';
 
     // Validate beta token — only enforce when ADMIN_KEY is set (production mode)
+    // Uses AccessControl to check mode access (beta tokens grant all modes)
     let betaUser = null;
     if (ADMIN_KEY) {
-      betaUser = TokenStore.validateToken(tokenCode);
-      if (!betaUser) {
+      const access = AccessControl.checkAccess(tokenCode, 'storyline');
+      if (!access.allowed) {
         return reply.status(401).send({ error: 'Valid beta access code required. Please enter your code on the login page.' });
       }
+      betaUser = access.token;
     }
 
     if (!adventureId) {

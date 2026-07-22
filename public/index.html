@@ -103,6 +103,20 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 #questionnaire-screen{text-align:center;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow-y:auto;flex:1;}
 #questionnaire-screen h2{color:#C9A84C;font-size:1.3em;letter-spacing:2px;}
 #questionnaire-screen .q-sub{color:#F5F0E1aa;max-width:400px;font-size:0.92em;line-height:1.5;}
+#mode-select-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
+#mode-select-screen h2{color:#C9A84C;font-size:1.4em;letter-spacing:2px;}
+.mode-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:700px;}
+.mode-card{background:#0C0B10;border:2px solid #C9A84C44;border-radius:12px;padding:24px 20px;width:200px;cursor:pointer;transition:all 0.3s;text-align:center;}
+.mode-card:hover{border-color:#C9A84C;transform:translateY(-4px);box-shadow:0 8px 24px #C9A84C22;}
+.mode-card.locked{opacity:0.5;cursor:not-allowed;border-color:#F5F0E122;}
+.mode-card.locked:hover{transform:none;box-shadow:none;}
+.mode-card .mode-icon{font-size:2.4em;margin-bottom:12px;}
+.mode-card .mode-name{color:#C9A84C;font-size:1.1em;font-weight:bold;margin-bottom:8px;font-family:Georgia,serif;}
+.mode-card .mode-desc{color:#F5F0E1aa;font-size:0.85em;line-height:1.5;margin-bottom:12px;}
+.mode-card .mode-price{color:#E8A838;font-size:0.9em;font-weight:bold;}
+.mode-card .mode-status{color:#7CB97C;font-size:0.8em;margin-top:8px;}
+.mode-card .mode-locked{color:#EF5350;font-size:0.8em;margin-top:8px;}
+
 #questionnaire-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:440px;text-align:left;}
 .q-field label{display:block;color:#C9A84C;font-size:0.88em;font-weight:600;margin-bottom:5px;}
 .q-field input,.q-field select,.q-field textarea{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:11px 14px;border-radius:8px;font-family:Georgia,serif;font-size:0.95em;}
@@ -442,6 +456,36 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     </div>
   </div>
 
+
+  <!-- Mode Selection Screen -->
+  <div id="mode-select-screen" class="hidden">
+    <h2>Choose Your Experience</h2>
+    <p style="color:#F5F0E1aa;max-width:500px;">Select how you want to play. All modes are unlocked during beta.</p>
+    <div class="mode-cards">
+      <div class="mode-card" onclick="selectMode('storyline')">
+        <div class="mode-icon">📖</div>
+        <div class="mode-name">Storyline</div>
+        <div class="mode-desc">Play through classic books — Dracula, Frankenstein, Sherlock Holmes. Unlimited replays.</div>
+        <div class="mode-price">$2.99/book</div>
+        <div class="mode-status">✓ Unlocked</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('campaign')">
+        <div class="mode-icon">⚔️</div>
+        <div class="mode-name">Campaign</div>
+        <div class="mode-desc">Open-ended D&amp;D with AI DM. Dice, combat, quests. Multiplayer ready.</div>
+        <div class="mode-price">$4.99/day pass</div>
+        <div class="mode-status">✓ Unlocked</div>
+      </div>
+      <div class="mode-card" onclick="selectMode('digital_dm')">
+        <div class="mode-icon">🧙</div>
+        <div class="mode-name">Digital DM</div>
+        <div class="mode-desc">Freeform AI Dungeon Master. Voice conversation, no scripts, pure improv.</div>
+        <div class="mode-price">$7.99/day pass</div>
+        <div class="mode-status">✓ Unlocked</div>
+      </div>
+    </div>
+  </div>
+
   <div id="start-screen" class="hidden">
     <h2>Choose Your Adventure</h2>
     <p id="adventure-description">Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
@@ -651,7 +695,7 @@ function initSpectatorMode() {
   playerRole = 'spectator';
 
   // Hide all pre-game screens
-  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'start-screen'];
+  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'mode-select-screen', 'start-screen'];
   screens.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.add('hidden');
@@ -1069,8 +1113,7 @@ async function validateBetaToken() {
     document.getElementById('gate-screen').classList.add('hidden');
     if (localStorage.getItem('ndaAccepted_' + code)) {
       if (localStorage.getItem('questionnaireDone_' + code)) {
-        document.getElementById('start-screen').classList.remove('hidden');
-        loadAdventures();
+        document.getElementById('mode-select-screen').classList.remove('hidden');
       } else {
         document.getElementById('questionnaire-screen').classList.remove('hidden');
       }
@@ -1109,8 +1152,7 @@ async function validateBetaToken() {
     document.getElementById('gate-screen').classList.add('hidden');
     if (localStorage.getItem('ndaAccepted_' + betaToken)) {
       if (localStorage.getItem('questionnaireDone_' + betaToken)) {
-        document.getElementById('start-screen').classList.remove('hidden');
-        loadAdventures();
+        document.getElementById('mode-select-screen').classList.remove('hidden');
       } else {
         document.getElementById('questionnaire-screen').classList.remove('hidden');
       }
@@ -1163,8 +1205,7 @@ async function submitQuestionnaire() {
 
   localStorage.setItem('questionnaireDone_' + betaToken, 'true');
   document.getElementById('questionnaire-screen').classList.add('hidden');
-  document.getElementById('start-screen').classList.remove('hidden');
-  loadAdventures();
+  document.getElementById('mode-select-screen').classList.remove('hidden');
 }
 
 var betaInput = document.getElementById('beta-token-input');
@@ -1172,6 +1213,30 @@ if (betaInput) {
   betaInput.addEventListener('keydown', function(e) {
     if (e.key === 'Enter') validateBetaToken();
   });
+}
+
+
+// --- Mode Selection ---
+async function showModeSelection() {
+  document.getElementById('mode-select-screen').classList.remove('hidden');
+}
+
+async function selectMode(mode) {
+  if (mode === 'storyline') {
+    document.getElementById('mode-select-screen').classList.add('hidden');
+    document.getElementById('start-screen').classList.remove('hidden');
+    loadAdventures();
+  } else if (mode === 'campaign') {
+    // Campaign mode — create a campaign session
+    document.getElementById('mode-select-screen').classList.add('hidden');
+    document.getElementById('start-screen').classList.remove('hidden');
+    loadAdventures();
+    // TODO: Show campaign-specific UI (lobby, theme selection, etc.)
+    // For now, redirect to adventure selection as campaign entry point
+  } else if (mode === 'digital_dm') {
+    // Digital DM mode — coming soon
+    alert('Digital DM mode is in development. The backend is ready — frontend coming soon!');
+  }
 }
 
 async function loadAdventures() {
