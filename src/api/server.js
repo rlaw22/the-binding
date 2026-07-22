@@ -34,7 +34,7 @@ const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = 
 const CombatManager = require('../combat/combat-manager');
 const { DynamicDifficulty, preAdventureDifficulty, getDifficultyBucket, narrativeDifficultyWrap } = require('../difficulty/dynamic-difficulty');
 const Inventory = require('../inventory/inventory');
-const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem } = require('../inventory/inventory');
+const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
 
 // In-memory session store
 const sessions = new Map();
@@ -818,6 +818,16 @@ async function createServer(options = {}) {
       // Process through DM service
       const result = await processAction(game, content, player.character);
 
+      // Dynamic Difficulty: wrap narrative with difficulty context if available
+      if (data.difficultyProfile) {
+        const currentSceneIndex = game.turnHistory.length;
+        const totalScenes = coinPool.scenePools ? coinPool.scenePools.length : 10;
+        const bucket = getDifficultyBucket(currentSceneIndex, totalScenes);
+        const diffWrap = narrativeDifficultyWrap(data.difficultyProfile, getAdventure(data.game.adventureId));
+        // Attach difficulty metadata to result for client awareness
+        result.difficulty = { bucket: bucket.bucket, intensity: bucket.intensity, narrative: diffWrap };
+      }
+
       // Score coins
       const currentSceneIndex = game.turnHistory.length;
       const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
@@ -1035,6 +1045,49 @@ async function createServer(options = {}) {
     const data = sessions.get(request.params.id);
     if (!data) return reply.status(404).send({ error: 'Session not found' });
     return { suggestions: getPendingSuggestions(data.session) };
+  });
+
+  // --- SHOPPE ENDPOINTS ---
+  app.get('/api/sessions/:id/shoppe', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    const catalog = getShoppeCatalog();
+    const recommendations = getShoppeRecommendations(data.inventory, data.coinBalance || 0);
+    const transactionLog = getShoppeTransactionLog(data.inventory);
+    return { catalog, recommendations, transactionLog };
+  });
+
+  app.post('/api/sessions/:id/shoppe/buy', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    const { itemId, coinBalance } = request.body || {};
+    if (!itemId) return reply.status(400).send({ error: 'itemId is required' });
+    const result = buyItem(data.inventory, itemId, coinBalance || data.coinBalance || 0);
+    if (!result.success) return reply.status(400).send({ error: result.error || 'Purchase failed' });
+    markDirty();
+    return { ok: true, ...result };
+  });
+
+  app.post('/api/sessions/:id/shoppe/sell', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    const { itemId } = request.body || {};
+    if (!itemId) return reply.status(400).send({ error: 'itemId is required' });
+    const result = sellItem(data.inventory, itemId);
+    if (!result.success) return reply.status(400).send({ error: result.error || 'Sale failed' });
+    markDirty();
+    return { ok: true, ...result };
+  });
+
+  app.get('/api/sessions/:id/shoppe/haggle/:itemId', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    const catalog = getShoppeCatalog();
+    const item = catalog.find(i => i.id === request.params.itemId);
+    if (!item) return reply.status(404).send({ error: 'Item not in shoppe catalog' });
+    const charismaMod = request.query.charismaMod ? parseFloat(request.query.charismaMod) : 0.5;
+    const haggledPrice = hagglePrice(item.price, charismaMod);
+    return { itemId: item.id, originalPrice: item.price, haggledPrice, charismaMod };
   });
 
   // --- PHASE 2: CAMPAIGN MODE ROUTES ---
