@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "node tests/phase1.test.js && node tests/image-pipeline.test.js",
+    "test": "node tests/phase1.test.js && node tests/image-pipeline.test.js && node tests/coin-bellcurve.test.js && node tests/coin-engine-v2.test.js && node tests/dice.test.js && node tests/durability-combat.test.js && node tests/durability-image.test.js && node tests/dynamic-difficulty-tuning.test.js && node tests/e2e-expanded.test.js && node tests/image-cache.test.js && node tests/image-queue.test.js && node tests/inventory-edge-cases.test.js && node tests/inventory-shoppe.test.js && node tests/persistent-store.test.js && node tests/phase2.test.js && node tests/voice-tts.test.js",
     "start": "node server.js"
   },
   "keywords": [],

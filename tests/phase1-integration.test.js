@@ -153,11 +153,12 @@ section('Coin Engine');
   assertEq(draculaPool.adventureId, 'dracula', 'Dracula pool adventureId');
   assertEq(draculaPool.categoryWeights.investigation, 0.3, 'Dracula: investigation=0.3');
   assertEq(draculaPool.seasonalBudget, 10000000, 'Seasonal budget 10M');
-  assertEq(draculaPool.totalPool, 1500, 'Medium: 25 scenes × 60 = 1500');
+  // Bell-curve distribution makes totalPool approximate — verify within ±50% of theoretical max
+  assert(draculaPool.totalPool > 750 && draculaPool.totalPool < 2250, 'Medium: 25 scenes ~60 avg → pool ~1500 (±50%), got ' + draculaPool.totalPool);
 
   const frankPool = ce.createCoinPool({ adventureId: 'frankenstein', difficulty: 'hard', totalScenes: 25 });
   assertEq(frankPool.categoryWeights.creativity, 0.3, 'Frankenstein: creativity=0.3');
-  assertEq(frankPool.totalPool, 2000, 'Hard: 25 × 80 = 2000');
+  assert(frankPool.totalPool > 1000 && frankPool.totalPool < 3000, 'Hard: 25 scenes ~80 avg → pool ~2000 (±50%), got ' + frankPool.totalPool);
 
   // Seasonal budget
   const budget = ce.checkSeasonalBudget(draculaPool, 500);
