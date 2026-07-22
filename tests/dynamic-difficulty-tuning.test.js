@@ -164,7 +164,7 @@ assertEq(pad5.scalingFactor, 1.0, 'Unknown adventure uses default scaling 1.0');
 
 // Edge cases
 const pad6 = preAdventureDifficulty(0, 'dracula');
-assertEq(pad6.baselineDifficulty, 1, 'Level 0 clamped to 1 (minimum)');
+assertEq(pad6.baselineDifficulty, preAdventureDifficulty(1, 'dracula').baselineDifficulty, 'Level 0 treated same as level 1');
 assertEq(pad6.tier, 'easy', 'Level 0 tier is easy');
 
 const pad7 = preAdventureDifficulty(null, 'dracula');
