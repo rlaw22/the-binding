@@ -193,7 +193,7 @@ async function createServer(options = {}) {
     // Try a minimal LLM call to see if the key works
     if (!llmConfig.mock && key) {
       try {
-        const { createProvider } = require('./ai-dm/llm-provider');
+        const { createProvider } = require('../ai-dm/llm-provider');
         const testProvider = createProvider(llmConfig);
         const start = Date.now();
         const response = await testProvider([
