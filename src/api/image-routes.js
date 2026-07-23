@@ -28,9 +28,11 @@ function getImageService() {
  */
 async function imageRoutes(fastify, options) {
 
-  // ── Generate Image ───────────────────────────────────────────
+  // ── Generate Image (unified) ─────────────────────────────────
+  // Supports both typed generation (scene/character/combat with context)
+  // and raw prompt generation (with optional style/sessionId for game-facing use).
   fastify.post('/api/image/generate', async (request, reply) => {
-    const { prompt, type, context } = request.body || {};
+    const { prompt, type, context, style, sessionId } = request.body || {};
 
     if (!prompt && !type) {
       return reply.code(400).send({ error: 'Either prompt or type is required' });
@@ -39,7 +41,12 @@ async function imageRoutes(fastify, options) {
     const svc = getImageService();
 
     if (!svc.isEnabled) {
-      return reply.code(503).send({ error: 'Image generation not available (no API key configured)' });
+      return reply.code(503).send({ error: 'Image generation not available (no provider configured)' });
+    }
+
+    // Check rate limit if sessionId provided
+    if (sessionId && svc.rateLimiter && !svc.rateLimiter.canGenerate(sessionId)) {
+      return reply.code(429).send({ error: 'Rate limited', imageUrl: null, cached: false });
     }
 
     let result;
@@ -51,6 +58,14 @@ async function imageRoutes(fastify, options) {
         result = await svc.generateCharacter(context);
       } else if (type === 'combat' && context) {
         result = await svc.generateCombat(context);
+      } else if (type === 'npc-portrait' && context) {
+        result = await svc.generateNpcPortrait(context);
+      } else if (type === 'item' && context) {
+        result = await svc.generateItemIllustration(context);
+      } else if (type === 'scene-background' && context) {
+        result = await svc.generateSceneBackground(context);
+      } else if (type === 'detailed-combat' && context) {
+        result = await svc.generateDetailedCombat(context);
       } else if (prompt) {
         result = await svc.generateRaw(prompt);
       } else {
@@ -61,10 +76,18 @@ async function imageRoutes(fastify, options) {
     }
 
     if (!result) {
-      return reply.code(429).send({ error: 'Image generation rate-limited or failed' });
+      return reply.code(429).send({ error: 'Image generation rate-limited or failed', imageUrl: null, cached: false });
     }
 
-    return result;
+    // Record generation for rate limiting
+    if (sessionId && svc.rateLimiter) {
+      svc.rateLimiter.recordGeneration(sessionId);
+    }
+
+    // Check if result is a cached data URI (mock provider)
+    const isCached = result.startsWith('data:');
+
+    return { imageUrl: result, cached: isCached };
   });
 
   // ── Serve Stored Image ──────────────────────────────────────
@@ -106,7 +129,7 @@ async function imageRoutes(fastify, options) {
   });
 
   // ── List Stored Images (paginated) ───────────────────────
-  fastify.get('/api/images', async (request, reply) => {
+  fastify.get('/api/image/list', async (request, reply) => {
     const { limit, offset } = request.query || {};
     const svc = getImageService();
     const store = svc.persistentStore;
@@ -120,7 +143,7 @@ async function imageRoutes(fastify, options) {
   });
 
   // ── Get Single Stored Image Metadata ──────────────────────
-  fastify.get('/api/images/:key', async (request, reply) => {
+  fastify.get('/api/image/list/:key', async (request, reply) => {
     const { key } = request.params;
     if (!key || !/^[a-f0-9]{16,64}$/.test(key)) {
       return reply.code(400).send({ error: 'Invalid image key' });
@@ -134,7 +157,7 @@ async function imageRoutes(fastify, options) {
   });
 
   // ── Cleanup Old Stored Images ─────────────────────────────
-  fastify.post('/api/images/cleanup', async (request, reply) => {
+  fastify.post('/api/image/cleanup', async (request, reply) => {
     const { maxAgeDays } = request.body || {};
     const svc = getImageService();
     const store = svc.persistentStore;
@@ -145,24 +168,14 @@ async function imageRoutes(fastify, options) {
     return { success: true, removed, maxAgeDays: maxAgeDays || 30 };
   });
 
-  // ── Persistent Store Stats ───────────────────────────────────
-  fastify.get('/api/image/store/stats', async (request, reply) => {
+  // ── Image Stats (consolidated) ───────────────────────────────
+  fastify.get('/api/image/stats', async (request, reply) => {
     const svc = getImageService();
     const store = svc.persistentStore;
     return {
-      store: store ? store.stats() : { count: 0, maxEntries: 0, dir: 'N/A', entries: [] },
-      memoryCache: svc.cacheStats,
-      provider: svc.providerName,
-      enabled: svc.isEnabled,
-    };
-  });
-
-  // ── Cache Stats ──────────────────────────────────────────────
-  fastify.get('/api/image/cache/stats', async (request, reply) => {
-    const svc = getImageService();
-    return {
       cache: svc.cacheStats,
       rateLimiter: svc.rateLimiterStats,
+      store: store ? store.stats() : { count: 0, maxEntries: 0, dir: 'N/A', entries: [] },
       provider: svc.providerName,
       enabled: svc.isEnabled,
     };

@@ -38,7 +38,8 @@ const STATIC_ASSETS = [
   '/icon-192.png',
   '/icon-512.png',
   '/dice-box-threejs.umd.js',
-  '/dice-roller.js'
+  '/dice-roller.js',
+  '/browser-tts.js'
 ];
 
 // Adventure manifest files to pre-cache for offline play
