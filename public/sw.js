@@ -35,6 +35,8 @@ const STATIC_ASSETS = [
   '/create.html',
   '/manifest.json',
   '/offline.html',
+  '/icon-192.png',
+  '/icon-512.png',
   '/dice-box-threejs.umd.js',
   '/dice-roller.js'
 ];
