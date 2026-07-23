@@ -22,7 +22,7 @@ const { createContextManager, addTurn, setCharacterSheet, setAdventureContext, u
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT } = require('../ai-dm/prompts');
 const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions } = require('../ai-dm/dm-service');
 const { createProvider } = require('../ai-dm/llm-provider');
-const { createCoinPool, scoreTurn, completeScene, calculateTier, convertToBinding, formatChapterSummary, CoinCategory } = require('../coin-engine');
+const { createCoinPool, scoreTurn, completeScene, calculateTier, convertToBinding, formatChapterSummary, formatAdventureSummary, buildCoinNotification, CoinCategory } = require('../coin-engine');
 const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline } = require('../adventure');
 const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
@@ -403,6 +403,50 @@ async function createServer(options = {}) {
     return { feedback: feedbackLog };
   });
 
+  // Playtest calibration — returns live session data for DD tuning and coin engine calibration
+  app.get('/api/sessions/:id/calibration', async (request, reply) => {
+    const sessionId = request.params.id;
+    const data = sessions.get(sessionId);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const { game, coinPool, difficulty, difficultyProfile, sceneCoins, currentSceneCoins, completedScenes, runningCoinTotal } = data;
+
+    // Aggregate per-category scoring stats across all turns
+    const categoryTotals = { creativity: 0, investigation: 0, roleplay: 0, combat: 0, exploration: 0 };
+    const categoryCounts = { creativity: 0, investigation: 0, roleplay: 0, combat: 0, exploration: 0 };
+    for (const turn of sceneCoins) {
+      if (turn && turn.coins) {
+        for (const [cat, val] of Object.entries(turn.coins)) {
+          if (val > 0) { categoryTotals[cat] = (categoryTotals[cat] || 0) + val; categoryCounts[cat]++; }
+        }
+      }
+    }
+
+    return {
+      adventureId: game.adventureId,
+      turnCount: game.turnHistory ? game.turnHistory.length : 0,
+      coins: {
+        runningTotal: runningCoinTotal || 0,
+        scenePools: coinPool.scenePools ? coinPool.scenePools.length : 0,
+        completedScenes: (completedScenes || []).length,
+        currentSceneTurns: (currentSceneCoins || []).length,
+        categoryTotals,
+        categoryCounts
+      },
+      difficulty: {
+        profile: difficultyProfile || null,
+        state: difficulty && typeof difficulty.getState === 'function' ? difficulty.getState() : null
+      },
+      scenes: (completedScenes || []).map(s => ({
+        index: s.sceneIndex,
+        earned: s.sceneTotal,
+        max: s.maxForScene,
+        percentage: Math.round(s.percentage * 100),
+        breakdown: s.breakdown
+      }))
+    };
+  });
+
   // Generate a new token (admin only)
   app.post('/api/admin/tokens', async (request, reply) => {
     if (!requireAdmin(request, reply)) return;
@@ -531,7 +575,7 @@ async function createServer(options = {}) {
     session.state = 'active';
     // Pre-adventure difficulty calibration (design doc #8): silently sets baseline
     const advDiffProfile = preAdventureDifficulty(player.character.level || 1, adventureId);
-    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile });
+    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
     session._rejoinCode = rejoinCode;
@@ -877,6 +921,16 @@ async function createServer(options = {}) {
       const currentSceneIndex = game.turnHistory.length;
       const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
 
+      // Track per-scene coins for chapter breakdown
+      data.currentSceneCoins.push(turnCoins);
+
+      // Structured coin notification — subtle, with running total
+      data.runningCoinTotal = (data.runningCoinTotal || 0) + turnCoins.turnTotal;
+      const coinNotification = buildCoinNotification(turnCoins, data.runningCoinTotal);
+      if (coinNotification) {
+        recordMessage(sessionId, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
+      }
+
       // Record narrative
       recordMessage(sessionId, MessageRouter.narration(result.narrative, {}));
 
@@ -911,9 +965,17 @@ async function createServer(options = {}) {
         ));
       }
 
-      // Handle scene transitions — session-level tracking only
-      // (dm-service already handled game state, validator, warm context, and opening narration)
+      // Handle scene transitions — generate chapter breakdown, then transition
       if (result.sceneTransition) {
+        const sceneResult = completeScene(data.completedScenes.length, data.currentSceneCoins, coinPool);
+        if (sceneResult) {
+          data.completedScenes.push(sceneResult);
+          const summaryText = formatChapterSummary(sceneResult);
+          if (summaryText) {
+            recordMessage(sessionId, MessageRouter.chapterSummary(summaryText, sceneResult));
+          }
+        }
+        data.currentSceneCoins = [];
         transitionScene(session, result.sceneTransition.sceneId);
       }
 
@@ -1038,6 +1100,16 @@ async function createServer(options = {}) {
       const currentSceneIndex = game.turnHistory.length;
       const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
 
+      // Track per-scene coins for chapter breakdown
+      data.currentSceneCoins.push(turnCoins);
+
+      // Structured coin notification — subtle, with running total
+      data.runningCoinTotal = (data.runningCoinTotal || 0) + turnCoins.turnTotal;
+      const coinNotification = buildCoinNotification(turnCoins, data.runningCoinTotal);
+      if (coinNotification) {
+        recordMessage(session.id, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
+      }
+
       recordMessage(session.id, MessageRouter.narration(result.narrative, {}));
 
       // Generate TTS voice for the narration (async, non-blocking)
@@ -1070,6 +1142,15 @@ async function createServer(options = {}) {
       }
 
       if (result.sceneTransition) {
+        const sceneResult = completeScene(data.completedScenes.length, data.currentSceneCoins, coinPool);
+        if (sceneResult) {
+          data.completedScenes.push(sceneResult);
+          const summaryText = formatChapterSummary(sceneResult);
+          if (summaryText) {
+            recordMessage(session.id, MessageRouter.chapterSummary(summaryText, sceneResult));
+          }
+        }
+        data.currentSceneCoins = [];
         transitionScene(session, result.sceneTransition.sceneId);
       }
 
