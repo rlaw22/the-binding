@@ -986,7 +986,8 @@ async function createServer(options = {}) {
         ok: true,
         turnNumber: game.turnHistory.length,
         narrative: result.narrative,
-        suggestedActions: result.suggestedActions || []
+        suggestedActions: result.suggestedActions || [],
+        sceneImage: game._lastSceneImage || null
       };
     } catch (err) {
       console.error('[ACTION ERROR]', err.code || '', err.message, err.stack);
