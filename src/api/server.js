@@ -931,8 +931,9 @@ async function createServer(options = {}) {
         recordMessage(sessionId, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
       }
 
-      // Record narrative
-      recordMessage(sessionId, MessageRouter.narration(result.narrative, {}));
+      // Record narrative (with scene image if available)
+      const narrationOpts = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
+      recordMessage(sessionId, MessageRouter.narration(result.narrative, narrationOpts));
 
       // Generate TTS voice for the narration (async, non-blocking)
       if (voiceEnabled) {
@@ -1111,7 +1112,9 @@ async function createServer(options = {}) {
         recordMessage(session.id, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
       }
 
-      recordMessage(session.id, MessageRouter.narration(result.narrative, {}));
+      // Record narrative (with scene image if available)
+      const narrationOpts2 = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
+      recordMessage(session.id, MessageRouter.narration(result.narrative, narrationOpts2));
 
       // Generate TTS voice for the narration (async, non-blocking)
       if (voiceEnabled) {
