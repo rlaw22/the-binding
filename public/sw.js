@@ -1,5 +1,5 @@
 /**
- * The Binding — Service Worker (PWA) v6
+ * The Binding — Service Worker (PWA) v7
  * 
  * Strategies:
  * - Cache-first for static shell (HTML, manifest)
@@ -139,7 +139,7 @@ function trackSession(url, response) {
 
 // ── Install: pre-cache shell + manifests ────────────────────────────────
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing v6...');
+  console.log('[SW] Installing v7...');
   
   event.waitUntil(
     Promise.all([
@@ -189,7 +189,7 @@ self.addEventListener('install', (event) => {
 
 // ── Activate: clean old versioned caches ────────────────────────────────
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating v6...');
+  console.log('[SW] Activating v7...');
   
   event.waitUntil(
     caches.keys().then((keys) => {
