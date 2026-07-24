@@ -8,14 +8,14 @@
 
   /* ── Character voice profiles ── */
   var VOICE_PROFILES = {
-    narrator:  { rate: 0.92, pitch: 0.85, keywords: ['daniel', 'google uk english male', 'microsoft david', 'male'] },
-    villain:   { rate: 0.85, pitch: 0.65, keywords: ['daniel', 'google uk english male', 'microsoft mark', 'male'] },
-    merchant:  { rate: 1.15, pitch: 1.10, keywords: ['google uk english female', 'samantha', 'microsoft zira', 'female'] },
-    guard:     { rate: 1.00, pitch: 0.75, keywords: ['daniel', 'microsoft david', 'male'] },
-    companion: { rate: 1.05, pitch: 1.05, keywords: ['samantha', 'google uk english female', 'female'] },
-    elder:     { rate: 0.80, pitch: 0.90, keywords: ['daniel', 'microsoft david', 'male'] },
-    child:     { rate: 1.20, pitch: 1.40, keywords: ['samantha', 'female'] },
-    default:   { rate: 1.00, pitch: 1.00, keywords: [] }
+    narrator:  { rate: 0.92, pitch: 0.85, volume: 0.9, keywords: ['daniel', 'google uk english male', 'microsoft david', 'male'] },
+    villain:   { rate: 0.85, pitch: 0.65, volume: 0.7, keywords: ['daniel', 'google uk english male', 'microsoft mark', 'male'] },
+    merchant:  { rate: 1.15, pitch: 1.10, volume: 1.0, keywords: ['google uk english female', 'samantha', 'microsoft zira', 'female'] },
+    guard:     { rate: 1.00, pitch: 0.75, volume: 1.0, keywords: ['daniel', 'microsoft david', 'male'] },
+    companion: { rate: 1.05, pitch: 1.05, volume: 0.95, keywords: ['samantha', 'google uk english female', 'female'] },
+    elder:     { rate: 0.80, pitch: 0.90, volume: 0.8, keywords: ['daniel', 'microsoft david', 'male'] },
+    child:     { rate: 1.20, pitch: 1.40, volume: 1.0, keywords: ['samantha', 'female'] },
+    default:   { rate: 1.00, pitch: 1.00, volume: 1.0, keywords: [] }
   };
 
   /* ── Text chunking ── */
@@ -202,6 +202,7 @@
       if (item.voice) utter.voice = item.voice;
       utter.rate  = item.rate;
       utter.pitch = item.pitch;
+      utter.volume = item.volume !== undefined ? item.volume : 1.0;
 
       utter.onend = function () {
         self._currentUtterance = null;
@@ -235,7 +236,59 @@
       _getProfile: getProfile,
       _VOICE_PROFILES: VOICE_PROFILES,
       _MAX_CHUNK: MAX_CHUNK
-    };
+    
+    /** Pause current speech. */
+    pause: function () {
+      if (this._synth && this._speaking) {
+        this._synth.pause();
+      }
+    },
+
+    /** Resume paused speech. */
+    resume: function () {
+      if (this._synth) {
+        this._synth.resume();
+      }
+    },
+
+    /** Whether speech is currently paused. */
+    isPaused: function () {
+      return this._synth ? this._synth.paused : false;
+    },
+
+    /** Whether speech is currently in progress. */
+    isSpeaking: function () {
+      return this._speaking;
+    },
+
+    /** List available browser voices. */
+    getVoices: function () {
+      if (!this._synth) return [];
+      return this._synth.getVoices().map(function (v) {
+        return { name: v.name, lang: v.lang, default: v.default };
+      });
+    },
+
+    /** Returns a promise that resolves when voices are loaded. */
+    ready: function () {
+      if (!this._enabled) return Promise.resolve(false);
+      if (this._voicesLoaded) return Promise.resolve(true);
+      var self = this;
+      return new Promise(function (resolve) {
+        var check = function () {
+          if (self._synth.getVoices().length) {
+            self._voicesLoaded = true;
+            resolve(true);
+          }
+        };
+        self._synth.addEventListener('voiceschanged', function () {
+          self._voicesLoaded = true;
+          resolve(true);
+        });
+        check();
+      });
+    },
+};
   } else {
     // Browser global
     window.BrowserTTS = BrowserTTS;

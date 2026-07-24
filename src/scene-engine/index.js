@@ -287,6 +287,24 @@ function getHardExitNarration(sceneState) {
   return sceneState ? sceneState.hardExitNarration : 'It is time to move on.';
 }
 
+
+const StoryEngine = require('../story/story-engine');
+
+/**
+ * Process a Story Mode button action. Deterministic handler for button clicks
+ * in Story Mode (no LLM involvement in game logic).
+ *
+ * @param {string} buttonId — the button id clicked
+ * @param {string} buttonType — 'explore'|'threat'|'item'|'ability'|'bad_choice'
+ * @param {object} sceneManifest — scene manifest with storyMode field
+ * @param {object} playerState — current player state (mutated in place)
+ * @param {object|null} threatDef — threat definition if threat scene
+ * @returns {object} result with type, narrative, hpChange, coinChange, etc.
+ */
+function processButtonAction(buttonId, buttonType, sceneManifest, playerState, threatDef) {
+  return StoryEngine.processButtonAction(buttonId, buttonType, sceneManifest, playerState, threatDef);
+}
+
 module.exports = {
   PRESSURE_LEVELS,
   enterScene,
@@ -298,5 +316,6 @@ module.exports = {
   getExitAction,
   getUndiscoveredContent,
   isHardExitTriggered,
-  getHardExitNarration
+  getHardExitNarration,
+  processButtonAction
 };

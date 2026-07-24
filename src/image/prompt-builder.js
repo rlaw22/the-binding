@@ -62,6 +62,11 @@ function moodDirection(mood) {
     hope:         'A distant warm glow on the horizon. First green shoots through cracked stone. Dawn breaking after a long night.',
     seductive:    'Rich textures, velvet and silk, warm candlelight, half-seen figures in mirrors, intoxicating atmosphere.',
     paranoid:     'Multiple shadowy observers, eyes everywhere, distorted reflections, a sense of being watched from all angles.',
+    romantic:     'Soft warm lighting, intimate framing, rose petals, velvet textures, candlelight reflections.',
+    chaotic:      'Everything in motion, ink splatters, overlapping figures, disorienting perspective, visual noise.',
+    oppressive:   'Low ceilings pressing down, heavy stone, chains, narrow corridors, the weight of authority.',
+    whimsical:    'Slightly askew proportions, playful shadows, unexpected details, a hint of the surreal.',
+    sacred:       'Reverent lighting from stained glass, incense smoke, stone arches, hushed atmosphere.',
     default:      'Atmospheric and moody with deep shadows.',
   };
   return map[mood] || map.default;

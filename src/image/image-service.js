@@ -101,6 +101,28 @@ async function generateWithMock(prompt, config) {
     bg = '#1a0a0a'; accent = '#8b0000'; icon = '⚔️'; border = '#5a1a1a';
   } else if (p.includes('portrait') || p.includes('character')) {
     bg = '#1a1028'; accent = '#5a3d7a'; icon = '👤'; border = '#3d2b5a';
+  } else if (p.includes('ritual') || p.includes('ceremony') || p.includes('occult') || p.includes('summon')) {
+    bg = '#1a0a1a'; accent = '#6a0dad'; icon = '🔮'; border = '#3d1a3d';
+  } else if (p.includes('investigation') || p.includes('clue') || p.includes('evidence') || p.includes('search')) {
+    bg = '#1a1a10'; accent = '#8b7355'; icon = '🔎'; border = '#4a4a3a';
+  } else if (p.includes('transformation') || p.includes('transform') || p.includes('metamorphosis')) {
+    bg = '#0a1a1a'; accent = '#2d5a5a'; icon = '🌀'; border = '#2a3d3d';
+  } else if (p.includes('escape') || p.includes('chase') || p.includes('flee') || p.includes('pursuit')) {
+    bg = '#1a0a0a'; accent = '#8b4513'; icon = '🏃'; border = '#5a2a1a';
+  } else if (p.includes('dream') || p.includes('vision') || p.includes('hallucination')) {
+    bg = '#0a0a2a'; accent = '#4a2a8a'; icon = '💫'; border = '#2a2a5a';
+  } else if (p.includes('death') || p.includes('dying') || p.includes('final moment')) {
+    bg = '#0a0a0a'; accent = '#3a3a3a'; icon = '⚰️'; border = '#2a2a2a';
+  } else if (p.includes('travel') || p.includes('journey') || p.includes('coach') || p.includes('road')) {
+    bg = '#1a1a0a'; accent = '#5a4a2a'; icon = '🗺️'; border = '#4a4a2a';
+  } else if (p.includes('conversation') || p.includes('dialogue') || p.includes('speaks to')) {
+    bg = '#1a1020'; accent = '#5a3d6a'; icon = '💬'; border = '#3d2b4a';
+  } else if (p.includes('discovery') || p.includes('revelation') || p.includes('uncovers')) {
+    bg = '#1a1a0a'; accent = '#8b7355'; icon = '✨'; border = '#4a4a2a';
+  } else if (p.includes('item') || p.includes('potion') || p.includes('artifact') || p.includes('scroll')) {
+    bg = '#1a1018'; accent = '#6a5a3a'; icon = '🗡️'; border = '#4a3a2a';
+  } else if (p.includes('background') || p.includes('landscape') || p.includes('atmospheric')) {
+    bg = '#0d1020'; accent = '#2a3a5a'; icon = '🏔️'; border = '#2a3a4a';
   }
 
   // Extract key text for display (sanitized, truncated)
@@ -387,7 +409,7 @@ function buildFailoverChain(primary, opts = {}) {
 /**
  * HTTP status codes considered transient (worth retrying).
  */
-const TRANSIENT_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+const TRANSIENT_STATUS_CODES = new Set([408, 429, 500, 502, 503, 504]);
 
 /**
  * Classify an error as transient (retryable) or permanent (not retryable).
