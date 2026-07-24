@@ -14,8 +14,8 @@
 <title>The Binding — Spectator Mode</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;overflow:hidden;}
-body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
+html,body{height:100%;overflow-x:hidden;}
+body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));}
 .icon{font-size:3em;margin-bottom:16px;opacity:0.6;}
 h1{color:#6B5CE7;font-size:1.6em;letter-spacing:3px;margin-bottom:12px;}
 p{color:#F5F0E1aa;font-size:1.05em;line-height:1.7;max-width:420px;margin-bottom:8px;}
@@ -23,20 +23,173 @@ p{color:#F5F0E1aa;font-size:1.05em;line-height:1.7;max-width:420px;margin-bottom
 .cta{display:inline-block;background:#6B5CE7;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-family:Georgia,serif;font-size:1.05em;font-weight:600;transition:all 0.2s;}
 .cta:hover{background:#7d6ef0;transform:scale(1.03);}
 .hint{color:#F5F0E144;font-size:0.78em;margin-top:20px;}
+
+/* Spectator join form */
+.join-form{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:340px;margin:20px auto 0;}
+.join-form input{width:100%;background:#1A1A2E;border:1px solid #6B5CE744;color:#F5F0E1;padding:12px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1em;text-align:center;letter-spacing:2px;outline:none;transition:border-color 0.2s;}
+.join-form input:focus{border-color:#6B5CE7;}
+.join-form input::placeholder{color:#F5F0E144;letter-spacing:1px;}
+.join-form .name-input{letter-spacing:normal;font-size:0.95em;}
+.join-form button{background:#6B5CE7;color:#fff;border:none;padding:12px 32px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:1em;font-weight:600;width:100%;transition:all 0.2s;}
+.join-form button:hover{background:#7d6ef0;}
+.join-form button:disabled{opacity:0.4;cursor:not-allowed;}
+.error-msg{color:#e74c3c;font-size:0.88em;display:none;margin-top:4px;}
+.divider{width:120px;height:1px;background:linear-gradient(90deg,transparent,#6B5CE744,transparent);margin:20px auto;}
+.back-link{color:#F5F0E166;font-size:0.85em;text-decoration:none;margin-top:16px;transition:color 0.2s;}
+.back-link:hover{color:#F5F0E1aa;}
+
+/* Status indicator */
+.status-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;animation:pulse 2s infinite;}
+.status-dot.connecting{background:#E8A838;}
+.status-dot.connected{background:#2ecc71;}
+.status-dot.error{background:#e74c3c;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+
 @media(max-width:500px){
   h1{font-size:1.3em;letter-spacing:2px;}
   p{font-size:0.95em;}
   .icon{font-size:2.4em;}
-  body{padding:20px 16px;}
+  body{padding:20px 16px;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
+  .join-form{max-width:280px;}
+  .join-form input{padding:14px 12px;font-size:0.95em;}
+  .join-form button{padding:14px 24px;}
+}
+@media(max-width:360px){
+  h1{font-size:1.15em;letter-spacing:1px;}
+  .icon{font-size:2em;}
+  .join-form{max-width:240px;}
 }
 </style>
 </head>
 <body>
 <div class="icon">👁️</div>
 <h1>SPECTATOR MODE</h1>
-<p>Watch live adventures unfold in real-time. See every twist of fate as your friends brave The Binding.</p>
-<p class="sub">Coming soon — spectator mode is being forged.</p>
+<p>Watch live adventures unfold in real-time. Enter a session code or paste a session link to join as a spectator.</p>
+
+<div class="join-form" id="spectate-form">
+  <input type="text" id="spectate-code" placeholder="Session code (e.g. DRAC-A1B2)" autocomplete="off" autocapitalize="characters">
+  <input type="text" id="spectate-name" class="name-input" placeholder="Your name (optional)" value="">
+  <button id="join-btn" onclick="joinSpectate()">Watch Adventure</button>
+  <div class="error-msg" id="error-msg"></div>
+</div>
+
+<div class="divider"></div>
+
+<p class="sub" id="status-text">
+  <span class="status-dot connecting"></span>
+  Checking for active sessions...
+</p>
+
 <a href="/" class="cta">Return to The Binding</a>
-<div class="hint">Spectator links will appear here when a host shares their session.</div>
+<a href="/" class="back-link">← Start your own adventure</a>
+
+<script>
+(function() {
+  var codeInput = document.getElementById('spectate-code');
+  var nameInput = document.getElementById('spectate-name');
+  var joinBtn = document.getElementById('join-btn');
+  var errorMsg = document.getElementById('error-msg');
+  var statusText = document.getElementById('status-text');
+
+  // Pre-fill from URL params: ?code=XXX or ?session=XXX
+  var params = new URLSearchParams(window.location.search);
+  var preCode = params.get('code') || params.get('session') || '';
+  if (preCode) {
+    codeInput.value = preCode;
+    nameInput.focus();
+  } else {
+    codeInput.focus();
+  }
+
+  // Enter key on code input moves to name, then submits
+  codeInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      if (!codeInput.value.trim()) return;
+      nameInput.focus();
+    }
+  });
+  nameInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') joinSpectate();
+  });
+
+  // Check if server is reachable
+  fetch('/api/health', { method: 'GET', cache: 'no-store' })
+    .then(function(r) {
+      if (r.ok) {
+        statusText.innerHTML = '<span class="status-dot connected"></span> Server online — enter a session code to watch';
+      } else {
+        statusText.innerHTML = '<span class="status-dot error"></span> Server unreachable — try again later';
+      }
+    })
+    .catch(function() {
+      statusText.innerHTML = '<span class="status-dot error"></span> You appear offline — reconnect to spectate';
+    });
+
+  window.joinSpectate = function() {
+    var code = codeInput.value.trim();
+    if (!code) {
+      showError('Enter a session code or link');
+      codeInput.focus();
+      return;
+    }
+
+    var name = nameInput.value.trim() || 'Watcher';
+    joinBtn.disabled = true;
+    joinBtn.textContent = 'Connecting...';
+    hideError();
+
+    // Extract session ID from link or use as rejoin code
+    var sid = code;
+    if (code.indexOf('?session=') !== -1) {
+      sid = code.split('?session=')[1].split('&')[0];
+    }
+
+    // If it looks like a UUID, use it directly; otherwise treat as rejoin code
+    var isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-/i.test(sid);
+    var lookupPromise;
+
+    if (isUUID) {
+      lookupPromise = Promise.resolve({ sessionId: sid });
+    } else {
+      lookupPromise = fetch('/api/rejoin/' + encodeURIComponent(sid.toUpperCase()))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.error) throw new Error(data.error);
+          return data;
+        });
+    }
+
+    lookupPromise
+      .then(function(data) {
+        var targetSid = data.sessionId;
+        // Join as spectator
+        return fetch('/api/sessions/' + targetSid + '/join', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ playerName: name, role: 'spectator' })
+        });
+      })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) throw new Error(data.error);
+        // Redirect to main page in spectator mode
+        window.location.href = '/?spectator=' + encodeURIComponent(data.sessionId);
+      })
+      .catch(function(err) {
+        showError(err.message || 'Could not join session');
+        joinBtn.disabled = false;
+        joinBtn.textContent = 'Watch Adventure';
+      });
+  };
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+  function hideError() {
+    errorMsg.style.display = 'none';
+  }
+})();
+</script>
 </body>
 </html>

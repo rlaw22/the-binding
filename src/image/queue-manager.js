@@ -20,6 +20,9 @@ const DEFAULT_CONFIG = {
   maxRetries: 2,              // Retries per provider before fallback
   baseRetryDelayMs: 1000,     // Base delay for exponential backoff
   deduplicationWindowMs: 5 * 60 * 1000, // 5 min dedup window
+  jobTimeoutMs: 120_000,      // 2 min timeout for stale jobs
+  maxQueueSize: 100,          // Max pending jobs in queue
+  dedupCleanupIntervalMs: 60_000, // Cleanup dedup cache every 60s
   rateLimits: {
     xai:       { requestsPerMinute: 10 },
     openai:    { requestsPerMinute: 10 },
@@ -110,6 +113,11 @@ function createQueueManager(opts = {}) {
     const prompt = job.prompt || '';
     const priority = job.priority || Priority.SCENE;
     const promptHash = hashPrompt(prompt);
+
+    // Check queue size limit
+    if (queue.length >= config.maxQueueSize) {
+      return { jobId: null, deduplicated: false, error: 'queue full' };
+    }
 
     // Check deduplication (pending or completed)
     const cached = dedupCache.get(promptHash);
@@ -206,6 +214,21 @@ function createQueueManager(opts = {}) {
 
   async function processNext() {
     processing = false;
+    if (paused) return;
+
+    // Check for stale active jobs (timeout)
+    const now = Date.now();
+    for (const [jobId, entry] of active.entries()) {
+      if (entry.startedAt && (now - entry.startedAt) > config.jobTimeoutMs) {
+        active.delete(jobId);
+        const staleJob = queue.find(j => j.jobId === jobId) || null;
+        if (staleJob) {
+          pendingPrompts.delete(staleJob.promptHash);
+        }
+        completed.set(jobId, { result: null, error: 'job timed out', completedAt: Date.now() });
+        if (opts.onFailure) opts.onFailure(jobId, new Error('Job timed out'));
+      }
+    }
 
     // Check concurrency
     if (active.size >= config.maxConcurrency) {
@@ -214,6 +237,16 @@ function createQueueManager(opts = {}) {
     }
 
     // Find next eligible job (rate-limited provider check)
+    // Priority aging: boost jobs waiting > 30s
+    const AGING_THRESHOLD_MS = 30_000;
+    for (const qj of queue) {
+      if (qj.priority > 1 && (now - qj.enqueuedAt) > AGING_THRESHOLD_MS) {
+        qj.priority = Math.max(1, qj.priority - 1);
+      }
+    }
+    // Re-sort after aging
+    queue.sort((a, b) => a.priority - b.priority);
+
     let job = null;
     for (let i = 0; i < queue.length; i++) {
       const candidate = queue[i];
@@ -245,6 +278,15 @@ function createQueueManager(opts = {}) {
         sessionId: job.sessionId,
       });
 
+      // Check if job was cancelled while running
+      const activeEntry = active.get(job.jobId);
+      if (activeEntry && activeEntry.cancelled) {
+        active.delete(job.jobId);
+        pendingPrompts.delete(job.promptHash);
+        scheduleProcess();
+        return;
+      }
+
       // Success — cache and complete
       const dedupExpiresAt = Date.now() + config.deduplicationWindowMs;
       dedupCache.set(job.promptHash, {
@@ -264,7 +306,10 @@ function createQueueManager(opts = {}) {
       // Retry logic — try next provider or retry current
       if (job.retries < config.maxRetries) {
         job.retries++;
-        const delay = config.baseRetryDelayMs * Math.pow(2, job.retries - 1);
+        const delay = Math.min(
+          config.baseRetryDelayMs * Math.pow(2, job.retries - 1) + Math.random() * config.baseRetryDelayMs,
+          30_000
+        );
         setTimeout(() => {
           queue.unshift(job); // Re-insert at front (same priority)
           scheduleProcess();
@@ -295,8 +340,38 @@ function createQueueManager(opts = {}) {
       active: active.size,
       completed: completed.size,
       dedupCacheSize: dedupCache.size,
+      maxQueueSize: config.maxQueueSize,
+      jobTimeoutMs: config.jobTimeoutMs,
     };
   }
+
+  /**
+   * Estimate wait time for a new job based on current queue depth and concurrency.
+   * @returns {number} Estimated wait in milliseconds
+   */
+  function getEstimatedWaitTime() {
+    if (queue.length === 0 && active.size === 0) return 0;
+    const avgJobMs = 5000; // rough estimate: 5s per job
+    const slots = Math.max(1, config.maxConcurrency);
+    const aheadOfMe = queue.length + active.size;
+    return Math.ceil((aheadOfMe / slots) * avgJobMs);
+  }
+
+  /**
+   * Clean up expired dedup cache entries.
+   */
+  function cleanupDedupCache() {
+    const now = Date.now();
+    for (const [hash, entry] of dedupCache.entries()) {
+      if (entry.expiresAt <= now) {
+        dedupCache.delete(hash);
+      }
+    }
+  }
+
+  // Periodic dedup cleanup
+  const dedupCleanupTimer = setInterval(cleanupDedupCache, config.dedupCleanupIntervalMs);
+  if (dedupCleanupTimer.unref) dedupCleanupTimer.unref();
 
   function clearDedupCache() {
     dedupCache.clear();
@@ -306,13 +381,105 @@ function createQueueManager(opts = {}) {
     completed.clear();
   }
 
+  /**
+   * Cancel a queued or active job.
+   * @param {string} jobId
+   * @returns {{ cancelled: boolean, reason?: string }}
+   */
+  function cancelJob(jobId) {
+    // Check queue first
+    const idx = queue.findIndex(j => j.jobId === jobId);
+    if (idx !== -1) {
+      const job = queue.splice(idx, 1)[0];
+      pendingPrompts.delete(job.promptHash);
+      completed.set(jobId, { result: null, error: 'cancelled', completedAt: Date.now() });
+      return { cancelled: true };
+    }
+
+    // Check active (mark for cancellation — the running promise won't stop,
+    // but we mark it so processNext ignores the result)
+    if (active.has(jobId)) {
+      const entry = active.get(jobId);
+      entry.cancelled = true;
+      return { cancelled: true, reason: 'active — result will be discarded' };
+    }
+
+    // Already completed or unknown
+    if (completed.has(jobId)) {
+      return { cancelled: false, reason: 'already completed' };
+    }
+    return { cancelled: false, reason: 'unknown job' };
+  }
+
+  /**
+   * Get a snapshot of the current queue state for debugging.
+   * @returns {{ queued: Array, active: Array, stats: object }}
+   */
+  function getQueueSnapshot() {
+    return {
+      queued: queue.map(j => ({
+        jobId: j.jobId,
+        priority: j.priority,
+        retries: j.retries,
+        providerIndex: j.providerIndex,
+        enqueuedAt: j.enqueuedAt,
+        promptPreview: j.prompt.slice(0, 80),
+      })),
+      active: Array.from(active.entries()).map(([jobId, entry]) => ({
+        jobId,
+        startedAt: entry.startedAt,
+        cancelled: entry.cancelled || false,
+      })),
+      stats: getStats(),
+    };
+  }
+
+  /**
+   * Pause the queue — no new jobs will be processed.
+   */
+  function pause() {
+    paused = true;
+  }
+
+  /**
+   * Resume the queue after a pause.
+   */
+  function resume() {
+    paused = false;
+    scheduleProcess();
+  }
+
+  /**
+   * Check if the queue is paused.
+   */
+  function isPaused() {
+    return paused;
+  }
+
+  let paused = false;
+
+  // Patch scheduleProcess to respect pause
+  const _origScheduleProcess = scheduleProcess;
+  // We override scheduleProcess inline — but since it's a closure, we need
+  // to patch processNext instead. Add a guard at the top of processNext.
+  // Actually, we need to re-wrap. Let's just add the pause check inside processNext.
+  // Since processNext is already defined, we'll patch the exported resume to kick processing.
+
   return {
     enqueue,
     getStatus,
     waitForJob,
     getStats,
+    getEstimatedWaitTime,
+    cleanupDedupCache,
     clearDedupCache,
     clearCompleted,
+    cancelJob,
+    getQueueSnapshot,
+    pause,
+    resume,
+    isPaused,
+    destroy() { clearInterval(dedupCleanupTimer); },
     Priority,
   };
 }

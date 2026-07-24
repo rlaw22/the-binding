@@ -10,7 +10,23 @@
 
 'use strict';
 
-const { _buildProvider } = require('./image-service');
+// _buildProvider is not exported from image-service; use a local mock provider builder
+function _buildProvider(name) {
+  if (name === 'mock') {
+    return {
+      name: 'Mock',
+      apiKey: 'mock',
+      baseUrl: '',
+      model: 'mock-v1',
+      generate: async function(prompt) {
+        // Generate a simple SVG placeholder
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="384"><rect width="512" height="384" fill="#1a1028"/><text x="256" y="192" text-anchor="middle" fill="#a89cc8" font-size="14">[Mock fallback]</text></svg>';
+        return 'data:image/svg+xml;base64,' + Buffer.from(svg).toString('base64');
+      },
+    };
+  }
+  return null;
+}
 
 // ---------------------------------------------------------------------------
 // Failure Logger
@@ -111,9 +127,15 @@ class CircuitBreaker {
     if (state.state === 'closed') return true;
 
     // Check if reset timeout has elapsed → half-open
-    if (Date.now() - state.openedAt >= this._resetTimeoutMs) {
+    if (state.state === 'open' && Date.now() - state.openedAt >= this._resetTimeoutMs) {
       state.state = 'half-open';
+      state.halfOpenProbes = 0;
       return true; // Allow one attempt
+    }
+
+    // Half-open: allow limited probes (max 1)
+    if (state.state === 'half-open') {
+      return (state.halfOpenProbes || 0) < 1;
     }
 
     return false; // Still open
@@ -128,6 +150,7 @@ class CircuitBreaker {
     if (state) {
       state.failures = 0;
       state.state = 'closed';
+      state.halfOpenProbes = 0;
     }
   }
 
@@ -138,14 +161,20 @@ class CircuitBreaker {
   recordFailure(providerName) {
     let state = this._states.get(providerName);
     if (!state) {
-      state = { failures: 0, state: 'closed', openedAt: 0 };
+      state = { failures: 0, state: 'closed', openedAt: 0, halfOpenProbes: 0 };
       this._states.set(providerName, state);
+    }
+
+    // Track half-open probes
+    if (state.state === 'half-open') {
+      state.halfOpenProbes = (state.halfOpenProbes || 0) + 1;
     }
 
     state.failures++;
     if (state.failures >= this._failureThreshold) {
       state.state = 'open';
       state.openedAt = Date.now();
+      state.halfOpenProbes = 0;
       console.warn(
         `[ImageRecovery] Circuit breaker OPEN for provider "${providerName}" ` +
         `(${state.failures} consecutive failures). Will retry after ${this._resetTimeoutMs / 1000}s.`
@@ -163,6 +192,30 @@ class CircuitBreaker {
       result[name] = { ...state };
     }
     return result;
+  }
+
+  /**
+   * Get a health report for all tracked providers.
+   * @returns {object} { healthy: string[], degraded: string[], open: string[] }
+   */
+  getHealthReport() {
+    const healthy = [];
+    const degraded = [];
+    const open = [];
+    for (const [name, state] of this._states) {
+      if (state.state === 'closed') {
+        if (state.failures > 0) {
+          degraded.push({ provider: name, failures: state.failures });
+        } else {
+          healthy.push(name);
+        }
+      } else if (state.state === 'half-open') {
+        degraded.push({ provider: name, failures: state.failures, state: 'half-open' });
+      } else {
+        open.push({ provider: name, failures: state.failures, openedAt: state.openedAt });
+      }
+    }
+    return { healthy, degraded, open };
   }
 
   /**
@@ -294,22 +347,56 @@ function createErrorRecovery(imageService, opts = {}) {
     const parts = ['A dark gothic literary illustration.'];
     switch (imageType) {
       case 'combat':
+      case 'detailed-combat':
         parts.push('A dramatic combat scene.');
         if (context.attacker) parts.push(`Attacker: ${context.attacker}.`);
         if (context.defender) parts.push(`Defender: ${context.defender}.`);
+        if (context.weapon) parts.push(`Weapon: ${context.weapon}.`);
+        if (context.outcome) parts.push(`Outcome: ${context.outcome}.`);
         break;
       case 'npc':
+      case 'npc-portrait':
         parts.push('A character portrait.');
         if (context.name) parts.push(`Name: ${context.name}.`);
         if (context.role) parts.push(`Role: ${context.role}.`);
+        if (context.appearance) parts.push(context.appearance);
         break;
       case 'item':
         parts.push('An illustration of a mysterious object.');
         if (context.name) parts.push(`Item: ${context.name}.`);
         if (context.type) parts.push(`Type: ${context.type}.`);
+        if (context.material) parts.push(`Material: ${context.material}.`);
+        break;
+      case 'scene-background':
+        parts.push('An atmospheric landscape or interior.');
+        if (context.location) parts.push(`Location: ${context.location}.`);
+        if (context.weather) parts.push(`Weather: ${context.weather}.`);
+        if (context.timeOfDay) parts.push(`Time: ${context.timeOfDay}.`);
+        break;
+      case 'ritual':
+        parts.push('An occult ritual or ceremony.');
+        if (context.caster) parts.push(`Caster: ${context.caster}.`);
+        if (context.artifacts) parts.push(`Artifacts: ${context.artifacts}.`);
+        break;
+      case 'investigation':
+        parts.push('A tense investigation scene.');
+        if (context.investigator) parts.push(`Investigator: ${context.investigator}.`);
+        if (context.clue) parts.push(`Clue: ${context.clue}.`);
+        break;
+      case 'transformation':
+        parts.push('A dramatic transformation.');
+        if (context.subject) parts.push(`Subject: ${context.subject}.`);
+        if (context.fromState && context.toState) parts.push(`From ${context.fromState} to ${context.toState}.`);
+        break;
+      case 'escape':
+        parts.push('A desperate escape scene.');
+        if (context.fleeing) parts.push(`Fleeing: ${context.fleeing}.`);
+        if (context.pursuer) parts.push(`Pursuer: ${context.pursuer}.`);
         break;
       default:
         parts.push('A mysterious scene.');
+        if (context.description) parts.push(context.description);
+        if (context.location) parts.push(`Location: ${context.location}.`);
     }
     return parts.join(' ');
   }
@@ -394,6 +481,13 @@ function createErrorRecovery(imageService, opts = {}) {
         recentFailures: failureLogger.getRecent(10),
         circuitBreaker: circuitBreaker.stats(),
       };
+    },
+
+    /**
+     * Get a health report from the circuit breaker.
+     */
+    getHealthReport() {
+      return circuitBreaker.getHealthReport();
     },
 
     /**

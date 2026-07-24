@@ -120,6 +120,22 @@ function createPersistentStore(opts = {}) {
         console.log(`  🖼️  Persistent image store: loaded ${index.size} entries from ${dir}`);
       } catch (err) {
         console.warn(`  🖼️  Failed to load image index: ${err.message}`);
+        // Corruption recovery: try backup, then start fresh
+        const backupPath = indexPath + '.bak';
+        if (fs.existsSync(backupPath)) {
+          try {
+            const raw = JSON.parse(fs.readFileSync(backupPath, 'utf8'));
+            for (const [key, entry] of Object.entries(raw.entries || {})) {
+              const filePath = path.join(dir, entry.filename);
+              if (fs.existsSync(filePath)) {
+                index.set(key, entry);
+              }
+            }
+            console.log(`  🖼️  Recovered ${index.size} entries from backup index`);
+          } catch (_) {
+            console.warn('  🖼️  Backup index also corrupted, starting fresh');
+          }
+        }
       }
     }
   }
@@ -131,7 +147,14 @@ function createPersistentStore(opts = {}) {
     for (const [key, val] of index.entries()) {
       obj.entries[key] = val;
     }
-    fs.writeFileSync(indexPath, JSON.stringify(obj, null, 2));
+    const tmpPath = indexPath + '.tmp';
+    const backupPath = indexPath + '.bak';
+    fs.writeFileSync(tmpPath, JSON.stringify(obj, null, 2));
+    // Keep a backup of the previous index
+    if (fs.existsSync(indexPath)) {
+      try { fs.copyFileSync(indexPath, backupPath); } catch (_) {}
+    }
+    fs.renameSync(tmpPath, indexPath);
   }
 
   // ── Evict oldest entries when over max ────────────────────────────────
@@ -311,6 +334,47 @@ function createPersistentStore(opts = {}) {
       return removed;
     },
 
+
+    /**
+     * Search entries by prompt text (case-insensitive substring match).
+     * @param {string} query - Text to search for in prompts
+     * @param {number} [limit=20] - Max results
+     * @returns {Array} Matching entries
+     */
+    searchByPrompt(query, limit = 20) {
+      const q = (query || '').toLowerCase();
+      if (!q) return [];
+      const results = [];
+      for (const [key, entry] of index.entries()) {
+        if ((entry.prompt || '').toLowerCase().includes(q)) {
+          results.push({ key, ...entry, filePath: path.join(dir, entry.filename) });
+          if (results.length >= limit) break;
+        }
+      }
+      return results;
+    },
+
+    /**
+     * Get disk usage statistics.
+     * @returns {{ totalBytes: number, fileCount: number, avgFileSize: number }}
+     */
+    getDiskUsage() {
+      let totalBytes = 0;
+      let fileCount = 0;
+      for (const [, entry] of index.entries()) {
+        const filePath = path.join(dir, entry.filename);
+        try {
+          const stat = fs.statSync(filePath);
+          totalBytes += stat.size;
+          fileCount++;
+        } catch (_) { /* file missing */ }
+      }
+      return {
+        totalBytes,
+        fileCount,
+        avgFileSize: fileCount > 0 ? Math.round(totalBytes / fileCount) : 0,
+      };
+    },
     /**
      * Number of stored images.
      */

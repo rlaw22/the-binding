@@ -55,7 +55,14 @@ function moodDirection(mood) {
     triumphant:  'A shaft of golden light breaking through storm clouds.',
     grotesque:   'Unsettling anatomical exaggeration, Goya-esque nightmare imagery.',
     tense:       'Tight framing, claustrophobic composition, hands gripping.',
-    default:     'Atmospheric and moody with deep shadows.',
+    awe:          'Awe-inspiring scale — tiny figure against vast architecture or nature. Cathedral-like proportions.',
+    isolation:    'A single figure alone in an immense empty space. Vast negative space, cold light, existential solitude.',
+    supernatural: 'Reality bending — impossible geometry, shadows moving wrong, eyes in the darkness that should not be there.',
+    despair:      'Everything is crumbling. Dust, decay, broken objects, a figure slumped in defeat. Ash-grey palette.',
+    hope:         'A distant warm glow on the horizon. First green shoots through cracked stone. Dawn breaking after a long night.',
+    seductive:    'Rich textures, velvet and silk, warm candlelight, half-seen figures in mirrors, intoxicating atmosphere.',
+    paranoid:     'Multiple shadowy observers, eyes everywhere, distorted reflections, a sense of being watched from all angles.',
+    default:      'Atmospheric and moody with deep shadows.',
   };
   return map[mood] || map.default;
 }
@@ -547,6 +554,302 @@ function buildSceneBackgroundPrompt(ctx = {}) {
   return parts.join(' ');
 }
 
+
+/**
+ * Build an image prompt for a ritual or occult ceremony scene.
+ *
+ * @param {object} ctx
+ * @param {string} [ctx.description] - What the ritual involves
+ * @param {string} [ctx.location]    - Where it takes place
+ * @param {string} [ctx.caster]      - Who is performing the ritual
+ * @param {string} [ctx.artifacts]   - Ritual objects (candles, circles, tomes)
+ * @param {string} [ctx.effect]      - Visible magical/supernatural effect
+ * @param {string} [ctx.mood]        - Mood tag
+ * @returns {string} Full prompt string
+ */
+function buildRitualPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  parts.push('An illustration of an occult ritual or ceremony.');
+
+  if (ctx.location) {
+    parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  }
+
+  if (ctx.caster) {
+    parts.push(`Performed by ${sanitise(ctx.caster)}.`);
+  }
+
+  if (ctx.description) {
+    parts.push(sanitise(ctx.description));
+  }
+
+  if (ctx.artifacts) {
+    parts.push(`Ritual elements: ${sanitise(ctx.artifacts)}.`);
+  }
+
+  if (ctx.effect) {
+    parts.push(`Visible effect: ${sanitise(ctx.effect)}. The air itself seems to shimmer and distort.`);
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  parts.push('Circular composition suggesting a ritual circle. Dramatic uplighting from below.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for an investigation or discovery scene.
+ *
+ * @param {object} ctx
+ * @param {string} [ctx.description] - What is being investigated
+ * @param {string} [ctx.location]    - Where the investigation takes place
+ * @param {string} [ctx.investigator]- Who is investigating
+ * @param {string} [ctx.clue]        - A clue or evidence being examined
+ * @param {string} [ctx.mood]        - Mood tag
+ * @returns {string} Full prompt string
+ */
+function buildInvestigationPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  parts.push('An illustration of a tense investigation or discovery.');
+
+  if (ctx.location) {
+    parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  }
+
+  if (ctx.investigator) {
+    parts.push(`${sanitise(ctx.investigator)} examines the scene closely.`);
+  }
+
+  if (ctx.description) {
+    parts.push(sanitise(ctx.description));
+  }
+
+  if (ctx.clue) {
+    parts.push(`Key detail: ${sanitise(ctx.clue)}. Drawn with extra emphasis and detail.`);
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  parts.push('Close-up composition with a shallow depth of field. The focal point is the clue or discovery.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for a transformation or metamorphosis scene.
+ *
+ * @param {object} ctx
+ * @param {string} [ctx.description] - What is transforming
+ * @param {string} [ctx.subject]     - Who or what is transforming
+ * @param {string} [ctx.fromState]   - The original state
+ * @param {string} [ctx.toState]     - The transformed state
+ * @param {string} [ctx.location]    - Where it happens
+ * @param {string} [ctx.mood]        - Mood tag
+ * @returns {string} Full prompt string
+ */
+function buildTransformationPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  parts.push('An illustration of a dramatic transformation or metamorphosis.');
+
+  if (ctx.location) {
+    parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  }
+
+  if (ctx.subject) {
+    parts.push(`${sanitise(ctx.subject)} is undergoing a terrifying change.`);
+  }
+
+  if (ctx.fromState && ctx.toState) {
+    parts.push(`From ${sanitise(ctx.fromState)} to ${sanitise(ctx.toState)} — caught in the agonizing midpoint.`);
+  }
+
+  if (ctx.description) {
+    parts.push(sanitise(ctx.description));
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  parts.push('Split or blended composition showing both states simultaneously. Motion blur and distortion at the boundary between forms.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for an escape or chase scene.
+ *
+ * @param {object} ctx
+ * @param {string} [ctx.description] - The escape scenario
+ * @param {string} [ctx.fleeing]     - Who is fleeing
+ * @param {string} [ctx.pursuer]     - What is chasing them
+ * @param {string} [ctx.location]    - Where the chase takes place
+ * @param {string} [ctx.obstacle]    - An obstacle in the path
+ * @param {string} [ctx.mood]        - Mood tag
+ * @returns {string} Full prompt string
+ */
+function buildEscapePrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+
+  parts.push('A desperate escape or chase illustration.');
+
+  if (ctx.location) {
+    parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  }
+
+  if (ctx.fleeing) {
+    parts.push(`${sanitise(ctx.fleeing)} flees in terror.`);
+  }
+
+  if (ctx.pursuer) {
+    parts.push(`Pursued by ${sanitise(ctx.pursuer)} — a looming, unstoppable presence.`);
+  }
+
+  if (ctx.obstacle) {
+    parts.push(`Obstacle: ${sanitise(ctx.obstacle)}.`);
+  }
+
+  if (ctx.description) {
+    parts.push(sanitise(ctx.description));
+  }
+
+  if (ctx.mood) {
+    parts.push(moodDirection(ctx.mood));
+  }
+
+  parts.push('Dynamic diagonal composition suggesting frantic forward motion. Speed lines and blurred edges. The pursuer is partially visible, out of focus, behind.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+
+// ---------------------------------------------------------------------------
+// Additional scene prompt builders
+// ---------------------------------------------------------------------------
+
+/**
+ * Build an image prompt for a dream or vision sequence.
+ */
+function buildDreamPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+  parts.push('An illustration of a dream, vision, or hallucination.');
+  if (ctx.dreamer) parts.push(`${sanitise(ctx.dreamer)} experiences a vivid vision.`);
+  if (ctx.description) parts.push(sanitise(ctx.description));
+  if (ctx.symbolism) parts.push(`Symbolic elements: ${sanitise(ctx.symbolism)}. Rendered with surrealist distortion.`);
+  if (ctx.mood) parts.push(moodDirection(ctx.mood));
+  parts.push('Dreamlike composition — reality bends and warps. Soft focus at edges, impossible perspectives, double exposures. The boundary between waking and dreaming dissolves.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for a death or dying scene.
+ */
+function buildDeathPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+  parts.push('An illustration of death or a final moment.');
+  if (ctx.location) parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  if (ctx.character) parts.push(`${sanitise(ctx.character)} in their final moments.`);
+  if (ctx.cause) parts.push(`Cause: ${sanitise(ctx.cause)}.`);
+  if (ctx.description) parts.push(sanitise(ctx.description));
+  if (ctx.mood) parts.push(moodDirection(ctx.mood));
+  parts.push('Solemn composition. A single dramatic light source — candle, moonbeam, or fading daylight. Time seems frozen. The weight of finality hangs in the air.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for a travel or journey scene.
+ */
+function buildTravelPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+  parts.push('An illustration of a journey or travel scene.');
+  if (ctx.origin && ctx.destination) {
+    parts.push(`From ${sanitise(ctx.origin)} to ${sanitise(ctx.destination)}.`);
+  } else if (ctx.destination) {
+    parts.push(`Journey toward ${sanitise(ctx.destination)}.`);
+  }
+  if (ctx.mode) {
+    const modeMap = {
+      coach: 'A horse-drawn coach rattles along a dark road. Wheels creak, lanterns sway.',
+      ship: 'A ship at sea — masts creaking, sails taut, endless dark water stretching to the horizon.',
+      foot: 'A lone figure on foot, trudging through terrain. Boots muddy, cloak pulled tight.',
+      horse: 'Rider on horseback, galloping through the landscape. Hooves striking the earth.',
+    };
+    const m = (ctx.mode || '').toLowerCase();
+    parts.push(modeMap[m] || `Travel by ${sanitise(ctx.mode)}.`);
+  }
+  if (ctx.weather) {
+    const weatherMap = {
+      fog: 'Thick fog reduces visibility to a few yards. Shapes loom and vanish.',
+      rain: 'Relentless rain soaks everything. Muddy paths, dripping trees.',
+      storm: 'A violent storm rages — lightning, thunder, wind howling.',
+      clear: 'Clear skies, but the landscape is still dark and foreboding.',
+    };
+    const w = (ctx.weather || '').toLowerCase();
+    if (weatherMap[w]) parts.push(weatherMap[w]);
+  }
+  if (ctx.description) parts.push(sanitise(ctx.description));
+  if (ctx.mood) parts.push(moodDirection(ctx.mood));
+  parts.push('Panoramic composition showing the vastness of the journey. A sense of distance and passage of time. The path stretches ahead into uncertainty.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for a conversation or dialogue scene.
+ */
+function buildConversationPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+  parts.push('An illustration of a tense or significant conversation.');
+  if (ctx.location) parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  if (ctx.speaker && ctx.listener) {
+    parts.push(`${sanitise(ctx.speaker)} speaks to ${sanitise(ctx.listener)}.`);
+  } else if (ctx.speaker) {
+    parts.push(`${sanitise(ctx.speaker)} speaks with intensity.`);
+  }
+  if (ctx.tone) {
+    const toneMap = {
+      tense: 'Bodies rigid, eyes locked. Every word carries weight. Hands may rest on weapons.',
+      warm: 'Leaning in, open posture. Genuine connection. Soft lighting, shared warmth.',
+      secretive: 'Heads close together, whispering. Eyes darting. Shadows conceal their words.',
+      threatening: 'One figure looms over the other. Fists clenched. The power imbalance is visceral.',
+      pleading: 'One figure on their knees or reaching out. Desperation in their eyes. The other turns away.',
+    };
+    const t = (ctx.tone || '').toLowerCase();
+    if (toneMap[t]) parts.push(toneMap[t]);
+  }
+  if (ctx.description) parts.push(sanitise(ctx.description));
+  if (ctx.mood) parts.push(moodDirection(ctx.mood));
+  parts.push('Intimate two-shot composition. Focus on body language and facial expression. The space between the figures tells the story.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
+/**
+ * Build an image prompt for a discovery or revelation scene.
+ */
+function buildDiscoveryPrompt(ctx = {}) {
+  const parts = [STYLE_PREFIX];
+  parts.push('An illustration of a momentous discovery or revelation.');
+  if (ctx.location) parts.push(`Setting: ${sanitise(ctx.location)}.`);
+  if (ctx.discoverer) parts.push(`${sanitise(ctx.discoverer)} uncovers something extraordinary.`);
+  if (ctx.description) parts.push(sanitise(ctx.description));
+  if (ctx.significance) parts.push(`Significance: ${sanitise(ctx.significance)}. The implications are staggering.`);
+  if (ctx.mood) parts.push(moodDirection(ctx.mood));
+  parts.push('Dramatic reveal composition — the discovered object or scene is illuminated while the surroundings fall into shadow. The discoverer is caught in a moment of shock, wonder, or horror.');
+  parts.push(STYLE_SUFFIX);
+  return parts.join(' ');
+}
+
 module.exports = {
   buildScenePrompt,
   buildCharacterPrompt,
@@ -555,6 +858,15 @@ module.exports = {
   buildItemPrompt,
   buildSceneBackgroundPrompt,
   buildDetailedCombatPrompt,
+  buildRitualPrompt,
+  buildInvestigationPrompt,
+  buildTransformationPrompt,
+  buildEscapePrompt,
+  buildDreamPrompt,
+  buildDeathPrompt,
+  buildTravelPrompt,
+  buildConversationPrompt,
+  buildDiscoveryPrompt,
   buildAdventureScenePrompt,
   buildAdventureCharacterPrompt,
   getStylePreset,

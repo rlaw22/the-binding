@@ -43,7 +43,6 @@ class CircuitBreaker {
     this._failures = [];       // timestamps of recent failures
     this._state = 'closed';    // 'closed' | 'open' | 'half-open'
     this._openedAt = 0;        // when the circuit opened
-    this._probeAllowed = false; // half-open: one probe allowed
   }
 
   /** Current state string. */
@@ -89,18 +88,13 @@ class CircuitBreaker {
       // Check if the window has expired
       if (Date.now() - this._openedAt >= this._windowMs) {
         this._state = 'half-open';
-        this._probeAllowed = true;
         return true; // Allow one probe request
       }
       return false;
     }
 
-    // half-open — only allow one probe, then block until recordSuccess resets
-    if (this._probeAllowed) {
-      this._probeAllowed = false;
-      return true;
-    }
-    return false; // Block until probe result is recorded
+    // half-open — allow the probe
+    return true;
   }
 
   /**
@@ -110,7 +104,6 @@ class CircuitBreaker {
     this._failures = [];
     this._state = 'closed';
     this._openedAt = 0;
-    this._probeAllowed = false;
   }
 
   /**
@@ -159,9 +152,7 @@ const DEFAULT_VOICE_SETTINGS = { voice: 'nova', pitch: 1.0, rate: 1.0 };
 function getVoiceForCharacter(characterType) {
   if (!characterType) return { ...DEFAULT_VOICE_SETTINGS };
   const key = characterType.toLowerCase().trim();
-  const preset = CHARACTER_VOICE_PRESETS[key];
-  if (preset) return { ...preset }; // Always return a copy to prevent external mutation
-  return { ...DEFAULT_VOICE_SETTINGS };
+  return CHARACTER_VOICE_PRESETS[key] || { ...DEFAULT_VOICE_SETTINGS };
 }
 
 /**
@@ -253,8 +244,7 @@ const VOICE_PROFILES = {
  */
 function getVoiceProfile(profileName) {
   if (!profileName) return null;
-  const key = profileName.toLowerCase().trim();
-  return VOICE_PROFILES[key] || null;
+  return VOICE_PROFILES[profileName.toLowerCase()] || null;
 }
 
 /**
@@ -306,102 +296,12 @@ function resolveVoiceSettings(opts = {}) {
   }
 
   // Layer 3: Explicit overrides (highest priority)
-  // Use 'in' operator to allow falsy-but-valid values (e.g. empty string, 0)
-  if ('voiceId' in overrides && overrides.voiceId !== undefined) settings.voiceId = overrides.voiceId;
-  if ('pitch' in overrides && overrides.pitch !== undefined) settings.pitch = overrides.pitch;
-  if ('rate' in overrides && overrides.rate !== undefined) settings.rate = overrides.rate;
-  if ('volume' in overrides && overrides.volume !== undefined) settings.volume = overrides.volume;
+  if (overrides.voiceId) settings.voiceId = overrides.voiceId;
+  if (overrides.pitch) settings.pitch = overrides.pitch;
+  if (overrides.rate) settings.rate = overrides.rate;
+  if (overrides.volume) settings.volume = overrides.volume;
 
   return settings;
-}
-
-// ─── Voice Settings Validation ────────────────────────────────────────────────
-
-/**
- * Valid SSML prosody keywords and patterns.
- */
-const VALID_SSML_RATES = new Set([
-  'x-slow', 'slow', 'medium', 'fast', 'x-fast'
-]);
-const VALID_SSML_PITCHES = new Set([
-  'x-low', 'low', 'medium', 'high', 'x-high'
-]);
-const VALID_SSML_VOLUMES = new Set([
-  'silent', 'x-soft', 'soft', 'medium', 'loud', 'x-loud'
-]);
-const VALID_EMPHASIS_LEVELS = new Set([
-  'strong', 'moderate', 'reduced', 'none'
-]);
-
-// Patterns for relative values like '+10%', '-20%', '+6dB'
-const RELATIVE_PERCENT_PATTERN = /^[+-]\d+%$/;
-const RELATIVE_DB_PATTERN = /^[+-]\d+(\.\d+)?dB$/;
-
-/**
- * Validate a voice settings object. Returns an object with:
- *   - valid: boolean
- *   - errors: string[] of validation error messages
- *   - sanitized: the settings with invalid fields replaced by defaults
- *
- * @param {Object} settings — { voiceId, pitch, rate, volume }
- * @returns {{ valid: boolean, errors: string[], sanitized: Object }}
- */
-function validateVoiceSettings(settings = {}) {
-  const errors = [];
-  const defaults = { voiceId: 'nova', pitch: '+0%', rate: '100%', volume: 'medium' };
-  const sanitized = { ...defaults, ...settings };
-
-  // Validate voiceId
-  if (settings.voiceId !== undefined) {
-    if (typeof settings.voiceId !== 'string' || settings.voiceId.trim().length === 0) {
-      errors.push('voiceId must be a non-empty string');
-      sanitized.voiceId = defaults.voiceId;
-    }
-  }
-
-  // Validate pitch
-  if (settings.pitch !== undefined) {
-    const p = settings.pitch;
-    if (typeof p === 'string') {
-      if (!VALID_SSML_PITCHES.has(p) && !RELATIVE_PERCENT_PATTERN.test(p)) {
-        errors.push(`Invalid pitch value: "${p}". Expected keyword (${[...VALID_SSML_PITCHES].join(', ')}) or relative like "+10%"`);
-        sanitized.pitch = defaults.pitch;
-      }
-    } else {
-      errors.push(`pitch must be a string, got ${typeof p}`);
-      sanitized.pitch = defaults.pitch;
-    }
-  }
-
-  // Validate rate
-  if (settings.rate !== undefined) {
-    const r = settings.rate;
-    if (typeof r === 'string') {
-      if (!VALID_SSML_RATES.has(r) && !RELATIVE_PERCENT_PATTERN.test(r)) {
-        errors.push(`Invalid rate value: "${r}". Expected keyword (${[...VALID_SSML_RATES].join(', ')}) or relative like "90%"`);
-        sanitized.rate = defaults.rate;
-      }
-    } else {
-      errors.push(`rate must be a string, got ${typeof r}`);
-      sanitized.rate = defaults.rate;
-    }
-  }
-
-  // Validate volume
-  if (settings.volume !== undefined) {
-    const v = settings.volume;
-    if (typeof v === 'string') {
-      if (!VALID_SSML_VOLUMES.has(v) && !RELATIVE_DB_PATTERN.test(v)) {
-        errors.push(`Invalid volume value: "${v}". Expected keyword (${[...VALID_SSML_VOLUMES].join(', ')}) or dB like "+6dB"`);
-        sanitized.volume = defaults.volume;
-      }
-    } else {
-      errors.push(`volume must be a string, got ${typeof v}`);
-      sanitized.volume = defaults.volume;
-    }
-  }
-
-  return { valid: errors.length === 0, errors, sanitized };
 }
 
 // ─── SSML Dramatic Helpers ──────────────────────────────────────────────────
@@ -758,18 +658,7 @@ function wrapSSML(text, options = {}, provider) {
   const ssmlProviders = ['mock', 'openai'];
   if (!ssmlProviders.includes(provider)) return text;
 
-  // Validate prosody values before wrapping
-  const validation = validateVoiceSettings({
-    pitch: options.pitch,
-    rate: options.rate,
-    volume: options.volume
-  });
-  const { rate, pitch, volume } = validation.sanitized;
-  const { emphasis } = options;
-
-  if (!validation.valid) {
-    console.warn('[TTS:SSML] Invalid prosody values:', validation.errors.join('; '));
-  }
+  const { rate, pitch, volume, emphasis } = options;
 
   // If no prosody options, still wrap in speak tags for consistency
   const prosodyAttrs = [];
@@ -944,38 +833,14 @@ function getDefaultVoice(provider) {
 /**
  * Truncate text for TTS, trying to end at a sentence boundary.
  */
-/**
- * Truncate text for TTS, trying to end at a sentence boundary.
- * Handles abbreviations (Dr., Mr., Mrs., etc.) so we don't break mid-sentence.
- */
 function truncateForTTS(text, maxChars) {
-  if (!text || text.length <= maxChars) return text;
+  if (text.length <= maxChars) return text;
   const truncated = text.substring(0, maxChars);
-
-  // Common abbreviations that end with a period but don't end a sentence
-  const abbreviations = /\b(Dr|Mr|Mrs|Ms|Prof|Sr|Jr|St|Ave|Blvd|Dept|Est|Fig|Gen|Gov|Inc|Ltd|Mt|Rev|Sgt|vs|etc|approx|appt|apt|approx)\./i;
-
-  // Try to end at a real sentence boundary (period followed by space, not an abbreviation)
-  // Search backwards from the end
-  let searchFrom = truncated.length;
-  while (searchFrom > maxChars * 0.5) {
-    const idx = truncated.lastIndexOf('. ', searchFrom);
-    if (idx === -1) break;
-    // Check if this period is part of an abbreviation
-    const beforePeriod = truncated.substring(Math.max(0, idx - 10), idx + 1);
-    if (abbreviations.test(beforePeriod)) {
-      searchFrom = idx - 1; // Skip this period, keep searching backwards
-      continue;
-    }
-    return truncated.substring(0, idx + 1);
+  // Try to end at a sentence
+  const lastPeriod = truncated.lastIndexOf('. ');
+  if (lastPeriod > maxChars * 0.5) {
+    return truncated.substring(0, lastPeriod + 1);
   }
-
-  // Fallback: try to end at a comma or semicolon
-  const lastComma = truncated.lastIndexOf(', ');
-  if (lastComma > maxChars * 0.5) {
-    return truncated.substring(0, lastComma + 1);
-  }
-
   return truncated + '...';
 }
 
@@ -1340,7 +1205,6 @@ module.exports = {
   getVoiceProfile,
   listVoiceProfiles,
   resolveVoiceSettings,
-  validateVoiceSettings,
   // Character Voice Presets
   CHARACTER_VOICE_PRESETS,
   DEFAULT_VOICE_SETTINGS,

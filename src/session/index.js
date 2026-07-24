@@ -305,6 +305,71 @@ function resumeSession(savedState) {
   return savedState;
 }
 
+
+
+/**
+ * Validate a rejoin attempt — check session exists, isn't expired, isn't completed.
+ * @returns {{ valid: boolean, reason: string|null, session: object|null }}
+ */
+function validateRejoin(session, playerId) {
+  if (!session) {
+    return { valid: false, reason: 'Session not found', session: null };
+  }
+  if (session.state === SessionState.COMPLETED) {
+    return { valid: false, reason: 'Adventure already completed', session: null };
+  }
+  // Stale threshold: 2 hours of no activity for non-paused sessions
+  const staleThreshold = 2 * 60 * 60 * 1000;
+  if (Date.now() - session.updatedAt > staleThreshold && session.state !== SessionState.PAUSED) {
+    return { valid: false, reason: 'Session expired due to inactivity', session: null };
+  }
+  return { valid: true, reason: null, session };
+}
+
+/**
+ * Record a heartbeat for a player — updates connectedAt and session.updatedAt.
+ * @returns {boolean} true if the player was found and updated
+ */
+function recordHeartbeat(session, playerId) {
+  const player = getPlayer(session, playerId);
+  if (!player) return false;
+  player.connected = true;
+  player.connectedAt = Date.now();
+  session.updatedAt = Date.now();
+  return true;
+}
+
+/**
+ * Mark a player as disconnected (graceful disconnect).
+ * @returns {boolean} true if the player was found and updated
+ */
+function markDisconnected(session, playerId) {
+  const player = getPlayer(session, playerId);
+  if (!player) return false;
+  player.connected = false;
+  session.updatedAt = Date.now();
+  return true;
+}
+
+/**
+ * Get a lightweight session summary for rejoin display.
+ * No full state — just what the UI needs to show the rejoin banner.
+ */
+function getSessionSummary(session) {
+  const host = getHostPlayer(session);
+  return {
+    sessionId: session.id,
+    adventureId: session.adventureId,
+    sessionName: session.sessionName,
+    state: session.state,
+    playerCount: session.players.length,
+    hostName: host ? host.character.name : 'Unknown',
+    totalTurns: session.worldState.turnCount,
+    currentScene: session.worldState.currentScene,
+    updatedAt: session.updatedAt
+  };
+}
+
 module.exports = {
   SessionMode,
   SessionState,
@@ -326,5 +391,9 @@ module.exports = {
   updateNPC,
   transitionScene,
   saveSession,
-  resumeSession
+  resumeSession,
+  validateRejoin,
+  recordHeartbeat,
+  markDisconnected,
+  getSessionSummary
 };
