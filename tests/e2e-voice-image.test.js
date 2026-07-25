@@ -44,11 +44,11 @@ describe('E2E Voice & Image Integration', () => {
   });
 
   describe('Image API', () => {
-    it('GET /api/images returns image list', async () => {
-      const res = await server.inject({ method: 'GET', url: '/api/images' });
+    it('GET /api/image/list returns image list', async () => {
+      const res = await server.inject({ method: 'GET', url: '/api/image/list' });
       assert.equal(res.statusCode, 200);
       const body = JSON.parse(res.payload);
-      assert.equal(res.statusCode, 200);
+      assert.ok(body.items !== undefined || Array.isArray(body), 'should return items or array');
     });
   });
 
