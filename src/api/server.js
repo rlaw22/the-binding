@@ -126,14 +126,6 @@ async function createServer(options = {}) {
     cacheControl: false
   });
 
-  // Serve /src/ files directly from the real source tree (no duplicates in public/)
-  await app.register(fastifyStatic, {
-    root: path.join(__dirname, '..', '..'),
-    prefix: '/src/',
-    cacheControl: false,
-    decorateReply: false
-  });
-
   // No-cache header
   app.addHook('onSend', async (request, reply) => {
     reply.header('Cache-Control', 'no-cache, no-store, must-revalidate');
