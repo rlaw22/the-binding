@@ -217,8 +217,9 @@ function scoreTurn(poolOrScores, sceneIndexOrPool, turnScores) {
 
   for (const category of Object.values(CoinCategory)) {
     const rawScore = scores[category] || 0;
+    const normalized = bellCurveNormalize(rawScore);
     const maxForCategory = breakdown[category] || 0;
-    const earned = Math.round((rawScore / 10) * maxForCategory);
+    const earned = Math.round((normalized / 10) * maxForCategory);
     coins[category] = earned;
     turnTotal += earned;
   }
@@ -227,7 +228,9 @@ function scoreTurn(poolOrScores, sceneIndexOrPool, turnScores) {
     coins,
     total: turnTotal,
     turnTotal,
-    isSubtle: true
+    isSubtle: true,
+    rawScores: { ...scores },
+    normalizedScores: normalizeScores(scores)
   };
 }
 
@@ -828,6 +831,169 @@ Assess this player action across all 5 categories. Return ONLY a JSON object (no
   return prompt;
 }
 
+/**
+ * Score a player action end-to-end: build prompt → call LLM → normalize → scoreTurn.
+ * This is the main integration point between the AI DM and the coin engine.
+ *
+ * @param {object} pool — the adventure's coin pool (from createCoinPool)
+ * @param {number} sceneIndex — current scene index
+ * @param {string} playerAction — the player's action text
+ * @param {object} narrativeContext — { sceneDescription, questInfo, characterInfo }
+ * @param {object} sceneInfo — { sceneIndex, totalScenes, difficulty, adventureId }
+ * @param {object} analytics — scoring analytics tracker (from createScoringAnalytics)
+ * @param {Function} llmCaller — async (prompt) => scores object. Caller provides the LLM.
+ *   Must return { creativity, investigation, roleplay, combat, exploration } (0-10 each).
+ *   If null, uses heuristic fallback scoring.
+ * @returns {object} { turnResult, streakInfo, notification }
+ */
+async function scorePlayerAction(pool, sceneIndex, playerAction, narrativeContext, sceneInfo, analytics, llmCaller) {
+  // 1. Build the scoring prompt
+  const prompt = buildScoringPrompt(playerAction, narrativeContext, sceneInfo);
+
+  // 2. Get scores from LLM or heuristic fallback
+  let rawScores;
+  if (llmCaller) {
+    try {
+      const llmResult = await llmCaller(prompt);
+      // Validate and clamp LLM response
+      rawScores = {};
+      for (const cat of Object.values(CoinCategory)) {
+        const val = llmResult[cat];
+        rawScores[cat] = (typeof val === 'number' && !isNaN(val)) ? Math.max(0, Math.min(10, Math.round(val))) : 5;
+      }
+    } catch (err) {
+      // LLM call failed — fall back to heuristic
+      rawScores = heuristicScore(playerAction);
+    }
+  } else {
+    rawScores = heuristicScore(playerAction);
+  }
+
+  // 3. Score through the bell-curved pipeline
+  const turnResult = scoreTurn(pool, sceneIndex, rawScores);
+
+  // 4. Record in analytics and check for streaks
+  if (analytics) {
+    recordScore(analytics, rawScores);
+  }
+  const streakInfo = analytics ? detectStreak(analytics) : { streak: 'none', count: 0 };
+
+  // 5. Apply streak bonus/penalty to the turn result
+  const streakAdjusted = applyStreakBonus(turnResult, streakInfo);
+
+  // 6. Build notification
+  const notification = buildCoinNotification(streakAdjusted, analytics ? analytics.totalCoinsEarned : 0);
+
+  return {
+    turnResult: streakAdjusted,
+    rawScores,
+    normalizedScores: normalizeScores(rawScores),
+    streakInfo,
+    notification
+  };
+}
+
+/**
+ * Heuristic scoring fallback when no LLM is available.
+ * Uses simple text analysis to estimate category scores.
+ *
+ * @param {string} action — the player's action text
+ * @returns {object} scores { creativity, investigation, roleplay, combat, exploration } (0-10)
+ */
+function heuristicScore(action) {
+  if (!action || typeof action !== 'string') {
+    return { creativity: 5, investigation: 5, roleplay: 5, combat: 5, exploration: 5 };
+  }
+
+  const lower = action.toLowerCase();
+  const wordCount = lower.split(/\s+/).length;
+
+  // Creativity: reward longer, more descriptive actions with varied vocabulary
+  const uniqueWords = new Set(lower.split(/\s+/)).size;
+  const creativity = Math.min(10, Math.max(3, Math.round(
+    3 + (wordCount > 20 ? 2 : wordCount > 10 ? 1 : 0) +
+    (uniqueWords > 15 ? 2 : uniqueWords > 8 ? 1 : 0) +
+    (/(?:instead|however|but what if|alternatively|cleverly|disguise|trick|create|combine|improvise)/.test(lower) ? 2 : 0)
+  )));
+
+  // Investigation: reward searching, questioning, examining, connecting clues
+  const investigation = Math.min(10, Math.max(2, Math.round(
+    2 +
+    (/(?:search|examine|investigate|inspect|look|check|scan|study|analyze|observe)/.test(lower) ? 2 : 0) +
+    (/(?:ask|question|inquire|wonder|suspect|deduce|clue|evidence|notice)/.test(lower) ? 2 : 0) +
+    (/(?:connect|compare|match|link|relate|therefore|because|conclude)/.test(lower) ? 2 : 0) +
+    (wordCount > 15 ? 1 : 0)
+  )));
+
+  // Roleplay: reward in-character speech, dialogue, emotional expression
+  const roleplay = Math.min(10, Math.max(2, Math.round(
+    2 +
+    (/"[^"]+"/.test(action) ? 2 : 0) +  // quoted dialogue
+    (/(?:I say|I tell|I whisper|I shout|I reply|I declare|I speak)/.test(lower) ? 1 : 0) +
+    (/(?:feel|emotion|fear|anger|joy|sorrow|hesitat|confiden|nervous|excited)/.test(lower) ? 2 : 0) +
+    (/(?:character|role|demeanor|personality|accent|tone)/.test(lower) ? 1 : 0) +
+    (wordCount > 12 ? 1 : 0)
+  )));
+
+  // Combat: reward tactical thinking, positioning, resource use
+  const combat = Math.min(10, Math.max(2, Math.round(
+    2 +
+    (/(?:attack|strike|slash|stab|shoot|cast|spell|fight|defend|parry|dodge)/.test(lower) ? 2 : 0) +
+    (/(?:flank|cover|retreat|charge|ambush|trap|chokepoint|position|tactical|terrain)/.test(lower) ? 2 : 0) +
+    (/(?:heal|potion|ability|resource|shield|block|counter|exploit)/.test(lower) ? 1 : 0) +
+    (/(?:ally|coordinate|protect|distract|support)/.test(lower) ? 1 : 0)
+  )));
+
+  // Exploration: reward environmental interaction, discovery
+  const exploration = Math.min(10, Math.max(2, Math.round(
+    2 +
+    (/(?:explore|wander|travel|journey|venture|discover|find|uncover|reveal)/.test(lower) ? 2 : 0) +
+    (/(?:open|door|passage|path|room|corridor|cave|forest|mountain|river)/.test(lower) ? 1 : 0) +
+    (/(?:hidden|secret|behind|under|above|beneath|inside|around)/.test(lower) ? 2 : 0) +
+    (/(?:map|compass|direction|north|south|east|west|landmark)/.test(lower) ? 1 : 0) +
+    (wordCount > 10 ? 1 : 0)
+  )));
+
+  return { creativity, investigation, roleplay, combat, exploration };
+}
+
+/**
+ * Apply a streak bonus or penalty to a turn result.
+ * Hot streaks earn +10% bonus per streak count (capped at +30%).
+ * Cold streaks get a sympathy +5% to prevent death spirals.
+ *
+ * @param {object} turnResult — from scoreTurn()
+ * @param {object} streakInfo — from detectStreak()
+ * @returns {object} modified turnResult with streak adjustment
+ */
+function applyStreakBonus(turnResult, streakInfo) {
+  if (!streakInfo || streakInfo.streak === 'none') return turnResult;
+
+  const result = { ...turnResult, coins: { ...turnResult.coins } };
+
+  if (streakInfo.streak === 'hot') {
+    const bonusPct = Math.min(0.30, streakInfo.count * 0.10);
+    result.streakBonus = bonusPct;
+    result.streakType = 'hot';
+    for (const cat of Object.keys(result.coins)) {
+      result.coins[cat] = Math.round(result.coins[cat] * (1 + bonusPct));
+    }
+    result.turnTotal = Object.values(result.coins).reduce((s, v) => s + v, 0);
+    result.total = result.turnTotal;
+  } else if (streakInfo.streak === 'cold') {
+    const bonusPct = 0.05;
+    result.streakBonus = bonusPct;
+    result.streakType = 'cold';
+    for (const cat of Object.keys(result.coins)) {
+      result.coins[cat] = Math.round(result.coins[cat] * (1 + bonusPct));
+    }
+    result.turnTotal = Object.values(result.coins).reduce((s, v) => s + v, 0);
+    result.total = result.turnTotal;
+  }
+
+  return result;
+}
+
 module.exports = {
   CALIBRATION,
   CoinCategory,
@@ -854,5 +1020,8 @@ module.exports = {
   getAnalyticsSummary,
   detectStreak,
   getScoringRubric,
-  buildScoringPrompt
+  buildScoringPrompt,
+  scorePlayerAction,
+  heuristicScore,
+  applyStreakBonus
 };

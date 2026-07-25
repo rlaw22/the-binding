@@ -371,9 +371,105 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
 .combat-action-btn.danger{border-color:#c0392b44;color:#e74c3c;}
 .combat-action-btn.danger:hover{background:#c0392b22;border-color:#c0392b;}
 
+/* ── Story Mode: Class Selection Overlay ── */
+.class-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.class-overlay.active { display: flex; }
+.class-panel {
+  background: #1a1a2e;
+  border: 2px solid #C9A84C;
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 700px;
+  width: 90%;
+}
+.class-panel h2 {
+  color: #C9A84C;
+  text-align: center;
+  margin: 0 0 24px;
+  font-size: 1.4em;
+}
+.class-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.class-card {
+  background: #0f0f1e;
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.class-card:hover {
+  border-color: #C9A84C;
+  transform: translateY(-2px);
+}
+.class-card .cc-name {
+  color: #C9A84C;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.class-card .cc-hp {
+  color: #c0392b;
+  font-size: 0.85em;
+  margin-bottom: 8px;
+}
+.class-card .cc-desc {
+  color: #ccc;
+  font-size: 0.85em;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.class-card .cc-abilities {
+  color: #888;
+  font-size: 0.8em;
+}
+
+/* ── Story Mode Button Styles ── */
+.story-btn { border: 2px solid #444; background: #0f0f1e; color: #ccc; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 0.95em; transition: all 0.2s; margin: 4px; }
+.story-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.story-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.story-btn-explore { border-color: #27ae60; color: #27ae60; }
+.story-btn-explore:hover:not(:disabled) { background: #27ae6022; box-shadow: 0 4px 12px #27ae6033; }
+.story-btn-threat { border-color: #c0392b; color: #c0392b; }
+.story-btn-threat:hover:not(:disabled) { background: #c0392b22; box-shadow: 0 4px 12px #c0392b33; }
+.story-btn-item { border-color: #E8A838; color: #E8A838; }
+.story-btn-item:hover:not(:disabled) { background: #E8A83822; box-shadow: 0 4px 12px #E8A83833; }
+.story-btn-ability { border-color: #6B5CE7; color: #B8B0E8; }
+.story-btn-ability:hover:not(:disabled) { background: #6B5CE722; box-shadow: 0 4px 12px #6B5CE733; }
+.story-btn-bad_choice { border-color: #555; color: #888; font-style: italic; }
+.story-btn-bad_choice:hover:not(:disabled) { background: #55555522; }
+
 </style>
 </head>
 <body>
+
+  <!-- Story Mode: Persistent HP Bar -->
+  <div id="story-hp-bar" class="hidden" style="position:fixed;top:0;left:0;right:0;z-index:1000;background:#0C0B10;border-bottom:2px solid #C9A84C;padding:8px 20px;display:none;align-items:center;justify-content:space-between;font-family:Georgia,serif;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span id="story-class-label" style="color:#C9A84C;font-weight:bold;font-size:0.95em;"></span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span style="color:#c0392b;font-size:0.85em;">HP</span>
+        <div style="width:120px;height:14px;background:#1a1a2e;border-radius:7px;overflow:hidden;border:1px solid #333;">
+          <div id="story-hp-fill" style="width:100%;height:100%;background:#27ae60;border-radius:7px;transition:width 0.3s,background 0.3s;"></div>
+        </div>
+        <span id="story-hp-text" style="color:#ccc;font-size:0.85em;"></span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="color:#E8A838;font-size:0.85em;">Coins:</span>
+      <span id="story-coin-text" style="color:#E8A838;font-weight:bold;font-size:0.95em;"></span>
+    </div>
+  </div>
 
 <!-- Beta Access Gate -->
 <div id="accessGate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1A1A2E;z-index:9999;display:flex;align-items:center;justify-content:center;">
@@ -518,6 +614,39 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;disp
     </div>
   </div>
 
+
+  <!-- Story Mode: Class Selection Overlay -->
+  <div id="class-select-overlay" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,10,30,0.95);z-index:5000;display:none;align-items:center;justify-content:center;flex-direction:column;">
+    <div class="class-panel">
+      <h2>Choose Your Class</h2>
+      <div class="class-grid">
+        <div class="class-card" onclick="selectStoryClass('fighter')">
+          <div class="cc-name">Fighter</div>
+          <div class="cc-hp">12 HP</div>
+          <div class="cc-desc">A battle-hardened warrior. High survivability with Shield Block to reduce incoming damage.</div>
+          <div class="cc-abilities">Shield Block &bull; Second Wind</div>
+        </div>
+        <div class="class-card" onclick="selectStoryClass('cleric')">
+          <div class="cc-name">Cleric</div>
+          <div class="cc-hp">10 HP</div>
+          <div class="cc-desc">A holy healer. Turn Undead devastates the supernatural, and healing keeps you in the fight.</div>
+          <div class="cc-abilities">Turn Undead &bull; Healing Word</div>
+        </div>
+        <div class="class-card" onclick="selectStoryClass('mage')">
+          <div class="cc-name">Mage</div>
+          <div class="cc-hp">8 HP</div>
+          <div class="cc-desc">A wielder of arcane power. Fragile but deadly — Arcane Shield absorbs supernatural damage.</div>
+          <div class="cc-abilities">Arcane Shield &bull; Fire Bolt</div>
+        </div>
+        <div class="class-card" onclick="selectStoryClass('rogue')">
+          <div class="cc-name">Rogue</div>
+          <div class="cc-hp">9 HP</div>
+          <div class="cc-desc">A shadow-skilled survivor. Shadow Step lets you escape danger untouched and find extra loot.</div>
+          <div class="cc-abilities">Shadow Step &bull; Backstab</div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="start-screen" class="hidden">
     <h2>Choose Your Adventure</h2>
     <p id="adventure-description">Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
@@ -1256,6 +1385,7 @@ async function showModeSelection() {
 
 async function selectMode(mode) {
   if (mode === 'storyline') {
+    isStorylineMode = true;
     document.getElementById('mode-select-screen').classList.add('hidden');
     document.getElementById('start-screen').classList.remove('hidden');
     loadAdventures();
@@ -1506,6 +1636,7 @@ function addMessage(type, text) {
 }
 
 function showActions(actions) {
+  if (typeof storyModeActive !== 'undefined' && storyModeActive) return; // story mode renders its own buttons
   var container = document.getElementById('action-buttons');
   container.innerHTML = '';
   for (var i = 0; i < actions.length; i++) {
@@ -1833,7 +1964,7 @@ function fetchProgress() {
     .then(function(data) {
       if (!data) return;
       var bar = document.getElementById('progress-bar');
-      if (bar) bar.classList.remove('hidden');
+      if (bar) { bar.classList.remove('hidden'); bar.style.display = 'flex'; }
       var actEl = document.getElementById('progress-act');
       if (actEl && data.act) actEl.textContent = 'Act ' + toRoman(data.act.number);
       var sceneEl = document.getElementById('progress-scene');
@@ -2271,5 +2402,239 @@ document.getElementById('gateInput').addEventListener('keydown', function(e) {
 });
 </script>
 
+
+<!-- Story Mode Engine -->
+<script src="/src/story/threat-encounters.js"></script>
+<script src="/src/story/class-abilities.js"></script>
+<script src="/src/story/story-engine.js"></script>
 </body>
+
+// ══════════════════════════════════════════════════════════════════════
+// STORY MODE BRIDGE — Client-side integration with StoryEngine
+// ══════════════════════════════════════════════════════════════════════
+
+var storyModeActive = false;
+var storyPlayerState = null;
+var storySelectedClass = null;
+var storyCurrentSceneId = null;
+
+var isStorylineMode = false;
+
+
+// ── Chunk 3: Class Selection ────────────────────────────────────────
+
+function showClassSelection() {
+  var overlay = document.getElementById('class-select-overlay');
+  if (overlay) {
+    overlay.classList.remove('hidden');
+    overlay.style.display = 'flex';
+  }
+}
+
+function hideClassSelection() {
+  var overlay = document.getElementById('class-select-overlay');
+  if (overlay) {
+    overlay.classList.add('hidden');
+    overlay.style.display = 'none';
+  }
+}
+
+function selectStoryClass(classId) {
+  storySelectedClass = classId;
+  hideClassSelection();
+  // Set the hidden select field so the server gets the class too
+  var sel = document.getElementById('player-class');
+  if (sel) sel.value = classId;
+  // Now proceed to start the game
+  beginStoryAdventure();
+}
+
+function beginStoryAdventure() {
+  var btn = document.getElementById('begin-adventure-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
+  startGame().then(function() {
+    // Initialize story mode after session is created
+    storyModeActive = true;
+    if (window.StoryEngine && storySelectedClass) {
+      storyPlayerState = window.StoryEngine.createPlayerState(storySelectedClass);
+      showHpBar();
+      updateHpBar();
+    }
+  }).catch(function() {
+    if (btn) { btn.disabled = false; btn.textContent = 'Begin Adventure'; }
+  });
+}
+
+// ── Chunk 4: Persistent HP Bar ──────────────────────────────────────
+
+function showHpBar() {
+  var bar = document.getElementById('story-hp-bar');
+  if (bar) { bar.classList.remove('hidden'); bar.style.display = 'flex'; }
+}
+
+function updateHpBar() {
+  if (!storyPlayerState) return;
+  var hpText = document.getElementById('story-hp-text');
+  var hpFill = document.getElementById('story-hp-fill');
+  var coinText = document.getElementById('story-coin-text');
+  var classLabel = document.getElementById('story-class-label');
+  if (hpText) hpText.textContent = storyPlayerState.hp + ' / ' + storyPlayerState.maxHp;
+  if (coinText) coinText.textContent = storyPlayerState.coins;
+  if (classLabel) classLabel.textContent = storyPlayerState.className;
+  if (hpFill) {
+    var pct = Math.max(0, Math.min(100, (storyPlayerState.hp / storyPlayerState.maxHp) * 100));
+    hpFill.style.width = pct + '%';
+    if (pct <= 25) hpFill.style.background = '#c0392b';
+    else if (pct <= 50) hpFill.style.background = '#e67e22';
+    else hpFill.style.background = '#27ae60';
+  }
+  // Also update the existing char-bar if visible
+  var charHp = document.getElementById('char-hp');
+  if (charHp) charHp.textContent = storyPlayerState.hp + '/' + storyPlayerState.maxHp;
+}
+
+// ── Chunk 5: Story Mode Combat UI ───────────────────────────────────
+
+function renderStoryButtons(buttons) {
+  var container = document.getElementById('action-buttons');
+  if (!container) return;
+  container.innerHTML = '';
+  for (var i = 0; i < buttons.length; i++) {
+    var btn = buttons[i];
+    var el = document.createElement('button');
+    el.className = 'action-btn story-btn story-btn-' + btn.type;
+    el.textContent = btn.label;
+    el.setAttribute('data-story-id', btn.id);
+    el.setAttribute('data-story-type', btn.type);
+    if (btn.disabled) el.disabled = true;
+    el.onclick = (function(buttonId, buttonType) {
+      return function() { processStoryAction(buttonId, buttonType); };
+    })(btn.id, btn.type);
+    container.appendChild(el);
+  }
+  // Hide free input in story mode
+  var inputRow = document.getElementById('input-row');
+  if (inputRow) inputRow.style.display = 'none';
+}
+
+function processStoryAction(buttonId, buttonType) {
+  if (!storyPlayerState || !window.StoryEngine) return;
+
+  // Get current scene manifest from the last server response
+  var sceneManifest = window._currentStoryManifest || {};
+  var threatDef = null;
+  if (storyCurrentSceneId && window.ThreatEncounters) {
+    threatDef = window.ThreatEncounters.getThreat(storyCurrentSceneId) ||
+                window.ThreatEncounters.getThreat(sceneManifest.storyMode && sceneManifest.storyMode.threat && sceneManifest.storyMode.threat.id);
+  }
+
+  var result = window.StoryEngine.processButtonAction(
+    buttonId, buttonType, sceneManifest, storyPlayerState, threatDef
+  );
+
+  // Display narrative
+  if (result.narrative) {
+    addMessage('dm', result.narrative);
+  }
+
+  // Show HP/coin changes
+  if (result.hpChange && result.hpChange !== 0) {
+    var sign = result.hpChange > 0 ? '+' : '';
+    addMessage('system', sign + result.hpChange + ' HP');
+  }
+  if (result.coinChange && result.coinChange !== 0) {
+    var sign2 = result.coinChange > 0 ? '+' : '';
+    addMessage('system', sign2 + result.coinChange + ' coins');
+  }
+
+  // Zero HP rescue
+  if (result.zeroHp && result.zeroHp.rescued) {
+    addMessage('system', result.zeroHp.narrative);
+  }
+
+  // Update HP bar
+  updateHpBar();
+
+  // Mark this button as used (disable it)
+  var btns = document.querySelectorAll('#action-buttons .story-btn');
+  for (var i = 0; i < btns.length; i++) {
+    if (btns[i].getAttribute('data-story-id') === buttonId) {
+      btns[i].disabled = true;
+      btns[i].style.opacity = '0.5';
+    }
+  }
+
+  // Check game over
+  if (storyPlayerState.hp <= 0 && storyPlayerState.coins <= 0) {
+    showGameOver();
+  }
+}
+
+// ── Chunk 6: Threat Encounters Integration ──────────────────────────
+
+function loadThreatForScene(sceneManifest) {
+  if (!window.ThreatEncounters || !sceneManifest.storyMode || !sceneManifest.storyMode.threat) return null;
+  var threat = sceneManifest.storyMode.threat;
+  var threatId = threat.id || threat;
+  return window.ThreatEncounters.getThreat ? window.ThreatEncounters.getThreat(threatId) : null;
+}
+
+// ── Chunk 7: End Game State ─────────────────────────────────────────
+
+function showGameOver() {
+  if (!storyPlayerState) return;
+  var msg = 'Your adventure ends here.\n\n';
+  msg += 'Class: ' + storyPlayerState.className + '\n';
+  msg += 'Scenes completed: ' + storyPlayerState.scenesCompleted + '\n';
+  msg += 'Coins remaining: ' + storyPlayerState.coins + '\n';
+  msg += 'Items collected: ' + (storyPlayerState.inventory.length > 0 ? storyPlayerState.inventory.join(', ') : 'none') + '\n';
+  msg += 'Times rescued: ' + (storyPlayerState.flags.rescue_count || 0);
+
+  addMessage('system', msg);
+  addMessage('system', '— End of Adventure —');
+
+  // Disable all buttons
+  var btns = document.querySelectorAll('#action-buttons .action-btn');
+  for (var i = 0; i < btns.length; i++) btns[i].disabled = true;
+
+  storyModeActive = false;
+}
+
+
+// ── Scene Wiring ────────────────────────────────────────────────────
+
+function setStoryScene(sceneManifest, sceneId) {
+  window._currentStoryManifest = sceneManifest;
+  storyCurrentSceneId = sceneId;
+  if (storyModeActive && window.StoryEngine && storyPlayerState) {
+    storyPlayerState = storyPlayerState; // touch
+    var layout = window.StoryEngine.buildButtonLayout(sceneManifest, storyPlayerState);
+    if (layout.valid) {
+      renderStoryButtons(layout.buttons);
+    }
+  }
+}
+
+// ── Hook: Override Begin Adventure button for storyline mode ─────────
+
+(function() {
+  var btn = document.getElementById('begin-adventure-btn');
+  if (!btn) return;
+  btn.setAttribute('onclick', '');
+  btn.addEventListener('click', function(e) {
+    e.preventDefault();
+    this.disabled = true;
+    this.textContent = 'Starting...';
+    // If storyline mode, show class selection first
+    // Otherwise start directly
+    if (isStorylineMode) {
+      showClassSelection();
+    } else {
+      startGame().catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Begin Adventure';
+      });
+    }
+  });
+})();
 </html>

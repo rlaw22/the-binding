@@ -668,7 +668,7 @@ function createInventory(startingItems = []) {
     consumable_1: null,
     consumable_2: null
   };
-  return { slots, maxSize: 20, equipment, transactionLog: [] };
+  return { slots, maxSize: 20, capacity: 50, equipment, transactionLog: [] };
 }
 
 /**
@@ -1529,7 +1529,7 @@ function getShoppeRecommendations(inventory, coinBalance) {
     let reason = 'Available at the Shoppe';
     if (item.consumable) {
       reason = 'Consumable — useful in a pinch';
-    } else if (item.type === 'weapon' && !inventory.equipment?.mainHand) {
+    } else if (item.type === 'weapon' && !inventory.equipment?.weapon) {
       reason = 'No weapon equipped — recommended';
     } else if (item.type === 'armor' && !inventory.equipment?.armor) {
       reason = 'No armor equipped — recommended';
