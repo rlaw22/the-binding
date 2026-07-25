@@ -552,47 +552,6 @@ function buildAtmosphereContext(playerState, sceneManifest, result) {
 
 // ─── MODULE EXPORTS ────────────────────────────────────────────────
 
-module.exports = {
-  createPlayerState,
-  rechargeForNewScene,
-  generateStoryButtons,
-  processButtonAction,
-  processExplore,
-  processThreat,
-  processItem,
-  processAbility,
-  processBadChoice,
-  checkZeroHp,
-  applyHealing,
-  checkItemRequirement,
-  checkTacticalBonus,
-  processTravel,
-  buildButtonLayout,
-  buildAtmosphereContext
-};
-
-// Browser global
-if (typeof window !== 'undefined') {
-  window.StoryEngine = {
-    createPlayerState: createPlayerState,
-    rechargeForNewScene: rechargeForNewScene,
-    generateStoryButtons: generateStoryButtons,
-    processButtonAction: processButtonAction,
-    processExplore: processExplore,
-    processThreat: processThreat,
-    processItem: processItem,
-    processAbility: processAbility,
-    processBadChoice: processBadChoice,
-    checkZeroHp: checkZeroHp,
-    applyHealing: applyHealing,
-    checkItemRequirement: checkItemRequirement,
-    checkTacticalBonus: checkTacticalBonus,
-    processTravel: processTravel,
-    buildButtonLayout: buildButtonLayout,
-    buildAtmosphereContext: buildAtmosphereContext
-  };
-}
-
   // Expose as browser global
   var _exports = {
     createPlayerState: createPlayerState,
