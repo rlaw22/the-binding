@@ -223,21 +223,8 @@
     _visualFallback: function (text, options) {
       if (this._onVisual) this._onVisual(text);
       if (options && options.onEnd) options.onEnd();
-    }
-  };
+    },
 
-  /* ── Export ── */
-  if (typeof module !== 'undefined' && module.exports) {
-    // Node / test environment — export internals too for unit testing
-    module.exports = {
-      BrowserTTS: BrowserTTS,
-      _chunkText: chunkText,
-      _pickVoice: pickVoice,
-      _getProfile: getProfile,
-      _VOICE_PROFILES: VOICE_PROFILES,
-      _MAX_CHUNK: MAX_CHUNK
-    
-    /** Pause current speech. */
     pause: function () {
       if (this._synth && this._speaking) {
         this._synth.pause();
@@ -288,7 +275,19 @@
         check();
       });
     },
-};
+  };
+
+  /* ── Export ── */
+  if (typeof module !== 'undefined' && module.exports) {
+    // Node / test environment — export internals too for unit testing
+    module.exports = {
+      BrowserTTS: BrowserTTS,
+      _chunkText: chunkText,
+      _pickVoice: pickVoice,
+      _getProfile: getProfile,
+      _VOICE_PROFILES: VOICE_PROFILES,
+      _MAX_CHUNK: MAX_CHUNK
+    };
   } else {
     // Browser global
     window.BrowserTTS = BrowserTTS;
