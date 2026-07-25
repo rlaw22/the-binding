@@ -1589,6 +1589,10 @@ function handleMessage(msg) {
         imgWrap.appendChild(img);
         container.appendChild(imgWrap);
       }
+      // Re-enable input after DM response (story mode bypasses showActions)
+      sending = false;
+      document.getElementById('send-btn').disabled = false;
+      document.getElementById('free-input').disabled = false;
       break;
     case 'player_action':
       addMessage('player', msg.content);
