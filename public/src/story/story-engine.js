@@ -19,7 +19,7 @@
 var ClassAbilities;
 if (typeof window !== 'undefined' && window.ClassAbilities) {
   ClassAbilities = window.ClassAbilities;
-} else {
+} else if (typeof require !== 'undefined') {
   ClassAbilities = require('./class-abilities');
 }
 const { CLASSES, getClass, rechargeAbilities, useAbility, getAvailableAbilities, applyDamage, heal } = ClassAbilities;

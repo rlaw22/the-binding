@@ -251,6 +251,7 @@ function heal(character, amount) {
   };
 }
 
+if (typeof module !== 'undefined' && module.exports) {
 module.exports = {
   CLASSES,
   getClass,
@@ -262,6 +263,7 @@ module.exports = {
   applyDamage,
   heal
 };
+}
 
 // Browser global
 if (typeof window !== 'undefined') {
