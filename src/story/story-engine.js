@@ -1,4 +1,10 @@
 /**
+ * story-engine.js — Deterministic button processing for Story Mode
+ * IIFE-wrapped for browser use. Exposes window.StoryEngine.
+ */
+(function() {
+
+/**
  * story-engine.js — Deterministic button processing engine for Story Mode
  *
  * This engine handles ALL game logic for Story Mode without LLM involvement.
@@ -9,7 +15,14 @@
  * Button types: explore, threat, item, ability, bad_choice
  */
 
-const { CLASSES, getClass, rechargeAbilities, useAbility, getAvailableAbilities, applyDamage, heal } = require('./class-abilities');
+// Use ClassAbilities — browser global or Node.js require
+var ClassAbilities;
+if (typeof window !== 'undefined' && window.ClassAbilities) {
+  ClassAbilities = window.ClassAbilities;
+} else {
+  ClassAbilities = require('./class-abilities');
+}
+const { CLASSES, getClass, rechargeAbilities, useAbility, getAvailableAbilities, applyDamage, heal } = ClassAbilities;
 
 // ─── PLAYER STATE ──────────────────────────────────────────────────
 
@@ -557,3 +570,56 @@ module.exports = {
   buildButtonLayout,
   buildAtmosphereContext
 };
+
+// Browser global
+if (typeof window !== 'undefined') {
+  window.StoryEngine = {
+    createPlayerState: createPlayerState,
+    rechargeForNewScene: rechargeForNewScene,
+    generateStoryButtons: generateStoryButtons,
+    processButtonAction: processButtonAction,
+    processExplore: processExplore,
+    processThreat: processThreat,
+    processItem: processItem,
+    processAbility: processAbility,
+    processBadChoice: processBadChoice,
+    checkZeroHp: checkZeroHp,
+    applyHealing: applyHealing,
+    checkItemRequirement: checkItemRequirement,
+    checkTacticalBonus: checkTacticalBonus,
+    processTravel: processTravel,
+    buildButtonLayout: buildButtonLayout,
+    buildAtmosphereContext: buildAtmosphereContext
+  };
+}
+
+  // Expose as browser global
+  var _exports = {
+    createPlayerState: createPlayerState,
+    rechargeForNewScene: rechargeForNewScene,
+    generateStoryButtons: generateStoryButtons,
+    processButtonAction: processButtonAction,
+    processExplore: processExplore,
+    processThreat: processThreat,
+    processItem: processItem,
+    processAbility: processAbility,
+    processBadChoice: processBadChoice,
+    checkZeroHp: checkZeroHp,
+    applyHealing: applyHealing,
+    checkItemRequirement: checkItemRequirement,
+    checkTacticalBonus: checkTacticalBonus,
+    processTravel: processTravel,
+    buildButtonLayout: buildButtonLayout,
+    buildAtmosphereContext: buildAtmosphereContext
+  };
+
+  // Browser global
+  if (typeof window !== 'undefined') {
+    window.StoryEngine = _exports;
+  }
+  // Node.js / CommonJS
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = _exports;
+  }
+
+})();

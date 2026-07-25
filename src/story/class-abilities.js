@@ -1,5 +1,11 @@
 /**
  * Class Abilities — 4 classes for Story Mode
+ * IIFE-wrapped for browser use. Exposes window.ClassAbilities.
+ */
+(function() {
+
+/**
+ * Class Abilities — 4 classes for Story Mode
  * 
  * Each class has: name, starting HP, description, 2 per-scene recharge abilities
  * 
@@ -256,3 +262,41 @@ module.exports = {
   applyDamage,
   heal
 };
+
+// Browser global
+if (typeof window !== 'undefined') {
+  window.ClassAbilities = {
+    CLASSES: CLASSES,
+    getClass: getClass,
+    getClassIds: getClassIds,
+    getClassSummaries: getClassSummaries,
+    rechargeAbilities: rechargeAbilities,
+    useAbility: useAbility,
+    getAvailableAbilities: getAvailableAbilities,
+    applyDamage: applyDamage,
+    heal: heal
+  };
+}
+
+  var _exports = {
+    CLASSES: CLASSES,
+    getClass: getClass,
+    getClassIds: getClassIds,
+    getClassSummaries: getClassSummaries,
+    rechargeAbilities: rechargeAbilities,
+    useAbility: useAbility,
+    getAvailableAbilities: getAvailableAbilities,
+    applyDamage: applyDamage,
+    heal: heal
+  };
+
+  // Browser global
+  if (typeof window !== 'undefined') {
+    window.ClassAbilities = _exports;
+  }
+  // Node.js / CommonJS
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = _exports;
+  }
+
+})();
