@@ -63,6 +63,14 @@ const DEVICES = [
   { name: 'iPhone 16 Pro',      width: 402, height: 874, safeArea: true, dynamicIsland: true  },
   { name: 'iPhone 16 Pro Max',  width: 440, height: 956, safeArea: true, dynamicIsland: true  },
   { name: 'iPhone 16e',         width: 390, height: 844, safeArea: true, dynamicIsland: false },
+  // iPad (tablet)
+  { name: 'iPad Air 11"',       width: 820, height: 1180, safeArea: true, dynamicIsland: true  },
+  { name: 'iPad Pro 12.9"',    width: 1024, height: 1366, safeArea: true, dynamicIsland: true  },
+  { name: 'iPad 10th gen',      width: 810, height: 1080, safeArea: true, dynamicIsland: false },
+  // Android tablet
+  { name: 'Galaxy Tab S9',      width: 800, height: 1280, safeArea: false, dynamicIsland: false },
+  { name: 'Galaxy Tab S9 FE',   width: 1280, height: 800, safeArea: false, dynamicIsland: false },
+  { name: 'Pixel Tablet',       width: 840, height: 1288, safeArea: false, dynamicIsland: false },
 ];
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -129,8 +137,8 @@ const uniquePortraitWidths = [...new Set(DEVICES.map(d => d.width))].sort((a, b)
 console.log('  [info] device portrait widths: ' + uniquePortraitWidths.join(', '));
 
 for (const w of uniquePortraitWidths) {
-  const covered = maxWidthBreakpoints.some(bp => bp >= w);
-  assert(covered, 'portrait width ' + w + 'px covered by a max-width breakpoint');
+  const covered = maxWidthBreakpoints.some(bp => bp >= w) || w > 768;
+  assert(covered, 'portrait width ' + w + 'px covered (breakpoint or base CSS for tablets)');
 }
 
 // iPhone 16 Pro unique 402px
@@ -173,9 +181,9 @@ for (const device of DEVICES) {
   const pW = device.width, pH = device.height;
   const lW = device.height, lH = device.width;
 
-  const portraitCovered = maxWidthBreakpoints.some(bp => bp >= pW);
+  const portraitCovered = maxWidthBreakpoints.some(bp => bp >= pW) || pW > 768;
   assert(portraitCovered,
-    device.name + ' portrait (' + pW + '×' + pH + ') covered');
+    device.name + ' portrait (' + pW + '×' + pH + ') covered (breakpoint or base CSS)');
 
   const landscapeCovered = maxWidthBreakpoints.some(bp => bp >= lW) || lW > 768;
   assert(landscapeCovered,

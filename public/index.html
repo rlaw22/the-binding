@@ -143,6 +143,11 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;heig
 .rejoin-link{color:#C9A84C;cursor:pointer;font-size:0.95em;text-decoration:underline;}
 .rejoin-link:hover{color:#E8A838;}
 .hidden{display:none !important;}
+/* ── Game Active: universal rules (all widths, all devices) ──────────── */
+body.game-active #header{display:none;}
+body.game-active #rejoin-bar{display:none;}
+body.game-active #auto-rejoin-banner{display:none;}
+
 @media (orientation: landscape) {
   #app{padding:8px 24px;}
   #header{margin-bottom:8px;}
@@ -158,12 +163,10 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;heig
   #suggest-input{padding:10px 14px;font-size:1em;}
   #suggest-btn{padding:10px 18px;font-size:1em;}
 
-  /* Game HUD: compact in landscape to maximize narrative space */
-  body.game-active #header{display:none;}
+  /* Landscape-specific game-active compaction (header/rejoin already handled above) */
   body.game-active #char-bar{padding:4px 8px;font-size:0.75em;gap:8px;margin-bottom:4px;}
   body.game-active #coin-bar{padding:3px 8px;font-size:0.75em;margin-bottom:4px;}
   body.game-active #progress-bar{padding:3px 8px;font-size:0.7em;margin-bottom:4px;}
-  body.game-active #rejoin-bar{display:none;}
   body.game-active #inv-toggle{width:36px;height:36px;bottom:6px;right:6px;}
   body.game-active #inv-panel{width:50vw;right:-50vw;}
   body.game-active #messages{flex:8;}
@@ -2514,6 +2517,9 @@ function beginStoryAdventure() {
 function showHpBar() {
   var bar = document.getElementById('story-hp-bar');
   if (bar) { bar.classList.remove('hidden'); bar.style.display = 'flex'; }
+  // Hide duplicate coin-bar when story-hp-bar is active (story-hp-bar shows its own coins)
+  var coinBar = document.getElementById('coin-bar');
+  if (coinBar) coinBar.classList.add('hidden');
 }
 
 function updateHpBar() {
