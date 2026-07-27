@@ -14,7 +14,7 @@ const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
-const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights } = require('../coin-engine');
+const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
 // Image generation — optional, gracefully disabled when no provider configured
 let _imageService = null;
@@ -505,7 +505,14 @@ async function processAction(game, playerAction, character) {
   let coinScores;
   if (game.llmProvider && game.coinPool) {
     try {
-      coinScores = await scoreActionWithLLM(game.llmProvider, playerAction, parsed.narrative);
+      // Build scene info for the coin engine's full rubric prompt
+      const sceneInfo = (game.sceneState && game.coinPool) ? {
+        sceneIndex: game.coinPool.scenePools.findIndex(sp => !sp.earned),
+        totalScenes: game.coinPool.scenePools ? game.coinPool.scenePools.length : 10,
+        difficulty: game.coinPool.difficulty || 'medium',
+        adventureId: game.adventureId
+      } : null;
+      coinScores = await scoreActionWithLLM(game.llmProvider, playerAction, parsed.narrative, sceneInfo);
     } catch (err) {
       console.warn('[CoinEngine] LLM scoring failed, falling back to heuristic:', err.message);
       coinScores = scoreAction(playerAction, parsed.narrative);
@@ -685,8 +692,11 @@ function parseDMResponse(response) {
  *   - v2: Added code-fence stripping, robust JSON extraction, retry with
  *         explicit JSON-only instruction, and numeric clamping.
  */
-async function scoreActionWithLLM(llmProvider, playerAction, narrativeContext) {
-  const prompt = buildCoinScoringPrompt(playerAction, narrativeContext);
+async function scoreActionWithLLM(llmProvider, playerAction, narrativeContext, sceneInfo) {
+  // Use the coin engine's full rubric when scene info is available, simplified prompt as fallback
+  const prompt = sceneInfo
+    ? buildScoringPrompt(playerAction, { sceneDescription: narrativeContext }, sceneInfo)
+    : buildCoinScoringPrompt(playerAction, narrativeContext);
 
   /**
    * Extract JSON object from an LLM response that may contain markdown
