@@ -11,8 +11,10 @@ services:
         value: "false"
       - key: LLM_BASE_URL
         value: "https://api.novita.ai/v3/openai"
+        sync: false
       - key: LLM_MODEL
         value: "qwen/qwen3.6-plus"
+        sync: false
       - key: LLM_API_KEY
         sync: false
       - key: NOVITA_API_KEY
