@@ -1,10 +1,10 @@
 # The Binding — Status Tracker
 
-## Current Status: 🟢 Phase 1 Core Complete (minus API keys)           *July 27, 2026*
+## Current Status: 🟢 Phase 1 Core Complete (minus API keys)           *August 5, 2026*
 
 **Live URL:** https://the-binding.onrender.com/
-**Latest commit:** `4e762d3` — feat: wire coin engine's full scoring rubric into DM service
-**Test suite:** 1,649 passing across 37 suites (phase1 + image-pipeline + coin-bellcurve + coin-v2 + dice + durability-combat + durability-image + DD-tuning×2 + e2e-expanded + image-cache + image-queue + inventory-edge + shoppe + persistent-store + phase1-integration + phase2 + voice-tts + class-abilities + story-mode + pwa-improvements + session14-improvements + browser-tts + coin-notifications-calibration + coin-engine-rubric + e2e-extended + e2e-smoke + e2e-voice-image + image-dm-integration + phase2-campaign + phase2-e2e + phase2-extended + phase2bcd + pwa + shoppe-dd-api + tts-error-recovery + voice-profiles + voice-tts-e2e)
+**Latest commit:** `1d143f6` — Remove legacy access gate, clean up docs and auth module
+**Test suite:** 1,977+ passing across 38 suites (+game-mode)
 
 ---
 
@@ -72,3 +72,4 @@
 2. **Image Gen (92%→100%):** Wire chosen provider, end-to-end image test with real generation
 3. **PWA (100%):** Already complete — no further work needed
 4. **Playtest:** Real LLM play data for coin/DD calibration refinements
+// Gandalf write test Fri Jul 31 15:52:46 UTC 2026
