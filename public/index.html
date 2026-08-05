@@ -119,10 +119,8 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;heig
 .mode-card.locked:hover{transform:none;box-shadow:none;}
 .mode-card .mode-icon{font-size:2.4em;margin-bottom:12px;}
 .mode-card .mode-name{color:#C9A84C;font-size:1.1em;font-weight:bold;margin-bottom:8px;font-family:Georgia,serif;}
-.mode-card .mode-desc{color:#F5F0E1aa;font-size:0.85em;line-height:1.5;margin-bottom:12px;}
-.mode-card .mode-price{color:#E8A838;font-size:0.9em;font-weight:bold;}
-.mode-card .mode-status{color:#7CB97C;font-size:0.8em;margin-top:8px;}
-.mode-card .mode-locked{color:#EF5350;font-size:0.8em;margin-top:8px;}
+.mode-card .mode-tagline{color:#E8A838;font-size:0.88em;font-style:italic;margin-bottom:10px;}
+.mode-card .mode-desc{color:#F5F0E1aa;font-size:0.85em;line-height:1.5;}
 
 #questionnaire-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:440px;text-align:left;}
 .q-field label{display:block;color:#C9A84C;font-size:0.88em;font-weight:600;margin-bottom:5px;}
@@ -496,24 +494,7 @@ body.game-active #auto-rejoin-banner{display:none;}
     </div>
   </div>
 
-<!-- Beta Access Gate -->
-<div id="accessGate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#1A1A2E;z-index:9999;display:flex;align-items:center;justify-content:center;">
-  <div style="text-align:center;max-width:400px;padding:40px 24px;">
-    <h1 style="color:#C9A84C;font-family:Georgia,serif;font-size:2.2em;letter-spacing:3px;margin-bottom:8px;">The Binding</h1>
-    <p style="color:#E8A838;font-style:italic;margin-bottom:32px;font-size:1.1em;">Enter the books you love.</p>
-    <div style="margin-bottom:20px;">
-      <input type="text" id="gateInput" placeholder="Enter beta code" autocomplete="off"
-        style="width:100%;padding:14px 18px;background:#0C0B10;border:1px solid #C9A84C44;color:#F5F0E1;border-radius:8px;font-family:Georgia,serif;font-size:1.1em;text-align:center;outline:none;transition:border-color 0.3s;"
-        onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='#C9A84C44'">
-    </div>
-    <button onclick="submitGate()"
-      style="width:100%;padding:14px;background:#C9A84C15;border:1px solid #C9A84C;color:#C9A84C;border-radius:8px;font-family:Georgia,serif;font-size:1em;cursor:pointer;transition:all 0.3s;letter-spacing:1px;"
-      onmouseover="this.style.background='#C9A84C33'" onmouseout="this.style.background='#C9A84C15'">
-      Enter
-    </button>
-    <p id="gateError" style="color:#EF5350;font-size:0.9em;margin-top:16px;display:none;">Incorrect code. Try again.</p>
-  </div>
-</div>
+
 
 <div id="app">
   <!-- Voice Toggle -->
@@ -618,23 +599,20 @@ body.game-active #auto-rejoin-banner{display:none;}
       <div class="mode-card" onclick="selectMode('storyline')">
         <div class="mode-icon">📖</div>
         <div class="mode-name">Storyline</div>
-        <div class="mode-desc">Play through classic books — Dracula, Frankenstein, Sherlock Holmes. Unlimited replays.</div>
-        <div class="mode-price">$2.99/book</div>
-        <div class="mode-status">✓ Unlocked</div>
+        <div class="mode-tagline">Follow the book. Tap to act.</div>
+        <div class="mode-desc">Experience classic novels through guided, tap-to-act gameplay. The story follows the book with AI-enhanced narration. No dice, no stats — just the story.</div>
       </div>
       <div class="mode-card" onclick="selectMode('campaign')">
         <div class="mode-icon">⚔️</div>
         <div class="mode-name">Campaign</div>
-        <div class="mode-desc">Open-ended D&amp;D with AI DM. Dice, combat, quests. Multiplayer ready.</div>
-        <div class="mode-price">$4.99/day pass</div>
-        <div class="mode-status">✓ Unlocked</div>
+        <div class="mode-tagline">The book, with D&amp;D under the hood.</div>
+        <div class="mode-desc">Play through classic stories with full D&amp;D mechanics — dice rolls, character classes, abilities, inventory, and coin rewards. Single-player with deeper gameplay.</div>
       </div>
       <div class="mode-card" onclick="selectMode('digital_dm')">
-        <div class="mode-icon">🧙</div>
+        <div class="mode-icon">🐉</div>
         <div class="mode-name">Digital DM</div>
-        <div class="mode-desc">Freeform AI Dungeon Master. Voice conversation, no scripts, pure improv.</div>
-        <div class="mode-price">$7.99/day pass</div>
-        <div class="mode-status">✓ Unlocked</div>
+        <div class="mode-tagline">Full dungeon master. Books &amp; beyond.</div>
+        <div class="mode-desc">The complete AI Dungeon Master experience. Play books or original D&amp;D scenarios with 1-6 players. Voice input, reusable characters, quest tracking, and more.</div>
       </div>
     </div>
   </div>
@@ -1027,7 +1005,8 @@ startGame = async function() {
         playerName: name,
         characterClass: cls,
         characterRace: 'human',
-        betaToken: betaToken
+        betaToken: betaToken,
+        gameMode: selectedGameMode || 'storyline'
       })
     });
     var data = await resp.json();
@@ -1053,6 +1032,8 @@ startGame = async function() {
     saveSessionToStorage(sessionId, name);
 
     showGameUI(data.character, data.rejoinCode, false);
+    // Apply mode UI config if server returned it
+    if (data.uiConfig) applyModeUIConfig(data.uiConfig);
     window.history.replaceState({}, '', '?session=' + sessionId);
     startPolling();
   } catch(e) {
@@ -1232,9 +1213,7 @@ function showGameUI(character, code, isSpectator) {
   // Hide the start screen (critical for iPad Safari where overflow:hidden prevents scrolling past it)
   var startEl = document.getElementById('start-screen');
   if (startEl) startEl.classList.add('hidden');
-  // Bug fixes: hide beta gate + header during gameplay, add game-active class
-  var gate = document.getElementById('accessGate');
-  if (gate) gate.style.display = 'none';
+  // Hide header during gameplay, add game-active class
   document.body.classList.add('game-active');
   document.getElementById('messages').classList.remove('hidden');
   document.getElementById('split-divider').classList.remove('hidden');
@@ -1414,27 +1393,41 @@ if (betaInput) {
 
 
 // --- Mode Selection ---
+var selectedGameMode = null;
+
 async function showModeSelection() {
   document.getElementById('mode-select-screen').classList.remove('hidden');
 }
 
 async function selectMode(mode) {
-  if (mode === 'storyline') {
-    isStorylineMode = true;
-    document.getElementById('mode-select-screen').classList.add('hidden');
-    document.getElementById('start-screen').classList.remove('hidden');
-    loadAdventures();
-  } else if (mode === 'campaign') {
-    // Campaign mode — create a campaign session
-    document.getElementById('mode-select-screen').classList.add('hidden');
-    document.getElementById('start-screen').classList.remove('hidden');
-    loadAdventures();
-    // TODO: Show campaign-specific UI (lobby, theme selection, etc.)
-    // For now, redirect to adventure selection as campaign entry point
-  } else if (mode === 'digital_dm') {
-    // Digital DM mode — coming soon
-    alert('Digital DM mode is in development. The backend is ready — frontend coming soon!');
-  }
+  selectedGameMode = mode;
+  isAdventureMode = (mode === 'storyline');
+  document.getElementById('mode-select-screen').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
+  loadAdventures();
+}
+
+// Apply UI config from server response based on game mode
+function applyModeUIConfig(uiConfig) {
+  if (!uiConfig) return;
+  // Show/hide HP bar
+  var charBar = document.getElementById('char-bar');
+  if (charBar) { if (uiConfig.showHpBar) charBar.classList.remove('hidden'); else charBar.classList.add('hidden'); }
+  // Show/hide coin bar
+  var coinBar = document.getElementById('coin-bar');
+  if (coinBar) { if (uiConfig.showCoinBar) coinBar.classList.remove('hidden'); else coinBar.classList.add('hidden'); }
+  // Show/hide inventory toggle
+  var invToggle = document.getElementById('inv-toggle');
+  if (invToggle) { if (uiConfig.showInventoryPanel) invToggle.classList.remove('hidden'); else invToggle.classList.add('hidden'); }
+  // Show/hide free text entry
+  var inputRow = document.getElementById('input-row');
+  if (inputRow) { inputRow.style.display = uiConfig.showFreeTextEntry ? '' : 'none'; }
+  // Show/hide voice input button
+  var voiceToggle = document.getElementById('voice-toggle');
+  if (voiceToggle) { voiceToggle.style.display = uiConfig.showVoiceInputButton ? '' : 'none'; }
+  // Show/hide class selection in start form
+  var classSelect = document.getElementById('player-class');
+  if (classSelect) { classSelect.style.display = uiConfig.allowClassSelection ? '' : 'none'; }
 }
 
 async function loadAdventures() {
@@ -1483,7 +1476,8 @@ async function startGame() {
         playerName: name,
         characterClass: cls,
         characterRace: 'human',
-        betaToken: betaToken
+        betaToken: betaToken,
+        gameMode: selectedGameMode || 'storyline'
       })
     });
     var data = await resp.json();
@@ -1506,6 +1500,8 @@ async function startGame() {
     playerRole = 'host';
     lastMsgIndex = 0;
     showGameUI(data.character, data.rejoinCode, false);
+    // Apply mode UI config if server returned it
+    if (data.uiConfig) applyModeUIConfig(data.uiConfig);
     window.history.replaceState({}, '', '?session=' + sessionId);
     startPolling();
   } catch(e) {
@@ -2416,34 +2412,7 @@ function reconnect() {
 })();
 </script>
 
-<script>
-// Beta access gate
-(function() {
-  var gate = 'BIND-TY5Y';
-  var stored = localStorage.getItem('tb_auth');
-  if (stored === gate) {
-    document.getElementById('accessGate').style.display = 'none';
-  } else {
-    document.getElementById('accessGate').style.display = 'flex';
-    document.getElementById('gateInput').focus();
-  }
-})();
-function submitGate() {
-  var gate = 'BIND-TY5Y';
-  var input = document.getElementById('gateInput').value.trim();
-  if (input === gate) {
-    localStorage.setItem('tb_auth', gate);
-    document.getElementById('accessGate').style.display = 'none';
-  } else {
-    document.getElementById('gateError').style.display = 'block';
-    document.getElementById('gateInput').value = '';
-    document.getElementById('gateInput').focus();
-  }
-}
-document.getElementById('gateInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') submitGate();
-});
-</script>
+
 
 
 <!-- Story Mode Engine -->
@@ -2460,7 +2429,7 @@ var storyPlayerState = null;
 var storySelectedClass = null;
 var storyCurrentSceneId = null;
 
-var isStorylineMode = false;
+var isAdventureMode = false;
 
 
 // ── Chunk 3: Class Selection ────────────────────────────────────────
@@ -2665,7 +2634,7 @@ function setStoryScene(sceneManifest, sceneId) {
   }
 }
 
-// ── Hook: Override Begin Adventure button for storyline mode ─────────
+// ── Hook: Override Begin Adventure button for adventure mode ─────────
 
 (function() {
   var btn = document.getElementById('begin-adventure-btn');
@@ -2675,9 +2644,9 @@ function setStoryScene(sceneManifest, sceneId) {
     e.preventDefault();
     this.disabled = true;
     this.textContent = 'Starting...';
-    // If storyline mode, show class selection first
+    // If adventure mode, show class selection first
     // Otherwise start directly
-    if (isStorylineMode) {
+    if (isAdventureMode) {
       showClassSelection();
     } else {
       startGame().catch(function() {
