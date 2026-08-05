@@ -70,7 +70,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;heig
 #suggest-btn{background:#6B5CE7;border:1px solid #6B5CE7;color:#fff;padding:14px 22px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 
 /* Voice toggle */
-#voice-toggle{position:fixed;top:12px;right:12px;z-index:100;display:flex;align-items:center;gap:8px;background:#1A1A2E;border:1px solid #C9A84C44;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;color:#C9A84C;transition:all 0.2s;}
+#voice-toggle{position:fixed;top:54px;right:12px;z-index:1001;display:flex;align-items:center;gap:8px;background:#1A1A2E;border:1px solid #C9A84C44;border-radius:8px;padding:8px 14px;cursor:pointer;font-family:'Helvetica Neue',Arial,sans-serif;font-size:0.85em;color:#C9A84C;transition:all 0.2s;}
 #voice-toggle:hover{border-color:#C9A84C;background:#C9A84C15;}
 #voice-toggle .voice-icon{font-size:1.1em;}
 #voice-toggle .voice-label{font-weight:600;}
@@ -1965,6 +1965,14 @@ function handleMessage(msg) {
       if (playerRole === 'spectator') {
         // Spectators see the suggested actions as read-only suggestions they can also propose
         showSpectatorActions((msg.metadata && msg.metadata.actions) || []);
+      } else if (storyModeActive) {
+        // Storyline mode: convert server actions to story button format and render
+        var rawActions = (msg.metadata && msg.metadata.actions) || [];
+        var storyBtns = rawActions.map(function(a, i) {
+          var label = (typeof a === 'string') ? a : (a.label || a.text || '');
+          return { id: 'action_' + i, type: 'explore', label: label };
+        });
+        if (storyBtns.length > 0) renderStoryButtons(storyBtns);
       } else {
         showActions((msg.metadata && msg.metadata.actions) || []);
       }
@@ -2799,9 +2807,17 @@ function selectStoryClass(classId) {
 function beginStoryAdventure() {
   var btn = document.getElementById('begin-adventure-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
+  // Force-hide input row and send button for storyline mode
+  var inputRow = document.getElementById('input-row');
+  if (inputRow) inputRow.style.display = 'none';
   startGame().then(function() {
     // Initialize story mode after session is created
     storyModeActive = true;
+    // Force-hide again after UI is set up
+    var inputRow2 = document.getElementById('input-row');
+    if (inputRow2) inputRow2.style.display = 'none';
+    var actionBtns = document.getElementById('action-buttons');
+    if (actionBtns) actionBtns.classList.add('storyline-actions');
     if (window.StoryEngine && storySelectedClass) {
       storyPlayerState = window.StoryEngine.createPlayerState(storySelectedClass);
       // Bug fix #2+#5: hide duplicate char-bar and coin-bar in story mode (story-hp-bar replaces them)
