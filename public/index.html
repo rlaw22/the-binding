@@ -652,6 +652,38 @@ body.game-active #auto-rejoin-banner{display:none;}
   transform: translateY(0);
   box-shadow: 0 2px 8px #C9A84C33;
 }
+/* ── Toast Notifications ──────────────────────────────────────────────────── */
+#toast-container {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: #1A1A2E;
+  border: 1px solid #e74c3c66;
+  color: #F5F0E1;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-family: Georgia, serif;
+  font-size: 0.92em;
+  max-width: 90vw;
+  text-align: center;
+  box-shadow: 0 4px 20px #0008;
+  animation: toastIn 0.3s ease forwards;
+  pointer-events: auto;
+}
+.toast.toast-error { border-color: #e74c3c; background: #1A1A2E; }
+.toast.toast-info { border-color: #C9A84C; background: #1A1A2E; }
+.toast.toast-fade { animation: toastOut 0.3s ease forwards; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-10px); } }
 /* Mobile responsive for setup screen */
 @media (max-width: 768px) {
   #storyline-setup-screen { padding: 12px 14px; }
@@ -951,6 +983,7 @@ body.game-active #auto-rejoin-banner{display:none;}
   </div>
 
   <div id="coin-flash"></div>
+  <div id="toast-container"></div>
   <!-- Progress Tracker -->
   <div id="progress-bar" class="hidden">
     <span class="act-label" id="progress-act">Act I</span>
@@ -1268,7 +1301,7 @@ startGame = async function() {
         document.getElementById('gate-screen').classList.remove('hidden');
         document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
       } else {
-        alert(data.error);
+        showToast(data.error);
       }
       return;
     }
@@ -1289,7 +1322,7 @@ startGame = async function() {
     window.history.replaceState({}, '', '?session=' + sessionId);
     startPolling();
   } catch(e) {
-    alert('Failed to create session: ' + e.message);
+    showToast('Failed to create session: ' + e.message);
   }
 };
 
@@ -1369,7 +1402,7 @@ function reconnectToSession(sid) {
   fetch('/api/sessions/' + sid)
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.error) { alert('Session not found: ' + data.error); return; }
+      if (data.error) { showToast('Session not found: ' + data.error); return; }
       sessionId = sid;
       playerRole = 'host';
       document.getElementById('start-screen').classList.add('hidden');
@@ -1377,7 +1410,7 @@ function reconnectToSession(sid) {
       showGameUI(data.character, null, false);
       startPolling();
     })
-    .catch(function(e) { alert('Failed to reconnect: ' + e.message); });
+    .catch(function(e) { showToast('Failed to reconnect: ' + e.message); });
 }
 
 function showRejoinForm() {
@@ -1402,7 +1435,7 @@ function rejoinGame() {
   fetch('/api/rejoin/' + encodeURIComponent(code))
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (data.error) { alert('Rejoin failed: ' + data.error); return; }
+      if (data.error) { showToast('Rejoin failed: ' + data.error); return; }
       sessionId = data.sessionId;
       playerRole = 'host';
       document.getElementById('start-screen').classList.add('hidden');
@@ -1411,13 +1444,13 @@ function rejoinGame() {
       window.history.replaceState({}, '', '?session=' + sessionId);
       startPolling();
     })
-    .catch(function(e) { alert('Rejoin failed: ' + e.message); });
+    .catch(function(e) { showToast('Rejoin failed: ' + e.message); });
 }
 
 function joinAsSpectator() {
   var name = document.getElementById('spectator-name').value.trim() || 'Watcher';
   var codeOrLink = document.getElementById('spectate-code-input').value.trim();
-  if (!codeOrLink) { alert('Enter a session code or link'); return; }
+  if (!codeOrLink) { showToast('Enter a session code or link'); return; }
 
   // Extract session ID from link or use as-is
   var sid = codeOrLink;
@@ -1433,10 +1466,10 @@ function joinAsSpectator() {
     fetch('/api/rejoin/' + encodeURIComponent(sid.toUpperCase()))
       .then(function(r) { return r.json(); })
       .then(function(data) {
-        if (data.error) { alert('Session not found: ' + data.error); return; }
+        if (data.error) { showToast('Session not found: ' + data.error); return; }
         return joinSession(data.sessionId, name);
       })
-      .catch(function(e) { alert('Failed to find session: ' + e.message); });
+      .catch(function(e) { showToast('Failed to find session: ' + e.message); });
   } else {
     joinSession(sid, name);
   }
@@ -1450,7 +1483,7 @@ function joinSession(sid, name) {
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
-    if (data.error) { alert('Join failed: ' + data.error); return; }
+    if (data.error) { showToast('Join failed: ' + data.error); return; }
     sessionId = data.sessionId;
     playerId = data.playerId;
     playerRole = 'spectator';
@@ -1461,7 +1494,7 @@ function joinSession(sid, name) {
     window.history.replaceState({}, '', '?session=' + sessionId + '&spectate=true');
     startPolling();
   })
-  .catch(function(e) { alert('Failed to join: ' + e.message); });
+  .catch(function(e) { showToast('Failed to join: ' + e.message); });
 }
 
 function showGameUI(character, code, isSpectator) {
@@ -1730,6 +1763,9 @@ async function startStorylineFromSetup() {
   storySelectedClass = setupSelectedClass;
   // Hide setup screen
   document.getElementById('storyline-setup-screen').classList.add('hidden');
+  // Remove selected class from cards to prevent ::after checkmark leaking into DOM
+  var cards = document.querySelectorAll('.storyline-class-card');
+  for (var i = 0; i < cards.length; i++) cards[i].classList.remove('selected');
   var btn = document.getElementById('storyline-begin-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
   // Start the game directly — class was already picked, no overlay needed
@@ -1821,7 +1857,7 @@ async function startGame() {
         document.getElementById('gate-screen').classList.remove('hidden');
         document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
       } else {
-        alert(data.error);
+        showToast(data.error);
       }
       return;
     }
@@ -1838,7 +1874,7 @@ async function startGame() {
     window.history.replaceState({}, '', '?session=' + sessionId);
     startPolling();
   } catch(e) {
-    alert('Failed to create session: ' + e.message);
+    showToast('Failed to create session: ' + e.message);
   }
 }
 
@@ -2166,6 +2202,18 @@ var voiceEnabled = false;
 var voiceQueue = [];
 var isPlayingVoice = false;
 var currentAudio = null;
+
+function showToast(message, type) {
+  type = type || 'error';
+  var container = document.getElementById('toast-container');
+  if (!container) return;
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(function() { toast.classList.add('toast-fade'); }, 4000);
+  setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 4500);
+}
 
 function toggleVoice() {
   voiceEnabled = !voiceEnabled;
