@@ -1716,7 +1716,17 @@ async function startStorylineFromSetup() {
   // Set values in the original form fields that startGame() reads
   document.getElementById('player-name').value = name;
   document.getElementById('player-class').value = setupSelectedClass || 'fighter';
-  if (adventureId) document.getElementById('adventure-select').value = adventureId;
+  // Ensure the hidden adventure-select has this option so startGame() can read it
+  if (adventureId) {
+    var mainSelect = document.getElementById('adventure-select');
+    if (mainSelect && !mainSelect.querySelector('option[value="' + adventureId + '"]')) {
+      var opt = document.createElement('option');
+      opt.value = adventureId;
+      opt.textContent = adventureId;
+      mainSelect.appendChild(opt);
+    }
+    mainSelect.value = adventureId;
+  }
   storySelectedClass = setupSelectedClass;
   // Hide setup screen
   document.getElementById('storyline-setup-screen').classList.add('hidden');
