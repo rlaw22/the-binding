@@ -34,7 +34,7 @@
  *
  * Environment variables (auto-detects provider):
  *   XAI_API_KEY       — Enables Grok Imagine (xAI)
- *   OPENAI_API_KEY    — Enables DALL-E (OpenAI)
+ *   OPENAI_API_KEY    — Enables gpt-image-1 (OpenAI)
  *
  * When no key is set, all generate*() calls return null gracefully —
  * the game continues without images.
