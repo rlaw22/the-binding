@@ -59,6 +59,7 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;heig
 #actions{display:flex;flex-direction:column;gap:10px;padding:10px 4px 8px 0;overflow-y:auto;flex:3;flex-shrink:0;-webkit-overflow-scrolling:touch;min-height:0;}
 .action-btn{background:#C9A84C15;border:1px solid #C9A84C44;color:#C9A84C;padding:14px 18px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:1em;text-align:left;transition:all 0.2s;line-height:1.4;}
 .action-btn:hover,.action-btn:active{background:#C9A84C33;border-color:#C9A84C;}
+.storyline-actions .action-btn{width:100%;padding:18px 20px;font-size:1.1em;min-height:54px;}
 #input-row{display:flex;gap:10px;margin-top:10px;}
 #free-input{flex:1;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;touch-action:manipulation;}
 #free-input::placeholder{color:#F5F0E144;}
@@ -1032,6 +1033,8 @@ startGame = async function() {
     saveSessionToStorage(sessionId, name);
 
     showGameUI(data.character, data.rejoinCode, false);
+    // Store game mode for UI gating
+    currentGameMode = data.gameMode || 'storyline';
     // Apply mode UI config if server returned it
     if (data.uiConfig) applyModeUIConfig(data.uiConfig);
     window.history.replaceState({}, '', '?session=' + sessionId);
@@ -1394,6 +1397,7 @@ if (betaInput) {
 
 // --- Mode Selection ---
 var selectedGameMode = null;
+var currentGameMode = 'storyline';
 
 async function showModeSelection() {
   document.getElementById('mode-select-screen').classList.remove('hidden');
@@ -1422,6 +1426,9 @@ function applyModeUIConfig(uiConfig) {
   // Show/hide free text entry
   var inputRow = document.getElementById('input-row');
   if (inputRow) { inputRow.style.display = uiConfig.showFreeTextEntry ? '' : 'none'; }
+  // Resize action buttons in storyline mode
+  var actionBtns = document.getElementById('action-buttons');
+  if (actionBtns) { if (uiConfig.showFreeTextEntry) actionBtns.classList.remove('storyline-actions'); else actionBtns.classList.add('storyline-actions'); }
   // Show/hide voice input button
   var voiceToggle = document.getElementById('voice-toggle');
   if (voiceToggle) { voiceToggle.style.display = uiConfig.showVoiceInputButton ? '' : 'none'; }
@@ -1500,6 +1507,8 @@ async function startGame() {
     playerRole = 'host';
     lastMsgIndex = 0;
     showGameUI(data.character, data.rejoinCode, false);
+    // Store game mode for UI gating on rejoin
+    if (data.gameMode) currentGameMode = data.gameMode;
     // Apply mode UI config if server returned it
     if (data.uiConfig) applyModeUIConfig(data.uiConfig);
     window.history.replaceState({}, '', '?session=' + sessionId);
@@ -1684,8 +1693,10 @@ function showActions(actions) {
     container.appendChild(btn);
   }
   sending = false;
-  document.getElementById('send-btn').disabled = false;
-  document.getElementById('free-input').disabled = false;
+  if (currentGameMode !== 'storyline') {
+    document.getElementById('send-btn').disabled = false;
+    document.getElementById('free-input').disabled = false;
+  }
 }
 
 function showSpectatorActions(actions) {
@@ -1767,6 +1778,7 @@ function sendAction(text) {
 }
 
 function sendFree() {
+  if (currentGameMode === 'storyline') return;
   var input = document.getElementById('free-input');
   var text = input.value.trim();
   if (!text) return;
