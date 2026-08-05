@@ -473,6 +473,199 @@ body.game-active #auto-rejoin-banner{display:none;}
 .story-btn-bad_choice { border-color: #555; color: #888; font-style: italic; }
 .story-btn-bad_choice:hover:not(:disabled) { background: #55555522; }
 
+/* ── Storyline Combined Setup Screen ──────────────────────────────────────── */
+#storyline-setup-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+  flex: 1;
+  padding: 16px 20px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.storyline-setup-inner {
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 24px;
+}
+.setup-title {
+  color: #C9A84C;
+  font-size: 1.5em;
+  letter-spacing: 4px;
+  text-align: center;
+  text-shadow: 0 0 24px #C9A84C44, 0 2px 8px #0008;
+}
+.setup-ornament {
+  text-align: center;
+  color: #C9A84C55;
+  font-size: 0.85em;
+  letter-spacing: 10px;
+  margin-top: -10px;
+  margin-bottom: -4px;
+}
+.setup-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.setup-label {
+  color: #C9A84C;
+  font-size: 0.82em;
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.setup-input {
+  background: #0C0B10;
+  border: 2px solid #C9A84C33;
+  color: #F5F0E1;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-family: Georgia, serif;
+  font-size: 1.1em;
+  text-align: center;
+  letter-spacing: 3px;
+  transition: all 0.3s;
+  width: 100%;
+}
+.setup-input:focus {
+  outline: none;
+  border-color: #C9A84C;
+  box-shadow: 0 0 20px #C9A84C33, inset 0 0 12px #C9A84C08;
+}
+.setup-input::placeholder {
+  color: #F5F0E133;
+  letter-spacing: 1px;
+}
+.setup-select {
+  background: #0C0B10;
+  border: 2px solid #C9A84C33;
+  color: #F5F0E1;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-family: Georgia, serif;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23C9A84C' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+.setup-select:focus {
+  outline: none;
+  border-color: #C9A84C;
+  box-shadow: 0 0 12px #C9A84C22;
+}
+.setup-select option {
+  background: #0C0B10;
+  color: #F5F0E1;
+}
+.setup-desc {
+  color: #F5F0E188;
+  font-size: 0.88em;
+  line-height: 1.5;
+  font-style: italic;
+  padding: 0 4px;
+  text-align: center;
+}
+.storyline-class-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.storyline-class-card {
+  border: 2px solid #C9A84C22;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.storyline-class-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at top, #C9A84C08 0%, transparent 70%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.storyline-class-card:hover::before {
+  opacity: 1;
+}
+.storyline-class-card.selected {
+  border-color: #C9A84C;
+  background: #C9A84C12;
+  box-shadow: 0 0 24px #C9A84C22, inset 0 0 20px #C9A84C08;
+  transform: translateY(-2px);
+}
+.storyline-class-card.selected::before {
+  opacity: 1;
+}
+.storyline-class-card.selected::after {
+  content: '\2713';
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  color: #C9A84C;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-shadow: 0 0 8px #C9A84C88;
+}
+.setup-begin-btn {
+  background: linear-gradient(135deg, #C9A84C, #E8A838);
+  border: 2px solid #C9A84C;
+  color: #1A1A2E;
+  padding: 16px 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  font-family: Georgia, serif;
+  font-size: 1.15em;
+  letter-spacing: 3px;
+  width: 100%;
+  transition: all 0.3s;
+  margin-top: 4px;
+  text-transform: uppercase;
+  box-shadow: 0 4px 16px #C9A84C33;
+}
+.setup-begin-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: #C9A84C;
+  box-shadow: none;
+}
+.setup-begin-btn:not(:disabled):hover {
+  background: linear-gradient(135deg, #E8A838, #F0C060);
+  border-color: #E8A838;
+  box-shadow: 0 6px 24px #C9A84C55;
+  transform: translateY(-2px);
+}
+.setup-begin-btn:not(:disabled):active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px #C9A84C33;
+}
+/* Mobile responsive for setup screen */
+@media (max-width: 768px) {
+  #storyline-setup-screen { padding: 12px 14px; }
+  .setup-title { font-size: 1.25em; letter-spacing: 3px; }
+  .storyline-class-grid { gap: 10px; }
+  .class-card.storyline-class-card { padding: 12px; }
+  .cc-name { font-size: 1em; }
+  .cc-desc { font-size: 0.8em; }
+}
+@media (max-width: 400px) {
+  .storyline-class-grid { grid-template-columns: 1fr; }
+  .setup-title { font-size: 1.1em; letter-spacing: 2px; }
+}
+
 </style>
 </head>
 <body>
@@ -619,7 +812,62 @@ body.game-active #auto-rejoin-banner{display:none;}
   </div>
 
 
-  <!-- Story Mode: Class Selection Overlay -->
+  <!-- Storyline Mode: Combined Setup Screen (Name + Adventure + Class) -->
+  <div id="storyline-setup-screen" class="hidden">
+    <div class="storyline-setup-inner">
+      <h2 class="setup-title">BEGIN YOUR ADVENTURE</h2>
+      <div class="setup-ornament">&#10022; &#10022; &#10022;</div>
+
+      <!-- Name Input -->
+      <div class="setup-section">
+        <label class="setup-label">Your Name</label>
+        <input type="text" id="storyline-player-name" class="setup-input" placeholder="Enter your name..." value="" oninput="validateStorylineSetup()">
+      </div>
+
+      <!-- Adventure Selection -->
+      <div class="setup-section">
+        <label class="setup-label">Choose Your Story</label>
+        <select id="storyline-adventure-select" class="setup-select"></select>
+        <p id="storyline-adventure-desc" class="setup-desc"></p>
+      </div>
+
+      <!-- Class Selection Cards -->
+      <div class="setup-section">
+        <label class="setup-label">Choose Your Class</label>
+        <div class="storyline-class-grid" id="storyline-class-grid">
+          <div class="class-card storyline-class-card" onclick="selectSetupClass(this, 'fighter')">
+            <div class="cc-name">Fighter</div>
+            <div class="cc-hp">12 HP</div>
+            <div class="cc-desc">A battle-hardened warrior. High survivability with Shield Block to reduce incoming damage.</div>
+            <div class="cc-abilities">Shield Block &#8226; Second Wind</div>
+          </div>
+          <div class="class-card storyline-class-card" onclick="selectSetupClass(this, 'cleric')">
+            <div class="cc-name">Cleric</div>
+            <div class="cc-hp">10 HP</div>
+            <div class="cc-desc">A holy healer. Turn Undead devastates the supernatural, and healing keeps you in the fight.</div>
+            <div class="cc-abilities">Turn Undead &#8226; Healing Word</div>
+          </div>
+          <div class="class-card storyline-class-card" onclick="selectSetupClass(this, 'mage')">
+            <div class="cc-name">Mage</div>
+            <div class="cc-hp">8 HP</div>
+            <div class="cc-desc">A wielder of arcane power. Fragile but deadly &#8212; Arcane Shield absorbs supernatural damage.</div>
+            <div class="cc-abilities">Arcane Shield &#8226; Fire Bolt</div>
+          </div>
+          <div class="class-card storyline-class-card" onclick="selectSetupClass(this, 'rogue')">
+            <div class="cc-name">Rogue</div>
+            <div class="cc-hp">9 HP</div>
+            <div class="cc-desc">A shadow-skilled survivor. Shadow Step lets you escape danger untouched and find extra loot.</div>
+            <div class="cc-abilities">Shadow Step &#8226; Backstab</div>
+          </div>
+        </div>
+      </div>
+
+      <button id="storyline-begin-btn" class="setup-begin-btn" onclick="startStorylineFromSetup()" disabled>Begin Adventure</button>
+    </div>
+  </div>
+
+
+  <!-- Story Mode: Class Selection Overlay (used by Campaign/Digital DM) -->
   <div id="class-select-overlay" class="hidden" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(10,10,30,0.95);z-index:5000;display:none;align-items:center;justify-content:center;flex-direction:column;">
     <div class="class-panel">
       <h2>Choose Your Class</h2>
@@ -861,7 +1109,7 @@ function initSpectatorMode() {
   playerRole = 'spectator';
 
   // Hide all pre-game screens
-  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'mode-select-screen', 'start-screen'];
+  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'mode-select-screen', 'start-screen', 'storyline-setup-screen'];
   screens.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.add('hidden');
@@ -1016,6 +1264,7 @@ startGame = async function() {
         localStorage.removeItem('betaToken');
         betaToken = null;
         document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('storyline-setup-screen').classList.add('hidden');
         document.getElementById('gate-screen').classList.remove('hidden');
         document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
       } else {
@@ -1124,6 +1373,7 @@ function reconnectToSession(sid) {
       sessionId = sid;
       playerRole = 'host';
       document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('storyline-setup-screen').classList.add('hidden');
       showGameUI(data.character, null, false);
       startPolling();
     })
@@ -1156,6 +1406,7 @@ function rejoinGame() {
       sessionId = data.sessionId;
       playerRole = 'host';
       document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('storyline-setup-screen').classList.add('hidden');
       showGameUI(data.character, code, false);
       window.history.replaceState({}, '', '?session=' + sessionId);
       startPolling();
@@ -1204,6 +1455,7 @@ function joinSession(sid, name) {
     playerId = data.playerId;
     playerRole = 'spectator';
     document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('storyline-setup-screen').classList.add('hidden');
     // Get host character for the char bar
     showGameUI(data.character, null, true);
     window.history.replaceState({}, '', '?session=' + sessionId + '&spectate=true');
@@ -1407,8 +1659,13 @@ async function selectMode(mode) {
   selectedGameMode = mode;
   isAdventureMode = (mode === 'storyline');
   document.getElementById('mode-select-screen').classList.add('hidden');
-  document.getElementById('start-screen').classList.remove('hidden');
-  loadAdventures();
+  if (isAdventureMode) {
+    document.getElementById('storyline-setup-screen').classList.remove('hidden');
+    loadStorylineAdventures();
+  } else {
+    document.getElementById('start-screen').classList.remove('hidden');
+    loadAdventures();
+  }
 }
 
 // Apply UI config from server response based on game mode
@@ -1435,6 +1692,62 @@ function applyModeUIConfig(uiConfig) {
   // Show/hide class selection in start form
   var classSelect = document.getElementById('player-class');
   if (classSelect) { classSelect.style.display = uiConfig.allowClassSelection ? '' : 'none'; }
+}
+
+var setupSelectedClass = null;
+
+function selectSetupClass(el, classId) {
+  var cards = document.querySelectorAll('.storyline-class-card');
+  for (var i = 0; i < cards.length; i++) cards[i].classList.remove('selected');
+  el.classList.add('selected');
+  setupSelectedClass = classId;
+  validateStorylineSetup();
+}
+
+function validateStorylineSetup() {
+  var name = document.getElementById('storyline-player-name').value.trim();
+  var btn = document.getElementById('storyline-begin-btn');
+  if (btn) btn.disabled = !(name && setupSelectedClass);
+}
+
+async function startStorylineFromSetup() {
+  var name = document.getElementById('storyline-player-name').value.trim() || 'Adventurer';
+  var adventureId = document.getElementById('storyline-adventure-select').value;
+  // Set values in the original form fields that startGame() reads
+  document.getElementById('player-name').value = name;
+  document.getElementById('player-class').value = setupSelectedClass || 'fighter';
+  if (adventureId) document.getElementById('adventure-select').value = adventureId;
+  storySelectedClass = setupSelectedClass;
+  // Hide setup screen
+  document.getElementById('storyline-setup-screen').classList.add('hidden');
+  var btn = document.getElementById('storyline-begin-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
+  // Start the game directly — class was already picked, no overlay needed
+  beginStoryAdventure();
+}
+
+async function loadStorylineAdventures() {
+  try {
+    var resp = await fetch('/api/adventures');
+    if (!resp.ok) return;
+    var adventures = await resp.json();
+    var select = document.getElementById('storyline-adventure-select');
+    var desc = document.getElementById('storyline-adventure-desc');
+    if (!select || !adventures || !adventures.length) return;
+    select.innerHTML = '';
+    for (var i = 0; i < adventures.length; i++) {
+      var opt = document.createElement('option');
+      opt.value = adventures[i].id;
+      opt.textContent = adventures[i].name + (adventures[i].levelRange ? ' (' + adventures[i].levelRange.label + ')' : '');
+      opt.setAttribute('data-description', adventures[i].description || '');
+      select.appendChild(opt);
+    }
+    select.addEventListener('change', function() {
+      var selected = select.options[select.selectedIndex];
+      if (desc && selected) desc.textContent = selected.getAttribute('data-description') || '';
+    });
+    if (select.options.length > 0 && desc) desc.textContent = select.options[0].getAttribute('data-description') || '';
+  } catch(e) { /* non-blocking */ }
 }
 
 async function loadAdventures() {
@@ -1494,6 +1807,7 @@ async function startGame() {
         localStorage.removeItem('betaToken');
         betaToken = null;
         document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('storyline-setup-screen').classList.add('hidden');
         document.getElementById('gate-screen').classList.remove('hidden');
         document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
       } else {
@@ -2646,7 +2960,8 @@ function setStoryScene(sceneManifest, sceneId) {
   }
 }
 
-// ── Hook: Override Begin Adventure button for adventure mode ─────────
+// ── Hook: Override Begin Adventure button (Campaign/Digital DM only) ──
+// Storyline mode now uses the combined setup screen (#storyline-setup-screen)
 
 (function() {
   var btn = document.getElementById('begin-adventure-btn');
@@ -2656,9 +2971,8 @@ function setStoryScene(sceneManifest, sceneId) {
     e.preventDefault();
     this.disabled = true;
     this.textContent = 'Starting...';
-    // If adventure mode, show class selection first
-    // Otherwise start directly
-    if (isAdventureMode) {
+    // Campaign / Digital DM: show class selection overlay first
+    if (!isAdventureMode) {
       showClassSelection();
     } else {
       startGame().catch(function() {
