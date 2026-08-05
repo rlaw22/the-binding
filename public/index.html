@@ -60,6 +60,38 @@ body{background:#1A1A2E;color:#F5F0E1;font-family:Georgia,serif;height:100%;heig
 .action-btn{background:#C9A84C15;border:1px solid #C9A84C44;color:#C9A84C;padding:14px 18px;border-radius:8px;cursor:pointer;font-family:Georgia,serif;font-size:1em;text-align:left;transition:all 0.2s;line-height:1.4;}
 .action-btn:hover,.action-btn:active{background:#C9A84C33;border-color:#C9A84C;}
 .storyline-actions .action-btn{width:100%;padding:18px 20px;font-size:1.1em;min-height:54px;}
+/* ── Storyline Mode: Horizontal Scroll Strip Layout ───────────────────────── */
+body.storyline-active #messages{
+  flex:1;min-height:0;padding-bottom:8px;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(139,119,80,0.04) 3px,rgba(139,119,80,0.04) 6px),
+    repeating-linear-gradient(90deg,transparent,transparent 5px,rgba(120,100,60,0.02) 5px,rgba(120,100,60,0.02) 10px),
+    linear-gradient(180deg,#3a3028 0%,#2e261f 40%,#25201a 100%);
+  border-left:2px solid #C9A84C22;
+  border-right:2px solid #C9A84C22;
+}
+body.storyline-active #messages .msg{color:#f0e6d2;}
+body.storyline-active #messages .msg.dm{border-left-color:#C9A84C55;}
+body.storyline-active #split-divider{display:none;}
+body.storyline-active #actions{
+  flex:none;height:auto;max-height:72px;
+  flex-direction:row;overflow-x:auto;overflow-y:hidden;
+  gap:8px;padding:6px 4px;border-top:1px solid #C9A84C22;flex-shrink:0;
+}
+body.storyline-active #action-buttons{display:flex;flex-direction:row;gap:8px;flex-wrap:nowrap;}
+body.storyline-active .storyline-actions .action-btn{
+  flex-shrink:0;min-width:90px;max-width:180px;
+  padding:6px 14px;font-size:0.82em;min-height:32px;
+  white-space:nowrap;border-radius:20px;touch-action:manipulation;
+}
+/* ── Ambient Candle (upper-left) ──────────────────────────────────────────── */
+body.storyline-active #app::before{
+  content:'';position:fixed;top:56px;left:10px;
+  width:5px;height:5px;background:#E8A838;border-radius:50%;
+  box-shadow:0 0 8px 3px #E8A83855,0 0 16px 6px #E8A83822;
+  pointer-events:none;z-index:1;animation:candleFlicker 3s ease-in-out infinite;
+}
+@keyframes candleFlicker{0%,100%{opacity:0.5;transform:scale(1);}50%{opacity:0.85;transform:scale(1.15);}}
 #input-row{display:flex;gap:10px;margin-top:10px;}
 #free-input{flex:1;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;touch-action:manipulation;}
 #free-input::placeholder{color:#F5F0E144;}
@@ -155,6 +187,8 @@ body.game-active #auto-rejoin-banner{display:none;}
   .msg.dm{font-size:1.05em;}
   #action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .action-btn{padding:10px 14px;font-size:0.9em;}
+  body.storyline-active .storyline-actions .action-btn{min-width:80px;padding:5px 10px;font-size:0.78em;min-height:28px;}
+  body.storyline-active #actions{max-height:60px;}
   #input-row{gap:8px;margin-top:6px;}
   #free-input{padding:10px 14px;font-size:1em;}
   #send-btn{padding:10px 18px;font-size:1em;}
@@ -1503,6 +1537,7 @@ function showGameUI(character, code, isSpectator) {
   if (startEl) startEl.classList.add('hidden');
   // Hide header during gameplay, add game-active class
   document.body.classList.add('game-active');
+  document.body.classList.remove('storyline-active');
   document.getElementById('messages').classList.remove('hidden');
   document.getElementById('split-divider').classList.remove('hidden');
 
@@ -2861,6 +2896,7 @@ function beginStoryAdventure() {
   startGame().then(function() {
     // Initialize story mode after session is created
     storyModeActive = true;
+    document.body.classList.add('storyline-active');
     // Force-hide again after UI is set up
     var inputRow2 = document.getElementById('input-row');
     if (inputRow2) inputRow2.style.display = 'none';
@@ -2937,7 +2973,9 @@ function renderStoryButtons(buttons) {
   // Hide free input in story mode
   var inputRow = document.getElementById('input-row');
   if (inputRow) inputRow.style.display = 'none';
-}
+  // Reset horizontal scroll to show first buttons
+  var actionsEl = document.getElementById('actions');
+  if (actionsEl) actionsEl.scrollLeft = 0;
 
 function processStoryAction(buttonId, buttonType) {
   if (!storyPlayerState || !window.StoryEngine) return;
