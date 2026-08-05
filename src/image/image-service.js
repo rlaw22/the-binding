@@ -4,7 +4,7 @@
  * Provider-abstracted image generation for The Binding.
  * Supports:
  *   - Grok Imagine via xAI API  (XAI_API_KEY)
- *   - OpenAI DALL-E 2/3         (OPENAI_API_KEY)
+ *   - OpenAI gpt-image-1        (OPENAI_API_KEY)
  *
  * Auto-detects provider from env vars. Returns null (never throws) when no
  * API key is configured or when generation fails — the game continues without
@@ -187,17 +187,16 @@ async function generateWithXAI(prompt, config) {
 }
 
 /**
- * OpenAI DALL-E provider.
+ * OpenAI gpt-image-1 provider.
  */
 async function generateWithOpenAI(prompt, config) {
   const res = await postJSON(
     `${config.baseUrl || 'https://api.openai.com'}/v1/images/generations`,
     {
-      model: config.model || 'dall-e-3',
+      model: config.model || 'gpt-image-1',
       prompt,
       n: 1,
       size: '1024x1024',
-      response_format: 'url',
     },
     { Authorization: `Bearer ${config.apiKey}` },
   );
@@ -207,9 +206,15 @@ async function generateWithOpenAI(prompt, config) {
     throw new Error(`OpenAI API error ${res.status}: ${msg}`);
   }
 
+  // gpt-image-1 returns b64_json by default
+  const b64 = res.body?.data?.[0]?.b64_json;
+  if (b64) return `data:image/png;base64,${b64}`;
+
+  // Fallback: check for URL response (older models)
   const url = res.body?.data?.[0]?.url;
-  if (!url) throw new Error('OpenAI returned no image URL');
-  return url;
+  if (url) return url;
+
+  throw new Error('OpenAI returned no image data');
 }
 
 /**
@@ -341,7 +346,7 @@ function _buildProvider(name) {
         name: 'OpenAI',
         apiKey: process.env.OPENAI_API_KEY,
         baseUrl: process.env.OPENAI_BASE_URL || 'https://api.openai.com',
-        model: process.env.OPENAI_IMAGE_MODEL || 'dall-e-3',
+        model: process.env.OPENAI_IMAGE_MODEL || 'gpt-image-1',
         generate: generateWithOpenAI,
       };
     case 'replicate':
