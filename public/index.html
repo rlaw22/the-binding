@@ -1128,6 +1128,10 @@ body.game-active #auto-rejoin-banner{display:none;}
 <script src="/dice-roller.js"></script>
 <script src="/browser-tts.js"></script>
 <script>
+// Initialize Browser TTS (Web Speech API fallback)
+if (typeof BrowserTTS !== 'undefined') BrowserTTS.init();
+</script>
+<script>
 if (navigator.serviceWorker) {
   navigator.serviceWorker.register('/sw.js').catch(function() {});
 }
@@ -2021,6 +2025,10 @@ function handleMessage(msg) {
       break;
     case 'narration':
       addMessage('dm', msg.content);
+      // Speak narration if voice is enabled
+      if (voiceEnabled && typeof BrowserTTS !== 'undefined') {
+        BrowserTTS.speak(msg.content, { character: 'narrator' });
+      }
       // Render scene image if available
       if (msg.metadata && msg.metadata.sceneImageUrl) {
         var container = document.getElementById('messages');
@@ -2042,6 +2050,10 @@ function handleMessage(msg) {
       break;
     case 'player_action':
       addMessage('player', msg.content);
+      // Speak player action if voice is enabled (full response text, not abbreviation)
+      if (voiceEnabled && typeof BrowserTTS !== 'undefined') {
+        BrowserTTS.speak(msg.content, { character: 'player' });
+      }
       break;
     case 'suggested_actions':
       if (playerRole === 'spectator') {
@@ -2285,6 +2297,8 @@ function toggleVoice() {
       isPlayingVoice = false;
     }
     voiceQueue = [];
+    // Stop browser TTS
+    if (typeof BrowserTTS !== 'undefined') BrowserTTS.stop();
   }
   
   // Save preference

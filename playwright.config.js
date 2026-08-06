@@ -29,6 +29,13 @@ module.exports = defineConfig({
 
   projects: [
     {
+      name: 'smoke',
+      testMatch: '**/uxui-smoke-journey.test.js',
+      use: {
+        viewport: { width: 1280, height: 720 },
+      },
+    },
+    {
       name: 'ipad-portrait',
       use: {
         ...devices['iPad (gen 7)'],
