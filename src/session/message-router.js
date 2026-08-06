@@ -202,6 +202,7 @@ function suggestedActions(actions, prompt, options = {}) {
     actions: actions.map((a, i) => ({
       id: i + 1,
       label: a.label,
+      shortLabel: a.shortLabel || a.label,
       description: a.description || null,
       type: a.type || 'free'   // 'combat', 'skill_check', 'social', 'investigation', 'free'
     }))

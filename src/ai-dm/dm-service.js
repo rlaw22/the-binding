@@ -582,6 +582,139 @@ function getNextSceneId(game) {
  * 3 actions from undiscovered content + 1 exit action.
  * Exit position depends on pressure level.
  */
+/**
+ * Generate a compact 2-4 word short label for mobile buttons.
+ * Maps common D&D action verbs + extracts the key noun.
+ * Falls back to word-boundary truncation if no pattern matches.
+ */
+function generateShortLabel(label) {
+  if (!label || label.length <= 16) return label;
+
+  var lower = label.toLowerCase().trim();
+
+  // Map common verb phrases to short verbs
+  var verbPatterns = [
+    [/^talk to\s+/i, 'Talk'],
+    [/^speak to\s+/i, 'Talk'],
+    [/^speak with\s+/i, 'Talk'],
+    [/^chat with\s+/i, 'Talk'],
+    [/^converse with\s+/i, 'Talk'],
+    [/^examine\s+/i, 'Check'],
+    [/^examine the\s+/i, 'Check'],
+    [/^investigate\s+/i, 'Check'],
+    [/^inspect\s+/i, 'Check'],
+    [/^look at\s+/i, 'Check'],
+    [/^look in\s+/i, 'Check'],
+    [/^look behind\s+/i, 'Check'],
+    [/^look around\s+/i, 'Search'],
+    [/^search the\s+/i, 'Search'],
+    [/^search\s+/i, 'Search'],
+    [/^pick up\s+/i, 'Grab'],
+    [/^pick up the\s+/i, 'Grab'],
+    [/^take the\s+/i, 'Grab'],
+    [/^take\s+/i, 'Grab'],
+    [/^grab the\s+/i, 'Grab'],
+    [/^grab\s+/i, 'Grab'],
+    [/^approach the\s+/i, 'Approach'],
+    [/^approach\s+/i, 'Approach'],
+    [/^enter the\s+/i, 'Enter'],
+    [/^enter\s+/i, 'Enter'],
+    [/^open the\s+/i, 'Open'],
+    [/^open\s+/i, 'Open'],
+    [/^attack the\s+/i, 'Attack'],
+    [/^attack\s+/i, 'Attack'],
+    [/^fight the\s+/i, 'Fight'],
+    [/^fight\s+/i, 'Fight'],
+    [/^flee from\s+/i, 'Flee'],
+    [/^flee\s+/i, 'Flee'],
+    [/^run from\s+/i, 'Flee'],
+    [/^run away\s+/i, 'Flee'],
+    [/^escape\s+/i, 'Escape'],
+    [/^ask the\s+/i, 'Ask'],
+    [/^ask about\s+/i, 'Ask'],
+    [/^listen at\s+/i, 'Listen'],
+    [/^listen to\s+/i, 'Listen'],
+    [/^listen\s+/i, 'Listen'],
+    [/^hide behind\s+/i, 'Hide'],
+    [/^hide\s+/i, 'Hide'],
+    [/^wait for\s+/i, 'Wait'],
+    [/^wait\s+/i, 'Wait'],
+    [/^go to\s+/i, 'Go to'],
+    [/^go to the\s+/i, 'Go to'],
+    [/^move to\s+/i, 'Go to'],
+    [/^walk to\s+/i, 'Go to'],
+    [/^head to\s+/i, 'Go to'],
+    [/^head to the\s+/i, 'Go to'],
+    [/^use the\s+/i, 'Use'],
+    [/^use\s+/i, 'Use'],
+    [/^try to\s+/i, 'Try'],
+    [/^try the\s+/i, 'Try'],
+    [/^attempt to\s+/i, 'Try'],
+    [/^climb the\s+/i, 'Climb'],
+    [/^climb\s+/i, 'Climb'],
+    [/^drink the\s+/i, 'Drink'],
+    [/^drink\s+/i, 'Drink'],
+    [/^eat the\s+/i, 'Eat'],
+    [/^eat\s+/i, 'Eat'],
+    [/^read the\s+/i, 'Read'],
+    [/^read\s+/i, 'Read'],
+    [/^pray at\s+/i, 'Pray'],
+    [/^pray\s+/i, 'Pray'],
+    [/^pray to\s+/i, 'Pray'],
+    [/^get on\s+/i, 'Board'],
+    [/^board the\s+/i, 'Board'],
+    [/^board\s+/i, 'Board'],
+    [/^catch your\s+/i, 'Rest'],
+    [/^check your\s+/i, 'Check'],
+    [/^press onward\s+/i, 'Onward'],
+    [/^continue\s+/i, 'Continue'],
+    [/^proceed\s+/i, 'Continue'],
+    [/^push forward\s+/i, 'Onward'],
+    [/^light the\s+/i, 'Light'],
+    [/^light\s+/i, 'Light'],
+    [/^close the\s+/i, 'Close'],
+    [/^close\s+/i, 'Close'],
+    [/^push the\s+/i, 'Push'],
+    [/^push\s+/i, 'Push'],
+    [/^pull the\s+/i, 'Pull'],
+    [/^pull\s+/i, 'Pull'],
+  ];
+
+  var verb = null;
+  var rest = label;
+
+  for (var p = 0; p < verbPatterns.length; p++) {
+    var match = lower.match(verbPatterns[p][0]);
+    if (match && match.index === 0) {
+      verb = verbPatterns[p][1];
+      rest = label.substring(match[0].length).trim();
+      break;
+    }
+  }
+
+  // Extract key noun from rest — strip articles/determiners
+  var articles = { 'a': 1, 'an': 1, 'the': 1, 'this': 1, 'that': 1, 'your': 1,
+    'my': 1, 'his': 1, 'her': 1, 'its': 1, 'our': 1, 'their': 1, 'some': 1, 'any': 1 };
+  var words = rest.split(/\s+/).filter(function(w) { return !articles[w.toLowerCase()]; });
+
+  var noun = '';
+  if (words.length > 0) {
+    noun = words[0];
+    // Include a second word if the first is a short adjective/qualifier
+    if (words.length >= 2 && words[0].length <= 5) {
+      noun = words[0] + ' ' + words[1];
+    }
+  }
+
+  if (verb && noun) return verb + ' ' + noun;
+  if (verb) return verb;
+  if (noun) return noun;
+
+  // Ultimate fallback: first 3 words
+  var allWords = label.split(/\s+/);
+  return allWords.slice(0, 3).join(' ');
+}
+
 function generateSceneActions(sceneState, aiSuggestedActions = []) {
   const actions = [];
   const exitAction = SceneEngine.getExitAction(sceneState);
@@ -590,6 +723,7 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   // Pick all undiscovered content items — no artificial limit
   const contentActions = undiscovered.map(item => ({
     label: item.label,
+    shortLabel: generateShortLabel(item.label),
     type: 'exploration'
   }));
 
@@ -611,11 +745,11 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
       // If more than half the words overlap, it's a duplicate
       return overlap < Math.ceil(aiWords.length / 2);
     })
-    .map(ai => ({ label: ai.label, type: 'contextual' }));
+    .map(ai => ({ label: ai.label, shortLabel: generateShortLabel(ai.label), type: 'contextual' }));
 
   if (exitAction && exitAction.priority === 1) {
     // Strong/forced pressure — exit goes first
-    actions.push({ label: exitAction.label, type: 'exit' });
+    actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
     actions.push(...contentActions);
     actions.push(...contextualActions);
   } else {
@@ -623,7 +757,7 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     actions.push(...contentActions);
     actions.push(...contextualActions);
     if (exitAction) {
-      actions.push({ label: exitAction.label, type: 'exit' });
+      actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
     }
   }
 
@@ -648,7 +782,7 @@ function parseDMResponse(response) {
     if (actionLines) {
       for (const line of actionLines) {
         const text = line.replace(/^\d+\.\s+/, '').trim();
-        if (text) suggestedActions.push({ label: text, type: 'free' });
+        if (text) suggestedActions.push({ label: text, shortLabel: generateShortLabel(text), type: 'free' });
       }
     }
     narrative = narrative.replace(actionsMatch[0], '').replace(/---+/g, '').trim();

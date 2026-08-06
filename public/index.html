@@ -74,15 +74,17 @@ body.storyline-active #messages .msg{color:#f0e6d2;}
 body.storyline-active #messages .msg.dm{border-left-color:#C9A84C55;}
 body.storyline-active #split-divider{display:none;}
 body.storyline-active #actions{
-  flex:none;height:auto;max-height:72px;
-  flex-direction:row;overflow-x:auto;overflow-y:hidden;
-  gap:8px;padding:6px 4px;border-top:1px solid #C9A84C22;flex-shrink:0;
+  flex:none;height:auto;max-height:none;
+  flex-direction:column;overflow:visible;
+  gap:4px;padding:6px 4px;border-top:1px solid #C9A84C22;flex-shrink:0;
 }
-body.storyline-active #action-buttons{display:flex;flex-direction:row;gap:8px;flex-wrap:nowrap;}
+body.storyline-active #action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 body.storyline-active .storyline-actions .action-btn{
-  flex-shrink:0;min-width:90px;max-width:180px;
-  padding:6px 14px;font-size:0.82em;min-height:32px;
-  white-space:nowrap;border-radius:20px;touch-action:manipulation;
+  width:100%;min-width:0;max-width:none;
+  padding:8px 12px;font-size:0.82em;min-height:36px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  border-radius:20px;touch-action:manipulation;
+  position:relative;
 }
 /* ── Ambient Candle (upper-left) ──────────────────────────────────────────── */
 body.storyline-active #app::before{
@@ -187,8 +189,8 @@ body.game-active #auto-rejoin-banner{display:none;}
   .msg.dm{font-size:1.05em;}
   #action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
   .action-btn{padding:10px 14px;font-size:0.9em;}
-  body.storyline-active .storyline-actions .action-btn{min-width:80px;padding:5px 10px;font-size:0.78em;min-height:28px;}
-  body.storyline-active #actions{max-height:60px;}
+  body.storyline-active .storyline-actions .action-btn{min-width:0;padding:6px 10px;font-size:0.78em;min-height:32px;}
+  body.storyline-active #actions{max-height:none;}
   #input-row{gap:8px;margin-top:6px;}
   #free-input{padding:10px 14px;font-size:1em;}
   #send-btn{padding:10px 18px;font-size:1em;}
@@ -496,6 +498,15 @@ body.game-active #auto-rejoin-banner{display:none;}
 .story-btn { border: 2px solid #444; background: #0f0f1e; color: #ccc; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 0.95em; transition: all 0.2s; margin: 4px; }
 .story-btn:hover:not(:disabled) { transform: translateY(-1px); }
 .story-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.story-btn-tooltip {
+  position: fixed; z-index: 10000; transform: translateX(-50%);
+  background: #1a1a2e; color: #f0e6d2; border: 1px solid #C9A84C66;
+  padding: 6px 12px; border-radius: 8px; font-size: 0.82em;
+  font-family: Georgia, serif; white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5); pointer-events: none;
+  animation: tooltipFade 0.2s ease-out;
+}
+@keyframes tooltipFade { from { opacity: 0; transform: translateX(-50%) translateY(4px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 .story-btn-explore { border-color: #27ae60; color: #27ae60; }
 .story-btn-explore:hover:not(:disabled) { background: #27ae6022; box-shadow: 0 4px 12px #27ae6033; }
 .story-btn-threat { border-color: #c0392b; color: #c0392b; }
@@ -2041,7 +2052,8 @@ function handleMessage(msg) {
         var rawActions = (msg.metadata && msg.metadata.actions) || [];
         var storyBtns = rawActions.map(function(a, i) {
           var label = (typeof a === 'string') ? a : (a.label || a.text || '');
-          return { id: 'action_' + i, type: 'explore', label: label };
+          var shortLabel = (typeof a === 'object' && a.shortLabel) ? a.shortLabel : generateClientShortLabel(label);
+          return { id: 'action_' + i, type: 'explore', label: label, shortLabel: shortLabel };
         });
         if (storyBtns.length > 0) renderStoryButtons(storyBtns);
       } else {
@@ -2953,29 +2965,132 @@ function updateHpBar() {
 
 // ── Chunk 5: Story Mode Combat UI ───────────────────────────────────
 
+// ── Responsive Short Labels for Mobile ──────────────────────────────
+var _SHORT_LABEL_BREAKPOINT = 600;
+
+function generateClientShortLabel(label) {
+  if (!label || label.length <= 16) return label;
+  var lower = label.toLowerCase().trim();
+  var verbPatterns = [
+    [/^talk to\s+/i, 'Talk'], [/^speak to\s+/i, 'Talk'], [/^speak with\s+/i, 'Talk'],
+    [/^chat with\s+/i, 'Talk'], [/^converse with\s+/i, 'Talk'],
+    [/^examine the\s+/i, 'Check'], [/^examine\s+/i, 'Check'], [/^investigate\s+/i, 'Check'],
+    [/^inspect\s+/i, 'Check'], [/^look at\s+/i, 'Check'], [/^look behind\s+/i, 'Check'],
+    [/^look around\s+/i, 'Search'], [/^search the\s+/i, 'Search'], [/^search\s+/i, 'Search'],
+    [/^pick up the\s+/i, 'Grab'], [/^pick up\s+/i, 'Grab'], [/^take the\s+/i, 'Grab'],
+    [/^take\s+/i, 'Grab'], [/^grab the\s+/i, 'Grab'], [/^grab\s+/i, 'Grab'],
+    [/^approach the\s+/i, 'Approach'], [/^approach\s+/i, 'Approach'],
+    [/^enter the\s+/i, 'Enter'], [/^enter\s+/i, 'Enter'],
+    [/^open the\s+/i, 'Open'], [/^open\s+/i, 'Open'],
+    [/^attack the\s+/i, 'Attack'], [/^attack\s+/i, 'Attack'],
+    [/^fight the\s+/i, 'Fight'], [/^fight\s+/i, 'Fight'],
+    [/^flee from\s+/i, 'Flee'], [/^flee\s+/i, 'Flee'], [/^escape\s+/i, 'Escape'],
+    [/^ask the\s+/i, 'Ask'], [/^ask about\s+/i, 'Ask'],
+    [/^listen at\s+/i, 'Listen'], [/^listen to\s+/i, 'Listen'], [/^listen\s+/i, 'Listen'],
+    [/^hide behind\s+/i, 'Hide'], [/^hide\s+/i, 'Hide'],
+    [/^wait for\s+/i, 'Wait'], [/^wait\s+/i, 'Wait'],
+    [/^go to the\s+/i, 'Go to'], [/^go to\s+/i, 'Go to'], [/^move to\s+/i, 'Go to'],
+    [/^head to the\s+/i, 'Go to'], [/^head to\s+/i, 'Go to'],
+    [/^use the\s+/i, 'Use'], [/^use\s+/i, 'Use'],
+    [/^try to\s+/i, 'Try'], [/^attempt to\s+/i, 'Try'],
+    [/^climb the\s+/i, 'Climb'], [/^climb\s+/i, 'Climb'],
+    [/^drink the\s+/i, 'Drink'], [/^drink\s+/i, 'Drink'],
+    [/^eat the\s+/i, 'Eat'], [/^eat\s+/i, 'Eat'],
+    [/^read the\s+/i, 'Read'], [/^read\s+/i, 'Read'],
+    [/^pray at\s+/i, 'Pray'], [/^pray to\s+/i, 'Pray'], [/^pray\s+/i, 'Pray'],
+    [/^get on\s+/i, 'Board'], [/^board the\s+/i, 'Board'], [/^board\s+/i, 'Board'],
+    [/^catch your\s+/i, 'Rest'], [/^check your\s+/i, 'Check'],
+    [/^press onward\s+/i, 'Onward'], [/^continue\s+/i, 'Continue'],
+    [/^light the\s+/i, 'Light'], [/^light\s+/i, 'Light'],
+    [/^close the\s+/i, 'Close'], [/^close\s+/i, 'Close'],
+    [/^push the\s+/i, 'Push'], [/^pull the\s+/i, 'Pull'],
+  ];
+  var verb = null, rest = label;
+  for (var p = 0; p < verbPatterns.length; p++) {
+    var m = lower.match(verbPatterns[p][0]);
+    if (m && m.index === 0) { verb = verbPatterns[p][1]; rest = label.substring(m[0].length).trim(); break; }
+  }
+  var articles = {a:1,an:1,the:1,this:1,that:1,your:1,my:1,his:1,her:1,its:1,our:1,their:1,some:1,any:1};
+  var words = rest.split(/\s+/).filter(function(w) { return !articles[w.toLowerCase()]; });
+  var noun = '';
+  if (words.length > 0) { noun = words[0]; if (words.length >= 2 && words[0].length <= 5) noun = words[0] + ' ' + words[1]; }
+  if (verb && noun) return verb + ' ' + noun;
+  if (verb) return verb;
+  if (noun) return noun;
+  return label.split(/\s+/).slice(0, 3).join(' ');
+}
+
+function _isMobileViewport() { return window.innerWidth < _SHORT_LABEL_BREAKPOINT; }
+
+function _applyResponsiveLabels() {
+  var isMobile = _isMobileViewport();
+  var btns = document.querySelectorAll('#action-buttons .story-btn');
+  for (var i = 0; i < btns.length; i++) {
+    var el = btns[i];
+    var full = el.getAttribute('data-full-label');
+    var short_ = el.getAttribute('data-short-label');
+    if (!full || !short_) continue;
+    el.textContent = isMobile ? short_ : full;
+  }
+}
+
+function _attachLongPressTooltip(el) {
+  var timer = null, tooltip = null;
+  function showTooltip() {
+    var full = el.getAttribute('data-full-label');
+    if (!full || full === el.textContent) return;
+    tooltip = document.createElement('div');
+    tooltip.className = 'story-btn-tooltip';
+    tooltip.textContent = full;
+    document.body.appendChild(tooltip);
+    var rect = el.getBoundingClientRect();
+    tooltip.style.left = (rect.left + rect.width / 2) + 'px';
+    tooltip.style.top = (rect.top - 36) + 'px';
+    setTimeout(function() { if (tooltip && tooltip.parentNode) { tooltip.parentNode.removeChild(tooltip); tooltip = null; } }, 2500);
+  }
+  function cancel() { if (timer) { clearTimeout(timer); timer = null; } }
+  el.addEventListener('touchstart', function() { timer = setTimeout(showTooltip, 500); }, { passive: true });
+  el.addEventListener('touchend', cancel, { passive: true });
+  el.addEventListener('touchmove', cancel, { passive: true });
+  el.addEventListener('contextmenu', function(e) { e.preventDefault(); showTooltip(); });
+}
+
+var _resizeTimer = null;
+window.addEventListener('resize', function() {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(_applyResponsiveLabels, 150);
+});
+
 function renderStoryButtons(buttons) {
   var container = document.getElementById('action-buttons');
   if (!container) return;
   container.innerHTML = '';
-  for (var i = 0; i < buttons.length; i++) {
+  var isMobile = _isMobileViewport();
+  var count = Math.min(buttons.length, 8); // Max 8 buttons
+  for (var i = 0; i < count; i++) {
     var btn = buttons[i];
     var el = document.createElement('button');
     el.className = 'action-btn story-btn story-btn-' + btn.type;
-    el.textContent = btn.label;
+    var fullLabel = btn.label;
+    var shortLabel = btn.shortLabel || generateClientShortLabel(fullLabel);
+    el.setAttribute('data-full-label', fullLabel);
+    el.setAttribute('data-short-label', shortLabel);
+    el.textContent = isMobile ? shortLabel : fullLabel;
     el.setAttribute('data-story-id', btn.id);
     el.setAttribute('data-story-type', btn.type);
     if (btn.disabled) el.disabled = true;
     el.onclick = (function(buttonId, buttonType) {
       return function() { processStoryAction(buttonId, buttonType); };
     })(btn.id, btn.type);
+    _attachLongPressTooltip(el);
     container.appendChild(el);
   }
   // Hide free input in story mode
   var inputRow = document.getElementById('input-row');
   if (inputRow) inputRow.style.display = 'none';
-  // Reset horizontal scroll to show first buttons
+  // Reset scroll (no longer horizontal, but keep for safety)
   var actionsEl = document.getElementById('actions');
-  if (actionsEl) actionsEl.scrollLeft = 0;
+  if (actionsEl) actionsEl.scrollTop = 0;
 }
 function processStoryAction(buttonId, buttonType) {
   if (!storyPlayerState || !window.StoryEngine) return;

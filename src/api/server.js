@@ -35,6 +35,7 @@ const CombatManager = require('../combat/combat-manager');
 const { DynamicDifficulty, preAdventureDifficulty, getDifficultyBucket, narrativeDifficultyWrap } = require('../difficulty/dynamic-difficulty');
 const Inventory = require('../inventory/inventory');
 const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
+const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
 
 // In-memory session store
 const sessions = new Map();
@@ -518,7 +519,7 @@ async function createServer(options = {}) {
 
   // Create a new game session (requires valid beta token when ADMIN_KEY is set)
   app.post('/api/sessions', async (request, reply) => {
-    const { adventureId, playerName, characterClass, characterRace, betaToken } = request.body || {};
+    const { adventureId, playerName, characterClass, characterRace, betaToken, gameMode } = request.body || {};
 
     // Resolve beta token code — available for both validation and session recording
     const betaTokenHeader = request.headers['x-beta-token'];
@@ -528,7 +529,7 @@ async function createServer(options = {}) {
     // Uses AccessControl to check mode access (beta tokens grant all modes)
     let betaUser = null;
     if (ADMIN_KEY) {
-      const access = AccessControl.checkAccess(tokenCode, 'storyline');
+      const access = AccessControl.checkAccess(tokenCode, 'adventure');
       if (!access.allowed) {
         return reply.status(401).send({ error: 'Valid beta access code required. Please enter your code on the login page.' });
       }
@@ -572,10 +573,15 @@ async function createServer(options = {}) {
     const coinPool = createCoinPool(adventure.coinPoolConfig);
     const rejoinCode = generateRejoinCode(adventureId);
 
+    // Validate game mode — default to 'storyline' if not specified
+    const resolvedGameMode = isValidMode(gameMode) ? gameMode : GameMode.STORYLINE;
+    const modeConfig = getModeConfig(resolvedGameMode);
+    const uiConfig = getUIConfig(resolvedGameMode);
+
     session.state = 'active';
     // Pre-adventure difficulty calibration (design doc #8): silently sets baseline
     const advDiffProfile = preAdventureDifficulty(player.character.level || 1, adventureId);
-    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile });
+    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile, gameMode: resolvedGameMode, modeConfig });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
     session._rejoinCode = rejoinCode;
@@ -614,7 +620,7 @@ async function createServer(options = {}) {
       // Generate suggested actions from the scene engine
       const openingActions = generateSceneActions(game.sceneState);
       recordMessage(session.id, MessageRouter.suggestedActions(
-        openingActions.map(a => ({ label: a.label, type: a.type || 'free' })),
+        openingActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
         'What would you like to do?'
       ));
     }
@@ -629,8 +635,30 @@ async function createServer(options = {}) {
       playerId: player.id,
       adventureName: adventure.name,
       character: player.character,
+      gameMode: resolvedGameMode,
+      uiConfig,
       messages: openingMessages,
       message: `Welcome to ${adventure.name}. Your adventure begins...`
+    };
+  });
+
+  // --- GAME MODE ENDPOINTS ---
+
+  // List all available game modes with their metadata
+  app.get('/api/game-modes', async () => {
+    return { modes: listModes() };
+  });
+
+  // Get config for a specific game mode
+  app.get('/api/game-modes/:mode', async (request, reply) => {
+    const { mode } = request.params;
+    if (!isValidMode(mode)) {
+      return reply.status(404).send({ error: `Invalid game mode: ${mode}` });
+    }
+    return {
+      meta: getModeMeta(mode),
+      config: getModeConfig(mode),
+      uiConfig: getUIConfig(mode)
     };
   });
 
@@ -833,10 +861,10 @@ async function createServer(options = {}) {
       // Add victory/defeat suggested actions
       if (result.combat.outcome === 'victory') {
         recordMessage(data.session.id, MessageRouter.suggestedActions([
-          { label: 'Catch your breath', type: 'free' },
-          { label: 'Search the area', type: 'exploration' },
-          { label: 'Check your wounds', type: 'free' },
-          { label: 'Press onward', type: 'exit' }
+          { label: 'Catch your breath', shortLabel: 'Rest', type: 'free' },
+          { label: 'Search the area', shortLabel: 'Search', type: 'exploration' },
+          { label: 'Check your wounds', shortLabel: 'Check Wounds', type: 'free' },
+          { label: 'Press onward', shortLabel: 'Onward', type: 'exit' }
         ], 'The battle is won. What do you do?'));
       }
     }
@@ -961,7 +989,7 @@ async function createServer(options = {}) {
       // Record suggested actions
       if (result.suggestedActions.length > 0) {
         recordMessage(sessionId, MessageRouter.suggestedActions(
-          result.suggestedActions.map(a => ({ label: a.label, type: a.type || 'free' })),
+          result.suggestedActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
           'What would you like to do?'
         ));
       }
@@ -1140,7 +1168,7 @@ async function createServer(options = {}) {
 
       if (result.suggestedActions.length > 0) {
         recordMessage(session.id, MessageRouter.suggestedActions(
-          result.suggestedActions.map(a => ({ label: a.label, type: a.type || 'free' })),
+          result.suggestedActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
           'What would you like to do?'
         ));
       }
