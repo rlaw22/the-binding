@@ -3093,56 +3093,75 @@ function renderStoryButtons(buttons) {
   if (actionsEl) actionsEl.scrollTop = 0;
 }
 function processStoryAction(buttonId, buttonType) {
-  if (!storyPlayerState || !window.StoryEngine) return;
+  if (sending) return; // prevent double-taps
 
-  // Get current scene manifest from the last server response
-  var sceneManifest = window._currentStoryManifest || {};
-  var threatDef = null;
-  if (storyCurrentSceneId && window.ThreatEncounters) {
-    threatDef = window.ThreatEncounters.getThreat(storyCurrentSceneId) ||
-                window.ThreatEncounters.getThreat(sceneManifest.storyMode && sceneManifest.storyMode.threat && sceneManifest.storyMode.threat.id);
-  }
+  // Find the button to get its label for the server
+  var btn = document.querySelector('[data-story-id="' + buttonId + '"]');
+  var label = btn ? (btn.getAttribute('data-full-label') || btn.textContent) : buttonId;
 
-  var result = window.StoryEngine.processButtonAction(
-    buttonId, buttonType, sceneManifest, storyPlayerState, threatDef
-  );
+  // Disable the clicked button immediately
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; }
 
-  // Display narrative
-  if (result.narrative) {
-    addMessage('dm', result.narrative);
-  }
+  // Show "DM is thinking..." feedback and disable inputs
+  sending = true;
+  actionRequestId++;
+  var thisRequest = actionRequestId;
+  var sendBtn = document.getElementById('send-btn');
+  var freeInput = document.getElementById('free-input');
+  if (sendBtn) sendBtn.disabled = true;
+  if (freeInput) freeInput.disabled = true;
 
-  // Show HP/coin changes
-  if (result.hpChange && result.hpChange !== 0) {
-    var sign = result.hpChange > 0 ? '+' : '';
-    addMessage('system', sign + result.hpChange + ' HP');
-  }
-  if (result.coinChange && result.coinChange !== 0) {
-    var sign2 = result.coinChange > 0 ? '+' : '';
-    addMessage('system', sign2 + result.coinChange + ' coins');
-  }
+  var loadingMsg = addMessage('system', 'The DM is thinking...');
+  var feedbackTimer1 = setTimeout(function() {
+    if (sending && thisRequest === actionRequestId && loadingMsg) loadingMsg.textContent = 'Still preparing your adventure...';
+  }, 12000);
+  var feedbackTimer2 = setTimeout(function() {
+    if (sending && thisRequest === actionRequestId && loadingMsg) loadingMsg.textContent = 'Almost there, the world is loading...';
+  }, 30000);
 
-  // Zero HP rescue
-  if (result.zeroHp && result.zeroHp.rescued) {
-    addMessage('system', result.zeroHp.narrative);
-  }
-
-  // Update HP bar
-  updateHpBar();
-
-  // Mark this button as used (disable it)
-  var btns = document.querySelectorAll('#action-buttons .story-btn');
-  for (var i = 0; i < btns.length; i++) {
-    if (btns[i].getAttribute('data-story-id') === buttonId) {
-      btns[i].disabled = true;
-      btns[i].style.opacity = '0.5';
+  var sendTimeout = setTimeout(function() {
+    if (sending && thisRequest === actionRequestId) {
+      sending = false;
+      if (sendBtn) sendBtn.disabled = false;
+      if (freeInput) freeInput.disabled = false;
+      if (loadingMsg) loadingMsg.textContent = 'The DM is taking longer than expected. Try again in a moment.';
+      if (loadingMsg) loadingMsg.className = 'msg error';
     }
-  }
+  }, 60000);
 
-  // Check game over
-  if (storyPlayerState.hp <= 0 && storyPlayerState.coins <= 0) {
-    showGameOver();
-  }
+  // Post to server — same endpoint Campaign/Digital DM uses
+  fetch('/api/sessions/' + sessionId + '/actions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ content: label, playerId: playerId })
+  }).then(function(resp) {
+    clearTimeout(sendTimeout);
+    clearTimeout(feedbackTimer1);
+    clearTimeout(feedbackTimer2);
+    if (thisRequest === actionRequestId && loadingMsg && loadingMsg.parentNode) {
+      loadingMsg.parentNode.removeChild(loadingMsg);
+    }
+    sending = false;
+    if (!resp.ok) {
+      console.warn('Story action POST returned', resp.status);
+      addMessage('error', 'Something went wrong — try again.');
+      if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+    }
+    // Server response arrives via polling → rich narrative + new suggested_actions
+    // The suggested_actions handler already renders storyline buttons when storyModeActive is true
+  }).catch(function(err) {
+    clearTimeout(sendTimeout);
+    clearTimeout(feedbackTimer1);
+    clearTimeout(feedbackTimer2);
+    if (thisRequest === actionRequestId) {
+      if (loadingMsg && loadingMsg.parentNode) loadingMsg.parentNode.removeChild(loadingMsg);
+      addMessage('error', 'Connection issue — please try again.');
+      sending = false;
+      if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+      if (sendBtn) sendBtn.disabled = false;
+      if (freeInput) freeInput.disabled = false;
+    }
+  });
 }
 
 // ── Chunk 6: Threat Encounters Integration ──────────────────────────
