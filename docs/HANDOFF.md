@@ -69,28 +69,12 @@ All 10 major design decisions are documented in `docs/game-design-decisions.md`.
 
 | # | Question | Status | Details |
 |---|----------|--------|---------|
-| 1 | **Frontend architecture for v2** | OPEN | Current: 2,275 lines vanilla JS. Options: (A) keep vanilla, clean up; (B) move to React/Vue/Svelte for multiplayer lobby UI. This blocks Phase 4 but NOT Phases 1-3. |
+| 1 | **Frontend architecture** | OPEN | Current: 2,275 lines vanilla JS. Options: (A) keep vanilla, clean up; (B) move to React/Vue/Svelte for multiplayer lobby UI. |
 | 2 | **Gothic Horror as first Campaign theme** | OPEN | Proposed as natural extension of Dracula content. Needs approval or alternative pick. |
 | 3 | **Storyline vs Adventure Mode naming** | OPEN | Phase 1 calls it "Adventure Mode." Phase 2 renames to "Storyline Mode." Rename now or keep backward compat? |
 | 4 | **Digital DM scope** | OPEN | Scaffolding done. Full build in Phase 2 or keep as scaffolding? |
 | 5 | **Campaign session storage** | OPEN | JSON files for beta (consistent with Phase 1). Confirm no DB migration? |
 | 6 | **Campaign API auth** | OPEN | Campaign routes have no beta token validation. Add now or later? |
-
----
-
-## The v2 Rebuild Plan
-
-The decision has been made: **rebuild from scratch rather than refactor.** v1 reached 2,275 lines of frontend and a sprawling backend before the architecture was deemed wrong. This is a re-architecture, not a cleanup.
-
-Full plan in `docs/v2-rebuild-plan.md`.
-
-**Phases:**
-- Phase 0: Freeze v1 (tag as legacy, export test suite)
-- Phase 1: Core foundation (server, config, rule engine, dice, character, session)
-- Phase 2: Story and adventure engine
-- Phase 3: AI DM and coin engine
-- Phase 4: Frontend (architecture TBD — see open questions)
-- Phase 5: Campaign mode (multiplayer)
 
 ---
 
