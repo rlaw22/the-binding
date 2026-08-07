@@ -101,7 +101,7 @@ const MODE_CONFIG = {
     showJournalButton: false,
     showQuestTracker: false,
     showCharacterSheet: false,
-    showVoiceInputButton: false,
+    showVoiceInputButton: true,
     showFreeTextEntry: false,
     showDiceRoller: false,
     allowClassSelection: false,
