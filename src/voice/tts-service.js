@@ -138,10 +138,10 @@ class CircuitBreaker {
  */
 const CHARACTER_VOICE_PRESETS = {
   narrator: { voice: 'nova', pitch: 1.0, rate: 0.9 },
-  villain: { voice: 'onyx', pitch: 0.8, rate: 0.85 },
+  villain: { voice: 'ash', pitch: 0.8, rate: 0.85 },
   ally: { voice: 'shimmer', pitch: 1.1, rate: 1.0 },
   merchant: { voice: 'alloy', pitch: 0.95, rate: 1.1 },
-  monster: { voice: 'onyx', pitch: 0.7, rate: 0.8 }
+  monster: { voice: 'ash', pitch: 0.7, rate: 0.8 }
 };
 
 /**
@@ -175,7 +175,7 @@ function getVoiceForCharacter(characterType) {
  */
 const VOICE_PROFILES = {
   narrator: {
-    voiceId: 'onyx',
+    voiceId: 'ash',
     pitch: '-10%',
     rate: '90%',
     volume: 'medium',
@@ -203,7 +203,7 @@ const VOICE_PROFILES = {
     description: 'Warm, hospitable, slightly worried — knows local gossip'
   },
   guard: {
-    voiceId: 'onyx',
+    voiceId: 'ash',
     pitch: '-5%',
     rate: '100%',
     volume: 'loud',
@@ -796,6 +796,7 @@ function wrapSSML(text, options = {}, provider) {
 const OPENAI_TO_NOVITA_VOICE_MAP = {
   'nova': 'Emily',
   'onyx': 'Adam',
+  'ash': 'Adam',
   'echo': 'Antoni',
   'shimmer': 'Bella',
   'alloy': 'Elli',
@@ -873,7 +874,7 @@ async function pollNovitaTask(taskId, maxAttempts = 25, intervalMs = 2500) {
 async function generateOpenAI(text, voice, speed) {
   const apiKey = process.env.OPENAI_API_KEY;
   const body = JSON.stringify({
-    model: 'tts-1',
+    model: 'tts-1-hd',
     input: text,
     voice: voice || 'nova',
     speed: speed || 1.0,
