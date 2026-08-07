@@ -369,6 +369,31 @@ async function createServer(options = {}) {
     return { ok: true };
   });
 
+  // --- DEBUG: Token store diagnostics (remove after diagnosis) ---
+  app.get('/api/debug/token-store', async (request, reply) => {
+    const tokenStats = TokenStore.getTokenCount();
+    const allTokens = TokenStore.listTokens();
+    const founderToken = allTokens.find(t => t.code === 'BIND-TY5Y');
+
+    return {
+      adminKeySet: !!ADMIN_KEY,
+      tokenStore: {
+        total: tokenStats.total,
+        active: tokenStats.active,
+        revoked: tokenStats.revoked
+      },
+      founderToken: founderToken ? {
+        code: founderToken.code,
+        active: founderToken.active,
+        sessionsCreated: founderToken.sessionsCreated,
+        maxSessions: founderToken.maxSessions,
+        lastUsedAt: founderToken.lastUsedAt
+      } : null,
+      dataPath: require('path').join(__dirname, '..', 'data', 'beta-tokens.json'),
+      dataExists: require('fs').existsSync(require('path').join(__dirname, '..', 'data', 'beta-tokens.json'))
+    };
+  });
+
   // Admin: list all signups
   app.get('/api/admin/signups', async (request, reply) => {
     if (!requireAdmin(request, reply)) return;
