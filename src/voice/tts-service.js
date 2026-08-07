@@ -874,7 +874,7 @@ async function pollNovitaTask(taskId, maxAttempts = 25, intervalMs = 2500) {
 async function generateOpenAI(text, voice, speed) {
   const apiKey = process.env.OPENAI_API_KEY;
   const body = JSON.stringify({
-    model: 'tts-1-hd',
+    model: 'gpt-4o-mini-tts',
     input: text,
     voice: voice || 'nova',
     speed: speed || 1.0,
