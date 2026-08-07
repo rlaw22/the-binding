@@ -41,6 +41,19 @@ async function main() {
   try {
     await server.listen({ port: PORT, host: HOST });
     console.log(`  ✅ Server running at http://${HOST}:${PORT}`);
+
+    // Pre-generate adventure images on first start (non-blocking)
+    if (process.env.OPENAI_API_KEY || process.env.XAI_API_KEY) {
+      const { createImageService } = require('./src/image');
+      const { pregenerateAdventureImages } = require('./scripts/pregenerate-images');
+      const imgSvc = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
+      if (imgSvc && imgSvc.isEnabled) {
+        console.log('  🖼️  Checking adventure images...');
+        pregenerateAdventureImages(imgSvc, 'dracula').catch(err => {
+          console.error('  🖼️  Pre-generation failed:', err.message);
+        });
+      }
+    }
     console.log(`  📡 Polling: GET /api/sessions/:id/messages?after=N`);
     console.log(`  🎮 REST API: http://${HOST}:${PORT}/api/`);
     console.log('');
