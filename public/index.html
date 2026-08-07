@@ -387,6 +387,41 @@ body.game-active #auto-rejoin-banner{display:none;}
 #inv-panel .inv-header h3{color:#C9A84C;font-size:1em;letter-spacing:2px;margin:0;}
 #inv-panel .inv-close{background:none;border:none;color:#F5F0E166;font-size:1.4em;cursor:pointer;padding:4px 8px;}
 #inv-panel .inv-close:hover{color:#F5F0E1;}
+/* === GALLERY PANEL === */
+#gallery-btn{background:none;border:1px solid #C9A84C44;color:#C9A84C;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:0.85em;display:flex;align-items:center;gap:4px;transition:all 0.2s;font-family:Georgia,serif;}
+#gallery-btn:hover{border-color:#C9A84C;background:#C9A84C11;}
+#gallery-btn .gallery-count{font-weight:bold;}
+#gallery-panel{position:fixed;top:52px;left:0;right:0;max-height:0;overflow:hidden;background:#0C0B10;border-bottom:2px solid #C9A84C33;z-index:999;padding:0 16px;transition:max-height 0.3s ease,padding 0.3s ease;font-family:Georgia,serif;}
+#gallery-panel.open{max-height:60vh;padding:16px;overflow-y:auto;}
+.gallery-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.gallery-header h3{color:#C9A84C;font-size:1em;letter-spacing:2px;margin:0;}
+.gallery-close{background:none;border:none;color:#F5F0E166;font-size:1.4em;cursor:pointer;padding:4px 8px;}
+.gallery-close:hover{color:#F5F0E1;}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.gallery-item{border-radius:8px;overflow:hidden;border:1px solid #C9A84C33;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;background:#1A1A2E;}
+.gallery-item:hover{transform:scale(1.03);box-shadow:0 4px 20px #C9A84C33;}
+.gallery-item img{width:100%;height:150px;object-fit:cover;display:block;}
+.gallery-item .caption{padding:6px 8px;font-size:0.75em;color:#C9A84C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gallery-item .desc{padding:4px 8px 6px;font-size:0.65em;color:#f0e6d288;display:none;max-height:40px;overflow:hidden;}
+.gallery-item:hover .desc{display:block;}
+.gallery-expand{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.3s;}
+.gallery-expand-inner{max-width:800px;max-height:90vh;text-align:center;}
+.gallery-expand-inner img{max-width:100%;max-height:70vh;border-radius:12px;border:2px solid #C9A84C44;}
+.gallery-expand-inner h3{color:#C9A84C;margin:12px 0 4px;font-family:Georgia,serif;}
+.gallery-expand-inner p{color:#f0e6d2;font-size:0.9em;max-width:600px;margin:0 auto;font-family:Georgia,serif;}
+.gallery-expand-close{margin-top:12px;background:#C9A84C;border:none;color:#1A1A2E;padding:8px 20px;border-radius:20px;cursor:pointer;font-family:Georgia,serif;font-weight:bold;}
+.gallery-expand-close:hover{background:#E8A838;}
+/* === IMAGE LOADING SCREEN === */
+#image-loading-screen{position:fixed;inset:0;z-index:3000;background:#0C0B10;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Georgia,serif;}
+#image-loading-screen h2{color:#C9A84C;margin:0 0 8px;}
+#image-loading-screen .loading-sub{color:#f0e6d2;margin:0;}
+#image-loading-bar{width:300px;height:8px;background:#1A1A2E;border-radius:4px;overflow:hidden;margin-top:16px;}
+#image-loading-fill{width:0%;height:100%;background:#C9A84C;border-radius:4px;transition:width 0.3s;}
+#image-loading-text{color:#C9A84C88;font-size:0.85em;margin-top:8px;}
+/* === SCENE IMAGE IN MESSAGES === */
+.scene-image{margin:8px 0;text-align:center;animation:fadeIn 0.5s;}
+.scene-img{max-width:100%;max-height:400px;border-radius:12px;border:1px solid #C9A84C33;box-shadow:0 4px 20px #0006;}
+
 #inv-panel .inv-list{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
 .inv-item{background:#C9A84C08;border:1px solid #C9A84C22;border-radius:8px;padding:12px 14px;cursor:pointer;transition:all 0.2s;}
 .inv-item:hover{background:#C9A84C15;border-color:#C9A84C44;}
@@ -759,10 +794,20 @@ body.game-active #auto-rejoin-banner{display:none;}
         <span id="story-hp-text" style="color:#ccc;font-size:0.85em;"></span>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;">
+    <div style="display:flex;align-items:center;gap:10px;">
       <span style="color:#E8A838;font-size:0.85em;">Coins:</span>
       <span id="story-coin-text" style="color:#E8A838;font-weight:bold;font-size:0.95em;"></span>
+      <button id="gallery-btn" class="hidden" onclick="toggleGallery()">🎨 <span class="gallery-count" id="gallery-count">0</span></button>
     </div>
+  </div>
+
+  <!-- Gallery Panel -->
+  <div id="gallery-panel">
+    <div class="gallery-header">
+      <h3>SCENE GALLERY</h3>
+      <button class="gallery-close" onclick="toggleGallery()">&times;</button>
+    </div>
+    <div class="gallery-grid" id="gallery-grid"></div>
   </div>
 
 
@@ -2042,6 +2087,7 @@ function handleMessage(msg) {
         img.onerror = function() { this.parentNode.style.display = 'none'; };
         imgWrap.appendChild(img);
         container.appendChild(imgWrap);
+        addToGallery(msg.metadata.sceneImageUrl, 'Scene', msg.content ? msg.content.substring(0, 100) : '');
       }
       // Re-enable input after DM response (story mode bypasses showActions)
       sending = false;
@@ -2088,6 +2134,9 @@ function handleMessage(msg) {
       break;
     case 'voice_audio':
       handleVoiceAudio(msg);
+      break;
+    case 'scene_image':
+      handleSceneImage(msg);
       break;
     case 'error':
       addMessage('error', msg.content);
@@ -2492,6 +2541,85 @@ function toRoman(n) {
 
 // ── Inventory Panel ──────────────────────────────────────────────────────
 var invOpen = false;
+
+
+// === SCENE GALLERY ===
+var galleryImages = [];
+var galleryOpen = false;
+
+function toggleGallery() {
+  galleryOpen = !galleryOpen;
+  var panel = document.getElementById('gallery-panel');
+  if (galleryOpen) {
+    panel.classList.add('open');
+  } else {
+    panel.classList.remove('open');
+  }
+}
+
+function addToGallery(imageUrl, sceneName, sceneDesc) {
+  galleryImages.push({ url: imageUrl, name: sceneName, desc: sceneDesc || '' });
+  document.getElementById('gallery-count').textContent = galleryImages.length;
+  document.getElementById('gallery-btn').classList.remove('hidden');
+  var grid = document.getElementById('gallery-grid');
+  var item = document.createElement('div');
+  item.className = 'gallery-item';
+  item.innerHTML = '<img src="' + imageUrl + '" loading="lazy" alt="' + (sceneName || 'Scene') + '">' +
+    '<div class="caption">' + (sceneName || 'Scene') + '</div>' +
+    '<div class="desc">' + (sceneDesc || '') + '</div>';
+  item.onclick = function() { expandImage(imageUrl, sceneName, sceneDesc); };
+  grid.appendChild(item);
+}
+
+function expandImage(url, name, desc) {
+  var overlay = document.createElement('div');
+  overlay.className = 'gallery-expand';
+  overlay.innerHTML = '<div class="gallery-expand-inner">' +
+    '<img src="' + url + '">' +
+    '<h3>' + (name || '') + '</h3>' +
+    '<p>' + (desc || '') + '</p>' +
+    '<button class="gallery-expand-close" onclick="this.closest(\'.gallery-expand\').remove()">Close</button>' +
+    '</div>';
+  overlay.onclick = function(e) { if (e.target === overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+function handleSceneImage(msg) {
+  var container = document.getElementById('messages');
+  var imgWrap = document.createElement('div');
+  imgWrap.className = 'msg scene-image';
+  var img = document.createElement('img');
+  img.src = msg.metadata ? msg.metadata.sceneImageUrl : '';
+  img.alt = msg.content || 'Scene illustration';
+  img.loading = 'lazy';
+  img.className = 'scene-img';
+  img.onerror = function() { this.parentNode.style.display = 'none'; };
+  imgWrap.appendChild(img);
+  container.appendChild(imgWrap);
+  addToGallery(msg.metadata ? msg.metadata.sceneImageUrl : '', msg.content || 'Scene', msg.content || '');
+  container.scrollTop = container.scrollHeight;
+}
+
+// Also add scene images from narration metadata to gallery
+function handleNarrationSceneImage(msg) {
+  if (msg.metadata && msg.metadata.sceneImageUrl) {
+    addToGallery(msg.metadata.sceneImageUrl, msg.content ? msg.content.substring(0, 60) : 'Scene', msg.content || '');
+  }
+}
+
+// === IMAGE LOADING SCREEN ===
+function showImageLoadingScreen(progress, total) {
+  document.getElementById('image-loading-screen').classList.remove('hidden');
+  updateImageLoadingScreen(progress, total);
+}
+function updateImageLoadingScreen(progress, total) {
+  var pct = total > 0 ? Math.round((progress / total) * 100) : 0;
+  document.getElementById('image-loading-fill').style.width = pct + '%';
+  document.getElementById('image-loading-text').textContent = progress + '/' + total;
+}
+function hideImageLoadingScreen() {
+  document.getElementById('image-loading-screen').classList.add('hidden');
+}
 
 function toggleInventory() {
   invOpen = !invOpen;
@@ -3259,5 +3387,13 @@ function setStoryScene(sceneManifest, sceneId) {
   });
 })();
 </script>
+<!-- Image Loading Screen -->
+<div id="image-loading-screen" class="hidden">
+  <div style="font-size:3em;margin-bottom:20px;">🖼️</div>
+  <h2>Preparing Your Adventure</h2>
+  <p class="loading-sub">Illustrating scenes...</p>
+  <div id="image-loading-bar"><div id="image-loading-fill"></div></div>
+  <p id="image-loading-text">0/28</p>
+</div>
 </body>
 </html>
