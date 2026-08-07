@@ -8,3 +8,5 @@ playwright-mcp/
 data/
 *.bak
 .github-token
+playwright-report/
+test-results/

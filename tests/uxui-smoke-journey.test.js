@@ -15,10 +15,23 @@ const { test, expect } = require('@playwright/test');
 // ═════════════════════════════════════════════════════════════════════════
 
 async function dismissAccessGate(page) {
-  const gate = page.locator('#accessGate');
-  if (await gate.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await gate.evaluate(el => el.style.display = 'none');
-  }
+  const testToken = 'BIND-TY5Y';
+
+  // Intercept the beta token validation API to always succeed
+  await page.route('**/api/beta/validate', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true })
+    });
+  });
+
+  // Seed localStorage BEFORE the page loads so the auto-login flow fires
+  await page.addInitScript(token => {
+    localStorage.setItem('betaToken', token);
+    localStorage.setItem('ndaAccepted_' + token, 'true');
+    localStorage.setItem('questionnaireDone_' + token, 'true');
+  }, testToken);
 }
 
 // ═════════════════════════════════════════════════════════════════════════
@@ -27,10 +40,10 @@ async function dismissAccessGate(page) {
 
 test.describe('Smoke Journey — Full Player Flow', () => {
   test('complete journey: load → mode → class → actions → DM response', async ({ page }) => {
-    // ── Step 1: Load the app ──
+    // ── Step 1: Load the app (seed auth BEFORE navigation) ──
+    await dismissAccessGate(page);
     await page.setViewportSize({ width: 1280, height: 720 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await dismissAccessGate(page);
 
     // Verify the app loaded
     const appContainer = page.locator('#app');
@@ -114,10 +127,10 @@ test.describe('Smoke Journey — Full Player Flow', () => {
   });
 
   test('responsive: journey works on mobile viewport', async ({ page }) => {
-    // ── Mobile viewport ──
+    // ── Mobile viewport (seed auth BEFORE navigation) ──
+    await dismissAccessGate(page);
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await dismissAccessGate(page);
 
     // Verify app loads on mobile
     const appContainer = page.locator('#app');
