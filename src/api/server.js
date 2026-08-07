@@ -1001,6 +1001,27 @@ async function createServer(options = {}) {
         });
       }
 
+      // Dynamic scene images for combat encounters (async, non-blocking)
+      if (result.combat && result.combat.active && !result.combat.existing) {
+        try {
+          const imgSvc = require('../ai-dm/dm-service').getImageService ? null : null;
+          // Use the image service directly
+          const { createImageService } = require('../image');
+          const dynImgSvc = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
+          if (dynImgSvc && dynImgSvc.isEnabled) {
+            dynImgSvc.generateCombat({
+              description: result.narrative.substring(0, 200),
+              location: game.sceneState?.sceneName || 'Unknown',
+              outcome: result.combat.outcome || 'encounter'
+            }).then(imageUrl => {
+              if (imageUrl) {
+                recordMessage(sessionId, MessageRouter.sceneImage(imageUrl, 'Combat Encounter'));
+              }
+            }).catch(err => console.error('[Image] Combat generation failed:', err.message));
+          }
+        } catch (err) { /* image service not available */ }
+      }
+
       // Coin reward — only on genuinely smart moves, shown as a natural DM comment
       const smartThreshold = 4; // any individual category must score >= 4
       const scores = result.coinScores || {};
