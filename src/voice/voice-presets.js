@@ -18,7 +18,7 @@ const VOICE_PRESETS = {
   // ── Dracula ──────────────────────────────────────────────────────────
   dracula: {
     dm: {
-      voiceId: 'onyx',
+      voiceId: 'ash',
       pitch: '-15%',
       rate: 'slow',
       volume: 'medium',
@@ -67,7 +67,7 @@ const VOICE_PRESETS = {
       description: 'Young, earnest, increasingly anxious — a solicitor out of his depth'
     },
     seward: {
-      voiceId: 'onyx',
+      voiceId: 'ash',
       pitch: '-5%',
       rate: '95%',
       volume: 'medium',
@@ -92,7 +92,7 @@ const VOICE_PRESETS = {
   // ── Holmes (Hound of the Baskervilles) ───────────────────────────────
   holmes: {
     dm: {
-      voiceId: 'onyx',
+      voiceId: 'ash',
       pitch: '-5%',
       rate: '95%',
       volume: 'medium',
@@ -162,7 +162,7 @@ const VOICE_PRESETS = {
       description: 'Vulnerable, manipulated — used by Stapleton, struggling to trust'
     },
     lestrade: {
-      voiceId: 'onyx',
+      voiceId: 'ash',
       pitch: '+0%',
       rate: '105%',
       volume: 'loud',
@@ -173,7 +173,7 @@ const VOICE_PRESETS = {
   // ── Frankenstein ─────────────────────────────────────────────────────
   frankenstein: {
     dm: {
-      voiceId: 'onyx',
+      voiceId: 'ash',
       pitch: '-10%',
       rate: '90%',
       volume: 'medium',
@@ -208,7 +208,7 @@ const VOICE_PRESETS = {
       description: 'Warm, adventurous, optimistic — Victor\'s loyal and spirited friend'
     },
     waldman: {
-      voiceId: 'onyx',
+      voiceId: 'ash',
       pitch: '-5%',
       rate: '90%',
       volume: 'medium',
