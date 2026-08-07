@@ -189,4 +189,22 @@ async function imageRoutes(fastify, options) {
   });
 }
 
+
+// --- Pre-generation status endpoint ---
+fastify.get('/api/image/pregenerate/status/:adventureId', async (request, reply) => {
+  const { adventureId } = request.params;
+  try {
+    const { createImageService } = require('../image');
+    const svc = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
+    if (!svc || !svc.isEnabled) {
+      return { status: 'ready', progress: 0, total: 0, note: 'Image service disabled' };
+    }
+    const status = svc.getPregenerateStatus(adventureId);
+    return status;
+  } catch (err) {
+    return { status: 'error', error: err.message };
+  }
+});
+
+
 module.exports = imageRoutes;
