@@ -929,6 +929,80 @@ function createImageService(opts = {}) {
       const prompt = buildDetailedCombatPrompt(combatCtx);
       return generate(prompt, { style: 'detailed-combat', sessionId: combatCtx.sessionId });
     },
+
+    /**
+     * Get a cached image URL for a given prompt (without generating).
+     * Returns the cached URL if found, null otherwise.
+     */
+    getCachedImage(prompt) {
+      if (!prompt) return null;
+      // Check in-memory cache first
+      const memCached = cache.get(prompt);
+      if (memCached !== undefined) return memCached;
+      // Check persistent store
+      const primaryName = providerChain[0] ? providerChain[0].name : 'unknown';
+      const persistKey = persistentMakeKey(prompt, primaryName, 'scene');
+      if (persistentStore.has(persistKey)) {
+        const localUrl = \`/api/image/stored/\${persistKey}\`;
+        cache.set(prompt, localUrl);
+        return localUrl;
+      }
+      return null;
+    },
+
+    // --- Pre-generation status tracking ---
+    _pregenStatus: {},
+
+    /**
+     * Get pre-generation status for an adventure.
+     */
+    getPregenerateStatus(adventureId) {
+      return this._pregenStatus[adventureId] || { status: 'ready', progress: 0, total: 0 };
+    },
+
+    /**
+     * Pre-generate all scene images and NPC portraits for an adventure.
+     * Called on first game start if images are not yet cached.
+     */
+    async pregenerateAdventure(adventureId, scenes, characters) {
+      const total = scenes.length + Object.keys(characters).length;
+      this._pregenStatus[adventureId] = { status: 'preparing', progress: 0, total };
+      console.log(\`  🖼️  Pre-generating \${adventureId} images: 0/\${total}\`);
+
+      // Generate scene images
+      for (let i = 0; i < scenes.length; i++) {
+        try {
+          await this.generateScene(scenes[i]);
+        } catch (err) {
+          console.error(\`  🖼️  Failed scene \${scenes[i].location}: \${err.message}\`);
+        }
+        this._pregenStatus[adventureId].progress = i + 1;
+      }
+
+      // Generate NPC portraits
+      const charEntries = Object.entries(characters);
+      for (let i = 0; i < charEntries.length; i++) {
+        const [key, desc] = charEntries[i];
+        try {
+          await this.generateNpcPortrait({ name: key, appearance: desc, mood: 'dread' });
+        } catch (err) {
+          console.error(\`  🖼️  Failed NPC \${key}: \${err.message}\`);
+        }
+        this._pregenStatus[adventureId].progress = scenes.length + i + 1;
+      }
+
+      this._pregenStatus[adventureId].status = 'ready';
+      console.log(\`  🖼️  Pre-generation complete: \${total}/\${total} images ready\`);
+    },
+
+    /**
+     * Check if an adventure's images are pre-generated (all cached).
+     */
+    isAdventureReady(adventureId, scenes) {
+      if (!scenes || !scenes.length) return true;
+      const status = this._pregenStatus[adventureId];
+      return status && status.status === 'ready';
+    },
   };
 }
 
