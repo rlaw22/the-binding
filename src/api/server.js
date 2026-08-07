@@ -554,7 +554,7 @@ async function createServer(options = {}) {
     console.log('[DEBUG /api/sessions] tokenCode:', JSON.stringify(tokenCode), 'adventureId:', adventureId, 'gameMode:', gameMode);
     console.log('[DEBUG /api/sessions] ADMIN_KEY set:', !!ADMIN_KEY);
     if (ADMIN_KEY) {
-      const access = AccessControl.checkAccess(tokenCode, 'adventure');
+      const access = AccessControl.checkAccess(tokenCode, gameMode || 'storyline');
       console.log('[DEBUG /api/sessions] access result:', JSON.stringify(access));
       if (!access.allowed) {
         return reply.status(401).send({ error: 'Valid beta access code required. Please enter your code on the login page.' });
