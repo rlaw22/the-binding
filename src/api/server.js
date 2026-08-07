@@ -550,11 +550,12 @@ async function createServer(options = {}) {
     const betaTokenHeader = request.headers['x-beta-token'];
     const tokenCode = betaToken || betaTokenHeader || '';
 
-    // Validate beta token — only enforce when ADMIN_KEY is set (production mode)
-    // Uses AccessControl to check mode access (beta tokens grant all modes)
-    let betaUser = null;
+    // DEBUG: Log token validation details
+    console.log('[DEBUG /api/sessions] tokenCode:', JSON.stringify(tokenCode), 'adventureId:', adventureId, 'gameMode:', gameMode);
+    console.log('[DEBUG /api/sessions] ADMIN_KEY set:', !!ADMIN_KEY);
     if (ADMIN_KEY) {
       const access = AccessControl.checkAccess(tokenCode, 'adventure');
+      console.log('[DEBUG /api/sessions] access result:', JSON.stringify(access));
       if (!access.allowed) {
         return reply.status(401).send({ error: 'Valid beta access code required. Please enter your code on the login page.' });
       }
