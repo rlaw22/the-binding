@@ -943,7 +943,7 @@ function createImageService(opts = {}) {
       const primaryName = providerChain[0] ? providerChain[0].name : 'unknown';
       const persistKey = persistentMakeKey(prompt, primaryName, 'scene');
       if (persistentStore.has(persistKey)) {
-        const localUrl = \`/api/image/stored/\${persistKey}\`;
+        const localUrl = `/api/image/stored/${persistKey}`;
         cache.set(prompt, localUrl);
         return localUrl;
       }
@@ -967,14 +967,14 @@ function createImageService(opts = {}) {
     async pregenerateAdventure(adventureId, scenes, characters) {
       const total = scenes.length + Object.keys(characters).length;
       this._pregenStatus[adventureId] = { status: 'preparing', progress: 0, total };
-      console.log(\`  🖼️  Pre-generating \${adventureId} images: 0/\${total}\`);
+      console.log(`  🖼️  Pre-generating ${adventureId} images: 0/${total}`);
 
       // Generate scene images
       for (let i = 0; i < scenes.length; i++) {
         try {
           await this.generateScene(scenes[i]);
         } catch (err) {
-          console.error(\`  🖼️  Failed scene \${scenes[i].location}: \${err.message}\`);
+          console.error(`  🖼️  Failed scene ${scenes[i].location}: ${err.message}`);
         }
         this._pregenStatus[adventureId].progress = i + 1;
       }
@@ -986,13 +986,13 @@ function createImageService(opts = {}) {
         try {
           await this.generateNpcPortrait({ name: key, appearance: desc, mood: 'dread' });
         } catch (err) {
-          console.error(\`  🖼️  Failed NPC \${key}: \${err.message}\`);
+          console.error(`  🖼️  Failed NPC ${key}: ${err.message}`);
         }
         this._pregenStatus[adventureId].progress = scenes.length + i + 1;
       }
 
       this._pregenStatus[adventureId].status = 'ready';
-      console.log(\`  🖼️  Pre-generation complete: \${total}/\${total} images ready\`);
+      console.log(`  🖼️  Pre-generation complete: ${total}/${total} images ready`);
     },
 
     /**
