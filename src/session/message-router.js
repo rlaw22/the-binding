@@ -28,6 +28,7 @@ const MessageTypes = {
   SUGGESTED_ACTIONS: 'suggested_actions',
   SPECTATOR_SUGGESTION: 'spectator_suggestion',
   VOICE_AUDIO: 'voice_audio',
+  SCENE_IMAGE: 'scene_image',
   ERROR: 'error'
 };
 
@@ -253,6 +254,19 @@ function voiceAudio(taskId, status, options = {}) {
   });
 }
 
+/**
+ * Create a scene image message — illustration shown in message stream.
+ * @param {string} imageUrl - URL of the scene image
+ * @param {string} caption - Scene name or description
+ * @param {Object} options
+ */
+function sceneImage(imageUrl, caption, options = {}) {
+  return createMessage(MessageTypes.SCENE_IMAGE, caption || '', {
+    ...options,
+    sceneImageUrl: imageUrl
+  });
+}
+
 module.exports = {
   MessageTypes,
   createMessage,
@@ -268,5 +282,6 @@ module.exports = {
   spectatorSuggestion,
   whisper,
   voiceAudio,
+  sceneImage,
   error
 };
