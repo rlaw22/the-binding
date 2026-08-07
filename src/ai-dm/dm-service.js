@@ -49,7 +49,7 @@ async function generateSceneImage(adventureId, sceneName, sceneDescription, sess
   if (!svc || !svc.isEnabled) return null;
 
   try {
-    const { buildAdventureScenePrompt, getStylePreset } = require('../image');
+    const { buildAdventureScenePrompt, buildScenePrompt, getStylePreset } = require('../image');
     // Map scene name to a scene key for the adventure template
     const sceneKey = mapSceneNameToKey(adventureId, sceneName);
     const stylePreset = getStylePreset(adventureId);
@@ -57,6 +57,27 @@ async function generateSceneImage(adventureId, sceneName, sceneDescription, sess
       description: sceneDescription,
       location: sceneName,
     });
+
+    // Check cache first (pre-generated images)
+    const cached = svc.getCachedImage(prompt);
+    if (cached) {
+      console.log('[DM] Using cached scene image for: ' + sceneName);
+      return cached;
+    }
+
+    // Also check with buildScenePrompt (the pregenerate script uses this)
+    const scenePrompt = buildScenePrompt({
+      description: sceneDescription,
+      location: sceneName,
+      mood: 'dread',
+    });
+    const cachedScene = svc.getCachedImage(scenePrompt);
+    if (cachedScene) {
+      console.log('[DM] Using cached scene image (alt prompt) for: ' + sceneName);
+      return cachedScene;
+    }
+
+    // Fall back to live generation
     const url = await svc.generateRaw(prompt, { sessionId });
     if (url) console.log('[DM] Generated scene image for: ' + sceneName);
     return url;
