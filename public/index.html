@@ -2150,6 +2150,7 @@ var actionRequestId = 0;  // tracks the current action request to ignore stale r
 function sendAction(text) {
   if (sending) return;
   sending = true;
+  stopVoice();
   actionRequestId++;
   var thisRequest = actionRequestId;
   document.getElementById('send-btn').disabled = true;
@@ -2261,6 +2262,17 @@ var voiceEnabled = false;
 var voiceQueue = [];
 var isPlayingVoice = false;
 var currentAudio = null;
+
+function stopVoice() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio.currentTime = 0;
+    currentAudio = null;
+  }
+  voiceQueue = [];
+  isPlayingVoice = false;
+  removeVoiceIndicators();
+}
 
 function showToast(message, type) {
   type = type || 'error';
@@ -2636,6 +2648,7 @@ function updateCombatDisplay(data) {
 
 function sendCombatAction(action) {
   if (!sessionId) return;
+  stopVoice();
   var btns = document.querySelectorAll('.combat-action-btn');
   for (var i = 0; i < btns.length; i++) btns[i].disabled = true;
 
