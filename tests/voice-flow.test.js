@@ -17,15 +17,28 @@ const { test, expect } = require('@playwright/test');
 // ═════════════════════════════════════════════════════════════════════════
 
 async function dismissAccessGate(page) {
-  const gate = page.locator('#accessGate');
-  if (await gate.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await gate.evaluate(el => el.style.display = 'none');
-  }
+  const testToken = 'BIND-TY5Y';
+
+  // Intercept the beta token validation API to always succeed
+  await page.route('**/api/beta/validate', async route => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ ok: true })
+    });
+  });
+
+  // Seed localStorage BEFORE the page loads so the auto-login flow fires
+  await page.addInitScript(token => {
+    localStorage.setItem('betaToken', token);
+    localStorage.setItem('ndaAccepted_' + token, 'true');
+    localStorage.setItem('questionnaireDone_' + token, 'true');
+  }, testToken);
 }
 
 async function startStoryMode(page) {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await dismissAccessGate(page);
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
 
   // Click storyline mode
   const storylineCard = page.locator('.mode-card', { hasText: 'Story' });
@@ -34,10 +47,10 @@ async function startStoryMode(page) {
   await page.waitForTimeout(1000);
 
   // Pick class if visible
-  const classSelection = page.locator('#classSelection, .class-selection, .class-card');
+  const classSelection = page.locator('.class-card, .class-option');
   const classVisible = await classSelection.first().isVisible({ timeout: 3000 }).catch(() => false);
   if (classVisible) {
-    await page.locator('.class-card, .class-option').first().click();
+    await classSelection.first().click();
     await page.waitForTimeout(1000);
   }
 
@@ -55,64 +68,45 @@ test.describe('Voice Toggle — Basic Functionality', () => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await startStoryMode(page);
 
-    // Find voice toggle
-    const voiceToggle = page.locator('#voiceToggle, .voice-toggle, [data-action="toggle-voice"]');
+    // Find voice toggle (actual ID is #voice-toggle, muted class = off state)
+    const voiceToggle = page.locator('#voice-toggle');
     await expect(voiceToggle).toBeVisible({ timeout: 5000 });
 
-    // Get initial state
-    const initialState = await voiceToggle.evaluate(el => {
-      return {
-        isActive: el.classList.contains('active') ||
-                  el.classList.contains('on') ||
-                  el.getAttribute('aria-pressed') === 'true' ||
-                  el.dataset.state === 'on',
-        text: el.textContent.trim()
-      };
+    // Get initial state — toggle starts with .muted class (voice off)
+    const initiallyMuted = await voiceToggle.evaluate(el => {
+      return el.classList.contains('muted');
     });
 
     // Click toggle
     await voiceToggle.click();
     await page.waitForTimeout(500);
 
-    // Verify state changed
-    const newState = await voiceToggle.evaluate(el => {
-      return {
-        isActive: el.classList.contains('active') ||
-                  el.classList.contains('on') ||
-                  el.getAttribute('aria-pressed') === 'true' ||
-                  el.dataset.state === 'on',
-        text: el.textContent.trim()
-      };
+    // Verify state changed — muted class should flip
+    const nowMuted = await voiceToggle.evaluate(el => {
+      return el.classList.contains('muted');
     });
 
-    // State should have changed
-    expect(newState.isActive).not.toBe(initialState.isActive);
+    expect(nowMuted).not.toBe(initiallyMuted);
   });
 
   test('voice toggle persists state across page reload', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await startStoryMode(page);
 
-    // Find and enable voice toggle
-    const voiceToggle = page.locator('#voiceToggle, .voice-toggle, [data-action="toggle-voice"]');
+    // Find voice toggle
+    const voiceToggle = page.locator('#voice-toggle');
     await expect(voiceToggle).toBeVisible({ timeout: 5000 });
 
-    // Enable voice
-    const isInitiallyActive = await voiceToggle.evaluate(el => {
-      return el.classList.contains('active') ||
-             el.classList.contains('on') ||
-             el.getAttribute('aria-pressed') === 'true' ||
-             el.dataset.state === 'on';
-    });
-
-    if (!isInitiallyActive) {
+    // Enable voice if currently muted
+    const isMuted = await voiceToggle.evaluate(el => el.classList.contains('muted'));
+    if (isMuted) {
       await voiceToggle.click();
       await page.waitForTimeout(500);
     }
 
     // Reload page
-    await page.reload({ waitUntil: 'domcontentloaded' });
     await dismissAccessGate(page);
+    await page.reload({ waitUntil: 'domcontentloaded' });
 
     // Check localStorage for voice state
     const voiceEnabled = await page.evaluate(() => {
@@ -130,8 +124,8 @@ test.describe('Voice Toggle — Basic Functionality', () => {
 test.describe('BrowserTTS — Integration', () => {
   test('BrowserTTS is initialized and available', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 720 });
-    await page.goto('/', { waitUntil: 'domcontentloaded' });
     await dismissAccessGate(page);
+    await page.goto('/', { waitUntil: 'domcontentloaded' });
 
     // Check if BrowserTTS is defined and initialized
     const browserTTSState = await page.evaluate(() => {
@@ -157,24 +151,18 @@ test.describe('BrowserTTS — Integration', () => {
     await page.setViewportSize({ width: 1280, height: 720 });
     await startStoryMode(page);
 
-    // Enable voice
-    const voiceToggle = page.locator('#voiceToggle, .voice-toggle, [data-action="toggle-voice"]');
+    // Enable voice toggle
+    const voiceToggle = page.locator('#voice-toggle');
     await expect(voiceToggle).toBeVisible({ timeout: 5000 });
 
-    const isInitiallyActive = await voiceToggle.evaluate(el => {
-      return el.classList.contains('active') ||
-             el.classList.contains('on') ||
-             el.getAttribute('aria-pressed') === 'true' ||
-             el.dataset.state === 'on';
-    });
-
-    if (!isInitiallyActive) {
+    const isMuted = await voiceToggle.evaluate(el => el.classList.contains('muted'));
+    if (isMuted) {
       await voiceToggle.click();
       await page.waitForTimeout(500);
     }
 
     // Click an action button to trigger DM response
-    const actionButtons = page.locator('#actions button, #actions .action-btn, .action-button');
+    const actionButtons = page.locator('#action-buttons .action-btn, #action-buttons button');
     const actionCount = await actionButtons.count();
 
     if (actionCount > 0) {
@@ -183,8 +171,7 @@ test.describe('BrowserTTS — Integration', () => {
       // Wait for DM response
       await page.waitForTimeout(2000);
 
-      // Check if BrowserTTS.speak was called (we can't directly test audio output,
-      // but we can verify the speak function exists and voice is enabled)
+      // Verify voice is enabled and BrowserTTS.speak exists
       const voiceState = await page.evaluate(() => {
         return {
           voiceEnabled: typeof voiceEnabled !== 'undefined' ? voiceEnabled : false,
@@ -210,7 +197,7 @@ test.describe('Voice Toggle — Mobile', () => {
     await startStoryMode(page);
 
     // Find voice toggle
-    const voiceToggle = page.locator('#voiceToggle, .voice-toggle, [data-action="toggle-voice"]');
+    const voiceToggle = page.locator('#voice-toggle');
     const isVisible = await voiceToggle.isVisible({ timeout: 3000 }).catch(() => false);
 
     if (isVisible) {
@@ -218,16 +205,11 @@ test.describe('Voice Toggle — Mobile', () => {
       await voiceToggle.click();
       await page.waitForTimeout(500);
 
-      // Verify state changed
-      const isActive = await voiceToggle.evaluate(el => {
-        return el.classList.contains('active') ||
-               el.classList.contains('on') ||
-               el.getAttribute('aria-pressed') === 'true' ||
-               el.dataset.state === 'on';
-      });
+      // Verify muted class was removed (voice enabled)
+      const isMuted = await voiceToggle.evaluate(el => el.classList.contains('muted'));
 
-      // Should be active after click
-      expect(isActive).toBe(true);
+      // Should NOT be muted after click
+      expect(isMuted).toBe(false);
     }
   });
 });
