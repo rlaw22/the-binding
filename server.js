@@ -49,9 +49,11 @@ async function main() {
       const imgSvc = createImageService({ cacheDir: process.env.IMAGE_CACHE_DIR || 'data/images' });
       if (imgSvc && imgSvc.isEnabled) {
         console.log('  🖼️  Checking adventure images...');
-        pregenerateAdventureImages(imgSvc, 'dracula').catch(err => {
-          console.error('  🖼️  Pre-generation failed:', err.message);
-        });
+    ['dracula', 'frankenstein', 'holmes'].forEach(advId => {
+      pregenerateAdventureImages(imgSvc, advId).catch(err => {
+        console.error(`  🖼️  Pre-generation failed for ${advId}:`, err.message);
+      });
+    });
       }
     }
     console.log(`  📡 Polling: GET /api/sessions/:id/messages?after=N`);
