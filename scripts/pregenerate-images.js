@@ -56,7 +56,37 @@ const ADVENTURE_SCENES = {
       default: 'dread',
     },
   },
-  // Future: frankenstein, holmes
+    frankenstein: {
+    scenes: [
+      { id: 'scene_00', location: 'Geneva — The Frankenstein Home', description: 'A grand house on the shore of Lake Geneva. The laboratory is cold, filled with glass jars and brass instruments. Lightning flickers beyond tall windows.' },
+      { id: 'scene_01', location: 'The University of Ingolstadt', description: 'A dim lecture hall smelling of formaldehyde. Anatomy tables line the walls. Professor Waldman speaks of the secret of life.' },
+      { id: 'scene_02', location: 'The Laboratory', description: 'A garret laboratory lit by oil lamps and lightning. Jars of organs, copper wires, glass rods, a slab where something lies under a sheet.' },
+      { id: 'scene_03', location: 'The Creation', description: 'The creature opens its eyes. Yellow skin stretches over muscle and bone. Black lips pull back from white teeth. Rain hammers the windows.' },
+      { id: 'scene_04', location: 'The Forest', description: 'A dark forest outside Ingolstadt. Frost on dead leaves. The creature has fled into the trees. Footprints in the mud lead deeper into shadow.' },
+      { id: 'scene_05', location: 'The De Lacey Cottage', description: 'A humble cottage at the edge of a wood. An old blind man plays a violin. The creature watches from a crack in the wall.' },
+      { id: 'scene_06', location: 'The Arctic', description: 'Ice stretches to the horizon. The ship is locked in pack ice. A figure approaches across the frozen waste — vast, misshapen, alone.' },
+    ],
+    characters: {
+      creature: 'A towering figure, eight feet tall. Yellow skin pulled tight over muscle. Black hair, white teeth, watery eyes. Beautiful and terrible.',
+      walman: 'A professor of chemistry. Stern face, grey wig, dark robes. Knowledgeable about the secret of life.',
+    },
+    moods: { default: 'dread' },
+  },
+  holmes: {
+    scenes: [
+      { id: 'scene_00', location: '221B Baker Street', description: 'A cluttered sitting room. Persian slipper stuffed with tobacco, violin on the mantelpiece, bullet holes in the wall plastered with VR monograms.' },
+      { id: 'scene_01', location: 'Dartmoor', description: 'Grimpen Moor stretches bleak and boggy under a grey sky. The Great Grimpen Mire swallows everything. Fog pools in hollows.' },
+      { id: 'scene_02', location: 'Baskerville Hall', description: 'A great grey house of granite. Long windows stare like eyes. The yew alley stretches into darkness. A portrait of Hugo Baskerville hangs in the hall.' },
+      { id: 'scene_03', location: 'The Grimpen Mire', description: 'Quaking bog. Tufts of grass float on brown water. One misstep means death. The mire bubbles and sighs.' },
+      { id: 'scene_04', location: 'The London Fog', description: 'Gas lamps halo in yellow fog. Hansoms splash through rain. A narrow alley off the Strand. A door with a red lamp.' },
+    ],
+    characters: {
+      holmes: 'A tall thin man with hawk-like features, sharp grey eyes, a deerstalker cap, and an Inverness cape. Smoking a curved pipe.',
+      watson: 'A solid, reliable man with a moustache. Medical bag, military bearing, warm eyes.',
+    },
+    moods: { default: 'dread' },
+  },
+  
 };
 
 // ---------------------------------------------------------------------------
