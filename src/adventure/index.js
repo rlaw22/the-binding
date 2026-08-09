@@ -84,6 +84,34 @@ function getAdventureStart(adventureId) {
 }
 
 /**
+ * Build the narrative prologue for an adventure.
+ * Substitutes player name/class tokens and appends class flavor text.
+ * Returns null if the adventure has no prologue (graceful fallback).
+ *
+ * @param {string} adventureId
+ * @param {string} playerName
+ * @param {string} playerClass
+ * @returns {string|null}
+ */
+function getPrologue(adventureId, playerName, playerClass) {
+  const adventure = getAdventure(adventureId);
+  if (!adventure || !adventure.prologue) return null;
+
+  const prologue = adventure.prologue;
+  let text = prologue.template
+    .replace(/\{name\}/g, playerName || 'Traveler')
+    .replace(/\{class\}/g, playerClass || 'adventurer');
+
+  // Append class-specific flavor line if available
+  const cls = (playerClass || '').toLowerCase();
+  if (prologue.classFlavor && prologue.classFlavor[cls]) {
+    text += '\n\n' + prologue.classFlavor[cls];
+  }
+
+  return text;
+}
+
+/**
  * Check if scene transition is allowed based on flags.
  */
 function canTransitionTo(adventureId, sceneId, flags) {
@@ -155,6 +183,7 @@ module.exports = {
   getAdventure,
   listAdventures,
   getAdventureStart,
+  getPrologue,
   canTransitionTo,
   getAvailableScenes,
   getScene,

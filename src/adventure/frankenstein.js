@@ -25,6 +25,21 @@ const FrankensteinAdventure = {
   estimatedLength: '10-14 hours',
   totalScenes: 25,
 
+  // Narrative prologue — shown before the first scene to establish who the player is and why they're here
+  prologue: {
+    template: `You are {name}, a {class} from Geneva. Your father, Alphonse Frankenstein, is a respected man of means — and you have grown up in comfort, surrounded by books, family, and the quiet beauty of Lake Geneva.
+
+But comfort was never enough. Since childhood, you have been consumed by a single question: what is the secret of life? What force animates the dead matter of the body? Your mother's death only deepened the hunger. You swore you would conquer death itself.
+
+Now, on the eve of your departure to the University of Ingolstadt, you sit in your family home for what may be the last time. Elizabeth waits by the fire. Your father reads in his study. Outside, a storm gathers over the lake — lightning splitting the sky like the spark of something terrible and beautiful.`,
+    classFlavor: {
+      fighter: 'You are strong, but brute force cannot answer the questions that haunt you.',
+      cleric: 'Your faith teaches that life is God\'s domain. You are about to challenge that teaching.',
+      mage: 'The arcane arts have always fascinated you. Now they consume you entirely.',
+      rogue: 'You have a talent for acquiring things that others say cannot be had.'
+    }
+  },
+
   // Coin pool config
   coinPoolConfig: {
     totalScenes: 25,

@@ -24,6 +24,21 @@ const DraculaAdventure = {
   estimatedLength: '8-12 hours',
   totalScenes: 25,
 
+  // Narrative prologue — shown before the first scene to establish who the player is and why they're here
+  prologue: {
+    template: `You are {name}, a {class} from England. Three weeks ago, a desperate letter arrived from Jonathan Harker — a young solicitor you once knew. He wrote of a castle in the Carpathian mountains, of a nobleman who was not what he seemed, and of something ancient and unspeakable that he could not name. The letter ended with three words: "Do not come."
+
+You came anyway.
+
+Now, after days of travel by train and coach, you find yourself in the town of Bistritz, Transylvania. The locals fall silent when you mention Castle Dracula. The road ahead climbs into mountains where wolves still hunt. And tonight — tonight you must find a coach to take you to a place no sane traveler would go.`,
+    classFlavor: {
+      fighter: 'Your sword has seen bandits and beasts, but nothing like what Harker described.',
+      cleric: 'Your faith has been your shield through dark times. You will need it where you are going.',
+      mage: 'You have studied the old texts — the ones that speak of things that should not exist.',
+      rogue: 'You have survived by your wits in worse places than this. But something tells you this is different.'
+    }
+  },
+
   // Coin pool config
   coinPoolConfig: {
     totalScenes: 25,

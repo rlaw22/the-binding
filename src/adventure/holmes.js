@@ -25,6 +25,23 @@ const HolmesAdventure = {
   estimatedLength: '8-12 hours',
   totalScenes: 25,
 
+  // Narrative prologue — shown before the first scene to establish who the player is and why they're here
+  prologue: {
+    template: `You are {name}, a {class} of some note in London. You have heard the name Sherlock Holmes — who hasn't? — but you never expected to find yourself at 221B Baker Street, sitting across from the great detective himself.
+
+It began three days ago. Dr. James Mortimer, a country physician from Dartmoor, came to Holmes with a strange story: Sir Charles Baskerville, master of Baskerville Hall, found dead on the grounds of his estate. His face twisted in terror. His footprints ended at the edge of a fog-shrouded mire. And nearby — the prints of an enormous hound.
+
+The locals whisper of a curse. An ancient legend. A phantom beast that has stalked the Baskerville line for generations. Sir Henry Baskerville, the last heir, arrives in London today.
+
+Holmes has asked you to assist. The fire crackles in the grate. The fog presses against the windows. And somewhere on the moor, something is waiting.`,
+    classFlavor: {
+      fighter: 'Your steady nerves and strong arm have served you well. They will be tested on the moor.',
+      cleric: 'You have faced dark things before. But a curse older than memory? That is something else entirely.',
+      mage: 'The rational mind should dismiss a ghostly hound. But you have seen enough in your studies to know better.',
+      rogue: 'You know how to find things that don\'t want to be found. This case will need that skill.'
+    }
+  },
+
   // Coin pool config
   coinPoolConfig: {
     totalScenes: 25,

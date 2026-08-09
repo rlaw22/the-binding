@@ -20,10 +20,10 @@ const { createSession, addPlayer, getPrimaryPlayer, getHostPlayer, getPlayer, is
 const MessageRouter = require('../session/message-router');
 const { createContextManager, addTurn, setCharacterSheet, setAdventureContext, updateScene, addKeyDecision } = require('../ai-dm/context-manager');
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT } = require('../ai-dm/prompts');
-const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions, generateSceneImage } = require('../ai-dm/dm-service');
+const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions } = require('../ai-dm/dm-service');
 const { createProvider } = require('../ai-dm/llm-provider');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, convertToBinding, formatChapterSummary, formatAdventureSummary, buildCoinNotification, CoinCategory } = require('../coin-engine');
-const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline } = require('../adventure');
+const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline, getPrologue } = require('../adventure');
 const SceneEngine = require('../scene-engine');
 const RuleEngine = require('../rule-engine');
 const DiceService = require('../dice/dice-service');
@@ -635,20 +635,13 @@ async function createServer(options = {}) {
         character: player.character
       });
 
-
-      // Generate scene image for opening narration (async, non-blocking)
-      const openingSceneName = sceneManifest ? (sceneManifest.sceneName || sceneManifest.name || adventure.name) : '';
-      if (openingSceneName) {
-        generateSceneImage(adventureId, openingSceneName, sceneManifest.description, session.id)
-          .then(imageUrl => {
-            if (imageUrl) {
-              game._lastSceneImage = imageUrl;
-              recordMessage(session.id, MessageRouter.sceneImage(imageUrl, openingSceneName));
-              console.log('[Session] Opening scene image ready: ' + imageUrl.slice(0, 80));
-            }
-          })
-          .catch(err => console.warn('[Session] Opening scene image failed:', err.message));
+      // Narrative prologue — establishes who the player is and why they're here
+      const prologueText = getPrologue(adventureId, player.character.name, player.character.class);
+      if (prologueText) {
+        recordMessage(session.id, MessageRouter.narration(prologueText, {}));
+        addTurn(game.contextManager, 'assistant', prologueText);
       }
+
       recordMessage(session.id, MessageRouter.narration(
         sceneManifest.description,
         {}
