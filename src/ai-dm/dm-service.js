@@ -50,35 +50,35 @@ async function generateSceneImage(adventureId, sceneName, sceneDescription, sess
 
   try {
     const { buildAdventureScenePrompt, buildScenePrompt, getStylePreset } = require('../image');
-    // Map scene name to a scene key for the adventure template
-    const sceneKey = mapSceneNameToKey(adventureId, sceneName);
-    const stylePreset = getStylePreset(adventureId);
-    const prompt = buildAdventureScenePrompt(adventureId, sceneKey, {
-      description: sceneDescription,
-      location: sceneName,
-    });
 
-    // Check cache first (pre-generated images)
-    const cached = svc.getCachedImage(prompt);
-    if (cached) {
-      console.log('[DM] Using cached scene image for: ' + sceneName);
-      return cached;
-    }
-
-    // Also check with buildScenePrompt (the pregenerate script uses this)
+    // PRIORITY 1: Check buildScenePrompt cache key (matches pregenerate-images.js)
     const scenePrompt = buildScenePrompt({
       description: sceneDescription,
       location: sceneName,
       mood: 'dread',
     });
-    const cachedScene = svc.getCachedImage(scenePrompt);
-    if (cachedScene) {
-      console.log('[DM] Using cached scene image (alt prompt) for: ' + sceneName);
-      return cachedScene;
+    const cached = svc.getCachedImage(scenePrompt);
+    if (cached) {
+      console.log('[DM] Using cached scene image for: ' + sceneName);
+      return cached;
     }
 
-    // Fall back to live generation
-    const url = await svc.generateRaw(prompt, { sessionId });
+    // PRIORITY 2: Check buildAdventureScenePrompt cache key (legacy/alt)
+    const sceneKey = mapSceneNameToKey(adventureId, sceneName);
+    const stylePreset = getStylePreset(adventureId);
+    const altPrompt = buildAdventureScenePrompt(adventureId, sceneKey, {
+      description: sceneDescription,
+      location: sceneName,
+    });
+    const cachedAlt = svc.getCachedImage(altPrompt);
+    if (cachedAlt) {
+      console.log('[DM] Using cached scene image (alt prompt) for: ' + sceneName);
+      return cachedAlt;
+    }
+
+    // Fall back to live generation (using buildScenePrompt so result gets cached
+    // under the same key the pregenerate script uses)
+    const url = await svc.generateRaw(scenePrompt, { sessionId });
     if (url) console.log('[DM] Generated scene image for: ' + sceneName);
     return url;
   } catch (err) {
