@@ -459,6 +459,16 @@ function createErrorRecovery(imageService, opts = {}) {
     },
 
     /**
+     * Get a cached image URL for a given prompt (without generating).
+     * Delegates directly to the underlying service — no retry needed for cache lookups.
+     * Returns the cached URL if found, null otherwise.
+     */
+    getCachedImage(prompt) {
+      if (!imageService.getCachedImage) return null;
+      return imageService.getCachedImage(prompt);
+    },
+
+    /**
      * Get failure logger for inspection.
      */
     get failureLogger() {
