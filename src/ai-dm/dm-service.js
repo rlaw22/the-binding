@@ -522,9 +522,10 @@ async function processAction(game, playerAction, character) {
     parsed.suggestedActions = generateSceneActions(game.sceneState, aiSuggestedActions);
   }
 
-  // Score the player's action for coins — use LLM when available, heuristic fallback
+  // Score the player's action for coins — heuristic by default, LLM only when COIN_SCORING_MODE=llm
   let coinScores;
-  if (game.llmProvider && game.coinPool) {
+  const useLLMScoring = process.env.COIN_SCORING_MODE === 'llm' && game.llmProvider && game.coinPool;
+  if (useLLMScoring) {
     try {
       // Build scene info for the coin engine's full rubric prompt
       const sceneInfo = (game.sceneState && game.coinPool) ? {

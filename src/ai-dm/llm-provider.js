@@ -108,7 +108,7 @@ const BASE_RETRY_DELAY_MS = 1000;
 function createOpenAIProvider(config = {}) {
   const apiKey = config.apiKey || process.env.LLM_API_KEY || '';
   const baseUrl = config.baseUrl || process.env.LLM_BASE_URL || 'https://api.openai.com/v1';
-  const model = config.model || process.env.LLM_MODEL || 'gpt-4o';
+  const model = config.model || process.env.LLM_MODEL || 'gpt-4o-mini';
   const maxTokens = config.maxTokens || 2000;
   const temperature = config.temperature || 0.8;
 

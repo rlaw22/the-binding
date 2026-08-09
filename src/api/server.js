@@ -168,7 +168,7 @@ async function createServer(options = {}) {
   app.get('/api/llm/status', async () => {
     return {
       mode: llmConfig.mock ? 'mock' : 'real',
-      model: llmConfig.model || process.env.LLM_MODEL || 'gpt-4o',
+      model: llmConfig.model || process.env.LLM_MODEL || 'gpt-4o-mini',
       hasApiKey: !!(llmConfig.apiKey || process.env.LLM_API_KEY)
     };
   });
@@ -178,7 +178,7 @@ async function createServer(options = {}) {
   app.get('/api/llm/diag', async () => {
     const key = llmConfig.apiKey || process.env.LLM_API_KEY || '';
     const baseUrl = llmConfig.baseUrl || process.env.LLM_BASE_URL || 'https://api.openai.com/v1';
-    const model = llmConfig.model || process.env.LLM_MODEL || 'gpt-4o';
+    const model = llmConfig.model || process.env.LLM_MODEL || 'gpt-4o-mini';
 
     const diag = {
       mode: llmConfig.mock ? 'mock' : 'real',
