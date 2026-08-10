@@ -589,6 +589,7 @@ async function createServer(options = {}) {
     const game = createGame({
       adventureId,
       adventureName: adventure.name,
+      gameMode: resolvedGameMode,
       llmProvider: createProvider(llmConfig),
       ruleEngine: RuleEngine,
       diceService: DiceService
