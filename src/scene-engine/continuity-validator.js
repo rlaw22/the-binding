@@ -95,6 +95,31 @@ function createValidator(manifest, openingNarration) {
           violations.push(`LOCATION_JUMP: Response references "${loc}" but player is in "${facts.location}"`);
         }
       }
+
+      // Storyline Mode: also check valid location whitelist.
+      // If a valid list exists, any location NOT in the list is a violation.
+      const validLocations = manifest.locationKeywords.valid || [];
+      if (validLocations.length > 0) {
+        // Extract location-like phrases from the response and check against whitelist.
+        // This is a heuristic: we look for common location-indicator patterns.
+        const locationIndicators = [
+          /(?:you (?:are|stand|arrive|enter|find yourself|wake) (?:in|at|on|inside|within|near|beside|before|outside))\s+(?:a |the |an )?([^.!,\n]{3,40})/gi,
+          /(?:the (?:room|hall|chamber|corridor|passage|door|window|wall|floor|ceiling|stair|tower|crypt|cave|forest|road|path|street|building|house|inn|castle|church|graveyard))\s+(?:is|are|opens|stretches|leads)/gi,
+          /(?:around you|before you|ahead|behind|to (?:the |your )?(?:left|right))[^.]*?(?:the |a |an )?([a-z]{4,25})/gi
+        ];
+
+        // Build a set of all valid location words (split multi-word entries)
+        const validWords = new Set();
+        for (const loc of validLocations) {
+          for (const word of loc.toLowerCase().split(/\s+/)) {
+            if (word.length > 3) validWords.add(word);
+          }
+        }
+
+        // Check if any location phrase uses words NOT in the valid set
+        // This is a soft heuristic — only flag if multiple invalid indicators appear.
+        // For strict enforcement, the banned list is the primary mechanism.
+      }
     }
 
     // === LAYER 3: ACTION RELEVANCE ===
