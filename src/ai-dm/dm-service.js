@@ -115,6 +115,145 @@ function mapSceneNameToSceneId(adventureId, sceneName) {
 const SCENE_MOODS = ['dread', 'mystery', 'eerie'];
 
 /**
+ * Build a spatial anchor from scene description for storyline mode free-text actions.
+ * Extracts spatial constraints so the LLM respects scene boundaries.
+ *
+ * @param {string} sceneDescription — the full scene description text
+ * @param {string} sceneName — the scene name
+ * @returns {string} spatial anchor prompt prefix
+ */
+function buildSpatialAnchor(sceneDescription, sceneName) {
+  const desc = (sceneDescription || '').toLowerCase();
+
+  // Detect containment — is the player inside something?
+  const indoorKeywords = ['inside', 'interior', 'within', 'enclosed', 'coach', 'carriage',
+    'cabin', 'room', 'chamber', 'hall', 'inn', 'tavern', 'dining', 'crypt', 'tunnel', 'cave'];
+  const isIndoor = indoorKeywords.some(kw => desc.includes(kw));
+
+  // Detect vehicle/movement
+  const vehicleKeywords = ['coach', 'carriage', 'horse', 'riding', 'rattling', 'moving',
+    'speed', 'lurching', 'wagon', 'train', 'boat', 'ship'];
+  const isInVehicle = vehicleKeywords.some(kw => desc.includes(kw));
+
+  // Detect outdoor
+  const outdoorKeywords = ['forest', 'field', 'road', 'path', 'mountain', 'cliff',
+    'courtyard', 'graveyard', 'cemetery', 'moor', 'heath'];
+  const isOutdoor = outdoorKeywords.some(kw => desc.includes(kw)) && !isIndoor;
+
+  let anchor = `SPATIAL ANCHOR — CRITICAL:\n`;
+  anchor += `Current location: "${sceneName}"\n`;
+
+  if (isInVehicle) {
+    anchor += `The player is INSIDE A MOVING VEHICLE. They cannot:\n`;
+    anchor += `- Touch the ground, search the earth, or interact with anything outside the vehicle\n`;
+    anchor += `- Leave the vehicle until it stops\n`;
+    anchor += `- Find items on the ground or in the forest\n`;
+    anchor += `All actions must occur within the vehicle interior.\n`;
+  } else if (isIndoor) {
+    anchor += `The player is INDOORS in "${sceneName}". They cannot:\n`;
+    anchor += `- Access outdoor areas not connected to this room\n`;
+    anchor += `- Interact with items not described in the scene\n`;
+  } else if (isOutdoor) {
+    anchor += `The player is OUTDOORS in "${sceneName}". They cannot:\n`;
+    anchor += `- Enter buildings or structures not described in the scene\n`;
+    anchor += `- Interact with items not described in the scene\n`;
+  }
+
+  return anchor;
+}
+
+/**
+ * Strip phantom items from LLM responses in storyline mode.
+ * Removes sentences that narrate the player finding, picking up, or acquiring
+ * items that don't exist in the manifest, scene description, or player inventory.
+ *
+ * @param {string} response — the LLM response text
+ * @param {object} game — the game state (has sceneState and inventory)
+ * @returns {string} cleaned response with phantom items removed
+ */
+function stripPhantomItems(response, game) {
+  if (!response || !game) return response;
+
+  // Build the set of known items: inventory + scene initialFacts + scene description nouns
+  const knownItems = new Set();
+
+  // From inventory
+  if (game.inventory && game.inventory.slots) {
+    for (const slot of game.inventory.slots) {
+      if (slot.id) knownItems.add(slot.id.toLowerCase());
+      if (slot.name) knownItems.add(slot.name.toLowerCase());
+    }
+  }
+
+  // From scene initialFacts
+  if (game.sceneState && game.sceneState.initialFacts && game.sceneState.initialFacts.items) {
+    for (const item of game.sceneState.initialFacts.items) {
+      knownItems.add(item.toLowerCase());
+    }
+  }
+
+  // From scene content items (discoverable things in the scene)
+  if (game.sceneState && game.sceneState.contentItems) {
+    for (const item of game.sceneState.contentItems) {
+      if (item.label) {
+        // Extract nouns from labels
+        const words = item.label.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+        words.forEach(w => knownItems.add(w));
+      }
+    }
+  }
+
+  // Known physical items that are always legitimate
+  const alwaysValid = new Set(['torch', 'journal', 'crucifix', 'garlic', 'sword', 'shield',
+    'cross', 'rosary', 'letter', 'key', 'lock', 'door', 'candle', 'wine', 'glass',
+    'plate', 'food', 'chair', 'table', 'bench', 'fire', 'candlestick']);
+  alwaysValid.forEach(i => knownItems.add(i));
+
+  // Phrases that indicate item acquisition — if the item isn't known, strip the sentence
+  const acquisitionPatterns = [
+    /you find\s+(?:a |an |the )?(.+?)(?:\.|,|$)/gi,
+    /you discover\s+(?:a |an |the )?(.+?)(?:\.|,|$)/gi,
+    /you pick up\s+(?:a |an |the )?(.+?)(?:\.|,|$)/gi,
+    /you take\s+(?:a |an |the )?(.+?)(?:\.|,|$)/gi,
+    /you grab\s+(?:a |an |the )?(.+?)(?:\.|,|$)/gi,
+    /you notice\s+(?:a |an |the )?(.+?)(?:lying|sitting|resting|hidden)/gi,
+    /(?:a |an |the )?small\s+(\w+)\s+(?:lies|rests|sits|catches|glints|gleams)/gi,
+    /(?:half-buried|hidden|tucked|concealed).*?(?:find|discover|notice)\s+(?:a |an |the )?(.+?)(?:\.|,|$)/gi,
+  ];
+
+  let cleaned = response;
+  const sentences = response.match(/[^.!?]+[.!?]+/g) || [response];
+  const keptSentences = [];
+
+  for (const sentence of sentences) {
+    let isPhantom = false;
+    const lower = sentence.toLowerCase();
+
+    // Check if this sentence describes finding/acquiring something
+    const isAcquisition = lower.includes('find') || lower.includes('discover') ||
+      lower.includes('pick up') || lower.includes('glint of metal') ||
+      lower.includes('tarnished') || lower.includes('half-buried');
+
+    if (isAcquisition) {
+      // Check if any known item is mentioned in this sentence
+      const mentionsKnown = [...knownItems].some(item =>
+        item.length > 3 && lower.includes(item)
+      );
+      if (!mentionsKnown) {
+        console.log('[StoryEngine] Stripping phantom item sentence:', sentence.trim().slice(0, 80));
+        isPhantom = true;
+      }
+    }
+
+    if (!isPhantom) {
+      keptSentences.push(sentence);
+    }
+  }
+
+  return keptSentences.join('').trim();
+}
+
+/**
  * Optionally generate an illustration for a new scene.
  * Checks static assets first (free, instant), then falls back to AI generation.
  * Avoids repeating images already shown in this session.
@@ -657,6 +796,44 @@ Do NOT change the outcome, damage, or coin values.
 Do NOT generate buttons, suggestions, or new content.
 Do NOT add meta-commentary or compliments.
 Stay in the world. Be concise.`;
+  } else if (isStoryline && !storyResult) {
+    // Storyline mode but no StoryEngine match (free-text action not matching any button)
+    // Build a spatially-anchored prompt so the LLM respects scene boundaries
+    const sceneDesc = game.sceneState ? game.sceneState.sceneName : 'unknown location';
+    const sceneDescription = game.sceneState ? (game.sceneState.description || '') : '';
+
+    // Extract spatial constraints from scene description
+    const spatialAnchor = buildSpatialAnchor(sceneDescription, sceneDesc);
+
+    systemPrompt = buildAdventureSystemPrompt({
+      adventureName: game.adventureName,
+      adventureDescription: '',
+      tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
+      sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
+    });
+
+    // Prepend spatial anchor — this is the critical fix for scene boundary violations
+    systemPrompt = spatialAnchor + '\n\n' + systemPrompt;
+
+    // Append inventory context
+    if (game.inventory) {
+      const items = listItems(game.inventory);
+      if (items.length > 0) {
+        const itemList = items.map(i => `${i.name}${i.consumable ? ` (${i.uses})` : ''}`).join(', ');
+        systemPrompt += `\n\nPLAYER INVENTORY: ${itemList}`;
+        systemPrompt += `\nOnly items listed above exist. Do NOT narrate the player possessing, finding, or using items NOT in this list.`;
+      }
+    }
+
+    // Add strict anti-hallucination rules for free-text in storyline mode
+    systemPrompt += `
+
+STRICT RULES FOR FREE-TEXT ACTIONS:
+- You MUST stay within the current scene location. Do NOT move the player to a different place.
+- Do NOT invent new items, objects, or NPCs that are not already described in the scene.
+- Do NOT narrate the player finding, picking up, or acquiring items unless they are explicitly listed in the scene description or player inventory.
+- If the player's action is impossible in the current setting (e.g. searching the ground while inside a moving vehicle), narrate WHY it cannot be done — do not hallucinate a result.
+- Keep the response to 2-3 sentences maximum.`;
   } else {
     // Campaign/Digital DM mode: full LLM prompt (unchanged)
     systemPrompt = buildAdventureSystemPrompt({
@@ -703,6 +880,21 @@ Stay in the world. Be concise.`;
       console.warn('[StoryEngine] LLM atmosphere failed, using deterministic narrative only:', err.message);
       dmResponse = storyResult.narrative;
     }
+  } else if (isStoryline && !storyResult) {
+    // Storyline mode free-text: spatially-anchored LLM with phantom item stripping
+    const storyMessages = [
+      { role: 'system', content: fullSystemPrompt },
+      { role: 'user', content: playerAction }
+    ];
+    try {
+      dmResponse = await llmProvider(storyMessages);
+    } catch (err) {
+      console.warn('[StoryEngine] Free-text LLM failed:', err.message);
+      dmResponse = `You consider your action, but the darkness around you offers no opportunity.`;
+    }
+
+    // Post-LLM: strip phantom items the LLM may have hallucinated
+    dmResponse = stripPhantomItems(dmResponse, game);
   } else {
     // Campaign/Digital DM mode: full LLM response (unchanged)
     dmResponse = await llmProvider(messages);
@@ -713,20 +905,32 @@ Stay in the world. Be concise.`;
     const validation = game.validator.validate(dmResponse, playerAction);
     if (!validation.valid) {
       console.warn('[ContinuityValidator] VIOLATIONS:', validation.violations);
-      // Enforce: regenerate if location jump detected (up to 2 retries)
+      // Enforce: regenerate if location jump detected (up to 2 retries, with timeout protection)
       const hasLocationJump = validation.violations.some(v => v.startsWith('LOCATION_JUMP'));
       if (hasLocationJump && game.llmProvider) {
         for (let retry = 0; retry < 2; retry++) {
           const correctionPrompt = fullSystemPrompt + `\n\nIMPORTANT: Your previous response referenced a location the player is NOT in. You are in "${game.sceneState ? game.sceneState.sceneName : 'this scene'}". Do NOT mention any location that is not the current scene. Stay in the current location.`;
           const correctionMessages = buildContext(contextManager, correctionPrompt);
-          const retryResponse = await llmProvider(correctionMessages);
-          const retryValidation = game.validator.validate(retryResponse, playerAction);
-          if (retryValidation.valid || !retryValidation.violations.some(v => v.startsWith('LOCATION_JUMP'))) {
-            dmResponse = retryResponse;
-            console.log('[ContinuityValidator] Retry ' + (retry + 1) + ' succeeded');
-            break;
+          try {
+            // Fix 5: Timeout protection — wrap retry in a race with timeout
+            const retryTimeout = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Retry timeout')), 15000)
+            );
+            const retryResponse = await Promise.race([
+              llmProvider(correctionMessages),
+              retryTimeout
+            ]);
+            const retryValidation = game.validator.validate(retryResponse, playerAction);
+            if (retryValidation.valid || !retryValidation.violations.some(v => v.startsWith('LOCATION_JUMP'))) {
+              dmResponse = retryResponse;
+              console.log('[ContinuityValidator] Retry ' + (retry + 1) + ' succeeded');
+              break;
+            }
+            console.warn('[ContinuityValidator] Retry ' + (retry + 1) + ' still has violations:', retryValidation.violations);
+          } catch (retryErr) {
+            console.warn('[ContinuityValidator] Retry ' + (retry + 1) + ' timed out or failed:', retryErr.message);
+            break; // Stop retrying — use the original response
           }
-          console.warn('[ContinuityValidator] Retry ' + (retry + 1) + ' still has violations:', retryValidation.violations);
         }
       }
     }
@@ -787,7 +991,16 @@ Stay in the world. Be concise.`;
       parsed.narrative = transitionNarration;
       const openingNarration = transitionScene(game, parsed.narrative);
       if (openingNarration) {
-        parsed.narrative += '\n\n' + openingNarration;
+        // Fix 10: Deduplicate exit narration — don't append if the transition narration
+        // already contains significant text about the departure (prevents double-narration)
+        const transitionLen = transitionNarration.length;
+        const openingPreview = openingNarration.slice(0, 100).toLowerCase();
+        const hasOverlap = transitionLen > 100 &&
+          (transitionNarration.toLowerCase().includes('coach') && openingPreview.includes('coach')) ||
+          (transitionNarration.toLowerCase().includes('door') && openingPreview.includes('door'));
+        if (!hasOverlap) {
+          parsed.narrative += '\n\n' + openingNarration;
+        }
       }
       // Regenerate suggested actions from the new scene state
       if (game.sceneState) {
@@ -824,6 +1037,18 @@ Stay in the world. Be concise.`;
     }
   } else {
     coinScores = scoreAction(playerAction, parsed.narrative);
+  }
+
+  // Fix 8: In storyline mode, dampen coins for free-text actions that didn't match a manifest button.
+  // Generic free-text actions should earn less than curated button actions.
+  if (isStoryline && !storyResult) {
+    // Free-text action in storyline mode — reduce all scores by 40%
+    for (const key of Object.keys(coinScores)) {
+      if (typeof coinScores[key] === 'number') {
+        coinScores[key] = Math.round(coinScores[key] * 0.6);
+      }
+    }
+    console.log('[CoinEngine] Dampened free-text storyline action coins by 40%');
   }
 
   // Apply bell curve normalization — makes high scores harder to achieve

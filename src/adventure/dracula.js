@@ -86,7 +86,7 @@ Through a back window, you can see the stable yard. A nervous horse stamps in it
 The innkeeper watches you from behind the bar. He looks like a man with something to say, but he is waiting for you to speak first.`,
       content: [
         { id: 'talk_innkeeper', label: 'Ask the innkeeper about Castle Dracula', keywords: ['innkeeper', 'ask', 'tell', 'dracula', 'castle', 'speak', 'talk'], discovery: 'You approach the innkeeper and ask about Castle Dracula. His face drains of color. He glances at the door, then at the old woman in the corner, then back at you. "You are going there?" he whispers. "To his castle?" He leans across the bar, his voice barely audible. "The Count is... not like other men. He has lived in that castle for longer than anyone can remember. The people in the mountains — they say he is the reason wolves obey. They say the dead do not rest easy in his land." He grips your wrist with surprising strength. "Take the crucifix. Take it and do not let go. And whatever you do — do not eat his food. Do not drink his wine. And do not fall asleep in his house."' },
-        { id: 'examine_crucifix', label: 'Examine the brass crucifix', keywords: ['crucifix', 'cross', 'examine', 'inspect', 'hold', 'brass'], discovery: 'You lift the brass crucifix into the lamplight. It is old — centuries old — the metal worn smooth by countless fingers. The figure of Christ is nearly featureless now, rubbed down to a suggestion of suffering. As you turn it, the firelight catches the edges and for a moment the shadows it casts look like wings. The innkeeper watches you from the doorway. "For protection," she says quietly. "You will need it where you are going."' },
+        { id: 'examine_crucifix', label: 'Examine the brass crucifix', keywords: ['crucifix', 'cross', 'examine', 'inspect', 'hold', 'brass'], discovery: 'You lift the brass crucifix into the lamplight. It is old — centuries old — the metal worn smooth by countless fingers. The figure of Christ is nearly featureless now, rubbed down to a suggestion of suffering. As you turn it, the firelight catches the edges and for a moment the shadows it casts look like wings. The innkeeper watches you from the doorway. "For protection," he says quietly. "You will need it where you are going."' },
         { id: 'find_old_woman', label: 'Approach the old woman in the corner', keywords: ['approach', 'woman', 'corner', 'old', 'talk', 'speak'], discovery: 'You approach the old woman slowly. Her eyes snap up — sharp, knowing, afraid. She whispers something you can\'t hear, then looks away quickly. Her hands tremble around her cup.' },
         { id: 'check_stables', label: 'Look out the back window at the stable yard', keywords: ['stable', 'stables', 'window', 'coach', 'horse', 'yard', 'outside', 'back'], discovery: 'You peer through the back window. The stable yard is nearly empty — just one horse, stamping and wild-eyed, its coat dark with sweat. The harness hangs loose. No coach. No driver. The animal looks at you with an intelligence that makes your skin crawl. Somewhere in the building behind you, a door slams.' },
         { id: 'read_letter', label: 'Search the bench near the fireplace where the shawl lies', keywords: ['search', 'bench', 'benches', 'fire', 'shawl', 'letter', 'hidden', 'under', 'near'], discovery: 'You lift the folded shawl on the bench near the fire. Beneath it, a letter. The handwriting is hurried, desperate: "To whoever finds this — do NOT travel to the Borgo Pass after dark. The wolves are not natural. The coachman is not what he seems. God have mercy on Jonathan Harker\'s soul." The letter is dated three months ago. The ink is smeared, as if the writer\'s hands were shaking.' },
@@ -96,7 +96,7 @@ The innkeeper watches you from behind the bar. He looks like a man with somethin
       exitLabel: 'Board the coach into the darkness',
       hardExitNarration: 'The innkeeper locks the front door and blows out the last candle. "Your coach awaits, traveler. I pray you return from that place." He ushers you outside into the cold night air.',
       initialFacts: {
-        items: [],
+        items: ['crucifix'],
         metNPCs: [],
         established: ['arrived at the Golden Krone Inn in Bistritz', 'evening, last light fading', 'coach has not yet arrived']
       },
@@ -139,7 +139,7 @@ You check your pockets. Something warm and hard rests against your thigh — the
       sceneName: 'The Borgo Pass',
       description: `The first coach stops at a crossroads where two roads meet in the moonlight. The driver — the same silent figure from Bistritz — gestures for you to transfer. A second coach waits here, larger, darker, its horses black as ink and breathing steam into the cold air. The new coachman sits motionless on the bench, wrapped in dark cloth, his face invisible beneath a wide-brimmed hat.
 
-The other passengers refuse to go further. The priest presses a crucifix into your hands and whispers something in Romanian that sounds like a prayer — or a warning. The women cross themselves and hurry back the way you came. You are alone now.
+The other passengers refuse to go further. The priest presses a small bundle of garlic into your hands and whispers something in Romanian that sounds like a prayer — or a warning. The women cross themselves and hurry back the way you came. You are alone now.
 
 The new coachman says nothing. He doesn't turn when you speak. He doesn't acknowledge your presence at all. But the moment you climb inside, the horses lurch forward at a speed that shouldn't be possible on these roads.
 
@@ -158,7 +158,7 @@ The road climbs higher. The air grows colder. Through the mist ahead, something 
       exitLabel: 'Approach the castle gates',
       hardExitNarration: 'The coach crashes to a halt at the base of a towering cliff. Above you, Castle Dracula looms against the lightning-split sky. The coachman opens the door with a thin smile.',
       initialFacts: {
-        items: ['crucifix'],
+        items: ['crucifix', 'garlic'],
         metNPCs: ['innkeeper', 'driver'],
         established: ['transferred coaches at Borgo Pass', 'new coachman commands the wolves', 'wolves surround the coach']
       },
