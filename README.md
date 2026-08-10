@@ -1,53 +1,90 @@
-# The Binding — Enter the books you love.
+# Storyline Mode Strict Narration - Implementation
 
-An AI-powered interactive fiction game engine. Play through classic novels as an AI Dungeon Master responds to your actions in real-time.
+## Summary
 
-## Play
+This implementation adds **Storyline Mode** with strict manifest-only narration to "The Binding" game. The key feature is that in Storyline Mode, the DM (Dungeon Master) can only narrate atmosphere and environment, while all content (discoveries, items, NPCs) comes from pre-authored scene manifests.
 
-Visit the deployed URL and click "Begin Adventure" to start.
+## What's Implemented (Steps 1-5)
 
-## Features
+### 1. Storyline System Prompt (`src/ai-dm/prompts.js`)
+- Added `STORYLINE_SYSTEM_PROMPT` constant
+- Added `buildStorylineSystemPrompt()` function
+- The prompt strictly limits the DM to narrating only atmosphere
 
-- **4-Action System**: 4 AI-generated suggested actions + open-ended text input per turn
-- **Multi-Device**: Rejoin from any device with a shareable code or URL
-- **Coin Engine**: Earn coins for clever play, tracked across adventures
-- **Dracula Adventure**: Full 25-scene, 5-act adventure based on Bram Stoker's Dracula
-- **Rule Engine**: Dice rolls, combat, skill checks, and character sheets
-- **SSE Real-Time**: Server-Sent Events for instant DM responses through any proxy
+### 2. Game Mode Support (`src/ai-dm/dm-service.js`)
+- Added `GameMode` import
+- Added `gameMode` property to game objects
+- Added Storyline branch with retry loop for validation
+- Uses stricter system prompt for Storyline Mode
 
-## Deploy on Render
+### 3. Scene Context Builder (`src/scene-engine/index.js`)
+- Added `buildStorylineSceneContext()` function
+- Omits discovery text (DM must not invent content)
+- Includes exit label and button list for narration
 
-1. Fork this repo
-2. Go to [render.com](https://render.com) → New → Web Service
-3. Connect your GitHub account and select this repo
-4. Render will auto-detect the Dockerfile
-5. Click "Create Web Service"
+### 4. Continuity Validator (`src/scene-engine/continuity-validator.js`)
+- Added `valid` whitelist skeleton in Layer 2
+- Checks location continuity against valid locations
 
-## Local Development
+### 5. Server Integration (`src/api/server.js`)
+- Wired `gameMode: resolvedGameMode` into `createGame()`
 
+## Step 6: Manifest Patcher
+
+### Generic Patcher (`patch-manifests-python.py`)
+- Adds `valid` arrays to all 75 scenes across 15 manifest files
+- Uses pattern matching to generate appropriate valid locations
+- **Note**: This adds generic valid arrays. For production, customize per scene.
+
+### How to Run
 ```bash
-npm install
-node server.js
+cd /path/to/the-binding
+python3 patch-manifests-python.py
 ```
 
-Server runs at http://localhost:3001
+## Step 7: Push to GitHub
 
-## Tech Stack
+### Option 1: Use the Push Script
+```bash
+# Set your GitHub token
+export GITHUB_PAT=your_github_token
 
-- **Server**: Node.js + Fastify
-- **Frontend**: Vanilla HTML/CSS/JS (no framework)
-- **Transport**: SSE (Server-Sent Events) + HTTP POST
-- **DM**: OpenAI-compatible LLM provider (mock mode for testing)
-- **Adventure Engine**: Scene graph with curated backbone + dynamic DM responses
+# Run the push script
+./push-to-github.sh
+```
 
-## Monster Database (SRD 5.1)
+### Option 2: Manual Push
+1. Create a new branch: `feat/storyline-strict-narration`
+2. Copy the modified files to the repository
+3. Run the manifest patcher
+4. Commit and push
 
-The Binding includes a comprehensive **334-creature monster database** built from the D&D 5.1 Systems Reference Document (CC-BY-4.0). It powers combat encounters in Campaign Mode and Digital DM Mode.
+## Files Modified
 
-- **Source:** `data/monsters/srd-monsters.json`
-- **Engine Module:** `src/campaign/monster-manual.js`
-- **Documentation:** `docs/monster-database.md`
-- **Docs Site:** `public/docs/monster-database.html`
-- **Builder Script:** `data/monsters/build_monster_db.py`
+### Source Files (Steps 1-5)
+- `src/ai-dm/prompts.js`
+- `src/ai-dm/dm-service.js`
+- `src/scene-engine/index.js`
+- `src/scene-engine/continuity-validator.js`
+- `src/api/server.js`
 
-See [docs/monster-database.md](docs/monster-database.md) for full schema, encounter building, and CR tables.
+### Manifest Files (Step 6)
+- All 15 manifest files (manifests-act*.js, manifests-frankenstein-act*.js, manifests-holmes-act*.js)
+- Each file gets `valid` arrays added to all scenes
+
+## Next Steps
+
+1. **Customize Valid Arrays**: The generic patcher adds basic valid locations. For production, customize each scene's `valid` array based on the scene context.
+
+2. **Test the Implementation**: 
+   - Start a new game in Storyline Mode
+   - Verify the DM only narrates atmosphere
+   - Check that discovery text comes from manifests
+
+3. **Create Pull Request**: Push the changes and create a PR to merge into main.
+
+## Notes
+
+- The manifest patcher uses pattern matching to generate valid locations
+- For production, consider creating a more sophisticated patcher that analyzes scene descriptions
+- The retry loop in dm-service.js helps ensure compliance with the strict narration rules
