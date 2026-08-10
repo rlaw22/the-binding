@@ -9,11 +9,12 @@
 
 const { v4: uuidv4 } = require('uuid');
 const { createContextManager, addTurn, setCharacterSheet, buildContext, updateScene, addKeyDecision, getStats } = require('./context-manager');
-const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT, buildCoinScoringPrompt } = require('./prompts');
+const { buildAdventureSystemPrompt, buildStorylineSystemPrompt, CHARACTER_CREATION_PROMPT, buildCoinScoringPrompt } = require('./prompts');
 const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
+const { GameMode } = require('../game-mode');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
 const path = require('path');
@@ -444,6 +445,7 @@ function createGame(options) {
     sessionId: uuidv4(),
     adventureId: options.adventureId || null,
     adventureName: options.adventureName || 'Untitled Adventure',
+    gameMode: options.gameMode || GameMode.STORYLINE, // default to storyline
     contextManager: createContextManager(),
     playerProfile: createPlayerProfile(),
     state: 'character_creation', // 'character_creation', 'playing', 'combat', 'completed'
@@ -494,13 +496,24 @@ async function processAction(game, playerAction, character) {
   // Add player action to context
   addTurn(contextManager, 'user', playerAction);
 
-  // Build full context for LLM, including scene state
-  const systemPrompt = buildAdventureSystemPrompt({
-    adventureName: game.adventureName,
-    adventureDescription: '',
-    tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
-    sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
-  });
+  // Build system prompt — Storyline Mode uses stricter prompt
+  const isStoryline = game.gameMode === GameMode.STORYLINE;
+  let systemPrompt;
+  if (isStoryline) {
+    systemPrompt = buildStorylineSystemPrompt({
+      adventureName: game.adventureName,
+      adventureDescription: '',
+      tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
+      sceneContext: game.sceneState ? SceneEngine.buildStorylineSceneContext(game.sceneState) : ''
+    });
+  } else {
+    systemPrompt = buildAdventureSystemPrompt({
+      adventureName: game.adventureName,
+      adventureDescription: '',
+      tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
+      sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
+    });
+  }
 
   // Append inventory context so the DM knows what the player is carrying
   let fullSystemPrompt = systemPrompt;
@@ -520,19 +533,29 @@ async function processAction(game, playerAction, character) {
 
   const messages = buildContext(contextManager, fullSystemPrompt);
 
-  // Call LLM for narrative response
-  const dmResponse = await llmProvider(messages);
+  // Call LLM for narrative response — with retry loop for Storyline Mode
+  let dmResponse;
+  const MAX_RETRIES = isStoryline ? 2 : 0;
 
-  // Validate the DM response against established facts
-  if (game.validator) {
-    const validation = game.validator.validate(dmResponse, playerAction);
-    if (!validation.valid) {
-      console.warn('[ContinuityValidator] VIOLATIONS:', validation.violations);
-      // In mock mode, we log violations. With a real LLM, we'd regenerate.
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    dmResponse = await llmProvider(messages);
+
+    // Validate the DM response against established facts
+    if (game.validator) {
+      const validation = game.validator.validate(dmResponse, playerAction);
+      if (!validation.valid) {
+        console.warn('[ContinuityValidator] VIOLATIONS (attempt ' + (attempt + 1) + '):', validation.violations);
+        if (attempt < MAX_RETRIES) {
+          console.warn('[StorylineMode] Regenerating response due to violations...');
+          continue; // retry
+        }
+        // Final attempt — log but proceed
+      }
+      if (validation.warnings.length > 0) {
+        console.warn('[ContinuityValidator] WARNINGS:', validation.warnings);
+      }
     }
-    if (validation.warnings.length > 0) {
-      console.warn('[ContinuityValidator] WARNINGS:', validation.warnings);
-    }
+    break; // valid or exhausted retries
   }
 
   // Process scene engine — discover content from DM response
