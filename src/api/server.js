@@ -13,6 +13,7 @@
 const Fastify = require('fastify');
 const fastifyCors = require('@fastify/cors');
 const fastifyStatic = require('@fastify/static');
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 

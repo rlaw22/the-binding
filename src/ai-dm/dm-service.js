@@ -16,8 +16,8 @@ const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
-// Scene variants for image variety (imported from pregenerate-images)
-const { SCENE_VARIANTS } = require('../../scripts/pregenerate-images');
+const path = require('path');
+const fs = require('fs');
 // Image generation — optional, gracefully disabled when no provider configured
 let _imageService = null;
 function getImageService() {
@@ -56,58 +56,113 @@ function _getShownSet(sessionId) {
 }
 
 /**
+ * Static image base path — images served from public/assets/images/
+ */
+const STATIC_IMAGE_DIR = path.join(__dirname, '..', '..', 'public', 'assets', 'images');
+
+/**
+ * Get the static image URL for a scene variant, if it exists on disk.
+ * Returns URL path like '/assets/images/dracula/scene_00_dread.png' or null.
+ */
+function getStaticSceneImage(adventureId, sceneId, mood) {
+  const filename = `${sceneId}_${mood}.png`;
+  const filepath = path.join(STATIC_IMAGE_DIR, adventureId, filename);
+  if (fs.existsSync(filepath)) {
+    return `/assets/images/${adventureId}/${filename}`;
+  }
+  return null;
+}
+
+/**
+ * Get the static portrait URL for an NPC, if it exists on disk.
+ */
+function getStaticPortrait(adventureId, characterName) {
+  const filename = `portrait_${characterName}.png`;
+  const filepath = path.join(STATIC_IMAGE_DIR, adventureId, filename);
+  if (fs.existsSync(filepath)) {
+    return `/assets/images/${adventureId}/${filename}`;
+  }
+  return null;
+}
+
+/**
+ * Map a scene name to its scene ID (e.g. "Castle Dracula" → "scene_04").
+ * Uses the ADVENTURE_SCENES from pregenerate-images or falls back to fuzzy match.
+ */
+function mapSceneNameToSceneId(adventureId, sceneName) {
+  try {
+    const { ADVENTURE_SCENES } = require('../../scripts/pregenerate-images');
+    const adventure = ADVENTURE_SCENES[adventureId];
+    if (!adventure) return null;
+    const name = (sceneName || '').toLowerCase();
+    for (const scene of adventure.scenes) {
+      if (scene.location.toLowerCase() === name || name.includes(scene.location.toLowerCase())) {
+        return scene.id;
+      }
+    }
+    // Fuzzy: check if any scene location words match
+    for (const scene of adventure.scenes) {
+      const words = scene.location.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+      if (words.some(w => name.includes(w))) return scene.id;
+    }
+  } catch {}
+  return null;
+}
+
+const SCENE_MOODS = ['dread', 'mystery', 'eerie'];
+
+/**
  * Optionally generate an illustration for a new scene.
- * Picks a random variant (dread/mystery/eerie) and avoids repeating
- * images already shown in this session. Returns image URL or null.
- * Non-blocking — failures are logged and ignored.
+ * Checks static assets first (free, instant), then falls back to AI generation.
+ * Avoids repeating images already shown in this session.
+ * Returns image URL or null.
  */
 async function generateSceneImage(adventureId, sceneName, sceneDescription, sessionId) {
+  const shown = _getShownSet(sessionId);
+
+  // --- PRIORITY 1: Static assets (free, instant, no API call) ---
+  const sceneId = mapSceneNameToSceneId(adventureId, sceneName);
+  if (sceneId) {
+    // Shuffle moods for variety
+    const shuffled = [...SCENE_MOODS].sort(() => Math.random() - 0.5);
+
+    for (const mood of shuffled) {
+      const staticUrl = getStaticSceneImage(adventureId, sceneId, mood);
+      if (staticUrl && !shown.has(staticUrl)) {
+        shown.add(staticUrl);
+        console.log('[DM] Using static scene image (' + mood + ') for: ' + sceneName);
+        return staticUrl;
+      }
+    }
+
+    // All static variants shown — reuse one anyway
+    for (const mood of shuffled) {
+      const staticUrl = getStaticSceneImage(adventureId, sceneId, mood);
+      if (staticUrl) {
+        console.log('[DM] Reusing static scene image (' + mood + ') for: ' + sceneName);
+        return staticUrl;
+      }
+    }
+  }
+
+  // --- PRIORITY 2: AI generation fallback (for scenes without static assets) ---
   const svc = getImageService();
   if (!svc || !svc.isEnabled) return null;
 
   try {
     const { buildScenePrompt } = require('../image');
-    const shown = _getShownSet(sessionId);
-
-    // Shuffle variants so we try them in random order
-    const shuffled = [...SCENE_VARIANTS].sort(() => Math.random() - 0.5);
-
-    for (const variant of shuffled) {
-      const prompt = buildScenePrompt({
-        description: sceneDescription,
-        location: sceneName,
-        mood: variant.mood,
-        details: variant.details,
-      });
-
-      const cached = svc.getCachedImage(prompt);
-      if (cached && !shown.has(cached)) {
-        shown.add(cached);
-        console.log('[DM] Using cached scene image (' + variant.mood + ') for: ' + sceneName);
-        return cached;
-      }
-    }
-
-    // All variants already shown — pick a random one anyway (better than nothing)
-    const fallbackVariant = shuffled[0];
-    const fallbackPrompt = buildScenePrompt({
+    const prompt = buildScenePrompt({
       description: sceneDescription,
       location: sceneName,
-      mood: fallbackVariant.mood,
-      details: fallbackVariant.details,
+      mood: 'dread',
     });
-    const fallbackCached = svc.getCachedImage(fallbackPrompt);
-    if (fallbackCached) {
-      console.log('[DM] Reusing scene image (' + fallbackVariant.mood + ') for: ' + sceneName + ' (all variants shown)');
-      return fallbackCached;
+    const cached = svc.getCachedImage(prompt);
+    if (cached && !shown.has(cached)) {
+      shown.add(cached);
+      return cached;
     }
-
-    // No cached images — fall back to live generation
-    const url = await svc.generateRaw(fallbackPrompt, { sessionId });
-    if (url) {
-      shown.add(url);
-      console.log('[DM] Generated scene image for: ' + sceneName);
-    }
+    const url = await svc.generateRaw(prompt, { sessionId });
+    if (url) shown.add(url);
     return url;
   } catch (err) {
     console.warn('[DM] Scene image generation failed:', err.message);
