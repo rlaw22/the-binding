@@ -305,6 +305,50 @@ function processButtonAction(buttonId, buttonType, sceneManifest, playerState, t
   return StoryEngine.processButtonAction(buttonId, buttonType, sceneManifest, playerState, threatDef);
 }
 
+
+/**
+ * Build a Storyline Mode scene context — strict, manifest-only.
+ * Omits discovery text (DM must not invent content).
+ * Includes exit label and button list so DM knows what to narrate around.
+ */
+function buildStorylineSceneContext(sceneState) {
+  if (!sceneState) return '';
+
+  const completion = getCompletion(sceneState);
+  const pressure = getPressureLevel(sceneState);
+  const undiscovered = sceneState.contentItems.filter(i => !i.discovered);
+
+  let context = `\n\nSCENE STATE (STORYLINE MODE):\n`;
+  context += `Scene: ${sceneState.sceneName}\n`;
+  context += `Player actions available: ${sceneState.contentItems.map(i => i.label).join(', ')}\n`;
+
+  if (undiscovered.length > 0) {
+    context += `Unexplored actions: ${undiscovered.map(i => i.label).join(', ')}\n`;
+  }
+
+  context += `Exit action: "${sceneState.exitLabel}"\n`;
+
+  // Pressure instructions
+  switch (pressure) {
+    case PRESSURE_LEVELS.BACKGROUND:
+      context += `Exit pressure: BACKGROUND — Focus on atmosphere. The exit is available but not urgent.\n`;
+      break;
+    case PRESSURE_LEVELS.GENTLE:
+      context += `Exit pressure: GENTLE — Begin weaving in subtle time cues.\n`;
+      break;
+    case PRESSURE_LEVELS.STRONG:
+      context += `Exit pressure: STRONG — Push toward the exit narratively.\n`;
+      break;
+    case PRESSURE_LEVELS.FORCED:
+      context += `Exit pressure: FORCED — The scene must end. Narrate the transition.\n`;
+      break;
+  }
+
+  context += `REMINDER: You narrate ONLY atmosphere. Discovery text is provided by the system.`;
+
+  return context;
+}
+
 module.exports = {
   PRESSURE_LEVELS,
   enterScene,
@@ -317,5 +361,6 @@ module.exports = {
   getUndiscoveredContent,
   isHardExitTriggered,
   getHardExitNarration,
-  processButtonAction
+  processButtonAction,
+  buildStorylineSceneContext
 };
