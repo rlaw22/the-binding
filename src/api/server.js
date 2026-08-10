@@ -20,7 +20,7 @@ const { createSession, addPlayer, getPrimaryPlayer, getHostPlayer, getPlayer, is
 const MessageRouter = require('../session/message-router');
 const { createContextManager, addTurn, setCharacterSheet, setAdventureContext, updateScene, addKeyDecision } = require('../ai-dm/context-manager');
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT } = require('../ai-dm/prompts');
-const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions } = require('../ai-dm/dm-service');
+const { createGame, processAction, processCharacterCreation, parseDMResponse, scoreAction, generateSceneActions, generateSceneImage } = require('../ai-dm/dm-service');
 const { createProvider } = require('../ai-dm/llm-provider');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, convertToBinding, formatChapterSummary, formatAdventureSummary, buildCoinNotification, CoinCategory } = require('../coin-engine');
 const { listAdventures, getAdventure, getAdventureStart, getAdventureOutline, getPrologue } = require('../adventure');
@@ -649,6 +649,18 @@ async function createServer(options = {}) {
 
       // Add opening narration to the context manager so the DM knows what already happened
       addTurn(game.contextManager, 'assistant', sceneManifest.description);
+
+      // Generate an opening scene image (non-blocking, best-effort)
+      if (sceneManifest && startInfo && startInfo.scene) {
+        generateSceneImage(adventureId, startInfo.scene.name || sceneManifest.sceneName, sceneManifest.description, session.id)
+          .then(imageUrl => {
+            if (imageUrl) {
+              recordMessage(session.id, MessageRouter.sceneImage(imageUrl, sceneManifest.sceneName || 'Opening Scene'));
+              game._lastSceneImage = imageUrl;
+            }
+          })
+          .catch(() => {});
+      }
 
       // Generate suggested actions from the scene engine
       const openingActions = generateSceneActions(game.sceneState);

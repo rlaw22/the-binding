@@ -7,11 +7,24 @@
  * Generates location images from scene manifest descriptions and
  * NPC portraits from ADVENTURE_TEMPLATES. All images are cached
  * in persistent-store so they're generated once and reused forever.
+ *
+ * Each scene generates 3 visual variants (dread, mystery, eerie) so
+ * players see fresh images as they revisit or progress through locations.
  */
 
 'use strict';
 
 const { buildScenePrompt, buildNPCPortraitPrompt } = require('../src/image/prompt-builder');
+
+// ---------------------------------------------------------------------------
+// Visual variants — 3 moods per scene for variety
+// ---------------------------------------------------------------------------
+
+const SCENE_VARIANTS = [
+  { mood: 'dread',       details: ['Variant A — suffocating darkness'] },
+  { mood: 'mystery',     details: ['Variant B — swirling fog and half-seen shapes'] },
+  { mood: 'eerie',       details: ['Variant C — unnatural stillness and distorted shadows'] },
+];
 
 // ---------------------------------------------------------------------------
 // Adventure scene definitions (from manifests + ADVENTURE_TEMPLATES)
@@ -52,7 +65,6 @@ const ADVENTURE_SCENES = {
       mina: 'A young Victorian woman with auburn hair and intelligent eyes. Brave but frightened. A small wound on her neck.',
     },
     moods: {
-      // Act-level mood mapping
       default: 'dread',
     },
   },
@@ -95,6 +107,9 @@ const ADVENTURE_SCENES = {
 
 /**
  * Pre-generate all images for an adventure.
+ * Each scene gets 3 visual variants (dread, mystery, eerie moods) for variety.
+ * NPC portraits are generated once each.
+ *
  * @param {object} imageService — the image service instance
  * @param {string} adventureId — 'dracula', 'frankenstein', or 'holmes'
  * @returns {Promise<{generated: number, skipped: number, failed: number}>}
@@ -111,8 +126,8 @@ async function pregenerateAdventureImages(imageService, adventureId) {
     return { generated: 0, skipped: 0, failed: 0 };
   }
 
-  const total = adventure.scenes.length + Object.keys(adventure.characters).length;
-  console.log(`  🖼️  Pre-generating ${adventureId} images: 0/${total}`);
+  const total = (adventure.scenes.length * SCENE_VARIANTS.length) + Object.keys(adventure.characters).length;
+  console.log(`  🖼️  Pre-generating ${adventureId} images: 0/${total} (${adventure.scenes.length} scenes × ${SCENE_VARIANTS.length} variants + ${Object.keys(adventure.characters).length} NPCs)`);
 
   // Set status for API polling
   imageService._pregenStatus[adventureId] = { status: 'preparing', progress: 0, total };
@@ -122,36 +137,40 @@ async function pregenerateAdventureImages(imageService, adventureId) {
   let failed = 0;
   let progress = 0;
 
-  // Generate scene images
+  // Generate scene images — 3 variants per scene
   for (const scene of adventure.scenes) {
-    try {
-      const prompt = buildScenePrompt({
-        description: scene.description,
-        location: scene.location,
-        mood: adventure.moods.default || 'dread',
-      });
+    for (const variant of SCENE_VARIANTS) {
+      try {
+        const prompt = buildScenePrompt({
+          description: scene.description,
+          location: scene.location,
+          mood: variant.mood,
+          details: variant.details,
+        });
 
-      // Check if already cached
-      const cached = imageService.getCachedImage(prompt);
-      if (cached) {
-        skipped++;
-        progress++;
-        imageService._pregenStatus[adventureId].progress = progress;
-        continue;
+        // Check if already cached
+        const cached = imageService.getCachedImage(prompt);
+        if (cached) {
+          skipped++;
+          progress++;
+          imageService._pregenStatus[adventureId].progress = progress;
+          continue;
+        }
+
+        await imageService.generateScene({
+          description: scene.description,
+          location: scene.location,
+          mood: variant.mood,
+          details: variant.details,
+        });
+        generated++;
+      } catch (err) {
+        console.error(`  🖼️  Failed scene ${scene.location} (${variant.mood}): ${err.message}`);
+        failed++;
       }
-
-      await imageService.generateScene({
-        description: scene.description,
-        location: scene.location,
-        mood: adventure.moods.default || 'dread',
-      });
-      generated++;
-    } catch (err) {
-      console.error(`  🖼️  Failed scene ${scene.location}: ${err.message}`);
-      failed++;
+      progress++;
+      imageService._pregenStatus[adventureId].progress = progress;
     }
-    progress++;
-    imageService._pregenStatus[adventureId].progress = progress;
   }
 
   // Generate NPC portraits
@@ -185,4 +204,5 @@ async function pregenerateAdventureImages(imageService, adventureId) {
 module.exports = {
   pregenerateAdventureImages,
   ADVENTURE_SCENES,
+  SCENE_VARIANTS,
 };

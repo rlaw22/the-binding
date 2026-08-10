@@ -16,6 +16,8 @@ const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
+// Scene variants for image variety (imported from pregenerate-images)
+const { SCENE_VARIANTS } = require('../../scripts/pregenerate-images');
 // Image generation — optional, gracefully disabled when no provider configured
 let _imageService = null;
 function getImageService() {
@@ -41,45 +43,71 @@ function getImageService() {
 }
 
 /**
+ * Track which image URLs have been shown per session to avoid repeats.
+ * Key: sessionId, Value: Set of image URLs already displayed.
+ */
+const _shownImages = new Map();
+
+function _getShownSet(sessionId) {
+  if (!_shownImages.has(sessionId)) {
+    _shownImages.set(sessionId, new Set());
+  }
+  return _shownImages.get(sessionId);
+}
+
+/**
  * Optionally generate an illustration for a new scene.
- * Returns image URL or null. Non-blocking — failures are logged and ignored.
+ * Picks a random variant (dread/mystery/eerie) and avoids repeating
+ * images already shown in this session. Returns image URL or null.
+ * Non-blocking — failures are logged and ignored.
  */
 async function generateSceneImage(adventureId, sceneName, sceneDescription, sessionId) {
   const svc = getImageService();
   if (!svc || !svc.isEnabled) return null;
 
   try {
-    const { buildAdventureScenePrompt, buildScenePrompt, getStylePreset } = require('../image');
+    const { buildScenePrompt } = require('../image');
+    const shown = _getShownSet(sessionId);
 
-    // PRIORITY 1: Check buildScenePrompt cache key (matches pregenerate-images.js)
-    const scenePrompt = buildScenePrompt({
-      description: sceneDescription,
-      location: sceneName,
-      mood: 'dread',
-    });
-    const cached = svc.getCachedImage(scenePrompt);
-    if (cached) {
-      console.log('[DM] Using cached scene image for: ' + sceneName);
-      return cached;
+    // Shuffle variants so we try them in random order
+    const shuffled = [...SCENE_VARIANTS].sort(() => Math.random() - 0.5);
+
+    for (const variant of shuffled) {
+      const prompt = buildScenePrompt({
+        description: sceneDescription,
+        location: sceneName,
+        mood: variant.mood,
+        details: variant.details,
+      });
+
+      const cached = svc.getCachedImage(prompt);
+      if (cached && !shown.has(cached)) {
+        shown.add(cached);
+        console.log('[DM] Using cached scene image (' + variant.mood + ') for: ' + sceneName);
+        return cached;
+      }
     }
 
-    // PRIORITY 2: Check buildAdventureScenePrompt cache key (legacy/alt)
-    const sceneKey = mapSceneNameToKey(adventureId, sceneName);
-    const stylePreset = getStylePreset(adventureId);
-    const altPrompt = buildAdventureScenePrompt(adventureId, sceneKey, {
+    // All variants already shown — pick a random one anyway (better than nothing)
+    const fallbackVariant = shuffled[0];
+    const fallbackPrompt = buildScenePrompt({
       description: sceneDescription,
       location: sceneName,
+      mood: fallbackVariant.mood,
+      details: fallbackVariant.details,
     });
-    const cachedAlt = svc.getCachedImage(altPrompt);
-    if (cachedAlt) {
-      console.log('[DM] Using cached scene image (alt prompt) for: ' + sceneName);
-      return cachedAlt;
+    const fallbackCached = svc.getCachedImage(fallbackPrompt);
+    if (fallbackCached) {
+      console.log('[DM] Reusing scene image (' + fallbackVariant.mood + ') for: ' + sceneName + ' (all variants shown)');
+      return fallbackCached;
     }
 
-    // Fall back to live generation (using buildScenePrompt so result gets cached
-    // under the same key the pregenerate script uses)
-    const url = await svc.generateRaw(scenePrompt, { sessionId });
-    if (url) console.log('[DM] Generated scene image for: ' + sceneName);
+    // No cached images — fall back to live generation
+    const url = await svc.generateRaw(fallbackPrompt, { sessionId });
+    if (url) {
+      shown.add(url);
+      console.log('[DM] Generated scene image for: ' + sceneName);
+    }
     return url;
   } catch (err) {
     console.warn('[DM] Scene image generation failed:', err.message);
