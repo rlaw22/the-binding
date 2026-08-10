@@ -93,7 +93,7 @@ The innkeeper watches you from behind the bar. He looks like a man with somethin
         { id: 'look_around', label: 'Take a careful look around the inn', keywords: ['look', 'around', 'room', 'inn', 'examine', 'survey', 'explore'], discovery: 'You take a moment to survey the inn properly. The fireplace crackles, throwing dancing shadows across rough-hewn walls stained with decades of smoke. The benches are worn smooth by countless travelers. The bar is sticky with spilled ale. The ceiling beams are dark with age. It is warm, it is sheltered, and it is the last friendly place you will see for a very long time. The innkeeper watches you from behind the bar, his hands never still. He looks like a man with something to say, but he is waiting for you to speak first.' }
       ],
       exitAction: 'board_coach',
-      exitLabel: 'Get on the coach for Castle Dracula',
+      exitLabel: 'Board the coach into the darkness',
       hardExitNarration: 'The innkeeper locks the front door and blows out the last candle. "Your coach awaits, traveler. I pray you return from that place." He ushers you outside into the cold night air.',
       initialFacts: {
         items: [],
@@ -123,7 +123,7 @@ You check your pockets. Something warm and hard rests against your thigh — the
         { id: 'examine_crucifix_coach', label: 'Clutch the crucifix for comfort', keywords: ['crucifix', 'cross', 'hold', 'clutch', 'comfort', 'pray'], discovery: 'You reach into your pocket and close your fingers around the brass crucifix. It is warm — warmer than it should be, as if it has been sitting in sunlight. As your hand tightens around it, the wolves outside fall silent for a moment, and the coach seems to slow. The priest notices. His eyes widen. \"Where did you get that?\" he whispers. You tell him the innkeeper gave it to you. He nods slowly. \"Keep it close. Do not let go. Not for any reason.\"' }
       ],
       exitAction: 'arrive_crossroads',
-      exitLabel: 'Get out at the crossroads',
+      exitLabel: 'Step out at the crossroads',
       hardExitNarration: 'The coach lurches to a stop. The driver gestures wordlessly toward a second coach waiting in the moonlight. You have no choice but to transfer.',
       initialFacts: {
         items: ['crucifix'],
@@ -155,7 +155,7 @@ The road climbs higher. The air grows colder. Through the mist ahead, something 
         { id: 'notice_eyes', label: 'Peer into the forest and see pairs of glowing eyes', keywords: ['eyes', 'forest', 'glow', 'peer', 'glowing', 'pairs'], discovery: 'You press your face to the glass and peer into the blackness between the trees. At first you see nothing. Then your eyes adjust, and the forest comes alive with points of red light \u2014 dozens of pairs of eyes, all watching the coach, all moving in perfect unison. They do not scatter. They do not hunt. They escort. As if they were summoned. As if they were commanded.' }
       ],
       exitAction: 'arrive_castle',
-      exitLabel: 'Go to the base of the castle',
+      exitLabel: 'Approach the castle gates',
       hardExitNarration: 'The coach crashes to a halt at the base of a towering cliff. Above you, Castle Dracula looms against the lightning-split sky. The coachman opens the door with a thin smile.',
       initialFacts: {
         items: ['crucifix'],
@@ -185,7 +185,7 @@ You look for a mirror. There are none. Where you'd expect glass, there is only s
         { id: 'enter_great_hall', label: 'Step into the vast, candlelit great hall', keywords: ['hall', 'great', 'enter', 'step', 'candlelit', 'vast', 'door'], discovery: 'You step through the heavy doors and the great hall opens before you like the ribcage of a cathedral. The ceiling vaults upward into darkness, supported by stone pillars carved with figures you cannot quite make out in the candlelight. Ancient tapestries line the walls — scenes of battle, of siege, of a warrior on horseback driving a stake into something on the ground. The colours are faded but the violence is unmistakable. A massive hearth dominates one wall, its fire casting long shadows that twist and writhe as if alive. The air smells of old stone, cold ash, and something faintly sweet — like flowers left too long in water. The grandeur is undeniable, but decay clings to everything: the tapestries are frayed, the stone is cracked, and the candles burn with a stillness that suggests no draft dares enter this place.' }
       ],
       exitAction: 'go_to_dinner',
-      exitLabel: 'Follow the Count to the dining hall',
+      exitLabel: 'Follow the Count inside',
       hardExitNarration: 'The Count extends a pale hand toward a corridor. "You must be famished from your journey. Please — dinner awaits." His tone makes it clear this is not a request.',
       initialFacts: {
         items: ['crucifix'],
@@ -215,7 +215,7 @@ The Count leans forward, his dark eyes glittering. "Tell me about England," he s
         { id: 'test_dracula', label: 'Mention local legends and watch his reaction', keywords: ['legend', 'local', 'mention', 'watch', 'reaction', 'test'], discovery: 'You mention the local legends carefully \u2014 the strigoi, the moroi, the living dead that walk the mountain passes. The Count listens with his head tilted, like a bird watching a worm. When you mention the word \"vampire,\" his smile does not waver. His hand does not tighten on the glass. He simply nods. \"Every culture has its monsters,\" he says. \"In England, I believe yours is the werewolf. The vampire is ours.\" He leans closer. \"But tell me \u2014 have you ever wondered what it would be like to live forever? To see empires rise and fall? To never age, never tire, never die?\" His eyes hold yours. The question is not rhetorical. He genuinely wants your answer.' }
       ],
       exitAction: 'retire_to_room',
-      exitLabel: 'Go to your room for the night',
+      exitLabel: 'Retire to your chamber',
       hardExitNarration: 'The Count rises abruptly. "The hour grows late, and you have had a long journey. I shall show you to your chambers." His eyes glitter in the candlelight as he leads you away.',
       initialFacts: {
         items: ['crucifix'],

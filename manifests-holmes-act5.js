@@ -64,7 +64,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_mire",
-    "exitLabel": "Walk back from the Mire with Holmes",
+    "exitLabel": "Return from the Mire",
     "hardExitNarration": "Holmes turns from the bog and walks back toward solid ground. You follow. The fog is lifting, and the moor is emerging from the whiteness — the purple heather, the grey tors, the vast, indifferent sky. Behind you, the Grimpen Mire waits, green and silent, keeping its secrets.",
     "initialFacts": {
       "items": [
@@ -89,7 +89,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -178,7 +179,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_study",
-    "exitLabel": "Leave Sir Henry to his reflections",
+    "exitLabel": "Leave Sir Henry to recover",
     "hardExitNarration": "Sir Henry stands at the window, looking out at the moor. The last light of day paints the heather in shades of gold and purple. The Hall is quiet. The curse is broken. Holmes touches your arm and nods toward the door. There is nothing more to say.",
     "initialFacts": {
       "items": [
@@ -205,7 +206,8 @@ module.exports = {
         "train",
         "station",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -294,7 +296,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_morning_room",
-    "exitLabel": "Leave Beryl to her rest",
+    "exitLabel": "Leave Beryl in peace",
     "hardExitNarration": "Holmes rises and bows — a gesture of respect that you have seen him make perhaps twice in all the years you have known him. \"Mrs. Stapleton,\" he says — using her real title for the first time — \"you have nothing to fear. Not anymore.\" He closes the door quietly behind you. In the corridor, he pauses. \"A brave woman, Watson. Braver than she knows. She tried to do the right thing, and she paid for it. We must make sure she is looked after.\"",
     "initialFacts": {
       "items": [],
@@ -318,7 +320,8 @@ module.exports = {
         "station",
         "mire",
         "moor open"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -406,7 +409,7 @@ module.exports = {
       }
     ],
     "exitAction": "arrive_paddington",
-    "exitLabel": "Step off the train at Paddington Station",
+    "exitLabel": "Arrive at Paddington Station",
     "hardExitNarration": "The train shudders to a halt. Holmes stands, collects his bag, and steps onto the platform with the easy grace of a man returning to familiar territory. \"Come, Watson,\" he says. \"Mrs. Hudson will have tea waiting, and I have a violin that has been neglected for far too long.\" He strides toward the exit, and you follow, and the noise of London swallows you both.",
     "initialFacts": {
       "items": [],
@@ -429,7 +432,8 @@ module.exports = {
         "baskerville hall",
         "grimpen",
         "stone circle"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -516,7 +520,7 @@ module.exports = {
       }
     ],
     "exitAction": "close_adventure",
-    "exitLabel": "Sit back by the fire and enjoy the evening",
+    "exitLabel": "Settle by the fire",
     "hardExitNarration": "Holmes picks up his violin and draws the bow across the strings — a slow, melancholy air that fills the room and drifts out through the window into the London night. The fire burns low. The tea grows cold. The case of the Hound of the Baskervilles is over. But on still nights, they say, if you stand on the edge of the Grimpen Mire and listen very carefully, you can still hear howling — faint, distant, mournful — rising from the dark heart of the moor.",
     "initialFacts": {
       "items": [],
@@ -540,7 +544,8 @@ module.exports = {
         "grimpen",
         "stone circle",
         "merripit"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {

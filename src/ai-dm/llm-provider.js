@@ -109,8 +109,8 @@ function createOpenAIProvider(config = {}) {
   const apiKey = config.apiKey || process.env.LLM_API_KEY || '';
   const baseUrl = config.baseUrl || process.env.LLM_BASE_URL || 'https://api.openai.com/v1';
   const model = config.model || process.env.LLM_MODEL || 'gpt-4o-mini';
-  const maxTokens = config.maxTokens || 2000;
-  const temperature = config.temperature || 0.8;
+  const maxTokens = config.maxTokens || 800;
+  const temperature = config.temperature || 0.7;
 
   /**
    * Single attempt — makes one HTTP request to the LLM API.

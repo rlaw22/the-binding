@@ -65,7 +65,7 @@ module.exports = {
       }
     ],
     "exitAction": "explore_hall",
-    "exitLabel": "Follow Barrymore to your chambers",
+    "exitLabel": "Retire to your chambers",
     "hardExitNarration": "Barrymore leads you up the main staircase, past more portraits, past windows that look out onto nothing but moor. \"Supper will be at eight, sir,\" he says, and leaves you in a room where the fire has been lit but cannot quite drive out the cold.",
     "initialFacts": {
       "items": [
@@ -93,7 +93,8 @@ module.exports = {
         "moor",
         "mire",
         "stone circle"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -183,7 +184,7 @@ module.exports = {
       }
     ],
     "exitAction": "return_to_bed",
-    "exitLabel": "Go back to your room and think about what you have seen",
+    "exitLabel": "Reflect on what you've seen",
     "hardExitNarration": "You retreat to your room as Barrymore's footsteps approach the corridor. The sobbing has stopped. The house is silent again, except for the wind. You lie in the dark and listen to the rain, and you think about signals in the night and secrets in old houses.",
     "initialFacts": {
       "items": [
@@ -208,7 +209,8 @@ module.exports = {
         "moor open",
         "mire",
         "stone circle"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -298,7 +300,7 @@ module.exports = {
       }
     ],
     "exitAction": "flee_inside",
-    "exitLabel": "Go back inside and bolt the door",
+    "exitLabel": "Bolt the door against the night",
     "hardExitNarration": "You stumble back through the garden door and slam it behind you. The bolt slides home with a sound like a gunshot in the silence. Through the window, the moor is nothing but fog and darkness. But somewhere out there, in the grey nothing, something is moving. You can hear it breathing.",
     "initialFacts": {
       "items": [
@@ -320,7 +322,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -409,7 +412,7 @@ module.exports = {
       }
     ],
     "exitAction": "stapleton_leaves",
-    "exitLabel": "Watch the Stapletons walk back across the moor",
+    "exitLabel": "Watch them cross the moor",
     "hardExitNarration": "Stapleton collects his butterfly net and offers a final warm smile. \"You must come to Merripit House for dinner,\" he says. \"We are lonely out here.\" He takes Beryl's arm — firmly, you notice, not gently — and they walk away across the heather. Beryl does not look back. But at the gate, she turns, just for a moment, and her expression is unmistakable: pure, desperate fear.",
     "initialFacts": {
       "items": [
@@ -435,7 +438,8 @@ module.exports = {
         "station",
         "mire deep",
         "stone circle"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -522,7 +526,7 @@ module.exports = {
       }
     ],
     "exitAction": "return_to_hall_night",
-    "exitLabel": "Go back to the Hall before dawn",
+    "exitLabel": "Return to the Hall",
     "hardExitNarration": "The moor is quiet now. Selden has vanished into the darkness, and the answering light has gone out. You walk back to the Hall through the cold predawn air, your mind racing. Barrymore's secret is out. But it does not explain the howling. It does not explain the paw prints. It does not explain the terror on the face of a man who has killed before and fears something worse than death.",
     "initialFacts": {
       "items": [
@@ -549,7 +553,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {

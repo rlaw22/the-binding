@@ -42,7 +42,10 @@ function enterScene(manifest) {
     hardExitTriggered: false,
     exitAction: manifest.exitAction || null,
     exitLabel: manifest.exitLabel || 'Move on',
-    hardExitNarration: manifest.hardExitNarration || 'The world nudges you forward. It is time to go.'
+    hardExitNarration: manifest.hardExitNarration || 'The world nudges you forward. It is time to go.',
+    locationKeywords: manifest.locationKeywords || null,  // banned locations for LLM
+    storyMode: manifest.storyMode || null,  // story mode config for StoryEngine
+    initialFacts: manifest.initialFacts || null  // initial items/NPCs for inventory sync
   };
 }
 
@@ -237,6 +240,14 @@ function buildSceneContext(sceneState) {
     case PRESSURE_LEVELS.FORCED:
       context += `Exit pressure: FORCED — The scene must end now. Narrate the world forcing the transition: doors closing, characters insisting, the environment becoming hostile. The next response should transition to the next scene. Do NOT offer more scene content.\n`;
       break;
+  }
+
+  // Banned locations — tell the LLM not to reference these
+  if (sceneState.locationKeywords && sceneState.locationKeywords.banned) {
+    const banned = sceneState.locationKeywords.banned;
+    if (banned.length > 0) {
+      context += `\nBANNED LOCATIONS — Do NOT reference these locations in your response. The player is NOT in these places: ${banned.join(', ')}\n`;
+    }
   }
 
   context += `NEVER tell the player about completion numbers or pressure levels. Keep it narrative.`;

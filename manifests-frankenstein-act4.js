@@ -62,7 +62,7 @@ module.exports = {
       }
     ],
     "exitAction": "agree_to_create",
-    "exitLabel": "Agree to create a female companion for the creature",
+    "exitLabel": "Accept the creature's demand",
     "hardExitNarration": "The creature watches you with those pale, unblinking eyes. \"You will do it,\" he says. It is not a question. \"You will create her, and we will leave, and you will be free. But if you betray me — if you destroy her, or refuse, or fail — I will be with you on your wedding night. Remember that, Victor. Remember it well.\" He turns and climbs the cliff face with terrible grace, and in moments he is gone — vanished into the grey stone and the grey sky, leaving you alone on the mountain with a promise and a threat.",
     "initialFacts": {
       "items": [
@@ -87,7 +87,8 @@ module.exports = {
         "de lacey cottage",
         "arctic",
         "geneva"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -175,7 +176,7 @@ module.exports = {
       }
     ],
     "exitAction": "continue_or_stop",
-    "exitLabel": "Work on despite your doubts about the female creature",
+    "exitLabel": "Continue the work",
     "hardExitNarration": "You return to the table. The half-finished body lies under the sheet, waiting. You pull the sheet back and pick up your tools. The work continues. Outside, the creature stands on the headland, watching. The sea crashes. The wind howls. And piece by piece, the female creature takes shape — a body built from the dead, a life waiting to be sparked, a companion for a monster, a sin for a creator.",
     "initialFacts": {
       "items": [
@@ -200,7 +201,8 @@ module.exports = {
         "de lacey cottage",
         "arctic",
         "geneva"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -288,7 +290,7 @@ module.exports = {
       }
     ],
     "exitAction": "face_consequences",
-    "exitLabel": "Face the consequences of your choice",
+    "exitLabel": "Face the consequences",
     "hardExitNarration": "You leave the cottage. The headland is empty. The creature is gone. The sea crashes against the cliffs below, indifferent to your grief, your guilt, your terror. You stand at the edge and look down at the white water and you think: I could end this now. One step. One moment of falling. And then it would be over. But you do not step. Because Elizabeth is waiting in Geneva. Because Clerval is waiting in England. Because the creature has promised to be with you on your wedding night, and you must be there to face him. You turn away from the cliff and walk back to the cottage. The work is done. The destruction is complete. And the consequences are coming.",
     "initialFacts": {
       "items": [
@@ -311,7 +313,8 @@ module.exports = {
         "de lacey cottage",
         "arctic",
         "geneva"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -397,7 +400,7 @@ module.exports = {
       }
     ],
     "exitAction": "arrested_for_murder",
-    "exitLabel": "Wake up in a prison cell, accused of Clerval's murder",
+    "exitLabel": "Wake in chains",
     "hardExitNarration": "You wake in a stone cell. Iron bars. A window too high to reach. Your clothes are gone, replaced with rough cloth. A guard sits outside the door, reading a newspaper. He sees you stir and stands. \"Ah, you're back with us,\" he says. His voice is flat, official. \"Victor Frankenstein, you are charged with the murder of Henry Clerval. You will be held until trial.\" The door closes. The lock turns. And you sit on the cold stone floor and stare at the wall and think: the creature has begun. The creature has begun, and I cannot stop it.",
     "initialFacts": {
       "items": [
@@ -421,7 +424,8 @@ module.exports = {
         "de lacey cottage",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -509,7 +513,7 @@ module.exports = {
       }
     ],
     "exitAction": "return_to_geneva",
-    "exitLabel": "Go back to Geneva and marry Elizabeth",
+    "exitLabel": "Return to Geneva",
     "hardExitNarration": "The coach carries you south through France, through the Jura mountains, into Switzerland. The landscape is beautiful — green valleys, snow-capped peaks, the clean blue of Lake Geneva in the distance. You see none of it. You stare at the road ahead and think about the creature. You think about the wedding night. You think about Elizabeth's face — her grey-green eyes, her gentle hands, her voice reading poetry by the fire. And you think: I will protect her. I will die to protect her. The coach crests a hill and Geneva spreads below you — the lake, the old town, the spire of St. Pierre's. Home. Elizabeth is there. The creature is there. And somewhere between them, you stand — a man who created life and death in the same breath, and who now must face the consequences of both.",
     "initialFacts": {
       "items": [
@@ -536,7 +540,8 @@ module.exports = {
         "de lacey cottage",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {

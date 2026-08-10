@@ -62,7 +62,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_mina_lodgings",
-    "exitLabel": "Help Mina gather her things and move to a safer location",
+    "exitLabel": "Move Mina to safety",
     "hardExitNarration": "Mina takes Jonathan's journal from your hands and clutches it to her chest. 'If I become what Lucy became,' she says, 'you must promise me you will do what must be done. Promise me.' Van Helsing puts his hand on her shoulder. 'We will save you, dear lady. But we must go. Now. Before the sun finishes setting.'",
     "initialFacts": {
       "items": [
@@ -96,7 +96,8 @@ module.exports = {
         "castle dracula",
         "transylvania",
         "the forbidden wing"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -183,7 +184,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_safe_house",
-    "exitLabel": "Rest before the dawn assault on Carfax Abbey",
+    "exitLabel": "Rest before the assault on Carfax",
     "hardExitNarration": "Van Helsing takes the first watch. Seward sleeps fitfully in a chair. Mina lies still, the communion wafer on her forehead glowing faintly in the dark. Outside, the rain has stopped. The clouds part and moonlight spills through a crack in the shutters, falling across Mina's face. For a moment — just a moment — she smiles in her sleep, and the smile is not hers.",
     "initialFacts": {
       "items": [
@@ -220,7 +221,8 @@ module.exports = {
         "transylvania",
         "the forbidden wing",
         "minas lodgings"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -307,7 +309,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_carfax",
-    "exitLabel": "Destroy the last earth boxes and retreat before Dracula returns",
+    "exitLabel": "Destroy the earth boxes and flee",
     "hardExitNarration": "You have destroyed thirty-seven of the fifty boxes when Van Helsing grabs your arm. 'Enough. Dawn is ending. He will rise soon, and he will come here first.' The soil screams as you drop the last wafer. The sound echoes through the abbey. Above you, the Szgany are running — fleeing through the nave and out the broken doors. They know what is coming. You run too.",
     "initialFacts": {
       "items": [
@@ -347,7 +349,8 @@ module.exports = {
         "the forbidden wing",
         "minas lodgings",
         "bermondsey safe house"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -435,7 +438,7 @@ module.exports = {
       }
     ],
     "exitAction": "flee_safe_house",
-    "exitLabel": "Run through the back door before the wolves break in",
+    "exitLabel": "Escape through the back door",
     "hardExitNarration": "The wolves breach the front door as you climb through the back window. Rain hammers the streets. Lightning illuminates the alley in strobing white, and for one frozen second, you see him — standing on the roof of the building opposite, his cloak billowing in a wind that touches nothing else. Dracula. Watching. Smiling. Then the lightning dies and he is gone, and you are running through London's midnight streets with the howling at your back.",
     "initialFacts": {
       "items": [
@@ -472,7 +475,8 @@ module.exports = {
         "the forbidden wing",
         "minas lodgings",
         "carfax abbey"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -559,7 +563,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_church",
-    "exitLabel": "Get ready for the final hunt into the caves beneath Whitby",
+    "exitLabel": "Begin the final hunt",
     "hardExitNarration": "Mina stands at the church door, wrapped in a borrowed shawl, her face pale but set with iron determination. 'I will lead you to him,' she says. 'And when you find him — when you raise the stake — do not hesitate. Do not look at my face. Because what he shows you will not be me.' She takes your hand one last time. Outside, the sun is setting over the North Sea, painting the sky in blood and gold. The hunt begins at dark.",
     "initialFacts": {
       "items": [
@@ -599,7 +603,8 @@ module.exports = {
         "minas lodgings",
         "carfax abbey",
         "bermondsey safe house"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {

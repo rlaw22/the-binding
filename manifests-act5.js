@@ -62,7 +62,7 @@ module.exports = {
       }
     ],
     "exitAction": "board_orion",
-    "exitLabel": "Get on the Orion and sail for Varna",
+    "exitLabel": "Board the Orion for Varna",
     "hardExitNarration": "The Orion's horn sounds across the Thames. You stand at the rail as London falls away behind you — the grey towers, the smoking chimneys, the bridges dissolving into mist. Mina grips your hand, her skin cold, her eyes fixed east. Van Helsing stands at the bow, Bible in hand, muttering prayers in Latin. The open water stretches ahead, grey and endless, and somewhere on it — in a box of Transylvanian earth — the Count is waiting.",
     "initialFacts": {
       "items": [
@@ -97,7 +97,8 @@ module.exports = {
         "transylvania",
         "carfax abbey",
         "the inn"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -198,7 +199,7 @@ module.exports = {
       }
     ],
     "exitAction": "traverse_pass",
-    "exitLabel": "Walk through the mountain pass toward the castle",
+    "exitLabel": "Enter the mountain pass",
     "hardExitNarration": "You press into the narrow defile, single file, weapons drawn. The walls of rock close in until you can touch both sides with outstretched arms. Snow falls in a fine curtain, erasing the world behind you. Ahead, the pass opens onto a frozen plateau — and beyond it, silhouetted against a sky the color of bruises, the broken towers of Castle Dracula rise from the cliff edge like a crown of bone. You are here. The end begins.",
     "initialFacts": {
       "items": [
@@ -234,7 +235,8 @@ module.exports = {
         "carfax abbey",
         "london",
         "the ship"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -335,7 +337,7 @@ module.exports = {
       }
     ],
     "exitAction": "descend_to_great_hall",
-    "exitLabel": "Open the iron-banded door and enter the great hall",
+    "exitLabel": "Enter the great hall",
     "hardExitNarration": "The iron door swings open with a shriek that echoes through the castle like a scream. Beyond it, the great hall yawns — vast, dark, its vaulted ceiling lost in shadow. The remnants of a long table lie splintered across the floor. Tapestries hang in shreds. And at the far end, arranged in a semicircle around the cold hearth, three shapes materialize from the darkness. The sisters have been waiting.",
     "initialFacts": {
       "items": [
@@ -371,7 +373,8 @@ module.exports = {
         "london",
         "the ship",
         "mountain pass"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -472,7 +475,7 @@ module.exports = {
       }
     ],
     "exitAction": "defeat_sisters",
-    "exitLabel": "Kill the last sister and head toward the crypt stairs",
+    "exitLabel": "Descend toward the crypt",
     "hardExitNarration": "The eldest sister — the last — hovers at the ceiling, her ruined face a mask of fury and terror. 'You cannot kill what has lived for centuries,' she whispers. But the crucifix in your hand is blazing and Van Helsing's voice fills the hall with prayer. She turns to flee. Jonathan Harker is waiting. His stake catches her in the back as she passes. She crumbles to dust on the wind, and the great hall falls silent. The hearth fire has died. The bats are gone. From below — far below — you hear a sound: the grinding of a stone lid opening. Dracula is awake. Dracula is rising.",
     "initialFacts": {
       "items": [
@@ -510,7 +513,8 @@ module.exports = {
         "the ship",
         "mountain pass",
         "courtyard"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -652,7 +656,8 @@ module.exports = {
         "mountain pass",
         "courtyard",
         "great hall"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {

@@ -76,7 +76,7 @@ module.exports = {
       }
     ],
     "exitAction": "retire_for_night",
-    "exitLabel": "Go to your room, your mind ablaze with ideas",
+    "exitLabel": "Retire with your thoughts",
     "hardExitNarration": "Your mother kisses your forehead. \"Goodnight, my son. Dream of pleasant things.\" Elizabeth squeezes your hand as you pass. You climb the stairs to your room, but you do not sleep. You lie in the dark, watching the lightning play across the ceiling, and you think about the oak tree — split open, its heart exposed, the life gone out of it in an instant. And you think: what if it could be put back?",
     "initialFacts": {
       "items": [],
@@ -102,7 +102,8 @@ module.exports = {
         "charnel house",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -189,7 +190,7 @@ module.exports = {
       }
     ],
     "exitAction": "embrace_chemistry",
-    "exitLabel": "Study the chemistry and galvanism you crave",
+    "exitLabel": "Begin your studies",
     "hardExitNarration": "You leave Waldman's study with his notes clutched to your chest and a fire in your mind that will never be extinguished. The corridors of the university echo with your footsteps — quick, purposeful, the footsteps of a man who has found his calling. Behind you, Waldman watches from his doorway. He looks older than he did an hour ago. He looks afraid.",
     "initialFacts": {
       "items": [
@@ -215,7 +216,8 @@ module.exports = {
         "charnel house",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -317,7 +319,7 @@ module.exports = {
       }
     ],
     "exitAction": "continue_work",
-    "exitLabel": "Push deeper into the work that consumes you",
+    "exitLabel": "Descend deeper into obsession",
     "hardExitNarration": "The candle burns low. The shadows lengthen. You work through the night, as you have worked through every night for months, and when dawn comes you do not notice. The creature is taking shape. Piece by piece, part by part, assembled from the dead and animated by the science of the living. You are close. So close. And you are so far from the man you used to be that you cannot see him anymore.",
     "initialFacts": {
       "items": [
@@ -348,7 +350,8 @@ module.exports = {
         "laboratory",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -436,7 +439,7 @@ module.exports = {
       }
     ],
     "exitAction": "prepare_for_animation",
-    "exitLabel": "Make the final preparations for the animation",
+    "exitLabel": "Prepare for the animation",
     "hardExitNarration": "You close the skylight and climb down the ladder. The laboratory is lit by a single oil lamp and the stuttering blue-white glare of the voltaic apparatus. The storm is almost here. The creature lies on the table, waiting. Your hand rests on the copper switch. Your heart hammers. And you think of your mother, dead. Of Elizabeth, waiting. Of the face that will open its eyes and look at you with the trust of a child for its parent. God forgive me, you whisper. And you wait for the lightning.",
     "initialFacts": {
       "items": [
@@ -465,7 +468,8 @@ module.exports = {
         "charnel house",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -569,7 +573,7 @@ module.exports = {
       }
     ],
     "exitAction": "animate_creature",
-    "exitLabel": "Pull the switch and bring the creature to life",
+    "exitLabel": "Pull the switch",
     "hardExitNarration": "The switch falls. Lightning screams through the apparatus. The creature's eyes open — pale, blue, and alive. They find your face. They focus. And in that moment, the laboratory, the university, the world itself contracts to a single point: the horror in those newborn eyes, and the horror in your own.",
     "initialFacts": {
       "items": [
@@ -598,7 +602,8 @@ module.exports = {
         "charnel house",
         "arctic",
         "orkney"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {

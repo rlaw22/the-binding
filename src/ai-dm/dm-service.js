@@ -16,6 +16,9 @@ const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
+const StoryEngine = require('../story/story-engine');
+const ThreatEncounters = require('../story/threat-encounters');
+const GameMode = require('../game-mode');
 const path = require('path');
 const fs = require('fs');
 // Image generation — optional, gracefully disabled when no provider configured
@@ -440,10 +443,12 @@ function updatePlayerProfile(profile, action, scores) {
  * Create a new game session with DM service initialized.
  */
 function createGame(options) {
+  const gameMode = options.gameMode || 'campaign';
   return {
     sessionId: uuidv4(),
     adventureId: options.adventureId || null,
     adventureName: options.adventureName || 'Untitled Adventure',
+    gameMode: gameMode,
     contextManager: createContextManager(),
     playerProfile: createPlayerProfile(),
     state: 'character_creation', // 'character_creation', 'playing', 'combat', 'completed'
@@ -456,7 +461,9 @@ function createGame(options) {
     sceneScores: [],      // accumulated turn scores for current scene
     inventory: createInventory(['torch', 'journal']),  // starting items
     sceneState: null, // scene engine state — initialized when first scene starts
-    validator: null // continuity validator — initialized with first scene
+    validator: null, // continuity validator — initialized with first scene
+    storyPlayerState: null, // StoryEngine player state — initialized for storyline mode
+    storyButtonContext: null // tracks which button the player clicked (type + id)
   };
 }
 
@@ -494,41 +501,234 @@ async function processAction(game, playerAction, character) {
   // Add player action to context
   addTurn(contextManager, 'user', playerAction);
 
-  // Build full context for LLM, including scene state
-  const systemPrompt = buildAdventureSystemPrompt({
-    adventureName: game.adventureName,
-    adventureDescription: '',
-    tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
-    sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
-  });
+  // === STORYLINE MODE: StoryEngine deterministic flow ===
+  const isStoryline = game.gameMode === 'storyline';
 
-  // Append inventory context so the DM knows what the player is carrying
-  let fullSystemPrompt = systemPrompt;
-  if (game.inventory) {
-    const items = listItems(game.inventory);
-    if (items.length > 0) {
-      const itemList = items.map(i => `${i.name}${i.consumable ? ` (${i.uses})` : ''}`).join(', ');
-      const equipped = Object.entries(game.inventory.equipment)
-        .filter(([_, v]) => v !== null)
-        .map(([slot, v]) => `${slot}: ${v.name}`)
-        .join(', ');
-      fullSystemPrompt += `\n\nPLAYER INVENTORY: ${itemList}`;
-      if (equipped) fullSystemPrompt += `\nEQUIPPED: ${equipped}`;
-      fullSystemPrompt += `\nNarrate item usage naturally when the player references their gear. If they find a new item, mention it clearly.`;
+  // Initialize StoryEngine player state if needed (storyline mode only)
+  if (isStoryline && !game.storyPlayerState) {
+    game.storyPlayerState = StoryEngine.createPlayerState('fighter'); // default class
+  }
+
+  // Sync initialFacts.items to inventory (both modes, when scene transitions)
+  if (game.sceneState && game.sceneState.initialFacts && game.sceneState.initialFacts.items) {
+    for (const itemId of game.sceneState.initialFacts.items) {
+      // Check if item is already in inventory (by ID or name match)
+      const existing = game.inventory.slots.find(s =>
+        s.id === itemId || s.name.toLowerCase() === itemId.toLowerCase()
+      );
+      if (!existing) {
+        try {
+          addItem(game.inventory, itemId);
+        } catch (e) {
+          // Item template not in registry — skip gracefully
+          console.log('[DM] Item "' + itemId + '" not in inventory registry, skipping server sync');
+        }
+      }
     }
   }
 
+  // Storyline mode: run StoryEngine deterministic logic first
+  let storyResult = null;
+  let atmosphereContext = null;
+  if (isStoryline && game.sceneState && game.sceneState.storyMode) {
+    const storyMode = game.sceneState.storyMode;
+    const manifest = game.sceneState;
+
+    // Detect button type from the player action label
+    const actionLower = playerAction.toLowerCase();
+    let buttonType = 'explore';
+    let buttonId = '';
+
+    // Match against threat encounter buttons
+    if (actionLower.includes('fight') || actionLower.includes('defend') || actionLower.includes('run') ||
+        actionLower.includes('flee') || actionLower.includes('escape')) {
+      buttonType = 'threat';
+      if (actionLower.includes('fight') || actionLower.includes('attack')) buttonId = 'threat_fight';
+      else if (actionLower.includes('defend') || actionLower.includes('block')) buttonId = 'threat_defend';
+      else buttonId = 'threat_run';
+    }
+    // Match against item buttons
+    else if (storyMode.collectibleItem && actionLower.includes(storyMode.collectibleItem.label.toLowerCase())) {
+      buttonType = 'item';
+      buttonId = 'item_' + storyMode.collectibleItem.id;
+    }
+    // Match against ability buttons
+    else if (actionLower.includes('spell') || actionLower.includes('ability') || actionLower.includes('channel') ||
+             actionLower.includes('turn undead') || actionLower.includes('shadow step') || actionLower.includes('arcane')) {
+      buttonType = 'ability';
+      // Extract ability ID from context
+      const abilities = StoryEngine.getAvailableAbilities(game.storyPlayerState);
+      for (const ab of abilities) {
+        if (actionLower.includes(ab.name.toLowerCase()) || actionLower.includes(ab.id.replace(/_/g, ' '))) {
+          buttonId = 'ability_' + ab.id;
+          break;
+        }
+      }
+      if (!buttonId) buttonId = 'ability_unknown';
+    }
+    // Match against bad choice
+    else if (storyMode.badChoice && actionLower.includes(storyMode.badChoice.label.toLowerCase())) {
+      buttonType = 'bad_choice';
+      buttonId = 'bad_' + storyMode.badChoice.id;
+    }
+    // Default: explore — match against content items
+    else {
+      buttonType = 'explore';
+      const content = manifest.contentItems || [];
+      for (const item of content) {
+        if (item.label && actionLower.includes(item.label.toLowerCase().substring(0, 8))) {
+          buttonId = item.id;
+          break;
+        }
+      }
+      if (!buttonId) buttonId = 'explore_generic';
+    }
+
+    // Get threat definition if this is a threat scene
+    let threatDef = null;
+    if (buttonType === 'threat' && storyMode.threat) {
+      const sceneIndex = adventure.scenes ? adventure.scenes.findIndex(s => s.id === game.sceneState.sceneId) : 0;
+      threatDef = ThreatEncounters.getThreatForScene(sceneIndex, game.adventureId);
+    }
+
+    // Run StoryEngine deterministic processing
+    storyResult = StoryEngine.processButtonAction(
+      buttonId, buttonType, manifest, game.storyPlayerState, threatDef
+    );
+
+    // Sync StoryEngine item gains to server inventory
+    if (storyResult.itemGained) {
+      try {
+        addItem(game.inventory, storyResult.itemGained);
+      } catch (e) {
+        console.log('[DM] Could not add story item "' + storyResult.itemGained + '" to server inventory');
+      }
+    }
+
+    // Build constrained atmosphere context for the LLM
+    atmosphereContext = StoryEngine.buildAtmosphereContext(
+      game.storyPlayerState, manifest, storyResult
+    );
+
+    // Store button context for reference
+    game.storyButtonContext = { type: buttonType, id: buttonId, result: storyResult };
+  }
+
+  // Build full context for LLM, including scene state
+  let systemPrompt;
+  if (isStoryline && storyResult && atmosphereContext) {
+    // Storyline mode: constrained LLM — only atmospheric flavor
+    const actionNarrative = storyResult.narrative || '';
+    const isThreat = storyResult.type === 'threat';
+    const isDramatic = isThreat || storyResult.type === 'bad_choice';
+
+    // Build seed narrative for threats
+    let seedText = '';
+    if (isThreat && threatDef) {
+      const reaction = storyResult.reaction || 'fight';
+      const baseOutcome = threatDef.outcomes[reaction];
+      if (baseOutcome && baseOutcome.text) {
+        seedText = `\nSEED NARRATIVE: "${baseOutcome.text}"`;
+      }
+    }
+
+    // Variable atmosphere length based on drama
+    let sentenceGuide;
+    if (isDramatic) {
+      sentenceGuide = '3-4 vivid sentences. Reference the player\'s class, any items used, and the outcome.';
+    } else if (storyResult.type === 'item') {
+      sentenceGuide = '1 sentence confirming the item collection.';
+    } else {
+      sentenceGuide = '1-2 atmospheric sentences. Do not over-explain.';
+    }
+
+    systemPrompt = `You are the narrator for a gothic horror RPG in Storyline Mode.
+The deterministic game engine has already resolved the outcome. Your ONLY job is to add atmospheric flavor.
+
+PLAYER ACTION: "${playerAction}"
+DETERMINISTIC RESULT: ${actionNarrative}${seedText}
+${atmosphereContext.inventory.length > 0 ? 'PLAYER INVENTORY: ' + atmosphereContext.inventory.join(', ') : ''}
+${atmosphereContext.flags && Object.keys(atmosphereContext.flags).length > 0 ? 'FLAGS: ' + JSON.stringify(atmosphereContext.flags) : ''}
+HP STATE: ${atmosphereContext.hpState} (${atmosphereContext.hp}/${atmosphereContext.maxHp})
+
+TASK: Expand the deterministic result into ${sentenceGuide}
+PRESERVE the core imagery of the seed narrative (if provided). Add sensory detail — sound, temperature, texture.
+Do NOT change the outcome, damage, or coin values.
+Do NOT generate buttons, suggestions, or new content.
+Do NOT add meta-commentary or compliments.
+Stay in the world. Be concise.`;
+  } else {
+    // Campaign/Digital DM mode: full LLM prompt (unchanged)
+    systemPrompt = buildAdventureSystemPrompt({
+      adventureName: game.adventureName,
+      adventureDescription: '',
+      tone: adventure ? adventure.tone : 'gothic, suspenseful, mysterious',
+      sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
+    });
+
+    // Append inventory context so the DM knows what the player is carrying
+    if (game.inventory) {
+      const items = listItems(game.inventory);
+      if (items.length > 0) {
+        const itemList = items.map(i => `${i.name}${i.consumable ? ` (${i.uses})` : ''}`).join(', ');
+        const equipped = Object.entries(game.inventory.equipment)
+          .filter(([_, v]) => v !== null)
+          .map(([slot, v]) => `${slot}: ${v.name}`)
+          .join(', ');
+        systemPrompt += `\n\nPLAYER INVENTORY: ${itemList}`;
+        if (equipped) systemPrompt += `\nEQUIPPED: ${equipped}`;
+        systemPrompt += `\nNarrate item usage naturally when the player references their gear. If they find a new item, mention it clearly.`;
+      }
+    }
+  }
+
+  let fullSystemPrompt = systemPrompt;
   const messages = buildContext(contextManager, fullSystemPrompt);
 
   // Call LLM for narrative response
-  const dmResponse = await llmProvider(messages);
+  let dmResponse;
+  if (isStoryline && storyResult) {
+    // Storyline mode: LLM adds atmosphere to deterministic result
+    // Use a simpler message set — just the system prompt with the action
+    const storyMessages = [
+      { role: 'system', content: fullSystemPrompt },
+      { role: 'user', content: playerAction }
+    ];
+    try {
+      const llmAtmosphere = await llmProvider(storyMessages);
+      // Combine: deterministic narrative + LLM atmosphere
+      dmResponse = storyResult.narrative + '\n\n' + llmAtmosphere;
+    } catch (err) {
+      // LLM failed — use deterministic narrative only (fallback)
+      console.warn('[StoryEngine] LLM atmosphere failed, using deterministic narrative only:', err.message);
+      dmResponse = storyResult.narrative;
+    }
+  } else {
+    // Campaign/Digital DM mode: full LLM response (unchanged)
+    dmResponse = await llmProvider(messages);
+  }
 
   // Validate the DM response against established facts
   if (game.validator) {
     const validation = game.validator.validate(dmResponse, playerAction);
     if (!validation.valid) {
       console.warn('[ContinuityValidator] VIOLATIONS:', validation.violations);
-      // In mock mode, we log violations. With a real LLM, we'd regenerate.
+      // Enforce: regenerate if location jump detected (up to 2 retries)
+      const hasLocationJump = validation.violations.some(v => v.startsWith('LOCATION_JUMP'));
+      if (hasLocationJump && game.llmProvider) {
+        for (let retry = 0; retry < 2; retry++) {
+          const correctionPrompt = fullSystemPrompt + `\n\nIMPORTANT: Your previous response referenced a location the player is NOT in. You are in "${game.sceneState ? game.sceneState.sceneName : 'this scene'}". Do NOT mention any location that is not the current scene. Stay in the current location.`;
+          const correctionMessages = buildContext(contextManager, correctionPrompt);
+          const retryResponse = await llmProvider(correctionMessages);
+          const retryValidation = game.validator.validate(retryResponse, playerAction);
+          if (retryValidation.valid || !retryValidation.violations.some(v => v.startsWith('LOCATION_JUMP'))) {
+            dmResponse = retryResponse;
+            console.log('[ContinuityValidator] Retry ' + (retry + 1) + ' succeeded');
+            break;
+          }
+          console.warn('[ContinuityValidator] Retry ' + (retry + 1) + ' still has violations:', retryValidation.violations);
+        }
+      }
     }
     if (validation.warnings.length > 0) {
       console.warn('[ContinuityValidator] WARNINGS:', validation.warnings);
@@ -832,6 +1032,10 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     type: 'exploration'
   }));
 
+  // Get banned location keywords for filtering suggestions
+  const bannedLocations = (sceneState.locationKeywords && sceneState.locationKeywords.banned) || [];
+  const bannedLower = bannedLocations.map(l => l.toLowerCase());
+
   // Build a set of significant words from content items for deduplication
   const genericWords = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'have', 'will', 'into', 'onto', 'back', 'out', 'about', 'through', 'every']);
   const contentWordSets = contentActions.map(a =>
@@ -839,9 +1043,13 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   );
 
   // Filter AI suggestions: keep only those that don't significantly overlap with content items
+  // and don't reference banned locations
   const contextualActions = (aiSuggestedActions || [])
     .filter(ai => {
-      const aiWords = ai.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w));
+      const aiLabel = ai.label.toLowerCase();
+      // Filter out suggestions that reference banned locations
+      if (bannedLower.some(loc => aiLabel.includes(loc))) return false;
+      const aiWords = aiLabel.split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w));
       if (aiWords.length === 0) return false;
       // Count how many significant AI words appear in any content item
       const overlap = aiWords.filter(w =>

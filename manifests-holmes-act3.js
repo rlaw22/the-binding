@@ -64,7 +64,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_camp",
-    "exitLabel": "Leave the camp with Holmes",
+    "exitLabel": "Leave camp with Holmes",
     "hardExitNarration": "Holmes gathers his pipe and newspapers with practised efficiency. \"Come, Watson. We have work to do. Stapleton will be heading for the Mire soon, and I want to be in position.\" He pulls his hat low and leads you out of the hut, moving across the moor with the easy stride of a man who has been living on it for days.",
     "initialFacts": {
       "items": [
@@ -89,7 +89,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -177,7 +178,7 @@ module.exports = {
       }
     ],
     "exitAction": "continue_investigation",
-    "exitLabel": "Walk with Holmes toward the Grimpen Mire",
+    "exitLabel": "Approach the Grimpen Mire",
     "hardExitNarration": "Holmes pulls his hat low and sets off across the heather with long, purposeful strides. \"Stay close, Watson. And keep your revolver ready. The moor has teeth tonight.\" You follow him into the gathering dusk, toward the dark mass of the Grimpen Mire.",
     "initialFacts": {
       "items": [
@@ -201,7 +202,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -292,7 +294,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_mire",
-    "exitLabel": "Go back from the Mire before dark",
+    "exitLabel": "Retreat from the Mire",
     "hardExitNarration": "Holmes checks the sky. The sun is low, the shadows lengthening across the heather. \"We must go,\" he says. \"Stapleton will be coming soon, and I do not want him to know we have found his path.\" He leads you back along the cairned route, each step careful, deliberate, until the solid ground of the moor is beneath your feet again. Behind you, the Mire waits — green, silent, bottomless.",
     "initialFacts": {
       "items": [
@@ -317,7 +319,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -408,7 +411,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_laura",
-    "exitLabel": "Leave Laura Lyons and go back to the moor",
+    "exitLabel": "Return to the moor",
     "hardExitNarration": "Laura shows you to the door. Her face is grey, her eyes hollow. \"What will happen to me?\" she asks. You tell her the truth will protect her. She nods, but she does not look convinced. As you walk back through Grimpen, the evening mist is rising from the Mire, and somewhere in the gathering dark, a dog is barking — deep, resonant, hungry.",
     "initialFacts": {
       "items": [
@@ -433,7 +436,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -523,7 +527,7 @@ module.exports = {
       }
     ],
     "exitAction": "plan_trap",
-    "exitLabel": "Join Holmes in planning the trap",
+    "exitLabel": "Plan the trap with Holmes",
     "hardExitNarration": "Holmes gathers you and Sir Henry in the study. He closes the curtains, locks the door, and spreads a map of the moor on the desk. \"Now,\" he says, his finger tracing a path from Merripit House to Baskerville Hall, across the open moor. \"Here is what we are going to do.\" The trap is set.",
     "initialFacts": {
       "items": [
@@ -547,7 +551,8 @@ module.exports = {
         "train",
         "station",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {

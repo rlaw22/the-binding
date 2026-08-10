@@ -78,7 +78,7 @@ module.exports = {
       }
     ],
     "exitAction": "animate_creature",
-    "exitLabel": "Face the horror of what you have created",
+    "exitLabel": "Face what you have created",
     "hardExitNarration": "You stumble backward. The creature breathes. Its eyes follow you. And you know — with a certainty that turns your blood to ice — that you cannot stay here. You cannot be near this thing you have made. The door is behind you. Ten steps. You take them.",
     "initialFacts": {
       "items": [
@@ -109,7 +109,8 @@ module.exports = {
         "de lacey cottage",
         "geneva",
         "arctic"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -197,7 +198,7 @@ module.exports = {
       }
     ],
     "exitAction": "abandon_creature",
-    "exitLabel": "Run from the laboratory in horror",
+    "exitLabel": "Flee the laboratory",
     "hardExitNarration": "You stumble into the corridor and slam the door behind you. The lock clicks. Through the wood, muffled but unmistakable, you hear the creature's cry — a long, desolate wail that follows you down the stairs and out into the night. It does not stop. Even when you are three streets away, ears ringing, breath ragged, you can still hear it. You will hear it for the rest of your life.",
     "initialFacts": {
       "items": [
@@ -223,7 +224,8 @@ module.exports = {
         "de lacey cottage",
         "geneva",
         "arctic"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -310,7 +312,7 @@ module.exports = {
       }
     ],
     "exitAction": "fall_ill",
-    "exitLabel": "Give in to the fever and let collapse take you",
+    "exitLabel": "Surrender to the fever",
     "hardExitNarration": "The fever takes you like a wave. For weeks, you burn — raving, shaking, calling out names that Clerval does not recognize. He tends you through every hour, changing your sheets, forcing broth between your lips, listening to your nightmares. When you finally wake, clear-headed and weak as a child, the first thing you see is Clerval's face, drawn with worry but smiling. \"Welcome back,\" he says. \"You have been gone a long time.\"",
     "initialFacts": {
       "items": [
@@ -336,7 +338,8 @@ module.exports = {
         "de lacey cottage",
         "geneva",
         "arctic"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -422,7 +425,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_lab_behind",
-    "exitLabel": "Leave the laboratory and its horrors behind",
+    "exitLabel": "Leave the horrors behind",
     "hardExitNarration": "You close the door of the laboratory for the last time. The lock clicks. The key is at the bottom of the Danube. The notes are ashes. The creature is gone — somewhere in the world, alone, learning, growing, remembering. You walk back to your lodgings in the spring sunshine, and you tell yourself that it is over. You know it is a lie.",
     "initialFacts": {
       "items": [
@@ -448,7 +451,8 @@ module.exports = {
         "de lacey cottage",
         "geneva",
         "arctic"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -534,7 +538,7 @@ module.exports = {
       }
     ],
     "exitAction": "depart_for_geneva",
-    "exitLabel": "Leave for Geneva with Clerval",
+    "exitLabel": "Depart for Geneva",
     "hardExitNarration": "The coach pulls away from the lodgings in the grey light of early morning. Clerval sits beside you, silent, his hand on your arm. The road to Geneva stretches south through the German countryside — green, peaceful, indifferent to the grief that fills the coach like smoke. You do not speak. You stare at the passing landscape and see nothing but the face of a creature with pale blue eyes, reaching for you with gentle hands. And behind it, smaller, stiller, the face of a boy who will never laugh again.",
     "initialFacts": {
       "items": [
@@ -561,7 +565,8 @@ module.exports = {
         "charnel house",
         "de lacey cottage",
         "arctic"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {

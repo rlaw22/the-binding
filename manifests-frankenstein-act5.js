@@ -62,7 +62,7 @@ module.exports = {
       }
     ],
     "exitAction": "creature_strikes",
-    "exitLabel": "Fight the creature as it strikes",
+    "exitLabel": "Confront the creature",
     "hardExitNarration": "The creature moves with a speed that your eyes cannot follow. One moment it is in the doorway. The next, it is beside you, and the pistol is on the floor, and your wrist is broken, and you are on your knees. It does not look at you. It looks toward the closet — toward the sound of Elizabeth's voice, muffled, terrified, calling your name. \"I told you,\" it says again. \"I told you what I would do.\" It turns and walks to the closet door. You scream. You scream and you crawl toward it and you try to stand, but your wrist is broken and your legs will not hold you. The creature opens the closet door. Elizabeth stands there, her face white, her eyes wide, her hands raised. The creature reaches for her. And the world ends.",
     "initialFacts": {
       "items": [
@@ -90,7 +90,8 @@ module.exports = {
         "arctic",
         "orkney",
         "laboratory"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -178,7 +179,7 @@ module.exports = {
       }
     ],
     "exitAction": "begin_pursuit",
-    "exitLabel": "Follow the creature's trail into the mountains",
+    "exitLabel": "Follow the creature north",
     "hardExitNarration": "You leave Geneva behind. The road climbs into the Alps — grey rock, white snow, the thin air of altitude. The creature's trail leads north, always north, through passes and valleys and frozen streams. You follow it with the single-minded determination of a man who has nothing left but the chase. Behind you, the graves of everyone you loved. Before you, the creature. And between them, the road — long, cold, and endless.",
     "initialFacts": {
       "items": [
@@ -205,7 +206,8 @@ module.exports = {
         "de lacey cottage",
         "orkney",
         "laboratory"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -292,7 +294,7 @@ module.exports = {
       }
     ],
     "exitAction": "continue_chase",
-    "exitLabel": "Press on through the ice toward the creature",
+    "exitLabel": "Press on through the ice",
     "hardExitNarration": "You stand. Your legs are stiff. Your hands are black. Your face is a mask of frozen blood and cracked skin. But you stand. And you walk. North. Always north. Toward the creature. Toward the end. The ice stretches before you — white, flat, infinite — and somewhere in that whiteness, the creature walks too. It is waiting for you. It has always been waiting for you. And you will find it. Or you will die trying. Either way, the chase will end.",
     "initialFacts": {
       "items": [
@@ -320,7 +322,8 @@ module.exports = {
         "orkney",
         "laboratory",
         "geneva"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -407,7 +410,7 @@ module.exports = {
       }
     ],
     "exitAction": "victor_deteriorates",
-    "exitLabel": "Watch as Victor's condition worsens",
+    "exitLabel": "Watch Victor fade",
     "hardExitNarration": "The days pass. Victor grows weaker. He speaks less. He eats nothing. He lies in the bunk and stares at the ceiling and sometimes, in the night, you hear him talking — not to you, not to the crew, but to someone who is not there. \"I am sorry,\" he whispers. \"I am sorry for what I made you. I am sorry for what I did to you. I am sorry I could not love you.\" The crew avoids the cabin. They are afraid. Not of Victor — of the story. Of the truth. Of the creature that waits on the ice.",
     "initialFacts": {
       "items": [
@@ -435,7 +438,8 @@ module.exports = {
         "orkney",
         "laboratory",
         "geneva"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -522,7 +526,7 @@ module.exports = {
       }
     ],
     "exitAction": "adventure_end",
-    "exitLabel": "Close Victor's journal and reflect on what you have learned",
+    "exitLabel": "Close the journal",
     "hardExitNarration": "You close the journal. The cabin is quiet. Victor's body lies in the bunk, peaceful at last. Outside, the ice creaks and the wind howls and the ship waits for the thaw that will carry you home. You sit at the desk and pick up your pen and begin to write — not to anyone in particular, but to the world. \"I have heard a story,\" you write, \"that has changed everything I believe about the nature of life, the limits of ambition, and the consequences of playing God. I tell it now so that others may learn. So that others may be warned. So that the creature's suffering — and its creator's — will not have been in vain.\" You write through the night. And when dawn comes, grey and cold over the ice, you are still writing. The story must be told. The lesson must be learned. And the creature — somewhere on the ice, building its pyre — must be remembered.",
     "initialFacts": {
       "items": [
@@ -552,7 +556,8 @@ module.exports = {
         "orkney",
         "laboratory",
         "geneva"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {

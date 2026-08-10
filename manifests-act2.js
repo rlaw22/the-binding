@@ -61,7 +61,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_forbidden_wing",
-    "exitLabel": "Go back upstairs before the Count wakes",
+    "exitLabel": "Return upstairs before dawn",
     "hardExitNarration": "The light through the corridor windows is fading fast. You race back to your chamber, bar the door, and collapse onto the bed. Sleep comes eventually, fitful and haunted. You wake in darkness. The fire has died to embers. Something is wrong with the shadows in the corner of the room. They are deeper than they should be. They are moving.",
     "initialFacts": {
       "items": [
@@ -87,7 +87,8 @@ module.exports = {
         "london",
         "lucy",
         "renfield"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -172,7 +173,7 @@ module.exports = {
       }
     ],
     "exitAction": "survive_sisters",
-    "exitLabel": "Run through the door the Count left open",
+    "exitLabel": "Flee through the open door",
     "hardExitNarration": "The Count draws the sisters away with a single gesture. 'Go,' he says to you, without looking back. 'Sleep in the great hall tonight. Lock the door. Do not come upstairs again after dark.' His voice carries the weight of command that is older than language.",
     "initialFacts": {
       "items": [
@@ -197,7 +198,8 @@ module.exports = {
         "coach ride",
         "carfax abbey",
         "london"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -286,7 +288,7 @@ module.exports = {
       }
     ],
     "exitAction": "close_journal",
-    "exitLabel": "Close the journal and figure out how escape",
+    "exitLabel": "Close the journal and plan your escape",
     "hardExitNarration": "The shadows are growing longer. The Count will wake soon. You cannot be here when he does. You tuck the journal inside your coat and move toward the window.",
     "initialFacts": {
       "items": [
@@ -311,7 +313,8 @@ module.exports = {
         "coach ride",
         "london",
         "carfax abbey exterior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -399,7 +402,7 @@ module.exports = {
       }
     ],
     "exitAction": "reach_mountain_path",
-    "exitLabel": "Run into the dark forest and don't look back",
+    "exitLabel": "Plunge into the dark forest",
     "hardExitNarration": "The castle door crashes open below. You do not look back. You run into the forest, branches tearing at your clothes, the wolves behind you and the darkness ahead, and you do not stop until the castle is a silhouette against the sky and the howling has faded to nothing.",
     "initialFacts": {
       "items": [
@@ -426,7 +429,8 @@ module.exports = {
         "carfax abbey",
         "lucy",
         "renfield"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -514,7 +518,7 @@ module.exports = {
       }
     ],
     "exitAction": "enter_monastery",
-    "exitLabel": "Walk to the monastery and seek help",
+    "exitLabel": "Seek refuge at the monastery",
     "hardExitNarration": "The monastery gate opens at your knock. A monk takes one look at you — torn clothes, bleeding hands, wild eyes — and pulls you inside without a word. The gate closes behind you. For the first time since Bistritz, you are safe. But safety is temporary. England is waiting.",
     "initialFacts": {
       "items": [
@@ -542,7 +546,8 @@ module.exports = {
         "london",
         "lucy",
         "renfield"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {

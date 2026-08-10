@@ -61,7 +61,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_van_helsing",
-    "exitLabel": "Leave Van Helsing's study to investigate Lucy",
+    "exitLabel": "Go to Lucy's bedside",
     "hardExitNarration": "Van Helsing grips your hand at the door. 'Be careful, my friend. The Count is here, and he knows we are coming.' He presses a small bottle into your hand. 'Holy water. From the Vatican. Use it wisely.'",
     "initialFacts": {
       "items": [
@@ -87,7 +87,8 @@ module.exports = {
         "coach ride",
         "castle dracula",
         "transylvania"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -171,7 +172,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_lucy",
-    "exitLabel": "Leave Lucy's room to prepare for tonight",
+    "exitLabel": "Prepare for the night watch",
     "hardExitNarration": "Van Helsing catches your arm at the door. 'Tonight,' he whispers. 'We watch. We guard. And we see what comes for her.' His eyes are grim.",
     "initialFacts": {
       "items": [
@@ -199,7 +200,8 @@ module.exports = {
         "coach ride",
         "castle dracula",
         "transylvania"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -281,7 +283,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_asylum",
-    "exitLabel": "Leave the asylum and get ready for the night watch",
+    "exitLabel": "Begin the night watch",
     "hardExitNarration": "As you leave, Renfield calls after you: 'Tell the Doctor to guard her tonight! He comes with the dark!' His voice follows you down the corridor.",
     "initialFacts": {
       "items": [
@@ -311,7 +313,8 @@ module.exports = {
         "coach ride",
         "castle dracula",
         "transylvania"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -395,7 +398,7 @@ module.exports = {
       }
     ],
     "exitAction": "end_night_watch",
-    "exitLabel": "Wait until dawn breaks",
+    "exitLabel": "Hold out until dawn",
     "hardExitNarration": "Dawn seeps through the curtains and the bats scatter. Van Helsing slumps in his chair. 'He will come again,' he says. 'And he will not stop until she is his — or she is dead.'",
     "initialFacts": {
       "items": [
@@ -425,7 +428,8 @@ module.exports = {
         "coach ride",
         "castle dracula",
         "transylvania"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -507,7 +511,7 @@ module.exports = {
       }
     ],
     "exitAction": "leave_mourning",
-    "exitLabel": "Leave the room and get ready for what comes next",
+    "exitLabel": "Steel yourself for what comes next",
     "hardExitNarration": "Van Helsing finds you in the corridor. 'Three days,' he says. 'Garlic, crucifixes, a stake of wood, and the courage to use them. Find a consecrated wafer. And a carpenter.'",
     "initialFacts": {
       "items": [
@@ -536,7 +540,8 @@ module.exports = {
         "coach ride",
         "castle dracula",
         "transylvania"
-      ]
+      ],
+      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
     },
     "storyMode": {
       "collectibleItem": {

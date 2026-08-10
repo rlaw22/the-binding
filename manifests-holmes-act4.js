@@ -64,7 +64,7 @@ module.exports = {
       }
     ],
     "exitAction": "prepare_for_ambush",
-    "exitLabel": "Go to bed early to get ready for tomorrow night",
+    "exitLabel": "Rest before the hunt",
     "hardExitNarration": "Holmes extinguishes the lamp and opens the curtains. The moor is a vast darkness beyond the glass, featureless and silent. \"Sleep well, Watson,\" he says. \"Tomorrow, we end this.\" You go to your room, but sleep does not come easily. Through the window, the moor waits — patient, ancient, hungry.",
     "initialFacts": {
       "items": [
@@ -90,7 +90,8 @@ module.exports = {
         "train",
         "station",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -179,7 +180,7 @@ module.exports = {
       }
     ],
     "exitAction": "holmes_signals",
-    "exitLabel": "Wait for Holmes to fire first",
+    "exitLabel": "Wait for the shot",
     "hardExitNarration": "A shot cracks through the darkness — Holmes's rifle, from behind the ruined wall. The signal. You rise from cover and fire.",
     "initialFacts": {
       "items": [
@@ -206,7 +207,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -294,7 +296,7 @@ module.exports = {
       }
     ],
     "exitAction": "holmes_closes_in",
-    "exitLabel": "Watch Holmes close in on the hound",
+    "exitLabel": "Watch Holmes close in",
     "hardExitNarration": "Holmes has outpaced you all. He is running straight at the hound, the rifle at his shoulder, his face a mask of cold concentration. The hound is five yards from Sir Henry. Holmes is ten yards from the hound. Time slows.",
     "initialFacts": {
       "items": [
@@ -321,7 +323,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -410,7 +413,7 @@ module.exports = {
       }
     ],
     "exitAction": "pursue_stapleton",
-    "exitLabel": "Follow Holmes toward the Grimpen Mire",
+    "exitLabel": "Follow Holmes into the Mire",
     "hardExitNarration": "Holmes straightens and looks west, toward the Mire. \"Stapleton is running,\" he says. \"He will try to reach his lair — to destroy the evidence, to cover his tracks. We must move quickly.\" He sets off across the moor at a pace that forces you and Lestrade to half-run to keep up. Behind you, the hound lies still, its phosphorescent glow fading as the paste dries in the cold air.",
     "initialFacts": {
       "items": [
@@ -437,7 +440,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -528,7 +532,7 @@ module.exports = {
       }
     ],
     "exitAction": "carry_beryl_to_safety",
-    "exitLabel": "Take Beryl Stapleton out of the Mire",
+    "exitLabel": "Lead Beryl to safety",
     "hardExitNarration": "You carry Beryl out of the Grimpen Mire, Holmes leading the way with his lantern, Lestrade bringing up the rear with the evidence. The Mire is silent now — no howling, no glowing eyes, no spectre from the legend. Just a bog, dark and wet and indifferent. Behind you, the kennel sits empty. The hound is dead. The trap is sprung. But Stapleton is still out there, somewhere in the darkness.",
     "initialFacts": {
       "items": [
@@ -554,7 +558,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {

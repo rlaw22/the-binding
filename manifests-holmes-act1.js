@@ -62,7 +62,7 @@ module.exports = {
       }
     ],
     "exitAction": "hear_mortimer",
-    "exitLabel": "Listen as Dr. Mortimer begins his extraordinary tale",
+    "exitLabel": "Hear Dr. Mortimer's tale",
     "hardExitNarration": "Mortimer opens his portfolio with trembling fingers. The paper inside is old — very old — the ink faded to a pale brown, the edges brittle with age. \"This manuscript,\" he says, \"was written in 1742 by Sir Hugo Baskerville's own hand. It tells the story of how the curse began.\" He begins to read, and the fire crackles, and the room grows very still.",
     "initialFacts": {
       "items": [],
@@ -87,7 +87,8 @@ module.exports = {
         "mire",
         "train",
         "station"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -176,7 +177,7 @@ module.exports = {
       }
     ],
     "exitAction": "consider_case",
-    "exitLabel": "Think about the implications of the manuscript",
+    "exitLabel": "Consider the manuscript's meaning",
     "hardExitNarration": "Holmes rises from his chair and stands before the fire, his long shadow stretching across the room. \"This is a three-pipe problem,\" he says, reaching for the Persian slipper. \"Dr. Mortimer, you have brought me something genuinely interesting. The question is: is this a case for the police, or for me?\" He turns, his eyes gleaming. \"I think, Watson, that Dartmoor is calling us.\"",
     "initialFacts": {
       "items": [
@@ -204,7 +205,8 @@ module.exports = {
         "mire",
         "train",
         "station"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -291,7 +293,7 @@ module.exports = {
       }
     ],
     "exitAction": "receive_warning",
-    "exitLabel": "Think about the anonymous warning letter",
+    "exitLabel": "Ponder the warning letter",
     "hardExitNarration": "Holmes holds the warning letter to the light, his eyes narrowed. \"Someone does not want you to go to Dartmoor, Sir Henry,\" he says. \"The question is: is this a warning from a friend, or a threat from an enemy?\" He places the letter carefully on the desk. \"Watson, I think our course is clear. Sir Henry must go to Dartmoor — but he must not go alone.\"",
     "initialFacts": {
       "items": [
@@ -321,7 +323,8 @@ module.exports = {
         "mire",
         "train",
         "station"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -412,7 +415,7 @@ module.exports = {
       }
     ],
     "exitAction": "return_baker_street",
-    "exitLabel": "Go back to Baker Street with Sir Henry",
+    "exitLabel": "Return to Baker Street",
     "hardExitNarration": "Holmes ushers you and Sir Henry out of the hotel and into a waiting cab. As the cab rattles toward Baker Street, Holmes is unusually quiet. His eyes are distant, his fingers drumming on his knee. At last he speaks: \"Watson, the game is afoot. Someone is watching Sir Henry — watching him closely — and that someone has access to his private rooms. We are not dealing with a legend, Watson. We are dealing with a very real, very present danger.\"",
     "initialFacts": {
       "items": [
@@ -441,7 +444,8 @@ module.exports = {
         "mire",
         "train",
         "station"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -530,7 +534,7 @@ module.exports = {
       }
     ],
     "exitAction": "depart_for_dartmoor",
-    "exitLabel": "Board the train at Paddington Station",
+    "exitLabel": "Board the train for Dartmoor",
     "hardExitNarration": "The train pulls out of Paddington at ten-fifteen, and London begins to recede — the grey terraces, the gas works, the spires and chimneys of the city dissolving into the soft green hills of the West Country. Sir Henry sits opposite you, his face set toward the window, watching the countryside change. Beside you, Dr. Mortimer dozes with his chin on his chest. The train gathers speed, and the moor draws closer — mile by mile, station by station, the landscape growing wilder, emptier, darker. By late afternoon, the heather begins. Purple, vast, stretching to the horizon. The moor. And somewhere on it, waiting, the house that has killed one Baskerville and may yet kill another.",
     "initialFacts": {
       "items": [
@@ -562,7 +566,8 @@ module.exports = {
         "grimpen",
         "mire",
         "stone circle"
-      ]
+      ],
+      "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
       "collectibleItem": {

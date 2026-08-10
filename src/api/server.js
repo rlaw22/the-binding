@@ -1061,15 +1061,12 @@ async function createServer(options = {}) {
         ));
       }
 
-      // Handle scene transitions — generate chapter breakdown, then transition
+      // Handle scene transitions — track chapter completion internally, don't display to player
       if (result.sceneTransition) {
         const sceneResult = completeScene(data.completedScenes.length, data.currentSceneCoins, coinPool);
         if (sceneResult) {
           data.completedScenes.push(sceneResult);
-          const summaryText = formatChapterSummary(sceneResult);
-          if (summaryText) {
-            recordMessage(sessionId, MessageRouter.chapterSummary(summaryText, sceneResult));
-          }
+          // Chapter summary tracked internally only — not displayed to player
         }
         data.currentSceneCoins = [];
         transitionScene(session, result.sceneTransition.sceneId);
@@ -1244,10 +1241,7 @@ async function createServer(options = {}) {
         const sceneResult = completeScene(data.completedScenes.length, data.currentSceneCoins, coinPool);
         if (sceneResult) {
           data.completedScenes.push(sceneResult);
-          const summaryText = formatChapterSummary(sceneResult);
-          if (summaryText) {
-            recordMessage(session.id, MessageRouter.chapterSummary(summaryText, sceneResult));
-          }
+          // Chapter summary tracked internally only — not displayed to player
         }
         data.currentSceneCoins = [];
         transitionScene(session, result.sceneTransition.sceneId);
