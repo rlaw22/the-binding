@@ -95,7 +95,7 @@ module.exports = {
       "badChoice": {
         "id": "approach_creature",
         "label": "Approach the creature directly",
-        "consequence": "It recoils and smashes a nearby table",
+        "consequence": "You step forward and the creature answers with its whole body — a convulsion that takes the table sideways, glass and instruments scattering across stone. The lesson is biological: proximity without preparation is not intimacy — it is pressure.",
         "coinCost": 3,
         "flagSet": {
           "provoked_creature": true
@@ -221,7 +221,7 @@ module.exports = {
       "badChoice": {
         "id": "light_torch",
         "label": "Light a torch in the cave",
-        "consequence": "The smoke reveals how small the exit really is",
+        "consequence": "The flame catches and the smoke maps the ceiling, pressing low, showing you the geometry you preferred not to measure. The exit was always this small; you simply hadn't lit it properly. The lesson is spatial: darkness flatters distances.",
         "coinCost": 3,
         "flagSet": {
           "revealed_location": true
@@ -332,7 +332,7 @@ module.exports = {
       "badChoice": {
         "id": "confront_victor",
         "label": "Confront Victor angrily",
-        "consequence": "He locks himself in his study and refuses to help",
+        "consequence": "Your anger fills the room and Victor retreats behind a locked door. The silence that follows is heavier than any argument. The lesson is relational: force closes the very doors that patience might have opened.",
         "coinCost": 3,
         "flagSet": {
           "alienated_victor": true
@@ -447,7 +447,7 @@ module.exports = {
       "badChoice": {
         "id": "follow_tracks",
         "label": "Follow the tracks into the storm",
-        "consequence": "Lightning strikes a tree nearby, blocking your path",
+        "consequence": "The bolt hits the oak with a sound like tearing fabric. Branches crash across the path, bark still smoking. The air tastes of copper and ozone. The lesson is immediate: storms do not negotiate with travelers — they rearrange the landscape and leave you to recalculate.",
         "coinCost": 3,
         "flagSet": {
           "followed_into_storm": true
@@ -564,7 +564,7 @@ module.exports = {
       "badChoice": {
         "id": "search_graveyard",
         "label": "Search the graveyard at night",
-        "consequence": "You disturb something that should have stayed buried",
+        "consequence": "Your hands break the surface and the smell hits first — old earth, old bone, old obligation. The ground settles around your wrists as if it has been waiting. The lesson is ancestral: some layers of soil are load-bearing.",
         "coinCost": 3,
         "flagSet": {
           "disturbed_graves": true

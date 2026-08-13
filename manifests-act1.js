@@ -70,7 +70,8 @@ module.exports = {
         "castle",
         "carpathians",
         "dracula"
-      ]
+      ],
+      "valid": ["castle", "dracula", "great hall", "crypt", "tower", "courtyard", "carpathians", "mountain", "forest", "road", "pass"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -80,7 +81,7 @@ module.exports = {
       "badChoice": {
         "id": "open_coffin",
         "label": "Open the coffin",
-        "consequence": "A pale hand shoots out and grabs your wrist",
+        "consequence": "The lid scrapes back. Cold air spills out. Something shifts in the dark — then the hand locks around your wrist. The lesson lands before the pain: what is sealed was sealed for a reason.",
         "coinCost": 3,
         "flagSet": {
           "opened_coffin_early": true
@@ -169,7 +170,8 @@ module.exports = {
       "banned": [
         "castle",
         "dracula"
-      ]
+      ],
+      "valid": ["castle", "dracula", "great hall", "crypt", "tower", "courtyard"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -179,7 +181,7 @@ module.exports = {
       "badChoice": {
         "id": "ignore_warnings",
         "label": "Ignore the villagers' warnings",
-        "consequence": "The road ahead is blocked by wolves",
+        "consequence": "You push past the advice and press on. The road narrows, the light dies, and shapes move in the trees. The warning was not superstition — it was geography, timing, and a world that punishes haste.",
         "coinCost": 3,
         "flagSet": {
           "ignored_locals": true
@@ -267,7 +269,8 @@ module.exports = {
       "banned": [
         "castle interior",
         "london"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -277,7 +280,7 @@ module.exports = {
       "badChoice": {
         "id": "take_shortcut",
         "label": "Take the dark shortcut",
-        "consequence": "You stumble into a nest of rats",
+        "consequence": "You cut into the shadowed passage and the ground gives way under wet leaves. The air turns sharp with animal musk. You learn the shape of the mistake only after you are inside it: shortcuts through unknown ground trade minutes for risk.",
         "coinCost": 3,
         "flagSet": {
           "took_dark_path": true
@@ -367,7 +370,8 @@ module.exports = {
         "london",
         "bistritz",
         "transylvania villages"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -377,7 +381,7 @@ module.exports = {
       "badChoice": {
         "id": "read_aloud",
         "label": "Read the strange text aloud",
-        "consequence": "The words summon a shadowy presence",
+        "consequence": "The syllables leave your mouth before you understand them. The lamplight narrows, the air thickens, and the carriage seems to lean toward the sound. The lesson arrives clean and cold: unknown words are not ornaments — they are keys, and some doors should stay closed.",
         "coinCost": 3,
         "flagSet": {
           "invoked_darkness": true
@@ -466,7 +470,8 @@ module.exports = {
         "london",
         "bistritz",
         "purfleet"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -476,7 +481,7 @@ module.exports = {
       "badChoice": {
         "id": "touch_artifact",
         "label": "Touch the ancient artifact",
-        "consequence": "A cold numbness spreads through your hand",
+        "consequence": "Your fingers meet the surface and the cold climbs past skin into bone. The room seems to recede, then return, as if the object measured you before you measured it. The lesson is simple: not every object invites contact, and silence can be consent.",
         "coinCost": 3,
         "flagSet": {
           "touched_cursed_item": true

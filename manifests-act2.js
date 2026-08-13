@@ -98,7 +98,7 @@ module.exports = {
       "badChoice": {
         "id": "trust_stranger",
         "label": "Trust the cloaked stranger",
-        "consequence": "The stranger vanishes with your coin purse",
+        "consequence": "The hand that took your coins was light — practised, rehearsed, gone before the weight registered. The street feels wider without your purse. The lesson is urban: strangers who smile too quickly are often measuring your pockets.",
         "coinCost": 3,
         "flagSet": {
           "trusted_deceiver": true
@@ -209,7 +209,7 @@ module.exports = {
       "badChoice": {
         "id": "explore_alone",
         "label": "Explore the wing alone",
-        "consequence": "A door slams shut behind you",
+        "consequence": "The sound is final — wood on stone, iron on iron. The air pressure shifts and the corridor goes quiet. The lesson is architectural: a door that invites you in serves its owner first.",
         "coinCost": 3,
         "flagSet": {
           "separated_from_group": true
@@ -324,7 +324,7 @@ module.exports = {
       "badChoice": {
         "id": "drink_offered",
         "label": "Drink the offered wine",
-        "consequence": "Your vision blurs and your limbs grow heavy",
+        "consequence": "The world softens at the edges, then at the centre. Your legs negotiate with gravity and lose. The lesson is pharmacological: what you swallow in the dark rarely agrees with what it promised in the light.",
         "coinCost": 3,
         "flagSet": {
           "drank_suspicious_wine": true
@@ -440,7 +440,7 @@ module.exports = {
       "badChoice": {
         "id": "open_coffin",
         "label": "Open the coffin",
-        "consequence": "A pale hand shoots out and grabs your wrist",
+        "consequence": "The grip is cold and precise — fingers like carved stone closing over the pulse point. Your wrist remembers the shape before your mind does. The lesson is cautionary: coffins are furniture for the occupant, not invitations for the visitor.",
         "coinCost": 3,
         "flagSet": {
           "opened_coffin_early": true
@@ -557,7 +557,7 @@ module.exports = {
       "badChoice": {
         "id": "ignore_warnings",
         "label": "Ignore the villagers' warnings",
-        "consequence": "The road ahead is blocked by wolves",
+        "consequence": "The shapes move without sound — grey bodies slotting between trees, eyes catching light that isn't there. The road narrows to the width of teeth. The lesson is geographical: territory belongs to those who already occupy it.",
         "coinCost": 3,
         "flagSet": {
           "ignored_locals": true

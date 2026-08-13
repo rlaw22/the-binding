@@ -107,7 +107,7 @@ module.exports = {
       "badChoice": {
         "id": "drink_offered",
         "label": "Drink the offered wine",
-        "consequence": "Your vision blurs and your limbs grow heavy",
+        "consequence": "The world softens at the edges, then at the centre. Your legs negotiate with gravity and lose. The lesson is pharmacological: what you swallow in the dark rarely agrees with what it promised in the light.",
         "coinCost": 3,
         "flagSet": {
           "drank_suspicious_wine": true
@@ -232,7 +232,7 @@ module.exports = {
       "badChoice": {
         "id": "open_coffin",
         "label": "Open the coffin",
-        "consequence": "A pale hand shoots out and grabs your wrist",
+        "consequence": "The grip is cold and precise — fingers like carved stone closing over the pulse point. Your wrist remembers the shape before your mind does. The lesson is cautionary: coffins are furniture for the occupant, not invitations for the visitor.",
         "coinCost": 3,
         "flagSet": {
           "opened_coffin_early": true
@@ -360,7 +360,7 @@ module.exports = {
       "badChoice": {
         "id": "ignore_warnings",
         "label": "Ignore the villagers' warnings",
-        "consequence": "The road ahead is blocked by wolves",
+        "consequence": "The shapes move without sound — grey bodies slotting between trees, eyes catching light that isn't there. The road narrows to the width of teeth. The lesson is geographical: territory belongs to those who already occupy it.",
         "coinCost": 3,
         "flagSet": {
           "ignored_locals": true
@@ -486,7 +486,7 @@ module.exports = {
       "badChoice": {
         "id": "take_shortcut",
         "label": "Take the dark shortcut",
-        "consequence": "You stumble into a nest of rats",
+        "consequence": "Your boot meets something soft, then everything moves. The floor ripples, the air fills with chittering, and the smell of damp fur and iron closes in. The lesson is spatial: shortcuts through unknown ground trade minutes for chaos.",
         "coinCost": 3,
         "flagSet": {
           "took_dark_path": true
@@ -614,7 +614,7 @@ module.exports = {
       "badChoice": {
         "id": "read_aloud",
         "label": "Read the strange text aloud",
-        "consequence": "The words summon a shadowy presence",
+        "consequence": "The syllables leave your mouth and the room answers — not with sound, but with subtraction. Light dims, edges blur, and something occupies the corner that wasn't there before. The lesson is linguistic: unknown words are keys to unknown doors.",
         "coinCost": 3,
         "flagSet": {
           "invoked_darkness": true

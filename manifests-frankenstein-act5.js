@@ -101,7 +101,7 @@ module.exports = {
       "badChoice": {
         "id": "confront_victor",
         "label": "Confront Victor angrily",
-        "consequence": "He locks himself in his study and refuses to help",
+        "consequence": "Your anger fills the room and Victor retreats behind a locked door. The silence that follows is heavier than any argument. The lesson is relational: force closes the very doors that patience might have opened.",
         "coinCost": 3,
         "flagSet": {
           "alienated_victor": true
@@ -217,7 +217,7 @@ module.exports = {
       "badChoice": {
         "id": "follow_tracks",
         "label": "Follow the tracks into the storm",
-        "consequence": "Lightning strikes a tree nearby, blocking your path",
+        "consequence": "The bolt hits the oak with a sound like tearing fabric. Branches crash across the path, bark still smoking. The air tastes of copper and ozone. The lesson is immediate: storms do not negotiate with travelers — they rearrange the landscape and leave you to recalculate.",
         "coinCost": 3,
         "flagSet": {
           "followed_into_storm": true
@@ -333,7 +333,7 @@ module.exports = {
       "badChoice": {
         "id": "search_graveyard",
         "label": "Search the graveyard at night",
-        "consequence": "You disturb something that should have stayed buried",
+        "consequence": "Your hands break the surface and the smell hits first — old earth, old bone, old obligation. The ground settles around your wrists as if it has been waiting. The lesson is ancestral: some layers of soil are load-bearing.",
         "coinCost": 3,
         "flagSet": {
           "disturbed_graves": true
@@ -449,7 +449,7 @@ module.exports = {
       "badChoice": {
         "id": "accept_help",
         "label": "Accept help from the suspicious villager",
-        "consequence": "They lead you into an ambush",
+        "consequence": "The corridor narrows, the footsteps ahead quicken, and then the space opens wrong — too wide, too silent, with exits that belong to other people. The lesson is social: trust offered too cheaply is often a transaction you haven't priced yet.",
         "coinCost": 3,
         "flagSet": {
           "accepted_trap": true
@@ -567,7 +567,7 @@ module.exports = {
       "badChoice": {
         "id": "enter_lab",
         "label": "Enter the forbidden laboratory",
-        "consequence": "The door locks behind you with a click",
+        "consequence": "The latch speaks once — a clean mechanical syllable — and the room becomes a decision you cannot unmake. The air cools. The walls listen. The lesson is architectural: a door that lets you in is not always a door that lets you out.",
         "coinCost": 3,
         "flagSet": {
           "entered_forbidden_lab": true

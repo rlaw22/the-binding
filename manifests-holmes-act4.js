@@ -101,7 +101,7 @@ module.exports = {
       "badChoice": {
         "id": "dismiss_witness",
         "label": "Dismiss the key witness",
-        "consequence": "They leave London and cannot be found",
+        "consequence": "The room is clean when you arrive — too clean. No letters, no luggage, no forwarding address. The trail goes from warm to stone-cold in the time it takes to hail a cab. The lesson is investigative: suspects do not wait for warrants.",
         "coinCost": 3,
         "flagSet": {
           "lost_witness": true
@@ -218,7 +218,7 @@ module.exports = {
       "badChoice": {
         "id": "reveal_clue",
         "label": "Reveal your clue to the suspect",
-        "consequence": "They destroy the evidence before you can act",
+        "consequence": "You hear the match strike before you reach the door. By the time you enter, the grate is full of ash and the smell of burned paper. The lesson is evidentiary: information is perishable — treat every lead as if it has an expiry.",
         "coinCost": 3,
         "flagSet": {
           "revealed_evidence": true
@@ -334,7 +334,7 @@ module.exports = {
       "badChoice": {
         "id": "ignore_watson",
         "label": "Ignore Watson's warning",
-        "consequence": "You walk straight into a trap",
+        "consequence": "The floor gives a different sound underfoot — hollow, rehearsed — and then the geometry of the room changes around you. The trap was not clever; it was patient. The lesson is tactical: confidence without verification is just momentum.",
         "coinCost": 3,
         "flagSet": {
           "ignored_partner": true
@@ -451,7 +451,7 @@ module.exports = {
       "badChoice": {
         "id": "take_bribe",
         "label": "Accept the offered bribe",
-        "consequence": "Lestrade gives you a suspicious look",
+        "consequence": "The coin feels warm in your palm — too warm. Lestrade's eyes narrow, and the room shifts. Trust, once sold, does not buy back easily. The lesson is professional: integrity is currency; spend it carefully.",
         "coinCost": 3,
         "flagSet": {
           "accepted_bribe": true
@@ -569,7 +569,7 @@ module.exports = {
       "badChoice": {
         "id": "rush_in",
         "label": "Rush in without a plan",
-        "consequence": "The suspect escapes through the back",
+        "consequence": "You burst through the door and the room answers with emptiness — a chair still warm, a window swinging wide, footsteps fading. The lesson is tactical: speed without position is just noise.",
         "coinCost": 3,
         "flagSet": {
           "acted_recklessly": true

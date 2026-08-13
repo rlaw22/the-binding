@@ -113,7 +113,7 @@ module.exports = {
       "badChoice": {
         "id": "enter_lab",
         "label": "Enter the forbidden laboratory",
-        "consequence": "The door locks behind you with a click",
+        "consequence": "The latch turns easily — too easily. Inside, the air is colder, the silence thicker. When the door closes, the sound is not dramatic, only final. The lesson is not in the lock; it is in the habit of stepping past warnings because the door permits it.",
         "coinCost": 3,
         "flagSet": {
           "entered_forbidden_lab": true
@@ -227,7 +227,7 @@ module.exports = {
       "badChoice": {
         "id": "take_notes",
         "label": "Take Victor's private notes",
-        "consequence": "The pages crumble to dust in your hands",
+        "consequence": "The pages are light in your hands — until they are not. The ink smears, the fibers part, and the knowledge collapses into dry dust. The lesson is practical: research kept private often survives in a form that theft cannot preserve.",
         "coinCost": 3,
         "flagSet": {
           "stole_research": true
@@ -361,7 +361,7 @@ module.exports = {
       "badChoice": {
         "id": "approach_creature",
         "label": "Approach the creature directly",
-        "consequence": "It recoils and smashes a nearby table",
+        "consequence": "You step in too fast and the space around it collapses into motion. Glass and wood go sideways, and the room reasserts itself louder than you intended. The lesson is plain: proximity without preparation is pressure, not care.",
         "coinCost": 3,
         "flagSet": {
           "provoked_creature": true
@@ -479,7 +479,7 @@ module.exports = {
       "badChoice": {
         "id": "light_torch",
         "label": "Light a torch in the cave",
-        "consequence": "The smoke reveals how small the exit really is",
+        "consequence": "The flame catches and the space answers: smoke hugs the ceiling, the walls close in, and the exit looks smaller than it did in the dark. The lesson is useful — light clarifies, but it also confines.",
         "coinCost": 3,
         "flagSet": {
           "revealed_location": true
@@ -613,7 +613,7 @@ module.exports = {
       "badChoice": {
         "id": "confront_victor",
         "label": "Confront Victor angrily",
-        "consequence": "He locks himself in his study and refuses to help",
+        "consequence": "Your anger fills the room and Victor retreats behind a locked door. The silence that follows is heavier than any argument. The lesson is relational: force closes the very doors that patience might have opened.",
         "coinCost": 3,
         "flagSet": {
           "alienated_victor": true

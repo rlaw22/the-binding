@@ -100,7 +100,7 @@ module.exports = {
       "badChoice": {
         "id": "take_bribe",
         "label": "Accept the offered bribe",
-        "consequence": "Lestrade gives you a suspicious look",
+        "consequence": "The coin feels warm in your palm — too warm. Lestrade's eyes narrow, and the room shifts. Trust, once sold, does not buy back easily. The lesson is professional: integrity is currency; spend it carefully.",
         "coinCost": 3,
         "flagSet": {
           "accepted_bribe": true
@@ -213,7 +213,7 @@ module.exports = {
       "badChoice": {
         "id": "rush_in",
         "label": "Rush in without a plan",
-        "consequence": "The suspect escapes through the back",
+        "consequence": "You burst through the door and the room answers with emptiness — a chair still warm, a window swinging wide, footsteps fading. The lesson is tactical: speed without position is just noise.",
         "coinCost": 3,
         "flagSet": {
           "acted_recklessly": true
@@ -330,7 +330,7 @@ module.exports = {
       "badChoice": {
         "id": "trust_alibi",
         "label": "Trust the alibi without checking",
-        "consequence": "The alibi crumbles under scrutiny later",
+        "consequence": "The story holds — until it doesn't. Later, a single detail turns wrong, and the whole structure collapses into contradiction. The lesson is investigative: trust is earned by verification, not by plausibility.",
         "coinCost": 3,
         "flagSet": {
           "trusted_false_alibi": true
@@ -447,7 +447,7 @@ module.exports = {
       "badChoice": {
         "id": "search_without_warrant",
         "label": "Search without proper authority",
-        "consequence": "Evidence found is inadmissible",
+        "consequence": "The folder opens and the paper inside is technically correct — and practically useless. Procedure was not followed; the chain of custody has a gap the width of a courtroom. The lesson is procedural: evidence without process is just paper.",
         "coinCost": 3,
         "flagSet": {
           "illegal_search": true
@@ -562,7 +562,7 @@ module.exports = {
       "badChoice": {
         "id": "confront_alone",
         "label": "Confront the criminal alone",
-        "consequence": "They pull a weapon on you",
+        "consequence": "The metal appears before you finish your sentence — fast, practised, the hand of someone who has done this before. The room contracts to the space between you and the blade. The lesson is situational: pressure applied without preparation invites escalation.",
         "coinCost": 3,
         "flagSet": {
           "confronted_unprepared": true

@@ -98,7 +98,7 @@ module.exports = {
       "badChoice": {
         "id": "take_shortcut",
         "label": "Take the dark shortcut",
-        "consequence": "You stumble into a nest of rats",
+        "consequence": "Your boot meets something soft, then everything moves. The floor ripples, the air fills with chittering, and the smell of damp fur and iron closes in. The lesson is spatial: shortcuts through unknown ground trade minutes for chaos.",
         "coinCost": 3,
         "flagSet": {
           "took_dark_path": true
@@ -211,7 +211,7 @@ module.exports = {
       "badChoice": {
         "id": "read_aloud",
         "label": "Read the strange text aloud",
-        "consequence": "The words summon a shadowy presence",
+        "consequence": "The syllables leave your mouth and the room answers — not with sound, but with subtraction. Light dims, edges blur, and something occupies the corner that wasn't there before. The lesson is linguistic: unknown words are keys to unknown doors.",
         "coinCost": 3,
         "flagSet": {
           "invoked_darkness": true
@@ -324,7 +324,7 @@ module.exports = {
       "badChoice": {
         "id": "touch_artifact",
         "label": "Touch the ancient artifact",
-        "consequence": "A cold numbness spreads through your hand",
+        "consequence": "The contact is brief but the cold doesn't stop at skin — it climbs through bone, settles in the joint, and stays. Your hand feels borrowed. The lesson is tactile: some objects measure the hand that touches them.",
         "coinCost": 3,
         "flagSet": {
           "touched_cursed_item": true
@@ -439,7 +439,7 @@ module.exports = {
       "badChoice": {
         "id": "trust_stranger",
         "label": "Trust the cloaked stranger",
-        "consequence": "The stranger vanishes with your coin purse",
+        "consequence": "The hand that took your coins was light — practised, rehearsed, gone before the weight registered. The street feels wider without your purse. The lesson is urban: strangers who smile too quickly are often measuring your pockets.",
         "coinCost": 3,
         "flagSet": {
           "trusted_deceiver": true
@@ -551,7 +551,7 @@ module.exports = {
       "badChoice": {
         "id": "explore_alone",
         "label": "Explore the wing alone",
-        "consequence": "A door slams shut behind you",
+        "consequence": "The sound is final — wood on stone, iron on iron. The air pressure shifts and the corridor goes quiet. The lesson is architectural: a door that invites you in serves its owner first.",
         "coinCost": 3,
         "flagSet": {
           "separated_from_group": true
