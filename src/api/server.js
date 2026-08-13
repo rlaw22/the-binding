@@ -37,6 +37,7 @@ const { DynamicDifficulty, preAdventureDifficulty, getDifficultyBucket, narrativ
 const Inventory = require('../inventory/inventory');
 const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
 const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
+const { createDigitalDMSession, getDigitalDMInfo, isDigitalDM } = require('../campaign/digital-dm');
 
 // In-memory session store
 const sessions = new Map();
@@ -563,6 +564,111 @@ async function createServer(options = {}) {
       betaUser = access.token;
     }
 
+    // Validate game mode early
+    const resolvedGameMode = isValidMode(gameMode) ? gameMode : GameMode.STORYLINE;
+
+    // === DIGITAL DM MODE: no adventure required, sandbox session ===
+    if (resolvedGameMode === 'digital_dm') {
+      const dmInfo = getDigitalDMInfo();
+
+      const session = createSession({
+        mode: 'digital_dm',
+        adventureId: 'digital_dm',
+        sessionName: `Digital DM — ${playerName || 'Adventurer'}`
+      });
+
+      const player = addPlayer(session, {
+        name: playerName || 'Adventurer',
+        class: characterClass || 'fighter',
+        race: characterRace || 'human',
+        level: 1,
+        hp: { current: 10, max: 10 }
+      });
+
+      const game = createGame({
+        adventureId: 'digital_dm',
+        adventureName: 'Digital DM Sandbox',
+        gameMode: 'digital_dm',
+        llmProvider: createProvider(llmConfig),
+        ruleEngine: RuleEngine,
+        diceService: DiceService
+      });
+
+      setCharacterSheet(game.contextManager, player.character);
+
+      const modeConfig = getModeConfig('digital_dm');
+      const uiConfig = getUIConfig('digital_dm');
+
+      session.state = 'active';
+      const rejoinCode = generateRejoinCode('digital_dm');
+      sessions.set(session.id, { session, game, coinPool: null, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: null, gameMode: 'digital_dm', modeConfig });
+      rejoinCodes.set(rejoinCode, session.id);
+      if (tokenCode) TokenStore.recordSession(tokenCode);
+      session._rejoinCode = rejoinCode;
+      markDirty();
+
+      // Send opening system message
+      recordMessage(session.id, {
+        type: 'connected',
+        sessionId: session.id,
+        character: player.character
+      });
+
+      // Digital DM opening: call LLM with world-building prompt to generate starting scene
+      try {
+        const worldPrompt = [
+          { role: 'system', content: buildAdventureSystemPrompt({
+            adventureName: 'Digital DM Sandbox',
+            adventureDescription: 'Open-ended AI-driven play. The DM creates everything live.',
+            tone: 'immersive, responsive, player-driven',
+            sceneContext: ''
+          }) + '\n\n' + require('../campaign/digital-dm').getDigitalDMPromptSuffix() + '\n\n' + require('../campaign/digital-dm').getDigitalDMWorldPrompt() },
+          { role: 'user', content: `I begin my adventure. My name is ${player.character.name}, and I am a ${player.character.class}. Describe where I am and what I see.` }
+        ];
+        const openingNarration = await game.llmProvider(worldPrompt);
+        addTurn(game.contextManager, 'assistant', openingNarration);
+
+        // Extract world state from opening narration
+        if (!game.worldState) game.worldState = { locations: [], npcs: [], quests: [], items: [], events: [] };
+        const { extractWorldState } = require('../ai-dm/dm-service');
+        extractWorldState(openingNarration, '', game.worldState);
+
+        recordMessage(session.id, MessageRouter.narration(openingNarration, {}));
+
+        // Digital DM suggested actions
+        recordMessage(session.id, MessageRouter.suggestedActions(
+          [
+            { label: 'Look around', shortLabel: 'Look', type: 'free' },
+            { label: 'Speak to someone nearby', shortLabel: 'Talk', type: 'free' },
+            { label: 'Move forward', shortLabel: 'Move', type: 'free' }
+          ],
+          'What would you like to do?'
+        ));
+      } catch (err) {
+        console.warn('[DigitalDM] Opening narration failed:', err.message);
+        const fallback = `You open your eyes in a world of infinite possibility. The air is thick with adventure. ${player.character.name}, your journey begins now.`;
+        addTurn(game.contextManager, 'assistant', fallback);
+        recordMessage(session.id, MessageRouter.narration(fallback, {}));
+      }
+
+      // Collect opening messages
+      const sessionData = sessions.get(session.id);
+      const openingMessages = sessionData ? sessionData.history.map((h, i) => ({ index: i, data: JSON.parse(h) })) : [];
+
+      return {
+        sessionId: session.id,
+        rejoinCode,
+        playerId: player.id,
+        adventureName: 'Digital DM Sandbox',
+        character: player.character,
+        gameMode: 'digital_dm',
+        uiConfig,
+        messages: openingMessages,
+        message: 'Welcome to Digital DM. Your world is being created...'
+      };
+    }
+
+    // === STORYLINE / CAMPAIGN MODE: adventure required ===
     if (!adventureId) {
       return reply.status(400).send({ error: 'adventureId is required' });
     }
@@ -600,8 +706,7 @@ async function createServer(options = {}) {
     const coinPool = createCoinPool(adventure.coinPoolConfig);
     const rejoinCode = generateRejoinCode(adventureId);
 
-    // Validate game mode — default to 'storyline' if not specified
-    const resolvedGameMode = isValidMode(gameMode) ? gameMode : GameMode.STORYLINE;
+    // Game mode already resolved above; reuse for non-digital_dm path
     const modeConfig = getModeConfig(resolvedGameMode);
     const uiConfig = getUIConfig(resolvedGameMode);
 
@@ -734,6 +839,22 @@ async function createServer(options = {}) {
     if (!data) return reply.status(404).send({ error: 'Session not found' });
 
     const { coinPool, sceneCoins, game } = data;
+
+    // Digital DM mode: no coin pool or scene-based tracking
+    if (!coinPool) {
+      return {
+        totalEarned: 0,
+        totalPool: 0,
+        percentage: 0,
+        currentScene: -1,
+        totalScenes: 0,
+        tier: 'explorer',
+        bindingAmount: 0,
+        conversionRate: 0,
+        categoryBreakdown: {}
+      };
+    }
+
     let totalEarned = 0;
     for (const sc of sceneCoins) {
       totalEarned += (sc && sc.turnTotal) || (sc && sc.total) || 0;
@@ -741,7 +862,7 @@ async function createServer(options = {}) {
 
     const currentScene = game.sceneState ? game.sceneState.sceneId : null;
     const sessionAdv = getAdventure(data.game.adventureId) || getAdventure('dracula');
-    const sceneIndex = sessionAdv.scenes.findIndex(s => s.id === currentScene);
+    const sceneIndex = sessionAdv && sessionAdv.scenes ? sessionAdv.scenes.findIndex(s => s.id === currentScene) : -1;
 
     // Calculate $BINDING conversion (tier-weighted)
     const tierResult = calculateTier(coinPool, sceneCoins.length, 0, 0);
@@ -772,10 +893,24 @@ async function createServer(options = {}) {
     const data = sessions.get(request.params.id);
     if (!data) return reply.status(404).send({ error: 'Session not found' });
 
+    // Digital DM mode: no scene-based progress
+    if (data.gameMode === 'digital_dm') {
+      return {
+        currentScene: -1,
+        totalScenes: 0,
+        sceneName: 'Open World',
+        sceneCompletion: 0,
+        act: null,
+        turnsInScene: data.game.turnHistory.length,
+        totalTurns: data.game.turnHistory.length,
+        mode: 'digital_dm'
+      };
+    }
+
     const currentScene = data.game.sceneState ? data.game.sceneState.sceneId : null;
     const progressAdv = getAdventure(data.game.adventureId) || getAdventure('dracula');
-    const sceneIndex = progressAdv.scenes.findIndex(s => s.id === currentScene);
-    const totalScenes = progressAdv.scenes.length;
+    const sceneIndex = progressAdv && progressAdv.scenes ? progressAdv.scenes.findIndex(s => s.id === currentScene) : -1;
+    const totalScenes = progressAdv && progressAdv.scenes ? progressAdv.scenes.length : 0;
 
     // Determine act based on scene index
     const acts = progressAdv.acts || [];
@@ -991,18 +1126,20 @@ async function createServer(options = {}) {
         result.difficulty = { bucket: bucket.bucket, intensity: bucket.intensity, narrative: diffWrap };
       }
 
-      // Score coins
-      const currentSceneIndex = game.turnHistory.length;
-      const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
+      // Score coins (skip for Digital DM — no coin pool)
+      if (coinPool && coinPool.scenePools) {
+        const currentSceneIndex = game.turnHistory.length;
+        const turnCoins = scoreTurn(result.coinScores, coinPool.scenePools[Math.min(currentSceneIndex, coinPool.scenePools.length - 1)]);
 
-      // Track per-scene coins for chapter breakdown
-      data.currentSceneCoins.push(turnCoins);
+        // Track per-scene coins for chapter breakdown
+        data.currentSceneCoins.push(turnCoins);
 
-      // Structured coin notification — subtle, with running total
-      data.runningCoinTotal = (data.runningCoinTotal || 0) + turnCoins.turnTotal;
-      const coinNotification = buildCoinNotification(turnCoins, data.runningCoinTotal);
-      if (coinNotification) {
-        recordMessage(sessionId, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
+        // Structured coin notification — subtle, with running total
+        data.runningCoinTotal = (data.runningCoinTotal || 0) + turnCoins.turnTotal;
+        const coinNotification = buildCoinNotification(turnCoins, data.runningCoinTotal);
+        if (coinNotification) {
+          recordMessage(sessionId, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
+        }
       }
 
       // Record narrative (with scene image if available)
@@ -1072,7 +1209,9 @@ async function createServer(options = {}) {
         transitionScene(session, result.sceneTransition.sceneId);
       }
 
-      data.sceneCoins.push(turnCoins);
+      if (typeof turnCoins !== 'undefined') {
+        data.sceneCoins.push(turnCoins);
+      }
       markDirty();
 
       return {
@@ -1247,7 +1386,9 @@ async function createServer(options = {}) {
         transitionScene(session, result.sceneTransition.sceneId);
       }
 
-      data.sceneCoins.push(turnCoins);
+      if (typeof turnCoins !== 'undefined') {
+        data.sceneCoins.push(turnCoins);
+      }
       markDirty();
 
       return { ok: true, suggestion, turnNumber: game.turnHistory.length, narrative: result.narrative };

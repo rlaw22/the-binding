@@ -10,6 +10,7 @@
 const { v4: uuidv4 } = require('uuid');
 const { createContextManager, addTurn, setCharacterSheet, buildContext, updateScene, addKeyDecision, getStats } = require('./context-manager');
 const { buildAdventureSystemPrompt, CHARACTER_CREATION_PROMPT, buildCoinScoringPrompt } = require('./prompts');
+const { getDigitalDMPromptSuffix, getDigitalDMWorldPrompt, isDigitalDM } = require('../campaign/digital-dm');
 const MessageRouter = require('../session/message-router');
 const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
@@ -452,6 +453,8 @@ function mapSceneNameToKey(adventureId, sceneName) {
  * Get the active adventure object from a game.
  */
 function resolveAdventure(game) {
+  // Digital DM mode has no curated adventure
+  if (game.gameMode === 'digital_dm') return null;
   return getAdventure(game.adventureId) || getAdventure('dracula');
 }
 
@@ -642,6 +645,7 @@ async function processAction(game, playerAction, character) {
 
   // === STORYLINE MODE: StoryEngine deterministic flow ===
   const isStoryline = game.gameMode === 'storyline';
+  const isDm = game.gameMode === 'digital_dm';
 
   // Initialize StoryEngine player state if needed (storyline mode only)
   if (isStoryline && !game.storyPlayerState) {
@@ -834,6 +838,54 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
 - Do NOT narrate the player finding, picking up, or acquiring items unless they are explicitly listed in the scene description or player inventory.
 - If the player's action is impossible in the current setting (e.g. searching the ground while inside a moving vehicle), narrate WHY it cannot be done — do not hallucinate a result.
 - Keep the response to 2-3 sentences maximum.`;
+  } else if (isDm) {
+    // === DIGITAL DM MODE: sandbox, no rails ===
+    systemPrompt = buildAdventureSystemPrompt({
+      adventureName: game.adventureName || 'Digital DM Sandbox',
+      adventureDescription: 'Open-ended AI-driven play. The DM creates everything live.',
+      tone: 'immersive, responsive, player-driven',
+      sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
+    });
+
+    // Inject Digital DM sandbox prompt suffix
+    systemPrompt += '\n\n' + getDigitalDMPromptSuffix();
+
+    // First turn: inject world-building prompt
+    if (game.turnHistory.length === 0) {
+      systemPrompt += '\n\n' + getDigitalDMWorldPrompt();
+    }
+
+    // Track world state in the game object
+    if (!game.worldState) {
+      game.worldState = {
+        locations: [],
+        npcs: [],
+        quests: [],
+        items: [],
+        events: []
+      };
+    }
+
+    // Append inventory context
+    if (game.inventory) {
+      const items = listItems(game.inventory);
+      if (items.length > 0) {
+        const itemList = items.map(i => `${i.name}${i.consumable ? ` (${i.uses})` : ''}`).join(', ');
+        systemPrompt += `\n\nPLAYER INVENTORY: ${itemList}`;
+        systemPrompt += `\nNarrate item usage naturally when the player references their gear. If they find a new item, mention it clearly.`;
+      }
+    }
+
+    // Append world state so the DM maintains consistency
+    const ws = game.worldState;
+    if (ws.locations.length > 0 || ws.npcs.length > 0) {
+      let worldContext = '\n\nESTABLISHED WORLD STATE (maintain consistency):';
+      if (ws.locations.length > 0) worldContext += `\nLocations: ${ws.locations.join(', ')}`;
+      if (ws.npcs.length > 0) worldContext += `\nNPCs: ${ws.npcs.join(', ')}`;
+      if (ws.quests.length > 0) worldContext += `\nActive quests: ${ws.quests.join(', ')}`;
+      if (ws.items.length > 0) worldContext += `\nWorld items: ${ws.items.join(', ')}`;
+      systemPrompt += worldContext;
+    }
   } else {
     // Campaign/Digital DM mode: full LLM prompt (unchanged)
     systemPrompt = buildAdventureSystemPrompt({
@@ -895,6 +947,14 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
 
     // Post-LLM: strip phantom items the LLM may have hallucinated
     dmResponse = stripPhantomItems(dmResponse, game);
+  } else if (isDm) {
+    // Digital DM mode: full LLM response, then extract world state
+    dmResponse = await llmProvider(messages);
+
+    // Post-LLM: extract new world entities from the response
+    if (game.worldState) {
+      extractWorldState(dmResponse, playerAction, game.worldState);
+    }
   } else {
     // Campaign/Digital DM mode: full LLM response (unchanged)
     dmResponse = await llmProvider(messages);
@@ -1025,6 +1085,9 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
   // Generate suggested actions from scene engine + AI contextual actions
   if (game.sceneState) {
     parsed.suggestedActions = generateSceneActions(game.sceneState, aiSuggestedActions);
+  } else if (isDm && parsed.suggestedActions && parsed.suggestedActions.length === 0) {
+    // Digital DM: if the LLM didn't suggest actions, generate generic sandbox actions
+    parsed.suggestedActions = ['Look around', 'Speak to someone nearby', 'Move forward'];
   }
 
   // Score the player's action for coins — heuristic by default, LLM only when COIN_SCORING_MODE=llm
@@ -1558,6 +1621,70 @@ async function processCharacterCreation(game, playerInput, currentStep) {
   };
 }
 
+/**
+ * Extract world state entities from a Digital DM narrative response.
+ * Simple heuristic: look for capitalized names following trigger phrases.
+ * This is intentionally lightweight — the LLM is the source of truth;
+ * this just gives it a persistent reference for consistency.
+ */
+function extractWorldState(dmResponse, playerAction, worldState) {
+  const lower = dmResponse.toLowerCase();
+
+  // Extract location names (e.g. "You arrive at the Crimson Tavern")
+  const locPatterns = [
+    /you (?:arrive at|enter|reach|find yourself (?:in|at)) (?:the |a )?([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/gi,
+    /(?:the |a )?([A-Z][a-z]+(?:\s[A-Z][a-z]+)*) (?:is|stands|lies|sits) (?:before|ahead|near)/gi,
+  ];
+  for (const pat of locPatterns) {
+    let m;
+    while ((m = pat.exec(dmResponse)) !== null) {
+      const loc = m[1].trim();
+      if (loc.length > 3 && loc.length < 50 && !worldState.locations.includes(loc)) {
+        worldState.locations.push(loc);
+      }
+    }
+  }
+
+  // Extract NPC names (e.g. "a tall figure named Elara" or "Elara says")
+  const npcPatterns = [
+    /(?:named|introduces? (?:herself|himself) as|called) ([A-Z][a-z]+(?:\s[A-Z][a-z]+)*)/g,
+    /([A-Z][a-z]+) (?:says|replies|asks|nods|smiles|growls|whispers|shouts)/g,
+  ];
+  for (const pat of npcPatterns) {
+    let m;
+    while ((m = pat.exec(dmResponse)) !== null) {
+      const npc = m[1].trim();
+      if (npc.length > 2 && npc.length < 40 && !worldState.npcs.includes(npc)) {
+        worldState.npcs.push(npc);
+      }
+    }
+  }
+
+  // Extract quest hooks (e.g. "you must find", "the quest to")
+  const questPatterns = [
+    /(?:you (?:must|need to|should)|quest to|tasked with|mission to) ([^.!?\n]{10,80})/gi,
+  ];
+  for (const pat of questPatterns) {
+    let m;
+    while ((m = pat.exec(dmResponse)) !== null) {
+      const quest = m[1].trim().replace(/\s+$/, '');
+      if (!worldState.quests.includes(quest)) {
+        worldState.quests.push(quest);
+        if (worldState.quests.length > 10) worldState.quests.shift(); // cap
+      }
+    }
+  }
+
+  // Log for debugging
+  if (worldState.locations.length + worldState.npcs.length + worldState.quests.length > 0) {
+    console.log('[DigitalDM] World state:', {
+      locs: worldState.locations.length,
+      npcs: worldState.npcs.length,
+      quests: worldState.quests.length
+    });
+  }
+}
+
 module.exports = {
   createGame,
   processAction,
@@ -1576,4 +1703,5 @@ module.exports = {
   // Expose for testing
   getImageService,
   mapSceneNameToKey,
+  extractWorldState,
 };
