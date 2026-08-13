@@ -12,7 +12,7 @@ function section(n) { console.log('\n═══ ' + n + ' ═══'); }
 
 function request(port, method, path, body) {
   return new Promise((resolve, reject) => {
-    const opts = { hostname: 'localhost', port, path, method, headers: { 'Content-Type': 'application/json' } };
+    const opts = { hostname: '127.0.0.1', port, path, method, headers: { 'Content-Type': 'application/json' } };
     const req = http.request(opts, res => {
       let data = '';
       res.on('data', c => data += c);
