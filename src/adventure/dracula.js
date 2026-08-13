@@ -512,9 +512,18 @@ console.log(`[Dracula] Loaded ${Object.keys(DraculaAdventure.sceneManifests).len
 
 /**
  * Get a scene by ID.
+ * Returns the rich manifest (with content, locationKeywords, exitAction, etc.)
+ * merged with the backbone data (flags, npcs, dmGuidance). Falls back to backbone-only
+ * if no manifest exists.
  */
 function getScene(sceneId) {
-  return DraculaAdventure.scenes.find(s => s.id === sceneId) || null;
+  const backbone = DraculaAdventure.scenes.find(s => s.id === sceneId);
+  const manifest = DraculaAdventure.sceneManifests[sceneId];
+  if (manifest && backbone) {
+    // Merge: manifest provides rich content, backbone provides flags/guidance
+    return { ...backbone, ...manifest, id: backbone.id, act: backbone.act };
+  }
+  return manifest || backbone || null;
 }
 
 /**

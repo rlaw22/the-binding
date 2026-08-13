@@ -360,9 +360,15 @@ console.log(`[Frankenstein] Loaded ${Object.keys(FrankensteinAdventure.sceneMani
 
 /**
  * Get a scene by ID.
+ * Returns the rich manifest merged with backbone data. Falls back to backbone-only.
  */
 function getScene(sceneId) {
-  return FrankensteinAdventure.scenes.find(s => s.id === sceneId) || null;
+  const backbone = FrankensteinAdventure.scenes.find(s => s.id === sceneId);
+  const manifest = FrankensteinAdventure.sceneManifests[sceneId];
+  if (manifest && backbone) {
+    return { ...backbone, ...manifest, id: backbone.id, act: backbone.act };
+  }
+  return manifest || backbone || null;
 }
 
 /**

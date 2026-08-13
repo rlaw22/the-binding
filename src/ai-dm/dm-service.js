@@ -929,7 +929,16 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
             console.warn('[ContinuityValidator] Retry ' + (retry + 1) + ' still has violations:', retryValidation.violations);
           } catch (retryErr) {
             console.warn('[ContinuityValidator] Retry ' + (retry + 1) + ' timed out or failed:', retryErr.message);
-            break; // Stop retrying — use the original response
+            break; // Stop retrying — fall through to scrub
+          }
+        }
+        // Fallback: if retries didn't fix it, scrub banned location sentences
+        const stillBad = game.validator.validate(dmResponse, playerAction);
+        if (!stillBad.valid && stillBad.violations.some(v => v.startsWith('LOCATION_JUMP'))) {
+          const scrubbed = game.validator.scrubBannedLocations(dmResponse);
+          if (scrubbed !== dmResponse) {
+            console.log('[ContinuityValidator] Scrubbed banned locations from response');
+            dmResponse = scrubbed;
           }
         }
       }

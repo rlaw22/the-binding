@@ -360,9 +360,15 @@ console.log(`[Holmes] Loaded ${Object.keys(HolmesAdventure.sceneManifests).lengt
 
 /**
  * Get a scene by ID.
+ * Returns the rich manifest merged with backbone data. Falls back to backbone-only.
  */
 function getScene(sceneId) {
-  return HolmesAdventure.scenes.find(s => s.id === sceneId) || null;
+  const backbone = HolmesAdventure.scenes.find(s => s.id === sceneId);
+  const manifest = HolmesAdventure.sceneManifests[sceneId];
+  if (manifest && backbone) {
+    return { ...backbone, ...manifest, id: backbone.id, act: backbone.act };
+  }
+  return manifest || backbone || null;
 }
 
 /**

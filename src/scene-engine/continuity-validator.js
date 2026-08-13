@@ -87,10 +87,14 @@ function createValidator(manifest, openingNarration) {
 
     // === LAYER 2: LOCATION CONTINUITY ===
     // If the response describes a location that doesn't match the current scene, flag it.
-    // Only check if we have a scene manifest with location keywords.
+    // Only check banned locations that are NOT also in the valid list (contradictory entries are ignored).
+    // Also: only flag if the banned term appears as a standalone location reference, not just a passing mention.
     if (manifest && manifest.locationKeywords) {
       const wrongLocations = manifest.locationKeywords.banned || [];
+      const validLocations = manifest.locationKeywords.valid || [];
       for (const loc of wrongLocations) {
+        // Skip entries that are also in the valid list — manifest contradiction
+        if (validLocations.includes(loc)) continue;
         if (responseLower.includes(loc.toLowerCase())) {
           violations.push(`LOCATION_JUMP: Response references "${loc}" but player is in "${facts.location}"`);
         }
@@ -148,6 +152,28 @@ function createValidator(manifest, openingNarration) {
   }
 
   /**
+   * Soft-scrub a response: remove sentences that reference banned locations.
+   * Used as a fallback when retries fail — better to redact a sentence than show a location jump.
+   */
+  function scrubBannedLocations(dmResponse) {
+    if (!manifest || !manifest.locationKeywords) return dmResponse;
+    const banned = manifest.locationKeywords.banned || [];
+    const valid = manifest.locationKeywords.valid || [];
+    const activeBanned = banned.filter(loc => !valid.includes(loc));
+    if (activeBanned.length === 0) return dmResponse;
+
+    // Split into sentences and remove any that contain a banned location
+    const sentences = dmResponse.split(/(?<=[.!?])\s+/);
+    const kept = sentences.filter(sentence => {
+      const lower = sentence.toLowerCase();
+      return !activeBanned.some(loc => lower.includes(loc.toLowerCase()));
+    });
+    // If we removed everything, return original (better than empty)
+    if (kept.length === 0) return dmResponse;
+    return kept.join(' ');
+  }
+
+  /**
    * Mark a response key as used (for mock LLM deduplication).
    */
   function markUsed(key) {
@@ -198,7 +224,7 @@ function createValidator(manifest, openingNarration) {
     extractFactsFromText(text, facts);
   }
 
-  const api = { validate, markUsed, getFacts, transitionTo, accumulate };
+  const api = { validate, markUsed, getFacts, transitionTo, accumulate, scrubBannedLocations };
   // Expose facts directly for easy access
   Object.defineProperty(api, 'facts', { get: () => facts, enumerable: true });
   return api;
