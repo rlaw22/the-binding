@@ -39,6 +39,7 @@ const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapa
 const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
 const { createDigitalDMSession, getDigitalDMInfo, isDigitalDM } = require('../campaign/digital-dm');
 const { listDigitalDMScenarios, getDigitalDMScenario, getScenarioWorldSeed } = require('../campaign/digital-dm-scenarios');
+const CharacterService = require('../character/character-service');
 
 // In-memory session store
 const sessions = new Map();
@@ -608,12 +609,26 @@ async function createServer(options = {}) {
         sessionName: `${scenario.name} — ${playerName || 'Adventurer'}`
       });
 
-      const player = addPlayer(session, {
+      // Create a full D&D 5e character via CharacterService
+      const fullCharacter = CharacterService.createCharacter({
+        userId: 'digital_dm_player',
         name: playerName || 'Adventurer',
-        class: characterClass || 'fighter',
         race: characterRace || 'human',
-        level: 1,
-        hp: { current: 10, max: 10 }
+        characterClass: characterClass || 'fighter',
+        sessionId: session.id,
+      });
+
+      const player = addPlayer(session, {
+        id: fullCharacter.id,
+        name: fullCharacter.name,
+        class: fullCharacter.characterClass,
+        race: fullCharacter.race,
+        level: fullCharacter.level,
+        stats: fullCharacter.stats,
+        hp: fullCharacter.hp,
+        portrait: fullCharacter.portrait,
+        // Store full character data for the character sheet endpoint
+        fullCharacter,
       });
 
       const game = createGame({
@@ -625,7 +640,12 @@ async function createServer(options = {}) {
         diceService: DiceService
       });
 
-      setCharacterSheet(game.contextManager, player.character);
+      // Build a context-friendly character sheet (maps characterClass → class for LLM)
+      const contextCharacter = {
+        ...fullCharacter,
+        class: fullCharacter.characterClass,
+      };
+      setCharacterSheet(game.contextManager, contextCharacter);
 
       // Store scenario metadata on the game object for dm-service to use
       game.digitalDMScenario = {
@@ -732,6 +752,7 @@ async function createServer(options = {}) {
         playerId: player.id,
         adventureName,
         character: player.character,
+        characterSheet: fullCharacter,
         gameMode: 'digital_dm',
         scenarioId: scenario.id,
         scenarioName: scenario.name,
@@ -757,12 +778,25 @@ async function createServer(options = {}) {
       sessionName: `${adventure.name} — ${playerName || 'Unknown Hero'}`
     });
 
-    const player = addPlayer(session, {
+    // Create a full D&D 5e character via CharacterService
+    const fullCharacter = CharacterService.createCharacter({
+      userId: 'storyline_player',
       name: playerName || 'Unknown Hero',
-      class: characterClass || 'fighter',
       race: characterRace || 'human',
-      level: 1,
-      hp: { current: 10, max: 10 }
+      characterClass: characterClass || 'fighter',
+      sessionId: session.id,
+    });
+
+    const player = addPlayer(session, {
+      id: fullCharacter.id,
+      name: fullCharacter.name,
+      class: fullCharacter.characterClass,
+      race: fullCharacter.race,
+      level: fullCharacter.level,
+      stats: fullCharacter.stats,
+      hp: fullCharacter.hp,
+      portrait: fullCharacter.portrait,
+      fullCharacter,
     });
 
     const game = createGame({
@@ -774,7 +808,12 @@ async function createServer(options = {}) {
     });
 
     setAdventureContext(game.contextManager, adventure.adventureSummary, getAdventureOutline());
-    setCharacterSheet(game.contextManager, player.character);
+    // Build a context-friendly character sheet (maps characterClass → class for LLM)
+    const contextCharacter = {
+      ...fullCharacter,
+      class: fullCharacter.characterClass,
+    };
+    setCharacterSheet(game.contextManager, contextCharacter);
 
     const coinPool = createCoinPool(adventure.coinPoolConfig);
     const rejoinCode = generateRejoinCode(adventureId);
@@ -859,6 +898,7 @@ async function createServer(options = {}) {
       playerId: player.id,
       adventureName: adventure.name,
       character: player.character,
+      characterSheet: fullCharacter,
       gameMode: resolvedGameMode,
       uiConfig,
       messages: openingMessages,
@@ -883,6 +923,23 @@ async function createServer(options = {}) {
       meta: getModeMeta(mode),
       config: getModeConfig(mode),
       uiConfig: getUIConfig(mode)
+    };
+  });
+
+  // --- CHARACTER SHEET ENDPOINT ---
+  app.get('/api/sessions/:id/character', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+
+    const host = getHostPlayer(data.session);
+    if (!host) return reply.status(404).send({ error: 'No host player found' });
+
+    // Return the full character sheet if available, fall back to minimal character
+    const fullChar = host.fullCharacter || host.character;
+    return {
+      sessionId: data.session.id,
+      character: fullChar,
+      gameMode: data.gameMode,
     };
   });
 

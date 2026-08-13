@@ -102,6 +102,8 @@ function addPlayer(session, characterData) {
       hp: characterData.hp || { current: 10, max: 10 },
       portrait: characterData.portrait || null
     },
+    // Full D&D 5e character sheet (from CharacterService.createCharacter)
+    fullCharacter: characterData.fullCharacter || null,
 
     // Private state — only this player sees this (Phase 2: DM whispers)
     privateState: {

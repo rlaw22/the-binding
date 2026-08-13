@@ -210,16 +210,43 @@ function buildContext(contextManager, systemPrompt) {
  */
 function formatCharacterSheet(character) {
   if (!character) return 'No character data available.';
+
+  // Support both CharacterService field names (characterClass) and session field names (class)
+  const charClass = character.class || character.characterClass || 'unknown';
+
   let sheet = `Name: ${character.name}\n`;
-  sheet += `Race: ${character.race}\n`;
-  sheet += `Class: ${character.class}\n`;
+  sheet += `Race: ${character.race}${character.subrace ? ` (${character.subrace})` : ''}\n`;
+  sheet += `Class: ${charClass}\n`;
   sheet += `Level: ${character.level}\n`;
   sheet += `HP: ${character.hp?.current || '?'}/${character.hp?.max || '?'}\n`;
+
+  // Stats — support both abbreviated (str/dex/con) and full (strength/dexterity) keys
   if (character.stats) {
-    sheet += `Stats: STR ${character.stats.strength || '?'}, DEX ${character.stats.dexterity || '?'}, `;
-    sheet += `CON ${character.stats.constitution || '?'}, INT ${character.stats.intelligence || '?'}, `;
-    sheet += `WIS ${character.stats.wisdom || '?'}, CHA ${character.stats.charisma || '?'}\n`;
+    const s = character.stats;
+    const str = s.str ?? s.strength ?? '?';
+    const dex = s.dex ?? s.dexterity ?? '?';
+    const con = s.con ?? s.constitution ?? '?';
+    const int_ = s.int ?? s.intelligence ?? '?';
+    const wis = s.wis ?? s.wisdom ?? '?';
+    const cha = s.cha ?? s.charisma ?? '?';
+    sheet += `Stats: STR ${str}, DEX ${dex}, CON ${con}, INT ${int_}, WIS ${wis}, CHA ${cha}\n`;
   }
+
+  // Derived stats if available
+  if (character.ac != null) sheet += `AC: ${character.ac}\n`;
+  if (character.speed != null) sheet += `Speed: ${character.speed}ft\n`;
+  if (character.proficiencyBonus != null) sheet += `Proficiency Bonus: +${character.proficiencyBonus}\n`;
+
+  // Features (level 1 class features)
+  if (character.features && character.features.length > 0) {
+    sheet += `Features: ${character.features.join(', ')}\n`;
+  }
+
+  // Languages
+  if (character.languages && character.languages.length > 0) {
+    sheet += `Languages: ${character.languages.join(', ')}\n`;
+  }
+
   return sheet;
 }
 
