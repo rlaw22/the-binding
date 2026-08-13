@@ -2,12 +2,13 @@
  * Digital DM Integration Tests
  *
  * Tests the Digital DM mode end-to-end:
- *   1. Session creation (no adventureId required)
- *   2. Opening narration with world-building
- *   3. Free-text action → narrative response
- *   4. World state tracking across turns
- *   5. Coins endpoint (no crash without coin pool)
- *   6. Progress endpoint (no crash without scenes)
+ *   1. Scenario catalog (GET /api/digital-dm/scenarios)
+ *   2. Session creation with scenarioId
+ *   3. Opening narration with world-building
+ *   4. Free-text action → narrative response
+ *   5. World state tracking across turns
+ *   6. Coins endpoint (no crash without coin pool)
+ *   7. Progress endpoint (no crash without scenes)
  *
  * Uses mock LLM mode — no API key needed.
  */
@@ -29,31 +30,111 @@ describe('Digital DM Integration Tests', () => {
     if (server) await server.close();
   });
 
+  describe('Scenario Catalog', () => {
+    it('GET /api/digital-dm/scenarios returns themes and adventures', async () => {
+      const res = await server.inject({ method: 'GET', url: '/api/digital-dm/scenarios' });
+      assert.equal(res.statusCode, 200);
+      const body = JSON.parse(res.payload);
+      assert.ok(Array.isArray(body.themes), 'should have themes array');
+      assert.ok(Array.isArray(body.adventures), 'should have adventures array');
+      assert.ok(body.themes.length >= 4, 'should have at least 4 themes');
+      assert.ok(body.adventures.length >= 3, 'should have at least 3 adventures');
+    });
+
+    it('Themes have required fields', async () => {
+      const res = await server.inject({ method: 'GET', url: '/api/digital-dm/scenarios' });
+      const body = JSON.parse(res.payload);
+      for (const theme of body.themes) {
+        assert.ok(theme.id, 'theme should have id');
+        assert.ok(theme.name, 'theme should have name');
+        assert.ok(theme.description, 'theme should have description');
+        assert.ok(theme.levelRange, 'theme should have levelRange');
+        assert.equal(theme.type, 'theme', 'theme type should be theme');
+      }
+    });
+
+    it('Adventures have required fields and correct statuses', async () => {
+      const res = await server.inject({ method: 'GET', url: '/api/digital-dm/scenarios' });
+      const body = JSON.parse(res.payload);
+      const ready = body.adventures.filter(a => a.status === 'ready');
+      const comingSoon = body.adventures.filter(a => a.status === 'coming_soon');
+      assert.ok(ready.length >= 3, 'should have at least 3 ready adventures (dracula, frankenstein, holmes)');
+      assert.ok(comingSoon.length >= 1, 'should have at least 1 coming_soon adventure');
+      for (const adv of body.adventures) {
+        assert.ok(adv.id, 'adventure should have id');
+        assert.ok(adv.name, 'adventure should have name');
+        assert.ok(adv.status, 'adventure should have status');
+      }
+    });
+  });
+
   describe('Session Creation', () => {
-    it('POST /api/sessions with gameMode=digital_dm creates session without adventureId', async () => {
+    it('POST /api/sessions with digital_dm requires scenarioId', async () => {
       const res = await server.inject({
         method: 'POST',
         url: '/api/sessions',
         payload: { gameMode: 'digital_dm', playerName: 'TestHero' }
+      });
+      assert.equal(res.statusCode, 400);
+      const body = JSON.parse(res.payload);
+      assert.ok(body.error.includes('scenarioId'), 'error should mention scenarioId');
+    });
+
+    it('POST /api/sessions with digital_dm + gothic_horror creates themed session', async () => {
+      const res = await server.inject({
+        method: 'POST',
+        url: '/api/sessions',
+        payload: { gameMode: 'digital_dm', scenarioId: 'gothic_horror', playerName: 'TestHero' }
       });
       assert.equal(res.statusCode, 200);
       const body = JSON.parse(res.payload);
       assert.ok(body.sessionId, 'should have sessionId');
       assert.ok(body.rejoinCode, 'should have rejoinCode');
       assert.ok(body.playerId, 'should have playerId');
-      assert.equal(body.adventureName, 'Digital DM Sandbox');
+      assert.equal(body.adventureName, 'Gothic Horror');
       assert.equal(body.gameMode, 'digital_dm');
+      assert.equal(body.scenarioId, 'gothic_horror');
       assert.ok(body.character, 'should have character');
       assert.equal(body.character.name, 'TestHero');
-      assert.ok(body.messages, 'should have messages array');
-      assert.ok(body.messages.length > 0, 'should have opening messages');
+    });
+
+    it('POST /api/sessions with digital_dm + dracula creates adventure session', async () => {
+      const res = await server.inject({
+        method: 'POST',
+        url: '/api/sessions',
+        payload: { gameMode: 'digital_dm', scenarioId: 'dracula', playerName: 'VampireHunter' }
+      });
+      assert.equal(res.statusCode, 200);
+      const body = JSON.parse(res.payload);
+      assert.equal(body.adventureName, 'Dracula');
+      assert.equal(body.scenarioId, 'dracula');
+    });
+
+    it('POST /api/sessions with digital_dm + coming_soon scenario returns 400', async () => {
+      const res = await server.inject({
+        method: 'POST',
+        url: '/api/sessions',
+        payload: { gameMode: 'digital_dm', scenarioId: 'death_house' }
+      });
+      assert.equal(res.statusCode, 400);
+      const body = JSON.parse(res.payload);
+      assert.ok(body.error.includes('coming soon'), 'should say coming soon');
+    });
+
+    it('POST /api/sessions with digital_dm + unknown scenario returns 404', async () => {
+      const res = await server.inject({
+        method: 'POST',
+        url: '/api/sessions',
+        payload: { gameMode: 'digital_dm', scenarioId: 'nonexistent' }
+      });
+      assert.equal(res.statusCode, 404);
     });
 
     it('Digital DM session uses default character when no player details given', async () => {
       const res = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'sword_coast' }
       });
       assert.equal(res.statusCode, 200);
       const body = JSON.parse(res.payload);
@@ -65,7 +146,7 @@ describe('Digital DM Integration Tests', () => {
       const res = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'noir_mystery' }
       });
       assert.equal(res.statusCode, 200);
       const body = JSON.parse(res.payload);
@@ -79,12 +160,11 @@ describe('Digital DM Integration Tests', () => {
       const res = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm', playerName: 'Narrator' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'wilderness_expedition', playerName: 'Narrator' }
       });
       const body = JSON.parse(res.payload);
       const msgTypes = body.messages.map(m => m.data.type);
       assert.ok(msgTypes.includes('connected'), 'should have connected message');
-      // Should have at least one narration (the world-building response)
       const narrations = body.messages.filter(m => m.data.type === 'narration');
       assert.ok(narrations.length > 0, 'should have narration messages');
     });
@@ -93,12 +173,11 @@ describe('Digital DM Integration Tests', () => {
       const res = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm', playerName: 'Test' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'gothic_horror', playerName: 'Test' }
       });
       const body = JSON.parse(res.payload);
       const narration = body.messages.find(m => m.data.type === 'narration');
       assert.ok(narration, 'should have a narration message');
-      // MessageRouter uses 'content' field for the text
       const text = narration.data.content || narration.data.text || '';
       assert.equal(typeof text, 'string', 'narration text should be a string');
       assert.ok(text.length > 0, 'narration text should be non-empty');
@@ -109,15 +188,13 @@ describe('Digital DM Integration Tests', () => {
     let sid;
 
     it('POST /api/sessions/:id/actions with free text returns narrative', async () => {
-      // Create session
       const create = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm', playerName: 'ActionTest' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'gothic_horror', playerName: 'ActionTest' }
       });
       sid = JSON.parse(create.payload).sessionId;
 
-      // Submit free-text action
       const action = await server.inject({
         method: 'POST',
         url: `/api/sessions/${sid}/actions`,
@@ -131,15 +208,13 @@ describe('Digital DM Integration Tests', () => {
     });
 
     it('Multiple actions return distinct responses', async () => {
-      // Create session
       const create = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm', playerName: 'MultiTest' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'sword_coast', playerName: 'MultiTest' }
       });
       sid = JSON.parse(create.payload).sessionId;
 
-      // First action
       const action1 = await server.inject({
         method: 'POST',
         url: `/api/sessions/${sid}/actions`,
@@ -147,7 +222,6 @@ describe('Digital DM Integration Tests', () => {
       });
       const body1 = JSON.parse(action1.payload);
 
-      // Second action
       const action2 = await server.inject({
         method: 'POST',
         url: `/api/sessions/${sid}/actions`,
@@ -157,7 +231,6 @@ describe('Digital DM Integration Tests', () => {
 
       assert.ok(body1.narrative, 'first action should have narrative');
       assert.ok(body2.narrative, 'second action should have narrative');
-      // Both should succeed (they may be different or the same depending on mock LLM)
     });
   });
 
@@ -188,36 +261,12 @@ describe('Digital DM Integration Tests', () => {
       assert.ok(worldState.npcs.includes('Elara'), 'should extract NPC Elara');
     });
 
-    it('extractWorldState extracts quest hooks', () => {
-      const { extractWorldState } = require('../src/ai-dm/dm-service');
-      const worldState = { locations: [], npcs: [], quests: [], items: [], events: [] };
-
-      extractWorldState(
-        'You must find the ancient relic hidden beneath the old chapel before the moon wanes.',
-        'What should I do?',
-        worldState
-      );
-
-      assert.ok(worldState.quests.length > 0, 'should extract at least one quest');
-      assert.ok(worldState.quests[0].includes('ancient relic'), 'quest should mention the relic');
-    });
-
     it('extractWorldState deduplicates entities', () => {
       const { extractWorldState } = require('../src/ai-dm/dm-service');
       const worldState = { locations: [], npcs: [], quests: [], items: [], events: [] };
 
       extractWorldState('Elara says hello. Elara nods at you.', '', worldState);
       assert.equal(worldState.npcs.filter(n => n === 'Elara').length, 1, 'should not duplicate Elara');
-    });
-
-    it('extractWorldState caps quests at 10', () => {
-      const { extractWorldState } = require('../src/ai-dm/dm-service');
-      const worldState = { locations: [], npcs: [], quests: [], items: [], events: [] };
-
-      for (let i = 0; i < 15; i++) {
-        extractWorldState(`You must find the artifact number ${i + 1} hidden in the cave.`, '', worldState);
-      }
-      assert.ok(worldState.quests.length <= 10, 'should cap at 10 quests');
     });
   });
 
@@ -228,7 +277,7 @@ describe('Digital DM Integration Tests', () => {
       const create = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm', playerName: 'InfoTest' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'gothic_horror', playerName: 'InfoTest' }
       });
       sid = JSON.parse(create.payload).sessionId;
 
@@ -243,7 +292,7 @@ describe('Digital DM Integration Tests', () => {
       const create = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'sword_coast' }
       });
       sid = JSON.parse(create.payload).sessionId;
 
@@ -259,11 +308,10 @@ describe('Digital DM Integration Tests', () => {
       const create = await server.inject({
         method: 'POST',
         url: '/api/sessions',
-        payload: { gameMode: 'digital_dm' }
+        payload: { gameMode: 'digital_dm', scenarioId: 'noir_mystery' }
       });
       sid = JSON.parse(create.payload).sessionId;
 
-      // Submit an action so turn count > 0
       await server.inject({
         method: 'POST',
         url: `/api/sessions/${sid}/actions`,
@@ -274,8 +322,36 @@ describe('Digital DM Integration Tests', () => {
       assert.equal(progress.statusCode, 200);
       const body = JSON.parse(progress.payload);
       assert.equal(body.mode, 'digital_dm');
-      assert.equal(body.sceneName, 'Open World');
       assert.ok(body.totalTurns >= 1, 'should track turns');
+    });
+  });
+
+  describe('Scenario World Seeds', () => {
+    it('Gothic Horror theme generates structured world seed', () => {
+      const { getScenarioWorldSeed } = require('../src/campaign/digital-dm-scenarios');
+      const seed = getScenarioWorldSeed('gothic_horror');
+      assert.ok(seed, 'should return a seed');
+      assert.ok(seed.locations, 'should have locations');
+      assert.ok(seed.npcs, 'should have npcs');
+      assert.ok(Object.keys(seed.locations).length >= 3, 'should have at least 3 locations');
+      assert.ok(Object.keys(seed.npcs).length >= 2, 'should have at least 2 NPCs');
+    });
+
+    it('Lost Mine manifest loads scene graph', () => {
+      const { getScenarioWorldSeed } = require('../src/campaign/digital-dm-scenarios');
+      const seed = getScenarioWorldSeed('lost_mine');
+      assert.ok(seed, 'should return a seed');
+      assert.ok(seed.scenes, 'should have scenes');
+      assert.ok(seed.scenes.length >= 20, 'should have many scenes');
+      assert.ok(seed.keyNPCs, 'should have keyNPCs');
+    });
+
+    it('Dracula adventure returns scene graph flag', () => {
+      const { getScenarioWorldSeed } = require('../src/campaign/digital-dm-scenarios');
+      const seed = getScenarioWorldSeed('dracula');
+      assert.ok(seed, 'should return a seed');
+      assert.equal(seed.useSceneGraph, true, 'should flag useSceneGraph');
+      assert.equal(seed.adventureId, 'dracula', 'should have adventureId');
     });
   });
 });

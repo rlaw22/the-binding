@@ -38,6 +38,7 @@ const Inventory = require('../inventory/inventory');
 const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
 const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
 const { createDigitalDMSession, getDigitalDMInfo, isDigitalDM } = require('../campaign/digital-dm');
+const { listDigitalDMScenarios, getDigitalDMScenario, getScenarioWorldSeed } = require('../campaign/digital-dm-scenarios');
 
 // In-memory session store
 const sessions = new Map();
@@ -160,6 +161,11 @@ async function createServer(options = {}) {
       estimatedLength: adventure.estimatedLength,
       acts: adventure.acts
     };
+  });
+
+  // Digital DM scenarios — theme and adventure catalog for Digital DM mode
+  app.get('/api/digital-dm/scenarios', async () => {
+    return listDigitalDMScenarios();
   });
 
   app.get('/api/health', async () => {
@@ -567,14 +573,39 @@ async function createServer(options = {}) {
     // Validate game mode early
     const resolvedGameMode = isValidMode(gameMode) ? gameMode : GameMode.STORYLINE;
 
-    // === DIGITAL DM MODE: no adventure required, sandbox session ===
+    // === DIGITAL DM MODE: scenario-based session ===
     if (resolvedGameMode === 'digital_dm') {
-      const dmInfo = getDigitalDMInfo();
+      const { scenarioId } = request.body || {};
+      if (!scenarioId) {
+        return reply.status(400).send({ error: 'scenarioId is required for Digital DM mode. Use GET /api/digital-m/scenarios to list options.' });
+      }
+
+      const scenario = getDigitalDMScenario(scenarioId);
+      if (!scenario) {
+        return reply.status(404).send({ error: `Unknown scenario: ${scenarioId}` });
+      }
+      if (scenario.status === 'coming_soon') {
+        return reply.status(400).send({ error: `"${scenario.name}" is coming soon and not yet available.` });
+      }
+
+      // Generate world seed based on scenario type
+      let worldSeed = null;
+      let adventureName = scenario.name;
+      let useSceneGraph = false;
+
+      try {
+        worldSeed = getScenarioWorldSeed(scenarioId);
+        if (worldSeed && worldSeed.useSceneGraph) {
+          useSceneGraph = true;
+        }
+      } catch (err) {
+        console.warn(`[DigitalDM] Failed to generate world seed for ${scenarioId}:`, err.message);
+      }
 
       const session = createSession({
         mode: 'digital_dm',
-        adventureId: 'digital_dm',
-        sessionName: `Digital DM — ${playerName || 'Adventurer'}`
+        adventureId: useSceneGraph ? scenarioId : 'digital_dm',
+        sessionName: `${scenario.name} — ${playerName || 'Adventurer'}`
       });
 
       const player = addPlayer(session, {
@@ -586,8 +617,8 @@ async function createServer(options = {}) {
       });
 
       const game = createGame({
-        adventureId: 'digital_dm',
-        adventureName: 'Digital DM Sandbox',
+        adventureId: useSceneGraph ? scenarioId : 'digital_dm',
+        adventureName,
         gameMode: 'digital_dm',
         llmProvider: createProvider(llmConfig),
         ruleEngine: RuleEngine,
@@ -595,6 +626,29 @@ async function createServer(options = {}) {
       });
 
       setCharacterSheet(game.contextManager, player.character);
+
+      // Store scenario metadata on the game object for dm-service to use
+      game.digitalDMScenario = {
+        scenarioId: scenario.id,
+        scenarioType: scenario.type,
+        scenarioName: scenario.name,
+        scenarioDescription: scenario.description,
+        worldSeed,
+        useSceneGraph
+      };
+
+      // For theme-based scenarios: pre-populate worldState from world seed
+      if (worldSeed && worldSeed.locations) {
+        game.worldState = {
+          locations: Object.keys(worldSeed.locations),
+          npcs: Object.values(worldSeed.npcs).map(n => n.name),
+          quests: [],
+          items: [],
+          events: []
+        };
+      } else {
+        game.worldState = { locations: [], npcs: [], quests: [], items: [], events: [] };
+      }
 
       const modeConfig = getModeConfig('digital_dm');
       const uiConfig = getUIConfig('digital_dm');
@@ -614,22 +668,39 @@ async function createServer(options = {}) {
         character: player.character
       });
 
-      // Digital DM opening: call LLM with world-building prompt to generate starting scene
+      // Build the opening system prompt with scenario context
+      let scenarioContext = '';
+      if (worldSeed && worldSeed.locations) {
+        // Theme-based: inject structured world
+        const currentLoc = worldSeed.locations[worldSeed.currentLocation];
+        const knownLocs = Object.values(worldSeed.locations).map(l => l.name).join(', ');
+        const knownNpcs = Object.values(worldSeed.npcs).map(n => `${n.name} (${n.role})`).join(', ');
+        scenarioContext = `\n\nSTARTING WORLD (maintain consistency with this foundation):\nTheme: ${scenario.name}\nStarting Location: ${currentLoc?.name}\nDescription: ${currentLoc?.description}\nKnown Locations: ${knownLocs}\nKnown NPCs: ${knownNpcs}`;
+      } else if (worldSeed && worldSeed.scenes) {
+        // Manifest-based: inject scene structure
+        const startScene = worldSeed.scenes[0];
+        const npcList = worldSeed.keyNPCs?.map(n => `${n.name} (${n.role})`).join(', ') || 'TBD';
+        scenarioContext = `\n\nADVENTURE MODULE: ${scenario.name}\n${scenario.description}\nStarting Scene: ${startScene?.location} — ${startScene?.summary}\nKey NPCs: ${npcList}\nTotal Scenes: ${worldSeed.scenes.length}`;
+      } else if (scenario.type === 'adventure' && scenario.description) {
+        // Coming-soon adventure (shouldn't reach here due to guard, but safety net)
+        scenarioContext = `\n\nADVENTURE MODULE: ${scenario.name}\n${scenario.description}`;
+      }
+
+      // Digital DM opening: call LLM with world-building prompt
       try {
         const worldPrompt = [
           { role: 'system', content: buildAdventureSystemPrompt({
-            adventureName: 'Digital DM Sandbox',
-            adventureDescription: 'Open-ended AI-driven play. The DM creates everything live.',
+            adventureName,
+            adventureDescription: scenario.description,
             tone: 'immersive, responsive, player-driven',
             sceneContext: ''
-          }) + '\n\n' + require('../campaign/digital-dm').getDigitalDMPromptSuffix() + '\n\n' + require('../campaign/digital-dm').getDigitalDMWorldPrompt() },
+          }) + '\n\n' + require('../campaign/digital-dm').getDigitalDMPromptSuffix() + '\n\n' + require('../campaign/digital-dm').getDigitalDMWorldPrompt() + scenarioContext },
           { role: 'user', content: `I begin my adventure. My name is ${player.character.name}, and I am a ${player.character.class}. Describe where I am and what I see.` }
         ];
         const openingNarration = await game.llmProvider(worldPrompt);
         addTurn(game.contextManager, 'assistant', openingNarration);
 
         // Extract world state from opening narration
-        if (!game.worldState) game.worldState = { locations: [], npcs: [], quests: [], items: [], events: [] };
         const { extractWorldState } = require('../ai-dm/dm-service');
         extractWorldState(openingNarration, '', game.worldState);
 
@@ -659,12 +730,14 @@ async function createServer(options = {}) {
         sessionId: session.id,
         rejoinCode,
         playerId: player.id,
-        adventureName: 'Digital DM Sandbox',
+        adventureName,
         character: player.character,
         gameMode: 'digital_dm',
+        scenarioId: scenario.id,
+        scenarioName: scenario.name,
         uiConfig,
         messages: openingMessages,
-        message: 'Welcome to Digital DM. Your world is being created...'
+        message: `Welcome to ${scenario.name}. Your world is being created...`
       };
     }
 

@@ -778,6 +778,32 @@ body.game-active #auto-rejoin-banner{display:none;}
   .setup-title { font-size: 1.1em; letter-spacing: 2px; }
 }
 
+/* Digital DM Scenario Selector */
+#scenario-select-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+#scenario-select-screen h2 { color: #C9A84C; font-size: 1.4em; }
+#scenario-select-screen p { color: #F5F0E1aa; max-width: 500px; font-size: 1.05em; line-height: 1.6; }
+.scenario-section-title { color: #C9A84C; font-size: 1.1em; margin: 10px 0 6px; text-transform: uppercase; letter-spacing: 2px; font-family: Georgia, serif; }
+.scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; max-width: 900px; width: 100%; }
+.scenario-card { background: #1A1A2E; border: 2px solid #C9A84C33; border-radius: 12px; padding: 20px; cursor: pointer; transition: all 0.2s; text-align: left; }
+.scenario-card:hover { border-color: #C9A84C; transform: translateY(-2px); box-shadow: 0 4px 20px #C9A84C22; }
+.scenario-card.selected { border-color: #C9A84C; background: #1A1A2E; box-shadow: 0 0 20px #C9A84C33; }
+.scenario-card.coming-soon { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+.scenario-card .sc-icon { font-size: 2em; margin-bottom: 8px; }
+.scenario-card .sc-name { font-weight: bold; font-size: 1.1em; color: #F5F0E1; margin-bottom: 6px; }
+.scenario-card .sc-desc { font-size: 0.9em; color: #9A8C6C; line-height: 1.4; margin-bottom: 8px; }
+.scenario-card .sc-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8em; }
+.scenario-card .sc-level { color: #C9A84C; }
+.scenario-card .sc-tags { color: #6A5C3C; }
+.scenario-card .sc-badge { display: inline-block; background: #C9A84C22; color: #C9A84C; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-top: 6px; }
+.scenario-card .sc-coming-soon { display: inline-block; background: #88888833; color: #888; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; margin-top: 6px; }
+.scenario-name-input { background: #1A1A2E; border: 1px solid #C9A84C44; color: #F5F0E1; font-family: Georgia, serif; padding: 14px 16px; border-radius: 8px; width: 100%; max-width: 360px; font-size: 1em; text-align: center; }
+.scenario-class-select { background: #1A1A2E; border: 1px solid #C9A84C44; color: #F5F0E1; font-family: Georgia, serif; padding: 14px 16px; border-radius: 8px; cursor: pointer; width: 100%; max-width: 360px; font-size: 1em; }
+.scenario-begin-btn { background: linear-gradient(135deg, #C9A84C, #A88B3C); color: #0A0A1E; border: none; padding: 14px 32px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; font-family: Georgia, serif; letter-spacing: 1px; width: 100%; max-width: 360px; transition: all 0.2s; }
+.scenario-begin-btn:hover { transform: scale(1.02); box-shadow: 0 4px 20px #C9A84C44; }
+.scenario-begin-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+#scenario-back-btn { background: none; border: 1px solid #C9A84C44; color: #C9A84C; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-family: Georgia, serif; font-size: 0.9em; }
+#scenario-back-btn:hover { border-color: #C9A84C; }
+
 </style>
 </head>
 <body>
@@ -1021,6 +1047,33 @@ body.game-active #auto-rejoin-banner{display:none;}
       </div>
     </div>
   </div>
+
+  <!-- Digital DM Scenario Selector Screen -->
+  <div id="scenario-select-screen" class="hidden">
+    <h2>Choose Your World</h2>
+    <p>Select a starting scenario for your Digital DM session.</p>
+
+    <h3 class="scenario-section-title">Themes</h3>
+    <div class="scenario-grid" id="theme-cards"></div>
+
+    <h3 class="scenario-section-title">Adventures</h3>
+    <div class="scenario-grid" id="adventure-cards"></div>
+
+    <div style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+      <input type="text" id="scenario-player-name" class="scenario-name-input" placeholder="Your character name" value="">
+      <select id="scenario-player-class" class="scenario-class-select">
+        <option value="fighter">Fighter</option>
+        <option value="wizard">Wizard</option>
+        <option value="rogue">Rogue</option>
+        <option value="cleric">Cleric</option>
+        <option value="ranger">Ranger</option>
+      </select>
+      <button id="scenario-begin-btn" class="scenario-begin-btn" disabled onclick="startDigitalDMGame()">Select a scenario above</button>
+    </div>
+
+    <button id="scenario-back-btn" onclick="backToModeSelect()">← Back to Mode Select</button>
+  </div>
+
   <div id="start-screen" class="hidden">
     <h2>Choose Your Adventure</h2>
     <p id="adventure-description">Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
@@ -1236,7 +1289,7 @@ function initSpectatorMode() {
   playerRole = 'spectator';
 
   // Hide all pre-game screens
-  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'mode-select-screen', 'start-screen', 'storyline-setup-screen'];
+  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'mode-select-screen', 'start-screen', 'storyline-setup-screen', 'scenario-select-screen'];
   screens.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.add('hidden');
@@ -1778,6 +1831,7 @@ if (betaInput) {
 // --- Mode Selection ---
 var selectedGameMode = null;
 var currentGameMode = 'storyline';
+var selectedDigitalDMScenario = null;
 
 async function showModeSelection() {
   document.getElementById('mode-select-screen').classList.remove('hidden');
@@ -1787,12 +1841,176 @@ async function selectMode(mode) {
   selectedGameMode = mode;
   isAdventureMode = (mode === 'storyline');
   document.getElementById('mode-select-screen').classList.add('hidden');
-  if (isAdventureMode) {
+  if (mode === 'digital_dm') {
+    // Show scenario selector instead of start-screen
+    document.getElementById('scenario-select-screen').classList.remove('hidden');
+    loadDigitalDMScenarios();
+  } else if (isAdventureMode) {
     document.getElementById('storyline-setup-screen').classList.remove('hidden');
     loadStorylineAdventures();
   } else {
     document.getElementById('start-screen').classList.remove('hidden');
     loadAdventures();
+  }
+}
+
+function backToModeSelect() {
+  document.getElementById('scenario-select-screen').classList.add('hidden');
+  selectedDigitalDMScenario = null;
+  document.getElementById('mode-select-screen').classList.remove('hidden');
+}
+
+async function loadDigitalDMScenarios() {
+  try {
+    var resp = await fetch('/api/digital-dm/scenarios');
+    if (!resp.ok) return;
+    var scenarios = await resp.json();
+
+    var themeGrid = document.getElementById('theme-cards');
+    var adventureGrid = document.getElementById('adventure-cards');
+    themeGrid.innerHTML = '';
+    adventureGrid.innerHTML = '';
+
+    // Render themes
+    (scenarios.themes || []).forEach(function(s) {
+      themeGrid.appendChild(createScenarioCard(s));
+    });
+
+    // Render adventures
+    (scenarios.adventures || []).forEach(function(s) {
+      adventureGrid.appendChild(createScenarioCard(s));
+    });
+  } catch(e) {
+    console.warn('[DigitalDM] Failed to load scenarios:', e);
+  }
+}
+
+function createScenarioCard(scenario) {
+  var card = document.createElement('div');
+  card.className = 'scenario-card' + (scenario.status === 'coming_soon' ? ' coming-soon' : '');
+  card.setAttribute('data-scenario-id', scenario.id);
+
+  var tags = (scenario.tags || []).slice(0, 3).join(' · ');
+  var badge = '';
+  if (scenario.status === 'ready') badge = '<div class="sc-badge">Ready</div>';
+  else if (scenario.status === 'manifest_ready') badge = '<div class="sc-badge">Manifest Ready</div>';
+  else if (scenario.status === 'coming_soon') badge = '<div class="sc-coming-soon">Coming Soon</div>';
+
+  card.innerHTML =
+    '<div class="sc-icon">' + (scenario.icon || '🎲') + '</div>' +
+    '<div class="sc-name">' + scenario.name + '</div>' +
+    '<div class="sc-desc">' + scenario.description + '</div>' +
+    '<div class="sc-meta">' +
+      '<span class="sc-level">' + (scenario.levelRange ? scenario.levelRange.label : '') + '</span>' +
+      '<span class="sc-tags">' + tags + '</span>' +
+    '</div>' +
+    badge;
+
+  if (scenario.status !== 'coming_soon') {
+    card.onclick = function() { selectDigitalDMScenario(scenario.id); };
+  }
+
+  return card;
+}
+
+function selectDigitalDMScenario(scenarioId) {
+  selectedDigitalDMScenario = scenarioId;
+
+  // Highlight selected card, un-highlight others
+  var cards = document.querySelectorAll('.scenario-card');
+  cards.forEach(function(c) {
+    if (c.getAttribute('data-scenario-id') === scenarioId) {
+      c.classList.add('selected');
+    } else {
+      c.classList.remove('selected');
+    }
+  });
+
+  // Enable begin button
+  var btn = document.getElementById('scenario-begin-btn');
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = 'Begin Adventure';
+  }
+}
+
+async function startDigitalDMGame() {
+  if (!selectedDigitalDMScenario) return;
+
+  var name = (document.getElementById('scenario-player-name').value || '').trim() || 'Adventurer';
+  var cls = document.getElementById('scenario-player-class').value || 'fighter';
+  var btn = document.getElementById('scenario-begin-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creating world...'; }
+
+  try {
+    var resp = await fetch('/api/sessions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-beta-token': betaToken || ''
+      },
+      body: JSON.stringify({
+        adventureId: 'digital_dm',
+        playerName: name,
+        characterClass: cls,
+        characterRace: 'human',
+        betaToken: betaToken,
+        gameMode: 'digital_dm',
+        scenarioId: selectedDigitalDMScenario
+      })
+    });
+
+    var data = await resp.json();
+    if (data.error) {
+      if (resp.status === 401) {
+        localStorage.removeItem('betaToken');
+        betaToken = null;
+        document.getElementById('scenario-select-screen').classList.add('hidden');
+        document.getElementById('gate-screen').classList.remove('hidden');
+        document.getElementById('gate-error').textContent = 'Your session code has expired. Please re-enter your beta access code.';
+      } else {
+        showToast(data.error);
+      }
+      if (btn) { btn.disabled = false; btn.textContent = 'Begin Adventure'; }
+      return;
+    }
+
+    sessionId = data.sessionId;
+    playerId = data.playerId;
+    playerRole = 'host';
+    lastMsgIndex = 0;
+
+    // Save session to localStorage for rejoin
+    saveSessionToStorage(sessionId, name);
+
+    // Hide scenario screen, show game UI
+    document.getElementById('scenario-select-screen').classList.add('hidden');
+    document.getElementById('messages').classList.remove('hidden');
+    document.getElementById('input-row').style.display = '';
+    document.getElementById('action-buttons').classList.remove('storyline-actions');
+
+    // Apply UI config
+    applyModeUIConfig(data.uiConfig);
+
+    // Show character name
+    var charName = document.getElementById('char-name');
+    if (charName) charName.textContent = name;
+
+    // Set up HP bar
+    showHpBar();
+    if (data.character) {
+      updateHpBar(data.character.hp ? data.character.hp.current : 10, data.character.hp ? data.character.hp.max : 10);
+    }
+
+    // Start polling for messages (handles opening narration from server)
+    startPolling();
+
+    showToast('Welcome to ' + (data.scenarioName || 'Digital DM') + '!');
+
+  } catch(e) {
+    console.error('[DigitalDM] Session creation failed:', e);
+    showToast('Failed to create session. Please try again.');
+    if (btn) { btn.disabled = false; btn.textContent = 'Begin Adventure'; }
   }
 }
 

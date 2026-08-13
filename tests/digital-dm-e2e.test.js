@@ -33,6 +33,7 @@ describe('Digital DM E2E — Full API Flow', () => {
       url: '/api/sessions',
       payload: {
         gameMode: 'digital_dm',
+        scenarioId: 'gothic_horror',
         playerName: 'Aria',
         characterClass: 'wizard',
         characterRace: 'elf'
@@ -140,9 +141,9 @@ describe('Digital DM E2E — Full API Flow', () => {
     ).length;
     assert.ok(narrationCount >= 4, `should have at least 4 narrations (opening + 3 actions), got ${narrationCount}`);
 
-    // === 10. Verify no adventureId required ===
-    // The session should work without any adventure references
-    assert.equal(session.adventureName, 'Digital DM Sandbox');
+    // === 10. Verify scenario info ===
+    assert.equal(session.adventureName, 'Gothic Horror');
+    assert.equal(session.scenarioId, 'gothic_horror');
   });
 
   it('Multiple Digital DM sessions can coexist', async () => {
@@ -150,12 +151,12 @@ describe('Digital DM E2E — Full API Flow', () => {
     const res1 = await server.inject({
       method: 'POST',
       url: '/api/sessions',
-      payload: { gameMode: 'digital_dm', playerName: 'Player1' }
+      payload: { gameMode: 'digital_dm', scenarioId: 'sword_coast', playerName: 'Player1' }
     });
     const res2 = await server.inject({
       method: 'POST',
       url: '/api/sessions',
-      payload: { gameMode: 'digital_dm', playerName: 'Player2' }
+      payload: { gameMode: 'digital_dm', scenarioId: 'noir_mystery', playerName: 'Player2' }
     });
 
     const s1 = JSON.parse(res1.payload);

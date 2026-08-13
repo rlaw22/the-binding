@@ -839,10 +839,13 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
 - If the player's action is impossible in the current setting (e.g. searching the ground while inside a moving vehicle), narrate WHY it cannot be done — do not hallucinate a result.
 - Keep the response to 2-3 sentences maximum.`;
   } else if (isDm) {
-    // === DIGITAL DM MODE: sandbox, no rails ===
+    // === DIGITAL DM MODE: scenario-based play ===
+    const scenario = game.digitalDMScenario;
+    const scenarioDesc = scenario?.scenarioDescription || 'Open-ended AI-driven play. The DM creates everything live.';
+
     systemPrompt = buildAdventureSystemPrompt({
       adventureName: game.adventureName || 'Digital DM Sandbox',
-      adventureDescription: 'Open-ended AI-driven play. The DM creates everything live.',
+      adventureDescription: scenarioDesc,
       tone: 'immersive, responsive, player-driven',
       sceneContext: game.sceneState ? SceneEngine.buildSceneContext(game.sceneState) : ''
     });
@@ -853,6 +856,22 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
     // First turn: inject world-building prompt
     if (game.turnHistory.length === 0) {
       systemPrompt += '\n\n' + getDigitalDMWorldPrompt();
+
+      // Inject scenario world seed context (first turn only)
+      if (scenario?.worldSeed) {
+        if (scenario.worldSeed.locations) {
+          // Theme-based: inject structured world
+          const currentLoc = scenario.worldSeed.locations[scenario.worldSeed.currentLocation];
+          const knownLocs = Object.values(scenario.worldSeed.locations).map(l => l.name).join(', ');
+          const knownNpcs = Object.values(scenario.worldSeed.npcs).map(n => `${n.name} (${n.role})`).join(', ');
+          systemPrompt += `\n\nSTARTING WORLD (maintain consistency with this foundation):\nTheme: ${scenario.scenarioName}\nStarting Location: ${currentLoc?.name}\nDescription: ${currentLoc?.description}\nKnown Locations: ${knownLocs}\nKnown NPCs: ${knownNpcs}`;
+        } else if (scenario.worldSeed.scenes) {
+          // Manifest-based: inject scene structure
+          const startScene = scenario.worldSeed.scenes[0];
+          const npcList = scenario.worldSeed.keyNPCs?.map(n => `${n.name} (${n.role})`).join(', ') || 'TBD';
+          systemPrompt += `\n\nADVENTURE MODULE: ${scenario.scenarioName}\n${scenarioDesc}\nStarting Scene: ${startScene?.location} — ${startScene?.summary}\nKey NPCs: ${npcList}\nTotal Scenes: ${scenario.worldSeed.scenes.length}`;
+        }
+      }
     }
 
     // Track world state in the game object
