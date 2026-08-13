@@ -804,6 +804,93 @@ body.game-active #auto-rejoin-banner{display:none;}
 #scenario-back-btn { background: none; border: 1px solid #C9A84C44; color: #C9A84C; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-family: Georgia, serif; font-size: 0.9em; }
 #scenario-back-btn:hover { border-color: #C9A84C; }
 
+/* ── Character Builder Steps ──────────────────────────────────── */
+.char-builder-steps { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; font-family: Georgia, serif; }
+.cb-step { color: #666; font-size: 0.95em; padding: 4px 12px; border-radius: 4px; }
+.cb-step.active { color: #C9A84C; border-bottom: 2px solid #C9A84C; font-weight: bold; }
+.cb-step.done { color: #4CAF50; }
+.cb-step-arrow { color: #444; font-size: 0.85em; }
+
+/* ── Race Grid ────────────────────────────────────────────────── */
+.race-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 700px; width: 100%; margin: 0 auto; }
+.race-card { background: #0f0f1e; border: 2px solid #333; border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; text-align: center; position: relative; }
+.race-card:hover { border-color: #C9A84C88; transform: translateY(-2px); }
+.race-card.selected { border-color: #C9A84C; background: #C9A84C12; box-shadow: 0 0 20px #C9A84C22; }
+.race-card.selected::after { content: '✓'; position: absolute; top: 6px; right: 8px; color: #C9A84C; font-size: 1em; font-weight: bold; }
+.rc-icon { font-size: 1.8em; margin-bottom: 4px; }
+.rc-name { color: #C9A84C; font-size: 1em; font-weight: bold; margin-bottom: 2px; }
+.rc-bonus { color: #4CAF50; font-size: 0.8em; margin-bottom: 4px; font-weight: 600; }
+.rc-desc { color: #999; font-size: 0.75em; line-height: 1.3; }
+
+/* ── Class Grid (char builder) ────────────────────────────────── */
+.char-class-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; max-width: 900px; width: 100%; margin: 0 auto; }
+.char-class-card { border: 2px solid #C9A84C22; position: relative; overflow: hidden; }
+.char-class-card .cc-saves { color: #666; font-size: 0.75em; margin-top: 4px; }
+.char-class-card.selected { border-color: #C9A84C; background: #C9A84C12; box-shadow: 0 0 20px #C9A84C22; }
+.char-class-card.selected::after { content: '✓'; position: absolute; top: 8px; right: 10px; color: #C9A84C; font-size: 1.1em; font-weight: bold; }
+
+/* ── Character Builder Navigation ─────────────────────────────── */
+.char-builder-nav { display: flex; justify-content: center; gap: 16px; margin-top: 24px; }
+.cb-back-btn { background: none; border: 1px solid #C9A84C44; color: #C9A84C; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-family: Georgia, serif; font-size: 0.95em; transition: all 0.2s; }
+.cb-back-btn:hover { border-color: #C9A84C; }
+.cb-next-btn { background: linear-gradient(135deg, #C9A84C, #A88B3C); color: #0A0A1E; border: none; padding: 10px 28px; border-radius: 8px; font-size: 0.95em; font-weight: bold; cursor: pointer; font-family: Georgia, serif; transition: all 0.2s; }
+.cb-next-btn:hover { transform: scale(1.02); box-shadow: 0 4px 20px #C9A84C44; }
+.cb-next-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── Character Review Card ────────────────────────────────────── */
+.char-review-card { background: #0f0f1e; border: 2px solid #C9A84C44; border-radius: 12px; padding: 24px; max-width: 500px; margin: 0 auto; text-align: left; }
+.review-header { text-align: center; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #C9A84C22; }
+.review-name { display: block; color: #C9A84C; font-size: 1.4em; font-weight: bold; font-family: Georgia, serif; }
+.review-subtitle { color: #999; font-size: 0.95em; }
+.review-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.review-stat { text-align: center; padding: 8px; background: #1A1A2E; border-radius: 6px; }
+.review-stat .rs-label { color: #888; font-size: 0.7em; text-transform: uppercase; letter-spacing: 1px; }
+.review-stat .rs-value { color: #C9A84C; font-size: 1.2em; font-weight: bold; display: block; margin-top: 2px; }
+.review-stat .rs-mod { color: #4CAF50; font-size: 0.8em; }
+.review-details { color: #ccc; font-size: 0.9em; line-height: 1.6; }
+.review-details .rd-row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #ffffff08; }
+.review-details .rd-label { color: #888; }
+.review-details .rd-value { color: #C9A84C; font-weight: 600; }
+
+/* ── Character Sheet Popup ────────────────────────────────────── */
+#char-sheet-overlay { position: fixed; inset: 0; background: rgba(10,10,30,0.92); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+#char-sheet-overlay.hidden { display: none; }
+#char-sheet-panel { background: #0C0B10; border: 2px solid #C9A84C44; border-radius: 16px; width: 90%; max-width: 520px; max-height: 85vh; overflow-y: auto; padding: 0; }
+.cs-header { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #C9A84C22; position: sticky; top: 0; background: #0C0B10; z-index: 1; }
+.cs-header h2 { color: #C9A84C; font-size: 1.2em; margin: 0; }
+.cs-close { background: none; border: none; color: #888; font-size: 1.5em; cursor: pointer; padding: 0 4px; }
+.cs-close:hover { color: #C9A84C; }
+.cs-body { padding: 20px; }
+.cs-section { margin-bottom: 20px; }
+.cs-section-title { color: #C9A84C; font-size: 0.85em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; border-bottom: 1px solid #C9A84C22; padding-bottom: 4px; }
+.cs-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.cs-stat-box { background: #1A1A2E; border-radius: 8px; padding: 10px; text-align: center; }
+.cs-stat-box .cs-abil { color: #C9A84C; font-size: 0.75em; text-transform: uppercase; letter-spacing: 1px; }
+.cs-stat-box .cs-val { color: #F5F0E1; font-size: 1.3em; font-weight: bold; display: block; margin: 2px 0; }
+.cs-stat-box .cs-mod { color: #4CAF50; font-size: 0.85em; }
+.cs-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cs-info-item { background: #1A1A2E; border-radius: 6px; padding: 8px 12px; }
+.cs-info-item .cs-info-label { color: #888; font-size: 0.75em; text-transform: uppercase; }
+.cs-info-item .cs-info-value { color: #F5F0E1; font-size: 1em; font-weight: 600; }
+.cs-feature-list { list-style: none; padding: 0; margin: 0; }
+.cs-feature-list li { color: #ccc; padding: 4px 0; font-size: 0.9em; border-bottom: 1px solid #ffffff06; }
+.cs-feature-list li::before { content: '⚔ '; color: #C9A84C; }
+.cs-saves-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.cs-save-item { background: #1A1A2E; border-radius: 6px; padding: 6px 8px; text-align: center; font-size: 0.85em; }
+.cs-save-item .cs-save-name { color: #888; font-size: 0.7em; text-transform: uppercase; }
+.cs-save-item .cs-save-val { color: #F5F0E1; font-weight: bold; }
+.cs-save-item .cs-save-prof { color: #4CAF50; font-size: 0.7em; }
+.cs-char-bar-btn { cursor: pointer; }
+#char-bar .stat { cursor: pointer; }
+
+@media (max-width: 600px) {
+  .race-grid { grid-template-columns: repeat(2, 1fr); }
+  .char-class-grid { grid-template-columns: 1fr 1fr; }
+  .review-stats { grid-template-columns: repeat(2, 1fr); }
+  .cs-stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .cs-info-grid { grid-template-columns: 1fr; }
+}
+
 </style>
 </head>
 <body>
@@ -1050,28 +1137,246 @@ body.game-active #auto-rejoin-banner{display:none;}
 
   <!-- Digital DM Scenario Selector Screen -->
   <div id="scenario-select-screen" class="hidden">
-    <h2>Choose Your World</h2>
-    <p>Select a starting scenario for your Digital DM session.</p>
+    <!-- Step 1: World Selection -->
+    <div id="char-step-world">
+      <h2>Choose Your World</h2>
+      <p>Select a starting scenario for your Digital DM session.</p>
 
-    <h3 class="scenario-section-title">Themes</h3>
-    <div class="scenario-grid" id="theme-cards"></div>
+      <h3 class="scenario-section-title">Themes</h3>
+      <div class="scenario-grid" id="theme-cards"></div>
 
-    <h3 class="scenario-section-title">Adventures</h3>
-    <div class="scenario-grid" id="adventure-cards"></div>
+      <h3 class="scenario-section-title">Adventures</h3>
+      <div class="scenario-grid" id="adventure-cards"></div>
 
-    <div style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
-      <input type="text" id="scenario-player-name" class="scenario-name-input" placeholder="Your character name" value="">
-      <select id="scenario-player-class" class="scenario-class-select">
-        <option value="fighter">Fighter</option>
-        <option value="wizard">Wizard</option>
-        <option value="rogue">Rogue</option>
-        <option value="cleric">Cleric</option>
-        <option value="ranger">Ranger</option>
-      </select>
-      <button id="scenario-begin-btn" class="scenario-begin-btn" disabled onclick="startDigitalDMGame()">Select a scenario above</button>
+      <div style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 14px;">
+        <button id="scenario-next-btn" class="scenario-begin-btn" disabled onclick="charBuilderNext()">Select a scenario above</button>
+      </div>
+
+      <button id="scenario-back-btn" onclick="backToModeSelect()">← Back to Mode Select</button>
     </div>
 
-    <button id="scenario-back-btn" onclick="backToModeSelect()">← Back to Mode Select</button>
+    <!-- Step 2: Name & Race -->
+    <div id="char-step-race" class="hidden">
+      <h2>Create Your Character</h2>
+      <div class="char-builder-steps">
+        <span class="cb-step active">Race</span>
+        <span class="cb-step-arrow">→</span>
+        <span class="cb-step">Class</span>
+        <span class="cb-step-arrow">→</span>
+        <span class="cb-step">Review</span>
+      </div>
+
+      <div class="setup-section">
+        <label class="setup-label">Your Name</label>
+        <input type="text" id="ddm-player-name" class="scenario-name-input" placeholder="Enter your name..." value="" oninput="validateCharBuilder()">
+      </div>
+
+      <div class="setup-section">
+        <label class="setup-label">Choose Your Race</label>
+        <div class="race-grid" id="race-grid">
+          <div class="race-card selected" onclick="selectRace(this, 'human')">
+            <div class="rc-icon">🧑</div>
+            <div class="rc-name">Human</div>
+            <div class="rc-bonus">+1 to all abilities</div>
+            <div class="rc-desc">Versatile and ambitious. Speed 30ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'elf')">
+            <div class="rc-icon">🧝</div>
+            <div class="rc-name">Elf</div>
+            <div class="rc-bonus">+2 DEX</div>
+            <div class="rc-desc">Graceful and keen-sighted. Darkvision, Fey Ancestry. Speed 30ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'dwarf')">
+            <div class="rc-icon">⛏️</div>
+            <div class="rc-name">Dwarf</div>
+            <div class="rc-bonus">+2 CON</div>
+            <div class="rc-desc">Stout and resilient. Darkvision, Dwarven Resilience. Speed 25ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'halfling')">
+            <div class="rc-icon">🍀</div>
+            <div class="rc-name">Halfling</div>
+            <div class="rc-bonus">+2 DEX</div>
+            <div class="rc-desc">Small but lucky. Lucky, Brave. Speed 25ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'half-elf')">
+            <div class="rc-icon">✨</div>
+            <div class="rc-name">Half-Elf</div>
+            <div class="rc-bonus">+2 CHA, +1 two others</div>
+            <div class="rc-desc">Best of both worlds. Darkvision, Fey Ancestry, Skill Versatility. Speed 30ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'half-orc')">
+            <div class="rc-icon">💪</div>
+            <div class="rc-name">Half-Orc</div>
+            <div class="rc-bonus">+2 STR, +1 CON</div>
+            <div class="rc-desc">Fierce and intimidating. Darkvision, Relentless Endurance. Speed 30ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'tiefling')">
+            <div class="rc-icon">😈</div>
+            <div class="rc-name">Tiefling</div>
+            <div class="rc-bonus">+2 CHA, +1 INT</div>
+            <div class="rc-desc">Infernal heritage. Darkvision, Hellish Resistance, Infernal Legacy. Speed 30ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'gnome')">
+            <div class="rc-icon">🔧</div>
+            <div class="rc-name">Gnome</div>
+            <div class="rc-bonus">+2 INT</div>
+            <div class="rc-desc">Clever and curious. Darkvision, Gnome Cunning. Speed 25ft.</div>
+          </div>
+          <div class="race-card" onclick="selectRace(this, 'dragonborn')">
+            <div class="rc-icon">🐉</div>
+            <div class="rc-name">Dragonborn</div>
+            <div class="rc-bonus">+2 STR, +1 CHA</div>
+            <div class="rc-desc">Draconic ancestry. Breath Weapon, Damage Resistance. Speed 30ft.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="char-builder-nav">
+        <button class="cb-back-btn" onclick="charBuilderBack()">← Back</button>
+        <button class="cb-next-btn" id="race-next-btn" onclick="charBuilderNext()">Next: Choose Class →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Class Selection -->
+    <div id="char-step-class" class="hidden">
+      <h2>Choose Your Class</h2>
+      <div class="char-builder-steps">
+        <span class="cb-step done">Race</span>
+        <span class="cb-step-arrow">→</span>
+        <span class="cb-step active">Class</span>
+        <span class="cb-step-arrow">→</span>
+        <span class="cb-step">Review</span>
+      </div>
+
+      <div class="char-class-grid" id="ddm-class-grid">
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'fighter')">
+          <div class="cc-name">Fighter</div>
+          <div class="cc-hp">10 + CON HP</div>
+          <div class="cc-desc">A battle-hardened warrior. Proficient with all armor and weapons.</div>
+          <div class="cc-abilities">Fighting Style • Second Wind</div>
+          <div class="cc-saves">STR, CON saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'wizard')">
+          <div class="cc-name">Wizard</div>
+          <div class="cc-hp">6 + CON HP</div>
+          <div class="cc-desc">A wielder of arcane power. Fragile but powerful spellcaster.</div>
+          <div class="cc-abilities">Spellcasting • Arcane Recovery</div>
+          <div class="cc-saves">INT, WIS saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'rogue')">
+          <div class="cc-name">Rogue</div>
+          <div class="cc-hp">8 + CON HP</div>
+          <div class="cc-desc">A shadow-skilled survivor. Stealth, traps, and deadly strikes.</div>
+          <div class="cc-abilities">Expertise • Sneak Attack • Thieves' Cant</div>
+          <div class="cc-saves">DEX, INT saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'cleric')">
+          <div class="cc-name">Cleric</div>
+          <div class="cc-hp">8 + CON HP</div>
+          <div class="cc-desc">A divine healer and protector. Turn Undead devastates the undead.</div>
+          <div class="cc-abilities">Spellcasting • Channel Divinity</div>
+          <div class="cc-saves">WIS, CHA saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'ranger')">
+          <div class="cc-name">Ranger</div>
+          <div class="cc-hp">10 + CON HP</div>
+          <div class="cc-desc">A skilled hunter and tracker. Deadly at range and in the wilds.</div>
+          <div class="cc-abilities">Favored Enemy • Natural Explorer</div>
+          <div class="cc-saves">STR, DEX saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'barbarian')">
+          <div class="cc-name">Barbarian</div>
+          <div class="cc-hp">12 + CON HP</div>
+          <div class="cc-desc">A fierce berserker. The toughest class — rage halves incoming damage.</div>
+          <div class="cc-abilities">Rage • Unarmored Defense</div>
+          <div class="cc-saves">STR, CON saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'bard')">
+          <div class="cc-name">Bard</div>
+          <div class="cc-hp">8 + CON HP</div>
+          <div class="cc-desc">A jack-of-all-trades. Music, magic, and silver tongue.</div>
+          <div class="cc-abilities">Spellcasting • Bardic Inspiration</div>
+          <div class="cc-saves">DEX, CHA saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'paladin')">
+          <div class="cc-name">Paladin</div>
+          <div class="cc-hp">10 + CON HP</div>
+          <div class="cc-desc">A holy warrior. Smite evil, heal allies, immune to disease.</div>
+          <div class="cc-abilities">Divine Sense • Lay on Hands</div>
+          <div class="cc-saves">WIS, CHA saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'warlock')">
+          <div class="cc-name">Warlock</div>
+          <div class="cc-hp">8 + CON HP</div>
+          <div class="cc-desc">Pact magic from a mysterious patron. Eldritch blasts and dark boons.</div>
+          <div class="cc-abilities">Pact Magic • Otherworldly Patron</div>
+          <div class="cc-saves">WIS, CHA saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'sorcerer')">
+          <div class="cc-name">Sorcerer</div>
+          <div class="cc-hp">6 + CON HP</div>
+          <div class="cc-desc">Innate magic from bloodline. Metamagic bends spells to your will.</div>
+          <div class="cc-abilities">Spellcasting • Sorcerous Origin</div>
+          <div class="cc-saves">CON, CHA saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'druid')">
+          <div class="cc-name">Druid</div>
+          <div class="cc-hp">8 + CON HP</div>
+          <div class="cc-desc">Nature's guardian. Shapechange into beasts and command the elements.</div>
+          <div class="cc-abilities">Druidic • Spellcasting</div>
+          <div class="cc-saves">INT, WIS saves</div>
+        </div>
+        <div class="class-card char-class-card" onclick="selectCharClass(this, 'monk')">
+          <div class="cc-name">Monk</div>
+          <div class="cc-hp">8 + CON HP</div>
+          <div class="cc-desc">A martial artist. Unarmed strikes, speed, and ki-powered abilities.</div>
+          <div class="cc-abilities">Unarmored Defense • Martial Arts</div>
+          <div class="cc-saves">STR, DEX saves</div>
+        </div>
+      </div>
+
+      <div class="char-builder-nav">
+        <button class="cb-back-btn" onclick="charBuilderBack()">← Back</button>
+        <button class="cb-next-btn" id="class-next-btn" disabled onclick="charBuilderNext()">Next: Review →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Review & Start -->
+    <div id="char-step-review" class="hidden">
+      <h2>Review Your Character</h2>
+      <div class="char-builder-steps">
+        <span class="cb-step done">Race</span>
+        <span class="cb-step-arrow">→</span>
+        <span class="cb-step done">Class</span>
+        <span class="cb-step-arrow">→</span>
+        <span class="cb-step active">Review</span>
+      </div>
+
+      <div class="char-review-card">
+        <div class="review-header">
+          <span class="review-name" id="review-name">—</span>
+          <span class="review-subtitle" id="review-subtitle">—</span>
+        </div>
+        <div class="review-stats" id="review-stats"></div>
+        <div class="review-details" id="review-details"></div>
+      </div>
+
+      <div class="char-builder-nav">
+        <button class="cb-back-btn" onclick="charBuilderBack()">← Back</button>
+        <button id="scenario-begin-btn" class="scenario-begin-btn" onclick="startDigitalDMGame()">Begin Adventure</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Character Sheet Popup -->
+  <div id="char-sheet-overlay" class="hidden" onclick="closeCharSheet(event)">
+    <div id="char-sheet-panel">
+      <div class="cs-header">
+        <h2 id="cs-title">Character Sheet</h2>
+        <button class="cs-close" onclick="closeCharSheet()">&times;</button>
+      </div>
+      <div class="cs-body" id="cs-body"></div>
+    </div>
   </div>
 
   <div id="start-screen" class="hidden">
@@ -1654,6 +1959,14 @@ function showGameUI(character, code, isSpectator) {
   document.getElementById('messages').classList.remove('hidden');
   document.getElementById('split-divider').classList.remove('hidden');
 
+  // Make char-bar clickable for character sheet
+  var charBar = document.getElementById('char-bar');
+  if (charBar) {
+    charBar.style.cursor = 'pointer';
+    charBar.title = 'Click to view character sheet';
+    charBar.onclick = function() { openCharSheet(); };
+  }
+
   if (isSpectator) {
     // Spectator mode
     document.getElementById('spectator-bar').classList.remove('hidden');
@@ -1832,6 +2145,12 @@ if (betaInput) {
 var selectedGameMode = null;
 var currentGameMode = 'storyline';
 var selectedDigitalDMScenario = null;
+var currentCharacterSheet = null;
+var charBuilderState = {
+  step: 0, // 0=world, 1=race, 2=class, 3=review
+  characterRace: 'human',
+  characterClass: null
+};
 
 async function showModeSelection() {
   document.getElementById('mode-select-screen').classList.remove('hidden');
@@ -1857,6 +2176,9 @@ async function selectMode(mode) {
 function backToModeSelect() {
   document.getElementById('scenario-select-screen').classList.add('hidden');
   selectedDigitalDMScenario = null;
+  // Reset character builder to step 0
+  charBuilderState = { step: 0, characterRace: 'human', characterClass: null };
+  charBuilderShowStep(0);
   document.getElementById('mode-select-screen').classList.remove('hidden');
 }
 
@@ -1926,19 +2248,20 @@ function selectDigitalDMScenario(scenarioId) {
     }
   });
 
-  // Enable begin button
-  var btn = document.getElementById('scenario-begin-btn');
+  // Enable next button
+  var btn = document.getElementById('scenario-next-btn');
   if (btn) {
     btn.disabled = false;
-    btn.textContent = 'Begin Adventure';
+    btn.textContent = 'Next: Create Character →';
   }
 }
 
 async function startDigitalDMGame() {
   if (!selectedDigitalDMScenario) return;
 
-  var name = (document.getElementById('scenario-player-name').value || '').trim() || 'Adventurer';
-  var cls = document.getElementById('scenario-player-class').value || 'fighter';
+  var name = (document.getElementById('ddm-player-name').value || '').trim() || 'Adventurer';
+  var cls = charBuilderState.characterClass || 'fighter';
+  var race = charBuilderState.characterRace || 'human';
   var btn = document.getElementById('scenario-begin-btn');
   if (btn) { btn.disabled = true; btn.textContent = 'Creating world...'; }
 
@@ -1953,7 +2276,7 @@ async function startDigitalDMGame() {
         adventureId: 'digital_dm',
         playerName: name,
         characterClass: cls,
-        characterRace: 'human',
+        characterRace: race,
         betaToken: betaToken,
         gameMode: 'digital_dm',
         scenarioId: selectedDigitalDMScenario
@@ -1980,6 +2303,9 @@ async function startDigitalDMGame() {
     playerRole = 'host';
     lastMsgIndex = 0;
 
+    // Store character sheet for popup
+    currentCharacterSheet = data.characterSheet || null;
+
     // Save session to localStorage for rejoin
     saveSessionToStorage(sessionId, name);
 
@@ -1992,9 +2318,8 @@ async function startDigitalDMGame() {
     // Apply UI config
     applyModeUIConfig(data.uiConfig);
 
-    // Show character name
-    var charName = document.getElementById('char-name');
-    if (charName) charName.textContent = name;
+    // Show character bar with full stats
+    showCharBar(data.character, name, cls);
 
     // Set up HP bar
     showHpBar();
@@ -2041,6 +2366,228 @@ function applyModeUIConfig(uiConfig) {
 }
 
 var setupSelectedClass = null;
+
+// ── Character Builder (Digital DM) ────────────────────────────────────────
+
+var CHAR_STEPS = ['char-step-world', 'char-step-race', 'char-step-class', 'char-step-review'];
+
+function charBuilderShowStep(step) {
+  charBuilderState.step = step;
+  CHAR_STEPS.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    if (el) { if (i === step) el.classList.remove('hidden'); else el.classList.add('hidden'); }
+  });
+}
+
+function charBuilderNext() {
+  var s = charBuilderState.step;
+  if (s === 0) {
+    // World → Race
+    if (!selectedDigitalDMScenario) return;
+    charBuilderShowStep(1);
+  } else if (s === 1) {
+    // Race → Class
+    charBuilderState.characterRace = charBuilderState.characterRace || 'human';
+    charBuilderShowStep(2);
+  } else if (s === 2) {
+    // Class → Review
+    if (!charBuilderState.characterClass) return;
+    buildReviewCard();
+    charBuilderShowStep(3);
+  }
+}
+
+function charBuilderBack() {
+  var s = charBuilderState.step;
+  if (s <= 0) { backToModeSelect(); return; }
+  charBuilderShowStep(s - 1);
+}
+
+function selectRace(el, raceId) {
+  charBuilderState.characterRace = raceId;
+  var cards = document.querySelectorAll('.race-card');
+  cards.forEach(function(c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function selectCharClass(el, classId) {
+  charBuilderState.characterClass = classId;
+  var cards = document.querySelectorAll('.char-class-card');
+  cards.forEach(function(c) { c.classList.remove('selected'); });
+  el.classList.add('selected');
+  var btn = document.getElementById('class-next-btn');
+  if (btn) btn.disabled = false;
+}
+
+function validateCharBuilder() {
+  // Currently no-op; name is optional (defaults to 'Adventurer')
+}
+
+function buildReviewCard() {
+  var name = (document.getElementById('ddm-player-name').value || '').trim() || 'Adventurer';
+  var race = charBuilderState.characterRace || 'human';
+  var cls = charBuilderState.characterClass || 'fighter';
+  var classHp = { barbarian:12, fighter:10, paladin:10, ranger:10, bard:8, cleric:8, druid:8, monk:8, rogue:8, warlock:8, sorcerer:6, wizard:6 };
+  var hitDie = classHp[cls] || 8;
+  var raceBonuses = { human:'all +1', elf:'+2 DEX', dwarf:'+2 CON', halfling:'+2 DEX', 'half-elf':'+2 CHA, +1×2', 'half-orc':'+2 STR, +1 CON', tiefling:'+2 CHA, +1 INT', gnome:'+2 INT', dragonborn:'+2 STR, +1 CHA' };
+  var classFeatures = { fighter:'Fighting Style, Second Wind', wizard:'Spellcasting, Arcane Recovery', rogue:'Expertise, Sneak Attack', cleric:'Spellcasting, Channel Divinity', ranger:'Favored Enemy, Natural Explorer', barbarian:'Rage, Unarmored Defense', bard:'Spellcasting, Bardic Inspiration', paladin:'Divine Sense, Lay on Hands', warlock:'Pact Magic, Patron', sorcerer:'Spellcasting, Origin', druid:'Druidic, Spellcasting', monk:'Unarmored Defense, Martial Arts' };
+  var classSaves = { fighter:'STR, CON', wizard:'INT, WIS', rogue:'DEX, INT', cleric:'WIS, CHA', ranger:'STR, DEX', barbarian:'STR, CON', bard:'DEX, CHA', paladin:'WIS, CHA', warlock:'WIS, CHA', sorcerer:'CON, CHA', druid:'INT, WIS', monk:'STR, DEX' };
+
+  var nameEl = document.getElementById('review-name');
+  if (nameEl) nameEl.textContent = name;
+  var subEl = document.getElementById('review-subtitle');
+  if (subEl) subEl.textContent = 'Level 1 ' + race.charAt(0).toUpperCase() + race.slice(1) + ' ' + cls.charAt(0).toUpperCase() + cls.slice(1);
+
+  // Stats preview (base 10 + racial — approximate, real rolls happen server-side)
+  var statsEl = document.getElementById('review-stats');
+  if (statsEl) {
+    var abils = ['STR','DEX','CON','INT','WIS','CHA'];
+    var vals = [10,10,10,10,10,10]; // base placeholder
+    statsEl.innerHTML = abils.map(function(a, i) {
+      var mod = Math.floor((vals[i] - 10) / 2);
+      var modStr = mod >= 0 ? '+' + mod : '' + mod;
+      return '<div class="review-stat"><div class="rs-label">' + a + '</div><div class="rs-value">' + vals[i] + '</div><div class="rs-mod">' + modStr + '</div></div>';
+    }).join('');
+  }
+
+  var detEl = document.getElementById('review-details');
+  if (detEl) {
+    detEl.innerHTML =
+      '<div class="rd-row"><span class="rd-label">Race Bonus</span><span class="rd-value">' + (raceBonuses[race] || '—') + '</span></div>' +
+      '<div class="rd-row"><span class="rd-label">Hit Die</span><span class="rd-value">d' + (cls==='barbarian'?12:cls==='fighter'||cls==='paladin'||cls==='ranger'?10:8) + ' + CON</span></div>' +
+      '<div class="rd-row"><span class="rd-label">Features</span><span class="rd-value">' + (classFeatures[cls]||'—') + '</span></div>' +
+      '<div class="rd-row"><span class="rd-label">Saving Throws</span><span class="rd-value">' + (classSaves[cls]||'—') + '</span></div>';
+  }
+}
+
+// ── Character Bar Helper ─────────────────────────────────────────────────
+
+function showCharBar(character, name, cls) {
+  var bar = document.getElementById('char-bar');
+  if (!bar) return;
+  bar.classList.remove('hidden');
+  bar.style.cursor = 'pointer';
+  bar.title = 'Click to view character sheet';
+  bar.onclick = function() { openCharSheet(); };
+  var cn = document.getElementById('char-name');
+  if (cn) cn.textContent = (character && character.name) || name || 'Adventurer';
+  var cl = document.getElementById('char-level');
+  if (cl) cl.textContent = (character && character.level) || 1;
+  var cc = document.getElementById('char-class');
+  if (cc) cc.textContent = cls ? cls.charAt(0).toUpperCase() + cls.slice(1) : '—';
+  var hp = document.getElementById('char-hp');
+  if (hp && character && character.hp) hp.textContent = character.hp.current + '/' + character.hp.max;
+}
+
+// ── Character Sheet Popup ────────────────────────────────────────────────
+
+function openCharSheet() {
+  if (!currentCharacterSheet && sessionId) {
+    // Fetch from server if not cached
+    fetch('/api/sessions/' + sessionId + '/character')
+      .then(function(r) { return r.json(); })
+      .then(function(data) { if (data.character) { currentCharacterSheet = data.character; renderCharSheet(data.character); } })
+      .catch(function() {});
+    return;
+  }
+  if (currentCharacterSheet) renderCharSheet(currentCharacterSheet);
+}
+
+function closeCharSheet(e) {
+  if (e && e.target !== document.getElementById('char-sheet-overlay')) return;
+  var ov = document.getElementById('char-sheet-overlay');
+  if (ov) ov.classList.add('hidden');
+}
+
+function renderCharSheet(ch) {
+  var ov = document.getElementById('char-sheet-overlay');
+  var body = document.getElementById('cs-body');
+  var title = document.getElementById('cs-title');
+  if (!ov || !body) return;
+  ov.classList.remove('hidden');
+  if (title) title.textContent = ch.name || 'Character Sheet';
+
+  var s = ch.stats || {};
+  var mod = function(v) { return Math.floor(((v||10) - 10) / 2); };
+  var modStr = function(v) { var m = mod(v); return m >= 0 ? '+' + m : '' + m; };
+  var abils = [
+    { key: 'str', label: 'STR' }, { key: 'dex', label: 'DEX' }, { key: 'con', label: 'CON' },
+    { key: 'int', label: 'INT' }, { key: 'wis', label: 'WIS' }, { key: 'cha', label: 'CHA' }
+  ];
+
+  var html = '';
+
+  // Stats
+  html += '<div class="cs-section"><div class="cs-section-title">Ability Scores</div><div class="cs-stat-grid">';
+  abils.forEach(function(a) {
+    var val = s[a.key] || 10;
+    html += '<div class="cs-stat-box"><div class="cs-abil">' + a.label + '</div><div class="cs-val">' + val + '</div><div class="cs-mod">' + modStr(val) + '</div></div>';
+  });
+  html += '</div></div>';
+
+  // Core info
+  html += '<div class="cs-section"><div class="cs-section-title">Stats</div><div class="cs-info-grid">';
+  html += '<div class="cs-info-item"><div class="cs-info-label">Armor Class</div><div class="cs-info-value">' + (ch.ac || 10) + '</div></div>';
+  html += '<div class="cs-info-item"><div class="cs-info-label">Hit Points</div><div class="cs-info-value">' + (ch.hp ? ch.hp.current + '/' + ch.hp.max : '?') + '</div></div>';
+  html += '<div class="cs-info-item"><div class="cs-info-label">Speed</div><div class="cs-info-value">' + (ch.speed || 30) + ' ft</div></div>';
+  html += '<div class="cs-info-item"><div class="cs-info-label">Proficiency</div><div class="cs-info-value">+' + (ch.proficiencyBonus || 2) + '</div></div>';
+  html += '<div class="cs-info-item"><div class="cs-info-label">Hit Dice</div><div class="cs-info-value">' + (ch.hitDice ? ch.hitDice.die : '—') + '</div></div>';
+  html += '<div class="cs-info-item"><div class="cs-info-label">Level</div><div class="cs-info-value">' + (ch.level || 1) + '</div></div>';
+  html += '</div></div>';
+
+  // Saving Throws
+  if (ch.savingThrows) {
+    html += '<div class="cs-section"><div class="cs-section-title">Saving Throws</div><div class="cs-saves-grid">';
+    abils.forEach(function(a) {
+      var sv = ch.savingThrows[a.key] || {};
+      var val = sv.value != null ? sv.value : mod(s[a.key] || 10);
+      var prof = sv.proficient ? ' <span class="cs-save-prof">●</span>' : '';
+      html += '<div class="cs-save-item"><div class="cs-save-name">' + a.label + '</div><div class="cs-save-val">' + (val >= 0 ? '+' : '') + val + prof + '</div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Features
+  if (ch.features && ch.features.length > 0) {
+    html += '<div class="cs-section"><div class="cs-section-title">Features</div><ul class="cs-feature-list">';
+    ch.features.forEach(function(f) { html += '<li>' + f + '</li>'; });
+    html += '</ul></div>';
+  }
+
+  // Languages
+  if (ch.languages && ch.languages.length > 0) {
+    html += '<div class="cs-section"><div class="cs-section-title">Languages</div>';
+    html += '<div style="color:#ccc;font-size:0.9em;">' + ch.languages.map(function(l) { return l.charAt(0).toUpperCase() + l.slice(1); }).join(', ') + '</div></div>';
+  }
+
+  // Spells
+  if (ch.spells && ch.spells.slots && Object.keys(ch.spells.slots).length > 0) {
+    html += '<div class="cs-section"><div class="cs-section-title">Spell Slots</div><div class="cs-info-grid">';
+    Object.keys(ch.spells.slots).forEach(function(lvl) {
+      html += '<div class="cs-info-item"><div class="cs-info-label">Level ' + lvl + '</div><div class="cs-info-value">' + ch.spells.slots[lvl] + ' slots</div></div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Equipment
+  if (ch.equipment) {
+    html += '<div class="cs-section"><div class="cs-section-title">Equipment</div>';
+    var eq = ch.equipment;
+    var items = [];
+    if (eq.armor) items.push(eq.armor.name || 'Armor');
+    if (eq.shield) items.push(eq.shield.name || 'Shield');
+    if (eq.mainHand) items.push(eq.mainHand.name || 'Weapon');
+    if (eq.offHand) items.push(eq.offHand.name || 'Off-hand');
+    if (items.length > 0) {
+      html += '<div style="color:#ccc;font-size:0.9em;">' + items.join(', ') + '</div>';
+    } else {
+      html += '<div style="color:#666;font-size:0.9em;">No equipment</div>';
+    }
+    html += '</div>';
+  }
+
+  body.innerHTML = html;
+}
 
 function selectSetupClass(el, classId) {
   var cards = document.querySelectorAll('.storyline-class-card');
@@ -2179,6 +2726,7 @@ async function startGame() {
     playerId = data.playerId;
     playerRole = 'host';
     lastMsgIndex = 0;
+    currentCharacterSheet = data.characterSheet || null;
     showGameUI(data.character, data.rejoinCode, false);
     // Store game mode for UI gating on rejoin
     if (data.gameMode) currentGameMode = data.gameMode;
