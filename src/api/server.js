@@ -657,6 +657,17 @@ async function createServer(options = {}) {
         useSceneGraph
       };
 
+      // Store full character sheet on game object for DM integration
+      game.fullCharacter = fullCharacter;
+
+      // Sync HP from character sheet back to session player object for frontend
+      game._syncPlayerHp = function(ch) {
+        const hostPlayer = getHostPlayer(session);
+        if (hostPlayer && hostPlayer.character) {
+          hostPlayer.character.hp = { current: ch.hp.current, max: ch.hp.max };
+        }
+      };
+
       // For theme-based scenarios: pre-populate worldState from world seed
       if (worldSeed && worldSeed.locations) {
         game.worldState = {
@@ -814,6 +825,17 @@ async function createServer(options = {}) {
       class: fullCharacter.characterClass,
     };
     setCharacterSheet(game.contextManager, contextCharacter);
+
+    // Store full character sheet on game object for DM integration
+    game.fullCharacter = fullCharacter;
+
+    // Sync HP from character sheet back to session player object for frontend
+    game._syncPlayerHp = function(ch) {
+      const hostPlayer = getHostPlayer(session);
+      if (hostPlayer && hostPlayer.character) {
+        hostPlayer.character.hp = { current: ch.hp.current, max: ch.hp.max };
+      }
+    };
 
     const coinPool = createCoinPool(adventure.coinPoolConfig);
     const rejoinCode = generateRejoinCode(adventureId);
@@ -1276,6 +1298,11 @@ async function createServer(options = {}) {
       const narrationOpts = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
       recordMessage(sessionId, MessageRouter.narration(result.narrative, narrationOpts));
 
+      // Record character effects (damage, healing, XP, items) as a subtle notification
+      if (result.characterEffects) {
+        recordMessage(sessionId, MessageRouter.characterEffect(result.characterEffects));
+      }
+
       // Generate TTS voice for the narration (async, non-blocking)
       if (voiceEnabled) {
         voiceService.generate(result.narrative).then(ttsResult => {
@@ -1476,6 +1503,11 @@ async function createServer(options = {}) {
       // Record narrative (with scene image if available)
       const narrationOpts2 = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
       recordMessage(session.id, MessageRouter.narration(result.narrative, narrationOpts2));
+
+      // Record character effects (suggestion path)
+      if (result.characterEffects) {
+        recordMessage(session.id, MessageRouter.characterEffect(result.characterEffects));
+      }
 
       // Generate TTS voice for the narration (async, non-blocking)
       if (voiceEnabled) {

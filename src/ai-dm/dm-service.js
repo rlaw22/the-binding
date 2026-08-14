@@ -605,7 +605,8 @@ function createGame(options) {
     sceneState: null, // scene engine state — initialized when first scene starts
     validator: null, // continuity validator — initialized with first scene
     storyPlayerState: null, // StoryEngine player state — initialized for storyline mode
-    storyButtonContext: null // tracks which button the player clicked (type + id)
+    storyButtonContext: null, // tracks which button the player clicked (type + id)
+    fullCharacter: null, // full D&D 5e character sheet from CharacterService
   };
 }
 
@@ -895,6 +896,32 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
       }
     }
 
+    // Inject full character sheet so the DM can reference exact stats for skill checks, combat, etc.
+    if (game.fullCharacter) {
+      const ch = game.fullCharacter;
+      const stats = ch.stats || {};
+      const mod = (v) => Math.floor(((v || 10) - 10) / 2);
+      const modStr = (v) => { const m = mod(v); return m >= 0 ? `+${m}` : `${m}`; };
+      const statLine = Object.entries(stats).map(([k, v]) => `${k.toUpperCase()} ${v} (${modStr(v)})`).join(', ');
+      const saves = ch.savingThrows ? Object.entries(ch.savingThrows).map(([k, v]) => `${k.toUpperCase()} ${v.value >= 0 ? '+' : ''}${v.value}${v.proficient ? '*' : ''}`).join(', ') : 'N/A';
+      const features = ch.features ? ch.features.join(', ') : 'none';
+      const langs = ch.languages ? ch.languages.map(l => l.charAt(0).toUpperCase() + l.slice(1)).join(', ') : 'Common';
+      const spells = ch.spells && ch.spells.cantrips && ch.spells.cantrips.length > 0
+        ? `Cantrips: ${ch.spells.cantrips.join(', ')}. ` + (ch.spells.known ? `Known: ${ch.spells.known.join(', ')}` : '')
+        : '';
+      systemPrompt += `\n\nPLAYER CHARACTER SHEET:
+Name: ${ch.name} | Race: ${ch.race} | Class: ${ch.characterClass} | Level ${ch.level}
+HP: ${ch.hp.current}/${ch.hp.max} | AC: ${ch.ac} | Speed: ${ch.speed}ft | Proficiency: +${ch.proficiencyBonus}
+Stats: ${statLine}
+Saving Throws: ${saves} (* = proficient)
+Features: ${features}
+Languages: ${langs}
+Hit Dice: ${ch.hitDice ? ch.hitDice.current + '/' + ch.hitDice.max + ' d' + ch.hitDice.die : 'N/A'}
+${spells}
+
+USE THIS SHEET for all mechanical references. When the player makes a skill check, use the correct ability modifier and proficiency bonus. When combat occurs, use their AC and HP. Do NOT invent stats — use exactly what is listed above.`;
+    }
+
     // Append world state so the DM maintains consistency
     const ws = game.worldState;
     if (ws.locations.length > 0 || ws.npcs.length > 0) {
@@ -927,6 +954,25 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
         if (equipped) systemPrompt += `\nEQUIPPED: ${equipped}`;
         systemPrompt += `\nNarrate item usage naturally when the player references their gear. If they find a new item, mention it clearly.`;
       }
+    }
+
+    // Inject full character sheet for campaign/storyline mode too
+    if (game.fullCharacter) {
+      const ch = game.fullCharacter;
+      const stats = ch.stats || {};
+      const mod = (v) => Math.floor(((v || 10) - 10) / 2);
+      const modStr = (v) => { const m = mod(v); return m >= 0 ? `+${m}` : `${m}`; };
+      const statLine = Object.entries(stats).map(([k, v]) => `${k.toUpperCase()} ${v} (${modStr(v)})`).join(', ');
+      const saves = ch.savingThrows ? Object.entries(ch.savingThrows).map(([k, v]) => `${k.toUpperCase()} ${v.value >= 0 ? '+' : ''}${v.value}${v.proficient ? '*' : ''}`).join(', ') : 'N/A';
+      const features = ch.features ? ch.features.join(', ') : 'none';
+      systemPrompt += `\n\nPLAYER CHARACTER SHEET:
+Name: ${ch.name} | Race: ${ch.race} | Class: ${ch.characterClass} | Level ${ch.level}
+HP: ${ch.hp.current}/${ch.hp.max} | AC: ${ch.ac} | Speed: ${ch.speed}ft | Proficiency: +${ch.proficiencyBonus}
+Stats: ${statLine}
+Saving Throws: ${saves} (* = proficient)
+Features: ${features}
+
+USE THIS SHEET for all mechanical references. When the player makes a skill check, use the correct ability modifier and proficiency bonus. When combat occurs, use their AC and HP.`;
     }
   }
 
@@ -1040,6 +1086,14 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
 
   // Parse response for game mechanics
   const parsed = parseDMResponse(cleanResponse);
+
+  // Apply character effects from the DM narrative (damage, healing, XP, inventory)
+  if (game.fullCharacter) {
+    const effectsResult = applyCharacterEffects(game, parsed.narrative);
+    if (effectsResult) {
+      parsed.characterEffects = effectsResult;
+    }
+  }
 
   // Save AI-suggested actions before generateSceneActions overwrites them
   const aiSuggestedActions = parsed.suggestedActions;
@@ -1180,7 +1234,8 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
     coinScores,
     playerProfile: game.playerProfile,
     turnNumber: game.turnHistory.length,
-    contextStats: getStats(contextManager)
+    contextStats: getStats(contextManager),
+    characterEffects: parsed.characterEffects || null,
   };
 }
 
@@ -1623,6 +1678,143 @@ function scoreAction(playerAction, context) {
 /**
  * Handle the character creation flow.
  */
+/**
+ * Apply mechanical character effects parsed from the DM's narrative.
+ * Detects damage, healing, XP grants, and item acquisition from natural language.
+ * Returns an effects summary object, or null if nothing was applied.
+ */
+function applyCharacterEffects(game, narrative) {
+  const ch = game.fullCharacter;
+  if (!ch) return null;
+
+  const effects = { damage: 0, healing: 0, xp: 0, items: [], notes: [] };
+  const lower = narrative.toLowerCase();
+
+  // ── Damage detection ──────────────────────────────────────────────────
+  // Match patterns like: "takes 8 damage", "deals 12 points of damage",
+  // "you lose 5 hit points", "suffers 3 points of slashing damage"
+  const damagePatterns = [
+    /(?:you|the player|your character)\s+(?:take|takes|suffer|suffers|lose|loses|receive|receives)\s+(\d+)\s+(?:points?\s+of\s+)?(?:\w+\s+)?damage/i,
+    /deals?\s+(\d+)\s+(?:points?\s+of\s+)?(?:\w+\s+)?damage\s+to\s+you/i,
+    /(\d+)\s+(?:points?\s+of\s+)?(?:\w+\s+)?damage\s+(?:to|against)\s+(?:you|the player)/i,
+    /you\s+(?:are|get)\s+(?:hit|struck|wounded)\s+for\s+(\d+)/i,
+    /take[s]?\s+(\d+)\s+(?:hit\s+points?|hp)\s+(?:of\s+)?damage/i,
+  ];
+  for (const pat of damagePatterns) {
+    const m = narrative.match(pat);
+    if (m) {
+      effects.damage = Math.max(effects.damage, parseInt(m[1], 10));
+    }
+  }
+
+  // ── Healing detection ─────────────────────────────────────────────────
+  const healPatterns = [
+    /(?:you|the player|your character)\s+(?:regain|regains|recover|recovers|heal|heals|gain|gains)\s+(\d+)\s+(?:hit\s+points?|hp)/i,
+    /(?:heals?|restores?|recovers?)\s+(\d+)\s+(?:hit\s+points?|hp)\s+(?:to|for)\s+you/i,
+    /(?:potion|spell|magic)\s+(?:heals?|restores?|recovers?)\s+you\s+(?:for\s+)?(\d+)/i,
+    /drink\s+(?:the\s+)?(?:potion|elixir)[^.!]*?(?:regain|recover|heal)\s+(\d+)/i,
+  ];
+  for (const pat of healPatterns) {
+    const m = narrative.match(pat);
+    if (m) {
+      effects.healing = Math.max(effects.healing, parseInt(m[1], 10));
+    }
+  }
+
+  // ── XP detection ──────────────────────────────────────────────────────
+  const xpPatterns = [
+    /(?:you|the player)\s+(?:gain|gains|earn|earns|receive|receives)\s+(\d+)\s+(?:experience\s+points?|xp|experience)/i,
+    /(\d+)\s+(?:experience\s+points?|xp)\s+(?:awarded|granted|gained|earned)/i,
+    /award[s]?\s+(?:you\s+)?(\d+)\s+(?:experience\s+points?|xp)/i,
+  ];
+  for (const pat of xpPatterns) {
+    const m = narrative.match(pat);
+    if (m) {
+      effects.xp = Math.max(effects.xp, parseInt(m[1], 10));
+    }
+  }
+
+  // ── Item detection ────────────────────────────────────────────────────
+  const itemPatterns = [
+    /(?:you|the player)\s+(?:find|finds|receive|receives|obtain|obtains|pick up|picks up|acquire|acquires|gain|gains)\s+(?:a|an|the)\s+([A-Za-z][\w\s]+?)(?:\.|,|!|\band\b)/i,
+    /(?:give|gives|hand|hands|offer|offers)\s+you\s+(?:a|an|the)\s+([A-Za-z][\w\s]+?)(?:\.|,|!|\band\b)/i,
+    /(?:loot|loot\s+from)[^.!]*?(?:find|finds|obtain|obtains)\s+(?:a|an|the)\s+([A-Za-z][\w\s]+?)(?:\.|,|!)/i,
+  ];
+  for (const pat of itemPatterns) {
+    const m = narrative.match(pat);
+    if (m) {
+      const itemName = m[1].trim().toLowerCase();
+      // Filter out false positives — common non-item phrases
+      const blacklist = ['look', 'moment', 'chance', 'way', 'place', 'room', 'door', 'step',
+        'deep breath', 'closer', 'glance', 'seat', 'rest', 'break', 'fight', 'fighting',
+        'position', 'opportunity', 'approach', 'attack', 'hit', 'damage', 'pain', 'wound'];
+      if (!blacklist.includes(itemName) && itemName.length > 2 && itemName.length < 40) {
+        effects.items.push(itemName);
+      }
+    }
+  }
+
+  // ── Apply effects to the character ────────────────────────────────────
+  const CharacterService = require('../character/character-service');
+  let modified = false;
+
+  // Apply damage
+  if (effects.damage > 0) {
+    ch.hp.current = Math.max(0, ch.hp.current - effects.damage);
+    effects.notes.push(`Took ${effects.damage} damage (HP: ${ch.hp.current}/${ch.hp.max})`);
+    modified = true;
+  }
+
+  // Apply healing
+  if (effects.healing > 0) {
+    const healed = Math.min(effects.healing, ch.hp.max - ch.hp.current);
+    ch.hp.current += healed;
+    effects.notes.push(`Healed ${healed} HP (HP: ${ch.hp.current}/${ch.hp.max})`);
+    modified = true;
+  }
+
+  // Apply XP
+  if (effects.xp > 0) {
+    try {
+      const xpResult = CharacterService.gainXP(ch, effects.xp);
+      effects.notes.push(`Gained ${effects.xp} XP`);
+      if (xpResult.levelsGained > 0) {
+        // Refresh the fullCharacter reference after level-up
+        const updated = CharacterService.getCharacter(ch.id);
+        if (updated) {
+          game.fullCharacter = updated;
+          effects.notes.push(`LEVEL UP! Now level ${updated.level}`);
+          effects.levelUp = true;
+        }
+      }
+      modified = true;
+    } catch (e) {
+      console.warn('[DM] Failed to apply XP:', e.message);
+    }
+  }
+
+  // Apply items
+  for (const itemName of effects.items) {
+    try {
+      CharacterService.addToInventory(ch.id, { name: itemName, type: 'misc', quantity: 1 });
+      effects.notes.push(`Acquired: ${itemName}`);
+      modified = true;
+    } catch (e) {
+      console.warn('[DM] Failed to add item:', e.message);
+    }
+  }
+
+  // Sync HP back to the session player object so the frontend stays current
+  if (modified && game._syncPlayerHp) {
+    game._syncPlayerHp(ch);
+  }
+
+  if (!modified) return null;
+
+  console.log('[DM] Character effects applied:', effects.notes);
+  return effects;
+}
+
 async function processCharacterCreation(game, playerInput, currentStep) {
   const { contextManager, llmProvider } = game;
 

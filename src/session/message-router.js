@@ -29,6 +29,7 @@ const MessageTypes = {
   SPECTATOR_SUGGESTION: 'spectator_suggestion',
   VOICE_AUDIO: 'voice_audio',
   SCENE_IMAGE: 'scene_image',
+  CHARACTER_EFFECT: 'character_effect',
   ERROR: 'error'
 };
 
@@ -267,6 +268,28 @@ function sceneImage(imageUrl, caption, options = {}) {
   });
 }
 
+/**
+ * Create a character effects message — HP damage, healing, XP gains, item pickups.
+ * Rendered as a subtle inline notification in the message stream.
+ * @param {Object} effects - { damage, healing, xp, items, notes }
+ * @param {Object} options
+ */
+function characterEffect(effects, options = {}) {
+  // Build a human-readable summary line
+  const parts = [];
+  if (effects.damage > 0) parts.push(`-${effects.damage} HP`);
+  if (effects.healing > 0) parts.push(`+${effects.healing} HP`);
+  if (effects.xp > 0) parts.push(`+${effects.xp} XP`);
+  if (effects.items && effects.items.length > 0) parts.push(`Found: ${effects.items.join(', ')}`);
+  if (effects.levelUp) parts.push('LEVEL UP!');
+  const summary = parts.join(' | ') || 'No changes';
+  return createMessage(MessageTypes.CHARACTER_EFFECT, summary, {
+    ...options,
+    characterEffects: effects,
+    priority: 'low'
+  });
+}
+
 module.exports = {
   MessageTypes,
   createMessage,
@@ -283,5 +306,6 @@ module.exports = {
   whisper,
   voiceAudio,
   sceneImage,
+  characterEffect,
   error
 };
