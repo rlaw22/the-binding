@@ -228,6 +228,22 @@ async function main() {
  */
 function downloadImage(url) {
   return new Promise((resolve, reject) => {
+    // Handle data URIs (from mock provider or OpenAI b64_json responses)
+    if (url.startsWith('data:')) {
+      try {
+        const match = url.match(/^data:[^;]+;base64,(.+)$/);
+        if (match) {
+          resolve(Buffer.from(match[1], 'base64'));
+        } else {
+          reject(new Error('Invalid data URI format'));
+        }
+      } catch (err) {
+        reject(err);
+      }
+      return;
+    }
+    
+    // Handle HTTP/HTTPS URLs
     const transport = url.startsWith('https') ? require('https') : require('http');
     transport.get(url, { timeout: 30000 }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
