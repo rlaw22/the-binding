@@ -1343,10 +1343,14 @@ async function createServer(options = {}) {
       // Coin reward — removed separate coin comment to avoid meta-commentary
       // Coins are now shown only via the subtle notification system
 
-      // Record suggested actions
-      if (result.suggestedActions.length > 0) {
+      // Record suggested actions (filter out bad choices from AI suggestions if they duplicate scene bad choice)
+      const sceneBadChoice = game.sceneState?.storyMode?.badChoice?.label?.toLowerCase();
+      const filteredActions = sceneBadChoice
+        ? result.suggestedActions.filter(a => !a.label.toLowerCase().includes(sceneBadChoice))
+        : result.suggestedActions;
+      if (filteredActions.length > 0) {
         recordMessage(sessionId, MessageRouter.suggestedActions(
-          result.suggestedActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
+          filteredActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
           'What would you like to do?'
         ));
       }
