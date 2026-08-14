@@ -1455,6 +1455,9 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     }
   }
 
+  // Add bad choice last — it's a trap, should be visually distinct and last in the list
+  actions.push(...badChoiceActions);
+
   // Return all available actions — no filler, no artificial limit
   return actions;
 }
