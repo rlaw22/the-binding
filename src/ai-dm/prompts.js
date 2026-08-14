@@ -23,6 +23,7 @@ AFTER EACH RESPONSE, provide SUGGESTED ACTIONS the player might take next. Provi
 - Specific: not "explore the room" but "Search behind the bookshelf for a hidden passage"
 - In-character: written as if the player is deciding what to do
 - Progressive: at least one suggestion should advance the main story
+- SINGLE ACTIONS ONLY: each suggestion must be ONE discrete action. Do NOT combine multiple actions like "Take the cross and talk to the lady and search the bench". Each suggestion should be independently executable.
 
 CONCISENESS — CRITICAL:
 - 1-3 SHORT paragraphs per response. Aim for 100-200 words total.

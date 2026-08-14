@@ -1403,6 +1403,16 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     type: 'exploration'
   }));
 
+  // Add bad choice if it exists in the scene's storyMode
+  const badChoiceActions = [];
+  if (sceneState.storyMode && sceneState.storyMode.badChoice) {
+    badChoiceActions.push({
+      label: sceneState.storyMode.badChoice.label,
+      shortLabel: generateShortLabel(sceneState.storyMode.badChoice.label),
+      type: 'bad_choice'
+    });
+  }
+
   // Get banned location keywords for filtering suggestions
   const bannedLocations = (sceneState.locationKeywords && sceneState.locationKeywords.banned) || [];
   const bannedLower = bannedLocations.map(l => l.toLowerCase());

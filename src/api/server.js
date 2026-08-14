@@ -1294,9 +1294,13 @@ async function createServer(options = {}) {
         }
       }
 
-      // Record narrative (with scene image if available)
+      // Record narrative (with scene image if available — only show once per scene)
       const narrationOpts = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
       recordMessage(sessionId, MessageRouter.narration(result.narrative, narrationOpts));
+      // Clear the scene image after showing it once to prevent repeats
+      if (game._lastSceneImage) {
+        game._lastSceneImage = null;
+      }
 
       // Record character effects (damage, healing, XP, items) as a subtle notification
       if (result.characterEffects) {
@@ -1336,16 +1340,8 @@ async function createServer(options = {}) {
         } catch (err) { /* image service not available */ }
       }
 
-      // Coin reward — only on genuinely smart moves, shown as a natural DM comment
-      const smartThreshold = 4; // any individual category must score >= 4
-      const scores = result.coinScores || {};
-      const topCategory = Object.entries(scores).reduce((best, [cat, val]) =>
-        val > best[1] ? [cat, val] : best, ['none', 0]);
-
-      if (topCategory[1] >= smartThreshold) {
-        const comment = generateCoinComment(topCategory[0], content);
-        recordMessage(sessionId, MessageRouter.narration(comment));
-      }
+      // Coin reward — removed separate coin comment to avoid meta-commentary
+      // Coins are now shown only via the subtle notification system
 
       // Record suggested actions
       if (result.suggestedActions.length > 0) {
@@ -1500,9 +1496,13 @@ async function createServer(options = {}) {
         recordMessage(session.id, MessageRouter.coinReward({ amount: coinNotification.delta, category: coinNotification.category, reason: coinNotification.displayText }));
       }
 
-      // Record narrative (with scene image if available)
+      // Record narrative (with scene image if available — only show once per scene)
       const narrationOpts2 = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
       recordMessage(session.id, MessageRouter.narration(result.narrative, narrationOpts2));
+      // Clear the scene image after showing it once to prevent repeats
+      if (game._lastSceneImage) {
+        game._lastSceneImage = null;
+      }
 
       // Record character effects (suggestion path)
       if (result.characterEffects) {
@@ -1520,16 +1520,8 @@ async function createServer(options = {}) {
         });
       }
 
-      // Coin reward — same logic as main action endpoint
-      const smartThreshold = 4;
-      const scores = result.coinScores || {};
-      const topCategory = Object.entries(scores).reduce((best, [cat, val]) =>
-        val > best[1] ? [cat, val] : best, ['none', 0]);
-
-      if (topCategory[1] >= smartThreshold) {
-        const comment = generateCoinComment(topCategory[0], suggestion.action);
-        recordMessage(session.id, MessageRouter.narration(comment));
-      }
+      // Coin reward — removed separate coin comment to avoid meta-commentary
+      // Coins are now shown only via the subtle notification system
 
       if (result.suggestedActions.length > 0) {
         recordMessage(session.id, MessageRouter.suggestedActions(
