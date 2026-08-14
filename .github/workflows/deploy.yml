@@ -1,0 +1,24 @@
+name: Deploy to Contabo
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: 207.244.228.80
+        username: neo
+        password: paxneorocks
+        script: |
+          cd /var/www/the-binding
+          git pull origin main
+          npm install --production
+          pm2 restart the-binding
+          echo "✅ Deployed successfully at $(date)"
