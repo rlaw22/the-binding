@@ -19,22 +19,12 @@ jobs:
         script: |
           cd /var/www/the-binding
           echo "=== Current directory: $(pwd) ==="
-          echo "=== Git status before pull ==="
-          git status
-          echo "=== Current commit ==="
-          git log --oneline -1
-          echo "=== Fetching latest changes ==="
-          git fetch origin main
-          echo "=== Resetting to origin/main (forcing sync) ==="
-          git reset --hard origin/main
-          echo "=== Verifying reset ==="
-          git log --oneline -3
-          echo "=== Checking if files changed ==="
-          git diff --name-only HEAD~1..HEAD 2>/dev/null || echo "No previous commit to compare"
+          echo "=== Downloading latest index.html from GitHub ==="
+          curl -sL https://raw.githubusercontent.com/rlaw22/the-binding/main/public/index.html > public/index.html
+          echo "=== Verifying CSS fix ==="
+          grep "mode-select-screen{" public/index.html
           echo "=== Installing dependencies ==="
-          npm install --production
+          npm install --omit=dev
           echo "=== Restarting PM2 ==="
           pm2 restart the-binding
-          echo "=== Verifying file content ==="
-          grep -A 2 "mode-select-screen{" public/index.html | head -3
           echo "✅ Deployed successfully at $(date)"
