@@ -18,7 +18,17 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
           cd /var/www/the-binding
-          git pull origin main
+          echo "Current directory: $(pwd)"
+          echo "Git status before pull:"
+          git status
+          echo "Fetching latest changes..."
+          git fetch origin main
+          echo "Resetting to origin/main..."
+          git reset --hard origin/main
+          echo "Installing dependencies..."
           npm install --production
+          echo "Restarting PM2..."
           pm2 restart the-binding
+          echo "Verifying deployment..."
+          git log --oneline -3
           echo "✅ Deployed successfully at $(date)"
