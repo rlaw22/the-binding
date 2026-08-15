@@ -17,12 +17,26 @@ jobs:
         username: ${{ secrets.SERVER_USER }}
         password: ${{ secrets.SSH_PASSWORD }}
         script: |
+          # Fix git dubious ownership
+          git config --global --add safe.directory /var/www/the-binding
+          
           cd /var/www/the-binding
-          echo "=== Current directory: $(pwd) ==="
-          echo "=== Downloading and running CSS fix script ==="
-          curl -sL https://raw.githubusercontent.com/rlaw22/the-binding/main/fix-css.sh | bash
+          echo "=== Pulling latest code ==="
+          git fetch origin main
+          git reset --hard origin/main
+          echo "=== Current commit ==="
+          git log --oneline -1
+          echo "=== Verifying CSS fix ==="
+          grep "mode-select-screen{" public/index.html
+          echo "=== Killing any orphaned processes on port 3000 ==="
+          fuser -k 3000/tcp || true
+          sleep 2
           echo "=== Installing dependencies ==="
           npm install --omit=dev
           echo "=== Restarting PM2 ==="
-          pm2 restart the-binding
+          pm2 delete the-binding || true
+          pm2 start server.js --name the-binding
+          pm2 save
+          echo "=== Final status ==="
+          pm2 list
           echo "✅ Deployed successfully at $(date)"
