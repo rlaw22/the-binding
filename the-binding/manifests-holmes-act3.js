@@ -32,7 +32,7 @@ module.exports = {
           "blanket",
           "inspect"
         ],
-        "discovery": "The camp is characteristically Holmesian — sparse, methodical, every item placed with purpose. The newspapers are from London, each one bearing reports of Sir Henry's arrival and the Baskerville case. Holmes has circled every mention of Stapleton and drawn connecting lines in the margins. A pair of binoculars lies beside the pipe. A jar of tobacco — his favourite shag — sits on the wall ledge. \"I have been observing Stapleton's movements,\" Holmes says. \"He goes to the Grimpen Mire every evening at dusk. Every evening, without fail. I intend to find out why.\""
+        "discovery": "The camp is characteristically Holmesian — sparse, methodical, every item placed with purpose. The granite boulders are damp with moor mist, and the air smells of peat smoke and cold stone. The newspapers are from London, each one bearing reports of Sir Henry's arrival and the Baskerville case. Holmes has circled every mention of Stapleton and drawn connecting lines in the margins with a blue pencil. A pair of binoculars lies beside the pipe. A jar of tobacco — his favourite shag — sits on the wall ledge, its scent sharp and familiar in the open air. \"I have been observing Stapleton's movements,\" Holmes says. \"He goes to the Grimpen Mire every evening at dusk. Every evening, without fail. I intend to find out why.\""
       },
       {
         "id": "ask_about_stapleton",
@@ -133,7 +133,7 @@ module.exports = {
           "situation",
           "woman"
         ],
-        "discovery": "Holmes's expression softens — as much as Holmes's expression ever softens. \"She is a prisoner, Watson. Not in chains, but in fear. Stapleton controls her absolutely. She obeys him because she has seen what he is capable of. But she has a conscience — I have watched her from hiding, and I have seen her weep when she thinks no one is watching. She tried to warn Sir Henry. That tells me everything I need to know about her character. When this is over, she will need our protection.\""
+        "discovery": "Holmes's expression softens — as much as Holmes's expression ever softens. His grey eyes lose their sharpness for a moment. \"She is a prisoner, Watson. Not in chains, but in fear. Stapleton controls her absolutely. She obeys him because she has seen what he is capable of. But she has a conscience — I have watched her from hiding, and I have seen her weep when she thinks no one is watching. Her shoulders shake in silence. She tried to warn Sir Henry. That tells me everything I need to know about her character. When this is over, she will need our protection. The moor has not been kind to her.\""
       },
       {
         "id": "ask_butterflies",

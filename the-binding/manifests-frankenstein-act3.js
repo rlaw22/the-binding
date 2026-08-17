@@ -45,7 +45,7 @@ module.exports = {
           "animals",
           "world"
         ],
-        "discovery": "You walk deeper into the forest. Everything is new. A deer startles at your approach and bounds away — the first living creature you have seen that is not human. You follow it, marveling at its grace, its speed, its effortless belonging in this world. A rabbit sits in a patch of sunlight, nose twitching. You reach for it and it bolts. You are too large, too strange, too wrong for this gentle place. But the forest itself does not judge you. The trees stand silent and indifferent. The moss grows on the north side of the trunks. The mushrooms cluster in the shade. The world goes on, and you are part of it, whether it knows it or not."
+        "discovery": "You walk deeper into the forest. The air is cool and green, thick with the scent of pine and wet earth. Everything is new. A deer startles at your approach and bounds away — the first living creature you have seen that is not human. You follow it, marveling at its grace, its speed, its effortless belonging in this world. A rabbit sits in a patch of sunlight, nose twitching. You reach for it and it bolts, the dry leaves crackling under its feet. You are too large, too strange, too wrong for this gentle place. But the forest itself does not judge you. The trees stand silent and indifferent, their bark rough against your fingertips when you steady yourself. The moss grows on the north side of the trunks. The mushrooms cluster in the shade. The world goes on, and you are part of it, whether it knows it or not."
       },
       {
         "id": "find_shelter",
@@ -156,7 +156,7 @@ module.exports = {
           "plutarch",
           "sorrows"
         ],
-        "discovery": "Felix leaves books on the windowsill when the weather is fine. You take them at night, careful, silent, and return them before dawn. The first is \"The Sorrows of Young Werther\" — a story of a man who loves a woman he cannot have and destroys himself for it. You read it by moonlight, sounding out the words, and you weep. You weep because Werther's pain is your pain — the pain of wanting something you can never possess. The second book is \"Plutarch's Lives\" — stories of great men who shaped the world. You read about heroes and tyrants, about courage and cruelty, and you wonder which one you are. The third book changes everything: \"Paradise Lost\" by John Milton. You read it three times. And in Satan's words — \"Better to reign in Hell than serve in Heaven\" — you find a mirror of yourself."
+        "discovery": "Felix leaves books on the windowsill when the weather is fine. You take them at night, careful, silent — your fingers trembling on the cool pages — and return them before dawn. The first is \"The Sorrows of Young Werther\" — a story of a man who loves a woman he cannot have and destroys himself for it. You read it by moonlight, sounding out the words, and you weep. You weep because Werther's pain is your pain — the pain of wanting something you can never possess. The second book is \"Plutarch's Lives\" — stories of great men who shaped the world. You read about heroes and tyrants, about courage and cruelty, and you wonder which one you are. The third book changes everything: \"Paradise Lost\" by John Milton. The leather binding is warm from the sun. You read it three times. And in Satan's words — \"Better to reign in Hell than serve in Heaven\" — you find a mirror of yourself."
       },
       {
         "id": "gather_food",
@@ -253,7 +253,7 @@ module.exports = {
           "fire",
           "conversation"
         ],
-        "discovery": "You sit across from the old man and speak. You tell him you are a traveler — alone, without family, without friends. You tell him you have been wandering for months. You tell him you have read books — Milton, Plutarch, Goethe — and his face lights up. \"A scholar!\" he exclaims. \"In these humble surroundings! Tell me, friend, what moved you most in Milton?\" You tell him about Satan — about the fallen angel who chose defiance over submission, who would rather reign in Hell than serve in Heaven. The old man listens, his head tilted, his blind eyes bright. \"You have a poet's soul,\" he says. \"Whatever your circumstances, whatever your appearance, you have a mind that soars.\" Your eyes fill with tears. No one has ever spoken to you like this. No one has ever seen past the surface to the mind beneath."
+        "discovery": "You sit across from the old man and speak. The fire crackles between you, its warmth on your face. You tell him you are a traveler — alone, without family, without friends. You tell him you have been wandering for months. You tell him you have read books — Milton, Plutarch, Goethe — and his face lights up. \"A scholar!\" he exclaims. \"In these humble surroundings! Tell me, friend, what moved you most in Milton?\" You tell him about Satan — about the fallen angel who chose defiance over submission, who would rather reign in Hell than serve in Heaven. The old man listens, his head tilted, his blind eyes bright. \"You have a poet's soul,\" he says, his voice warm. \"Whatever your circumstances, whatever your appearance, you have a mind that soars.\" Your eyes fill with tears. No one has ever spoken to you like this. No one has ever seen past the surface to the mind beneath. The fire pops, and a log shifts."
       },
       {
         "id": "ask_about_family",
@@ -406,7 +406,7 @@ module.exports = {
           "grief",
           "howl"
         ],
-        "discovery": "You run until the cottage is far behind. Then you stop, and the sound that comes from you is not human. It is not animal. It is the howl of a creature that has been given a soul and then shown that the soul is worthless — that no amount of learning, of kindness, of longing can overcome the accident of its appearance. You tear at the trees with your bare hands. You rip bark from trunks and hurl stones into the darkness. You roar until your throat is raw and the forest echoes with your grief. And when the rage passes, you lie on the forest floor and weep, and the weeping is worse than the rage, because the weeping is the sound of hope dying."
+        "discovery": "You run until the cottage is far behind. Then you stop, and the sound that comes from you is not human. It is not animal. It is the howl of a creature that has been given a soul and then shown that the soul is worthless — that no amount of learning, of kindness, of longing can overcome the accident of its appearance. You tear at the trees with your bare hands — the bark scrapes your palms raw. You rip bark from trunks and hurl stones into the darkness. You roar until your throat is raw and the forest echoes with your grief. The cold night air burns your lungs. And when the rage passes, you lie on the forest floor and weep, the leaves damp beneath your cheek, and the weeping is worse than the rage, because the weeping is the sound of hope dying."
       }
     ],
     "exitAction": "flee_into_night",
@@ -494,7 +494,7 @@ module.exports = {
           "firelight",
           "book"
         ],
-        "discovery": "You huddle in a cave and read \"Paradise Lost\" by the light of a small fire. You read Satan's speech — \"The mind is its own place, and in itself can make a Heaven of Hell, a Hell of Heaven\" — and you understand. You are Satan. Not evil, but fallen. Created by a god who did not think about what he was creating, and then cast out into a world that was not made for you. You read further: \"Which way I fly is Hell; myself am Hell.\" You close the book and stare at the fire. You are Hell. You are also the only creature in the world who knows it."
+        "discovery": "You huddle in a cave and read \"Paradise Lost\" by the light of a small fire. The pages are damp, the ink slightly blurred. You read Satan's speech — \"The mind is its own place, and in itself can make a Heaven of Hell, a Hell of Heaven\" — and you understand. You are Satan. Not evil, but fallen. Created by a god who did not think about what he was creating, and then cast out into a world that was not made for you. You read further: \"Which way I fly is Hell; myself am Hell.\" The fire crackles and spits. You close the book and stare at the flames. You are Hell. You are also the only creature in the world who knows it."
       },
       {
         "id": "observe_family",

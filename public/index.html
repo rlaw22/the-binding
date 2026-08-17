@@ -87,6 +87,13 @@ body.storyline-active .storyline-actions .action-btn{
   border-radius:20px;touch-action:manipulation;
   position:relative;
 }
+/* ── Discovered (dimmed) buttons — anti-funnel ─────────────────────────── */
+.story-btn-discovered{
+  opacity:0.55!important;
+  font-size:0.78em!important;border-style:dashed!important;
+  min-height:28px!important;
+  padding:5px 10px!important;
+}
 /* ── Ambient Candle (upper-left) ──────────────────────────────────────────── */
 body.storyline-active #app::before{
   content:'';position:fixed;top:56px;left:10px;
@@ -115,10 +122,10 @@ body.storyline-active #app::before{
 /* Voice playing indicator */
 .voice-indicator{display:inline-block;margin-left:8px;font-size:0.8em;color:#C9A84C;animation:voicePulse 1.5s ease-in-out infinite;}
 @keyframes voicePulse{0%,100%{opacity:0.5;}50%{opacity:1;}}
-#start-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+#start-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
 #start-screen h2{color:#C9A84C;font-size:1.4em;}
 #start-screen p{color:#F5F0E1aa;max-width:500px;font-size:1.05em;line-height:1.6;}
-#gate-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+#gate-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
 #gate-screen h2{color:#C9A84C;font-size:1.4em;letter-spacing:2px;}
 #gate-screen p{color:#F5F0E1aa;max-width:400px;font-size:1em;line-height:1.6;}
 #gate-form{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:340px;}
@@ -143,10 +150,8 @@ body.storyline-active #app::before{
 #nda-continue{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;width:100%;max-width:440px;transition:all 0.2s;opacity:0.4;pointer-events:none;}
 #nda-continue.enabled{opacity:1;pointer-events:auto;}
 #nda-continue.enabled:hover{background:#E8A838;border-color:#E8A838;}
-#questionnaire-screen{text-align:center;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow-y:auto;flex:1;}
-#questionnaire-screen h2{color:#C9A84C;font-size:1.3em;letter-spacing:2px;}
-#questionnaire-screen .q-sub{color:#F5F0E1aa;max-width:400px;font-size:0.92em;line-height:1.5;}
-#mode-select-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+
+#mode-select-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;}
 #mode-select-screen h2{color:#C9A84C;font-size:1.4em;letter-spacing:2px;}
 .mode-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:700px;}
 .mode-card{background:#0C0B10;border:2px solid #C9A84C44;border-radius:12px;padding:24px 20px;width:200px;cursor:pointer;transition:all 0.3s;text-align:center;}
@@ -158,14 +163,6 @@ body.storyline-active #app::before{
 .mode-card .mode-tagline{color:#E8A838;font-size:0.88em;font-style:italic;margin-bottom:10px;}
 .mode-card .mode-desc{color:#F5F0E1aa;font-size:0.85em;line-height:1.5;}
 
-#questionnaire-form{display:flex;flex-direction:column;gap:14px;width:100%;max-width:440px;text-align:left;}
-.q-field label{display:block;color:#C9A84C;font-size:0.88em;font-weight:600;margin-bottom:5px;}
-.q-field input,.q-field select,.q-field textarea{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:11px 14px;border-radius:8px;font-family:Georgia,serif;font-size:0.95em;}
-.q-field textarea{min-height:70px;resize:vertical;}
-.q-field input:focus,.q-field select:focus,.q-field textarea:focus{outline:none;border-color:#C9A84C;}
-#q-submit{background:#C9A84C;border:1px solid #C9A84C;color:#1A1A2E;padding:14px 32px;border-radius:8px;cursor:pointer;font-weight:600;font-family:Georgia,serif;font-size:1.05em;width:100%;transition:all 0.2s;margin-top:4px;}
-#q-submit:hover{background:#E8A838;border-color:#E8A838;}
-#q-error{color:#e74c3c;font-size:0.88em;min-height:1.2em;}
 #start-form{display:flex;flex-direction:column;gap:12px;align-items:center;width:100%;max-width:300px;}
 #start-form input,#start-form select{width:100%;background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;padding:14px 16px;border-radius:8px;font-family:Georgia,serif;font-size:1.05em;min-height:48px;}
 #adventure-select{background:#1A1A2E;border:1px solid #C9A84C44;color:#F5F0E1;font-family:Georgia,serif;padding:14px 16px;border-radius:8px;cursor:pointer;}
@@ -203,7 +200,6 @@ body.game-active #auto-rejoin-banner{display:none;}
   body.game-active #char-bar{padding:4px 8px;font-size:0.75em;gap:8px;margin-bottom:4px;}
   body.game-active #coin-bar{padding:3px 8px;font-size:0.75em;margin-bottom:4px;}
   body.game-active #progress-bar{padding:3px 8px;font-size:0.7em;margin-bottom:4px;}
-  body.game-active #inv-toggle{width:36px;height:36px;bottom:6px;right:6px;}
   body.game-active #inv-panel{width:50vw;right:-50vw;}
   body.game-active #messages{flex:8;}
   body.game-active #actions{flex:2;}
@@ -266,8 +262,7 @@ body.game-active #auto-rejoin-banner{display:none;}
   /* Report button: reposition */
   #report-btn{bottom:8px;right:8px;padding:6px 10px;font-size:0.75em;}
 
-  /* Inventory toggle: ensure touch-friendly */
-  #inv-toggle{width:48px;height:48px;bottom:12px;right:12px;}
+  /* Inventory toggle: now in top bar, no mobile overrides needed */
   #inv-panel{width:85vw;right:-85vw;}
 
   /* Combat overlay: mobile-friendly */
@@ -284,9 +279,6 @@ body.game-active #auto-rejoin-banner{display:none;}
   #nda-screen{padding:16px;}
   #nda-box{max-height:40vh;padding:16px;font-size:0.88em;}
   #nda-continue{padding:14px 24px;}
-  #questionnaire-screen{padding:16px;}
-  .q-field input,.q-field select,.q-field textarea{padding:12px;font-size:0.92em;}
-  #q-submit{padding:14px 24px;}
   #start-screen{padding:24px 16px;}
   #start-form input,#start-form select{padding:12px 14px;font-size:0.95em;}
   #start-form button{padding:14px 24px;font-size:1em;}
@@ -298,10 +290,6 @@ body.game-active #auto-rejoin-banner{display:none;}
   /* Reconnect banner */
   #reconnect-banner{padding:10px 12px;}
   #reconnect-banner .reconnect-btn{padding:10px 14px;font-size:0.85em;}
-  /* Mode selection screen: mobile-friendly */
-  #mode-select-screen{padding:24px 16px;}
-  .mode-cards{flex-direction:column;align-items:center;gap:16px;}
-  .mode-card{width:100%;max-width:300px;padding:20px 16px;}
 }
 
 /* ── Mobile: very small screens (< 400px) ──────────────────────────────────── */
@@ -383,9 +371,9 @@ body.game-active #auto-rejoin-banner{display:none;}
 #reconnect-banner .reconnect-btn{background:#e74c3c;border:none;color:#fff;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-left:10px;}
 
 /* ── Inventory Panel ──────────────────────────────────────────────────────── */
-#inv-toggle{position:fixed;bottom:16px;right:16px;z-index:90;width:44px;height:44px;border-radius:50%;background:#C9A84C;border:2px solid #E8A838;color:#1A1A2E;font-size:1.2em;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px #C9A84C44;transition:all 0.2s;}
-#inv-toggle:hover{transform:scale(1.1);box-shadow:0 4px 20px #C9A84C66;}
-#inv-toggle .inv-count{position:absolute;top:-4px;right:-4px;background:#E8A838;color:#1A1A2E;font-size:0.65em;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Helvetica Neue',Arial,sans-serif;}
+#inv-toggle{background:none;border:1px solid #C9A84C44;color:#C9A84C;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:0.85em;display:flex;align-items:center;gap:4px;transition:all 0.2s;font-family:Georgia,serif;}
+#inv-toggle:hover{border-color:#C9A84C;background:#C9A84C11;}
+#inv-toggle .inv-count{font-weight:bold;}
 #inv-panel{position:fixed;top:0;right:-320px;width:300px;height:100%;background:#1A1A2E;border-left:1px solid #C9A84C33;z-index:150;transition:right 0.3s ease;display:flex;flex-direction:column;box-shadow:-4px 0 20px #0008;}
 #inv-panel.open{right:0;}
 #inv-panel .inv-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #C9A84C22;}
@@ -913,9 +901,10 @@ body.game-active #auto-rejoin-banner{display:none;}
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px;">
+      <button id="inv-toggle" class="hidden" onclick="toggleInventory()">🎒 <span class="inv-count" id="inv-count">0</span></button>
+      <button id="gallery-btn" class="hidden" onclick="toggleGallery()">🎨 <span class="gallery-count" id="gallery-count">0</span></button>
       <span style="color:#E8A838;font-size:0.85em;">Coins:</span>
       <span id="story-coin-text" style="color:#E8A838;font-weight:bold;font-size:0.95em;"></span>
-      <button id="gallery-btn" class="hidden" onclick="toggleGallery()">🎨 <span class="gallery-count" id="gallery-count">0</span></button>
     </div>
   </div>
 
@@ -983,45 +972,6 @@ body.game-active #auto-rejoin-banner{display:none;}
       <span>I have read and agree to the Confidentiality Agreement</span>
     </label>
     <button id="nda-continue" onclick="agreeNDA()">Continue</button>
-  </div>
-
-  <!-- Questionnaire Screen -->
-  <div id="questionnaire-screen" class="hidden">
-    <h2>A Few Quick Questions</h2>
-    <p class="q-sub">Help us make The Binding better. This takes about 30 seconds.</p>
-    <div id="questionnaire-form">
-      <div class="q-field">
-        <label>How did you hear about The Binding?</label>
-        <input type="text" id="q-howheard" placeholder="Friend, social media, etc.">
-      </div>
-      <div class="q-field">
-        <label>How experienced are you with D&D or tabletop RPGs?</label>
-        <select id="q-experience">
-          <option value="">&mdash; Select &mdash;</option>
-          <option value="never">Never played</option>
-          <option value="casual">A few sessions</option>
-          <option value="regular">Regular player</option>
-          <option value="veteran">Veteran / DM</option>
-          <option value="designer">Game designer</option>
-        </select>
-      </div>
-      <div class="q-field">
-        <label>What device will you primarily play on?</label>
-        <select id="q-device">
-          <option value="">&mdash; Select &mdash;</option>
-          <option value="iphone">iPhone</option>
-          <option value="android">Android phone</option>
-          <option value="tablet">iPad / Tablet</option>
-          <option value="desktop">Laptop / Desktop</option>
-        </select>
-      </div>
-      <div class="q-field">
-        <label>What excites you most about The Binding? <span style="color:#F5F0E166;font-weight:normal;">(optional)</span></label>
-        <textarea id="q-excitement" placeholder="Tell us what drew you in..."></textarea>
-      </div>
-      <div id="q-error"></div>
-      <button id="q-submit" onclick="submitQuestionnaire()">Enter the Game</button>
-    </div>
   </div>
 
 
@@ -1444,12 +1394,6 @@ body.game-active #auto-rejoin-banner{display:none;}
     <span class="scene-name" id="progress-scene">—</span>
   </div>
 
-  <!-- Inventory Toggle -->
-  <button id="inv-toggle" class="hidden" onclick="toggleInventory()">
-    <span>🎒</span>
-    <span class="inv-count" id="inv-count">0</span>
-  </button>
-
   <!-- Inventory Panel -->
   <div id="inv-panel">
     <div class="inv-header">
@@ -1599,7 +1543,7 @@ function initSpectatorMode() {
   playerRole = 'spectator';
 
   // Hide all pre-game screens
-  var screens = ['gate-screen', 'nda-screen', 'questionnaire-screen', 'mode-select-screen', 'start-screen', 'storyline-setup-screen', 'scenario-select-screen'];
+  var screens = ['gate-screen', 'nda-screen', 'mode-select-screen', 'start-screen', 'storyline-setup-screen', 'scenario-select-screen'];
   screens.forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.add('hidden');
@@ -1621,7 +1565,7 @@ function initSpectatorMode() {
   var reportBtn = document.getElementById('report-btn');
   if (reportBtn) reportBtn.style.display = 'none';
   var invToggle = document.getElementById('inv-toggle');
-  if (invToggle) invToggle.style.display = 'none';
+  if (invToggle) invToggle.classList.add('hidden');
 
   // Auto-scroll narrative
   var messagesPane = document.getElementById('messages');
@@ -2037,16 +1981,12 @@ async function validateBetaToken() {
       btn.disabled = false;
       return;
     }
-    // Save token and advance through NDA/questionnaire gate
+    // Save token and advance through NDA gate
     betaToken = code;
     localStorage.setItem('betaToken', code);
     document.getElementById('gate-screen').classList.add('hidden');
     if (localStorage.getItem('ndaAccepted_' + code)) {
-      if (localStorage.getItem('questionnaireDone_' + code)) {
-        document.getElementById('mode-select-screen').classList.remove('hidden');
-      } else {
-        document.getElementById('questionnaire-screen').classList.remove('hidden');
-      }
+      document.getElementById('mode-select-screen').classList.remove('hidden');
     } else {
       document.getElementById('nda-screen').classList.remove('hidden');
     }
@@ -2081,11 +2021,7 @@ async function validateBetaToken() {
     }
     document.getElementById('gate-screen').classList.add('hidden');
     if (localStorage.getItem('ndaAccepted_' + betaToken)) {
-      if (localStorage.getItem('questionnaireDone_' + betaToken)) {
-        document.getElementById('mode-select-screen').classList.remove('hidden');
-      } else {
-        document.getElementById('questionnaire-screen').classList.remove('hidden');
-      }
+      document.getElementById('mode-select-screen').classList.remove('hidden');
     } else {
       document.getElementById('nda-screen').classList.remove('hidden');
     }
@@ -2105,38 +2041,9 @@ function agreeNDA() {
   if (!document.getElementById('nda-checkbox').checked) return;
   localStorage.setItem('ndaAccepted_' + betaToken, 'true');
   document.getElementById('nda-screen').classList.add('hidden');
-  document.getElementById('questionnaire-screen').classList.remove('hidden');
-}
-
-async function submitQuestionnaire() {
-  var howHeard = document.getElementById('q-howheard').value.trim();
-  var experience = document.getElementById('q-experience').value;
-  var device = document.getElementById('q-device').value;
-  var excitement = document.getElementById('q-excitement').value.trim();
-  var errorEl = document.getElementById('q-error');
-
-  if (!howHeard) { errorEl.textContent = 'Please tell us how you heard about us.'; return; }
-  if (!experience) { errorEl.textContent = 'Please select your experience level.'; return; }
-  if (!device) { errorEl.textContent = 'Please select your device.'; return; }
-  errorEl.textContent = '';
-
-  // Save to server (non-blocking)
-  try {
-    await fetch('/api/beta/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        token: betaToken,
-        ndaAccepted: true,
-        questionnaire: { howHeard: howHeard, experience: experience, device: device, excitement: excitement }
-      })
-    });
-  } catch(e) { /* non-blocking — continue even if server is down */ }
-
-  localStorage.setItem('questionnaireDone_' + betaToken, 'true');
-  document.getElementById('questionnaire-screen').classList.add('hidden');
   document.getElementById('mode-select-screen').classList.remove('hidden');
 }
+
 
 var betaInput = document.getElementById('beta-token-input');
 if (betaInput) {
@@ -3425,10 +3332,10 @@ function fetchInventory() {
       var toggle = document.getElementById('inv-toggle');
       var count = document.getElementById('inv-count');
       var list = document.getElementById('inv-list');
-      // Bug fix #7: only show inventory toggle when there are items
+      // P0 fix: always show inventory toggle when session is active (even with 0 items).
+      // Previously hid the toggle when empty, which meant the tray was inaccessible.
       if (toggle) {
-        if (items.length > 0) toggle.classList.remove('hidden');
-        else toggle.classList.add('hidden');
+        toggle.classList.remove('hidden');
       }
       if (count) count.textContent = items.length;
       if (!list) return;
@@ -4009,11 +3916,15 @@ function renderStoryButtons(buttons) {
   if (!container) return;
   container.innerHTML = '';
   var isMobile = _isMobileViewport();
-  var count = Math.min(buttons.length, 8); // Max 8 buttons
+  var count = Math.min(buttons.length, 12); // Max 12 buttons (increased for anti-funnel)
   for (var i = 0; i < count; i++) {
     var btn = buttons[i];
     var el = document.createElement('button');
     el.className = 'action-btn story-btn story-btn-' + btn.type;
+    // Anti-funnel: discovered items get dimmed, non-clickable styling
+    if (btn.type === 'explored') {
+      el.className += ' story-btn-discovered';
+    }
     var fullLabel = btn.label;
     var shortLabel = btn.shortLabel || generateClientShortLabel(fullLabel);
     el.setAttribute('data-full-label', fullLabel);

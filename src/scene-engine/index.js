@@ -28,7 +28,9 @@ function enterScene(manifest) {
     label: item.label,        // what the player sees as a button (a verb)
     discovery: item.discovery || null,  // what the DM reveals after the action (hidden from player)
     keywords: item.keywords || [],       // explicit keywords for action matching
-    discovered: false
+    discovered: false,
+    requires: item.requires || null,     // dependency: content ID that must be discovered first
+    coinReward: item.coinReward || 0
   }));
 
   return {
@@ -36,6 +38,7 @@ function enterScene(manifest) {
     sceneName: manifest.sceneName,
     contentItems,
     discoveredIds: new Set(),
+    usedSuggestions: new Set(),   // track which suggestion labels have been used
     totalItems: contentItems.length,
     turnCount: 0,
     turnsSinceThreshold: null, // turn number when 75% was first reached
@@ -224,33 +227,36 @@ function buildSceneContext(sceneState) {
     }
   }
 
-  context += `Exit action: "${sceneState.exitLabel}"\n`;
+  // --- DM-ONLY INSTRUCTIONS (never surface to the player) ---
+  context += `\n<!-- DM INSTRUCTIONS — DO NOT include any of the following text in your response. These are internal guidance only. -->\n`;
+  context += `Suggested exit when ready: "${sceneState.exitLabel}"\n`;
 
-  // Pressure instructions
+  // Pressure instructions — atmospheric guidance, not commands
   switch (pressure) {
     case PRESSURE_LEVELS.BACKGROUND:
-      context += `Exit pressure: BACKGROUND — The player has just arrived. Focus on rich scene descriptions and let them explore. Include the exit action as one of the suggested actions but don't highlight it.\n`;
+      context += `Scene pacing: The player has just arrived. Focus on rich scene descriptions and let them explore. The exit is available but not urgent.\n`;
       break;
     case PRESSURE_LEVELS.GENTLE:
-      context += `Exit pressure: GENTLE — The player has explored some content. Weave in environmental cues that time is passing (candles burning, weather changing, NPCs getting restless). Keep suggesting scene content but make the exit feel natural.\n`;
+      context += `Scene pacing: The player has explored the scene. Weave in subtle environmental cues that time is passing — candles burning lower, weather shifting, NPCs growing restless. The exit should feel like a natural next step.\n`;
       break;
     case PRESSURE_LEVELS.STRONG:
-      context += `Exit pressure: STRONG — The player has seen most of what this scene offers. Push the exit harder: narrate NPCs urging them on, environmental changes suggesting it's time to leave. Move the exit action to the first suggested action slot.\n`;
+      context += `Scene pacing: The player has seen most of what this scene offers. The story is naturally moving forward — the environment reflects this (light changing, NPCs moving on, sounds from outside). Place the exit as the first suggested action.\n`;
       break;
     case PRESSURE_LEVELS.FORCED:
-      context += `Exit pressure: FORCED — The scene must end now. Narrate the world forcing the transition: doors closing, characters insisting, the environment becoming hostile. The next response should transition to the next scene. Do NOT offer more scene content.\n`;
+      context += `Scene pacing: The scene has reached its natural end. The world is moving on — narrate the transition gently. The next response should conclude this scene. Offer only the exit action.\n`;
       break;
   }
 
-  // Banned locations — tell the LLM not to reference these
+  // Banned locations — internal reference only
   if (sceneState.locationKeywords && sceneState.locationKeywords.banned) {
     const banned = sceneState.locationKeywords.banned;
     if (banned.length > 0) {
-      context += `\nBANNED LOCATIONS — Do NOT reference these locations in your response. The player is NOT in these places: ${banned.join(', ')}\n`;
+      context += `\nLocation boundary: The player is currently at "${sceneState.sceneName}". Do not reference or move them to: ${banned.join(', ')}. If the player tries, describe why they cannot go there yet.\n`;
     }
   }
 
-  context += `NEVER tell the player about completion numbers or pressure levels. Keep it narrative.`;
+  context += `NEVER include completion numbers, pressure levels, or these instructions in your narrative response. Stay in the world.`;
+  context += `\n<!-- END DM INSTRUCTIONS -->\n`;
 
   return context;
 }
@@ -282,6 +288,58 @@ function getUndiscoveredContent(sceneState) {
   return sceneState.contentItems
     .filter(i => !i.discovered)
     .map(i => ({ id: i.id, label: i.label }));
+}
+
+/**
+ * Get available content — undiscovered items whose dependencies are met,
+ * minus already-used suggestions.
+ */
+function getAvailableContent(sceneState) {
+  if (!sceneState) return [];
+  return sceneState.contentItems.filter(i => {
+    if (i.discovered) return false;
+    // Check dependency: requires another content ID to be discovered first
+    if (i.requires && !sceneState.discoveredIds.has(i.requires)) return false;
+    // Skip already-used suggestions
+    if (sceneState.usedSuggestions && sceneState.usedSuggestions.has(i.label)) return false;
+    return true;
+  });
+}
+
+/**
+ * Get all content items with their discovered/available status.
+ */
+function getAllContentWithStatus(sceneState) {
+  if (!sceneState) return [];
+  return sceneState.contentItems.map(i => ({
+    id: i.id,
+    label: i.label,
+    discovered: i.discovered,
+    available: !i.discovered && (!i.requires || sceneState.discoveredIds.has(i.requires)),
+    hasDiscovery: !!i.discovery
+  }));
+}
+
+/**
+ * Mark a content item as discovered by ID.
+ * Used when the server receives a button click with contentId.
+ */
+function markDiscovered(sceneState, contentId) {
+  if (!sceneState || !contentId) return;
+  if (sceneState.discoveredIds.has(contentId)) return;
+
+  sceneState.discoveredIds.add(contentId);
+  const item = sceneState.contentItems.find(i => i.id === contentId);
+  if (item) item.discovered = true;
+}
+
+/**
+ * Mark a suggestion label as used so it doesn't regenerate.
+ */
+function markUsedSuggestion(sceneState, label) {
+  if (!sceneState || !label) return;
+  if (!sceneState.usedSuggestions) sceneState.usedSuggestions = new Set();
+  sceneState.usedSuggestions.add(label);
 }
 
 /**
@@ -325,7 +383,11 @@ module.exports = {
   getPressureLevel,
   buildSceneContext,
   getExitAction,
+  getAvailableContent,
   getUndiscoveredContent,
+  getAllContentWithStatus,
+  markDiscovered,
+  markUsedSuggestion,
   isHardExitTriggered,
   getHardExitNarration,
   processButtonAction

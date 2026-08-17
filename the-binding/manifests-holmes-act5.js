@@ -132,7 +132,7 @@ module.exports = {
           "holmes",
           "history"
         ],
-        "discovery": "Holmes retrieves the forged documents from the satchel. \"Stapleton was educated at Cambridge — I have confirmed this through my contacts. He studied natural sciences, which gave him his cover as a naturalist. He was brilliant, by all accounts — a first-class mind wasted on a single, poisonous obsession. After Cambridge, he disappeared. Changed his name. Moved to Dartmoor. Spent three years establishing himself as a harmless eccentric with a butterfly net.\" He pauses. \"The tragedy, Watson, is that he was genuinely talented. His entomological work was published in several journals. He could have had a legitimate career. Instead, he chose murder.\""
+        "discovery": "Holmes retrieves the forged documents from the satchel. The leather is damp from the moor, and the papers inside are spotted with moisture. \"Stapleton was educated at Cambridge — I have confirmed this through my contacts. He studied natural sciences, which gave him his cover as a naturalist. He was brilliant, by all accounts — a first-class mind wasted on a single, poisonous obsession. After Cambridge, he disappeared. Changed his name. Moved to Dartmoor. Spent three years establishing himself as a harmless eccentric with a butterfly net.\" He pauses, tapping the forged birth certificate with one long finger. \"The tragedy, Watson, is that he was genuinely talented. His entomological work was published in several journals. He could have had a legitimate career. Instead, he chose murder.\" The fire crackles in the grate, and the scent of burning peat fills the room."
       },
       {
         "id": "ask_about_hound_breeding",
@@ -264,7 +264,7 @@ module.exports = {
           "married",
           "fear"
         ],
-        "discovery": "\"The first year was bearable,\" Beryl says. \"He was still the man I married — attentive, intelligent, passionate about his work. But as the plan took shape, he changed. He became consumed. The hound, the breeding, the training — it was all he talked about, all he thought about. I became an accessory. A prop. The 'sister' who kept the house and smiled at visitors.\" She pauses. \"I tried to leave once. Packed a bag in the night. He found me on the road to Grimpen. He did not hit me. He did not need to. He simply looked at me and said, 'If you leave, I will find you. And then I will find your family.' I went back. I stayed. I obeyed.\""
+        "discovery": "\"The first year was bearable,\" Beryl says. Her voice is low, steady, but her hands twist a handkerchief in her lap — the linen white and creased from constant folding. \"He was still the man I married — attentive, intelligent, passionate about his work. But as the plan took shape, he changed. He became consumed. The hound, the breeding, the training — it was all he talked about, all he thought about. The house stank of dog and raw meat.\" She pauses, and you hear her breath catch. \"I became an accessory. A prop. The 'sister' who kept the house and smiled at visitors.\" She pauses. \"I tried to leave once. Packed a bag in the night. He found me on the road to Grimpen. He did not hit me. He did not need to. He simply looked at me and said, 'If you leave, I will find you. And then I will find your family.' I went back. I stayed. I obeyed.\""
       },
       {
         "id": "ask_about_future",
@@ -377,7 +377,7 @@ module.exports = {
           "article",
           "press"
         ],
-        "discovery": "Holmes hands you the paper. The headline reads: \"MYSTERIOUS DEATH ON DARTMOOR — Naturalist Lost in Bog.\" The article describes Stapleton as a respected local naturalist who wandered into the Grimpen Mire during fog and was presumed drowned. No mention of the hound, no mention of the Baskerville connection, no mention of murder. Holmes catches your expression. \"The official version, Watson. Lestrade has been thorough. The inquest will record an accidental death. Sir Henry's name will not appear. The Baskerville legend will fade into the obscurity it deserves.\" He takes back the paper. \"Some truths are better served by discretion than by headlines.\""
+        "discovery": "Holmes hands you the paper. The ink is still fresh, smudging slightly under your thumb. The headline reads: \"MYSTERIOUS DEATH ON DARTMOOR — Naturalist Lost in Bog.\" The article describes Stapleton as a respected local naturalist who wandered into the Grimpen Mire during fog and was presumed drowned. No mention of the hound, no mention of the Baskerville connection, no mention of murder. The paper smells of printer's ink and cheap newsprint. Holmes catches your expression. \"The official version, Watson. Lestrade has been thorough. The inquest will record an accidental death. Sir Henry's name will not appear. The Baskerville legend will fade into the obscurity it deserves.\" He takes back the paper, folding it with precise, deliberate creases. \"Some truths are better served by discretion than by headlines.\""
       },
       {
         "id": "plan_account",
@@ -392,7 +392,7 @@ module.exports = {
           "watson",
           "notes"
         ],
-        "discovery": "\"You must write it, Watson,\" Holmes says firmly. \"The world should know — not the sensational details, but the truth. That there was no curse. No supernatural hound. Just a man with a grievance and a dog with phosphorus.\" He leans forward. \"But I ask one thing. Wait a year. Let Sir Henry settle. Let Beryl find her peace. Let the moor forget.\" He settles back in his seat. \"And Watson — when you do write it, do not make me too heroic. I was merely the instrument. The real hero was Sir Henry, who walked that moor knowing what was waiting for him. And you, Watson, who stood your ground when the hound came.\""
+        "discovery": "\"You must write it, Watson,\" Holmes says firmly. He settles into his chair by the fire, the leather creaking beneath him. \"The world should know — not the sensational details, but the truth. That there was no curse. No supernatural hound. Just a man with a grievance and a dog with phosphorus.\" The firelight catches the angles of his face, deepening the hollows beneath his cheekbones. He leans forward. \"But I ask one thing. Wait a year. Let Sir Henry settle. Let Beryl find her peace. Let the moor forget.\" He draws on his pipe, the tobacco crackling, a thin ribbon of blue smoke rising toward the ceiling. \"And Watson — when you do write it, do not make me too heroic. I was merely the instrument. The real hero was Sir Henry, who walked that moor knowing what was waiting for him. And you, Watson, who stood your ground when the hound came.\""
       },
       {
         "id": "look_out_window",

@@ -282,7 +282,7 @@ module.exports = {
           "mess",
           "papers"
         ],
-        "discovery": "Your lodgings tell the story of your descent. The walls are covered in anatomical sketches — muscle groups, nerve pathways, the placement of organs. Books are stacked in precarious towers: Galvani on animal electricity, Paracelsus on the creation of homunculi, Aldini on the reanimation of the dead. The floor is littered with failed experiments — tissue samples in jars, electrodes wrapped in copper wire, a glass plate from a Leyden jar cracked and discarded. And in the corner, half-hidden under a coat, a charnel house spade, its blade still stained with grave earth."
+        "discovery": "Your lodgings tell the story of your descent. The air is stale, thick with the smell of old experiments and unwashed linen. The walls are covered in anatomical sketches — muscle groups, nerve pathways, the placement of organs, the pencil lines smeared where your hand has brushed against them. Books are stacked in precarious towers: Galvani on animal electricity, Paracelsus on the creation of homunculi, Aldini on the reanimation of the dead. The floor is littered with failed experiments — tissue samples in jars, electrodes wrapped in copper wire, a glass plate from a Leyden jar cracked and discarded. And in the corner, half-hidden under a coat, a charnel house spade, its blade still stained with grave earth."
       },
       {
         "id": "check_journal",
@@ -493,7 +493,7 @@ module.exports = {
           "father",
           "william"
         ],
-        "discovery": "You read the letter again, forcing yourself to absorb every word. William disappeared at dusk. The search lasted all night. Elizabeth found the body — your father could not bring himself to describe what she saw. The marks on William's neck were \"not human\" — too wide, too strong, made by hands not fingers. Justine was found with the locket, asleep, remembering nothing. She claims she was visiting her mother and fell asleep in the barn. No one believes her. Your father writes: \"I do not believe Justine capable of this crime, but the magistrate is certain of her guilt. She will be tried within the fortnight.\""
+        "discovery": "You read the letter again, forcing yourself to absorb every word. The paper is thin, almost translucent, and you can feel the pressure of your father's pen through the page. William disappeared at dusk. The search lasted all night. Elizabeth found the body — your father could not bring himself to describe what she saw. The marks on William's neck were \"not human\" — too wide, too strong, made by hands not fingers. Justine was found with the locket, asleep, remembering nothing. She claims she was visiting her mother and fell asleep in the barn. No one believes her. Your father writes: \"I do not believe Justine capable of this crime, but the magistrate is certain of her guilt. She will be tried within the fortnight.\" The candle on the desk sputters, and your shadow shakes on the wall."
       },
       {
         "id": "blame_yourself",

@@ -31,7 +31,7 @@ module.exports = {
           "talk",
           "approach"
         ],
-        "discovery": "You draw the group into a huddle beneath a warehouse overhang. Van Helsing unfolds a map of the Continent. 'We take the train to Paris, then the Orient Express to Varna. We arrive before the ship — barely. At the port, we wait for the Czarina Catherine and find the box.' Jonathan's jaw tightens. 'I know the castle. I know the passes. If he makes it back to Transylvania, we follow him there.' Van Helsing nods. 'If he reaches the castle, he regains his power. Every mile closer to his native soil makes him stronger. We must end this in Varna — or on the road.' Seward checks his bag. 'I have enough supplies for a siege. And Godalming has money.' Lord Godalming produces a leather pouch heavy with coin. 'Whatever it takes.'"
+        "discovery": "You draw the group into a huddle beneath a warehouse overhang. The rain drums on the iron roof above you. Van Helsing unfolds a map of the Continent — the paper is soft and worn at the folds. 'We take the train to Paris, then the Orient Express to Varna. We arrive before the ship — barely. At the port, we wait for the Czarina Catherine and find the box.' Jonathan's jaw tightens. 'I know the castle. I know the passes. If he makes it back to Transylvania, we follow him there.' Van Helsing nods. 'If he reaches the castle, he regains his power. Every mile closer to his native soil makes him stronger. We must end this in Varna — or on the road.' Seward checks his bag — you hear the clink of glass vials inside. 'I have enough supplies for a siege. And Godalming has money.' Lord Godalming produces a leather pouch heavy with coin. The gold gleams dully in the lamplight. 'Whatever it takes.'"
       },
       {
         "id": "examine_ship",
@@ -45,7 +45,7 @@ module.exports = {
           "boat",
           "vessel"
         ],
-        "discovery": "The Orion is a lean, black-hulled steamer built for speed, not comfort. Her smokestacks are clean, her rigging tight. The captain — a weathered man named Donelson — meets you at the gangplank. 'Varna in four days if the weather holds. Fifty pounds for the lot of you, payable in advance. No questions asked, no questions answered.' He looks at your group — your grim faces, your leather bags, your haunted eyes. 'I've carried worse cargo,' he mutters. Below decks, the cabins are cramped but clean. The hold is deep enough to conceal equipment. And the bow faces east — toward the rising sun, and toward Transylvania."
+        "discovery": "The Orion is a lean, black-hulled steamer built for speed, not comfort. Her smokestacks are clean, her rigging tight — the ropes creak as the ship shifts at anchor. The captain — a weathered man named Donelson — meets you at the gangplank. His handshake is firm, his skin rough as rope. 'Varna in four days if the weather holds. Fifty pounds for the lot of you, payable in advance. No questions asked, no questions answered.' He looks at your group — your grim faces, your leather bags, your haunted eyes. 'I've carried worse cargo,' he mutters, and the smell of salt and tar follows him as he turns away. Below decks, the cabins are cramped but clean. The hold is deep enough to conceal equipment. And the bow faces east — toward the rising sun, and toward Transylvania."
       },
       {
         "id": "prepare_supplies",
@@ -182,7 +182,7 @@ module.exports = {
           "examine",
           "find"
         ],
-        "discovery": "You kneel beside the fallen gypsy with the shattered amulet. He is alive — unconscious, breathing shallowly. In his belt pouch, you find a crude map drawn on leather: the path to the castle, marked with symbols — wolves at the forest edge, crosses at the bridge, a skull at the castle gate. And a note in broken English: 'Master comes by the old road. Keep the hunters from the mountain. Fail and die.' Dracula sent them. He knows you are close."
+        "discovery": "You kneel beside the fallen gypsy with the shattered amulet. He is alive — unconscious, breathing shallowly, his chest rising and falling in a ragged rhythm. The amulet around his neck is iron, etched with symbols you do not recognize, cracked down the middle. In his belt pouch, you find a crude map drawn on leather: the path to the castle, marked with symbols — wolves at the forest edge, crosses at the bridge, a skull at the castle gate. The leather smells of sweat and smoke. And a note in broken English: 'Master comes by the old road. Keep the hunters from the mountain. Fail and die.' Dracula sent them. He knows you are close."
       },
       {
         "id": "encourage_mina",
@@ -430,7 +430,7 @@ module.exports = {
           "cross",
           "ward"
         ],
-        "discovery": "You raise the crucifix and step forward. The light blazes — white, searing, casting shadows that are wrong because they point toward the vampires, not away from the light source. The second sister and the third recoil, hissing, their arms raised to shield their faces. The eldest, already burning, screeches and throws herself backward through the air, landing on the far wall like a spider. 'Kill the one holding it!' she screams. 'Kill the mortal! The Master demands it!'"
+        "discovery": "You raise the crucifix and step forward. The light blazes — white, searing, casting shadows that are wrong because they point toward the vampires, not away from the light source. The heat of it pulses against your palm. The second sister and the third recoil, hissing, their arms raised to shield their faces. The eldest, already burning, screeches — a sound that tears at your ears — and throws herself backward through the air, landing on the far wall like a spider. The stone cracks where she lands. 'Kill the one holding it!' she screams. 'Kill the mortal! The Master demands it!'"
       },
       {
         "id": "drive_stake",

@@ -31,7 +31,7 @@ module.exports = {
           "paper",
           "harker"
         ],
-        "discovery": "You blow the dust from the journal and open it carefully. The handwriting is steady at first — a young solicitor recording his journey. But as the pages turn, the writing grows jagged, desperate. 'He is not human. I have seen what sleeps in those coffins. I have seen the children in the courtyard — the ones with crimson lips. God help me.' The final entry is dated three months ago. It ends mid-sentence."
+        "discovery": "You blow the dust from the journal — it rises in a grey cloud, tickling your nose — and open it carefully. The leather cover is cracked, the spine fragile. The handwriting inside is steady at first — a young solicitor recording his journey in neat, confident lines. But as the pages turn, the writing grows jagged, desperate, the pen pressed so hard it has scored the paper. 'He is not human. I have seen what sleeps in those coffins. I have seen the children in the courtyard — the ones with crimson lips. God help me.' The ink is brown in places — old blood, perhaps, or simply age. The final entry is dated three months ago. It ends mid-sentence, the pen stroke trailing off the edge of the page."
       },
       {
         "id": "inspect_lock",
@@ -271,7 +271,7 @@ module.exports = {
           "journal",
           "diary"
         ],
-        "discovery": "You read from the beginning. Harker's early entries are precise, professional — a solicitor documenting a property transaction. But as the dates progress, the handwriting deteriorates. The entries grow shorter. He mentions the Count's nocturnal habits, the strange absence of mirrors, the women at the castle. The final entry is nearly illegible: \"I am a prisoner. God help me. I do not think I will leave this place alive.\""
+        "discovery": "You read from the beginning, the pages cool and slightly damp beneath your fingers. Harker's early entries are precise, professional — a solicitor documenting a property transaction in blue-black ink. But as the dates progress, the handwriting deteriorates, the letters slanting and erratic. The entries grow shorter. He mentions the Count's nocturnal habits, the strange absence of mirrors, the women at the castle. A cold draft passes through the room as you read, though the windows are shuttered. The final entry is nearly illegible, the ink smeared as though the page was wet — or the writer was weeping: \"I am a prisoner. God help me. I do not think I will leave this place alive.\""
       },
       {
         "id": "copy_notes",
@@ -285,7 +285,7 @@ module.exports = {
           "pocket",
           "notes"
         ],
-        "discovery": "You tear out the final six pages — the ones describing the castle, the boxes of earth, the strange women, the Count's plans for England. Your hands shake as you fold them into your coat. This is evidence. If you survive, someone must read this."
+        "discovery": "You tear out the final six pages — the ones describing the castle, the boxes of earth, the strange women, the Count's plans for England. The paper rips cleanly, the sound loud in the quiet room. Your hands shake as you fold them into your coat. This is evidence. The pages smell of dust and old leather. If you survive, someone must read this."
       }
     ],
     "exitAction": "close_journal",
@@ -371,7 +371,7 @@ module.exports = {
           "forest",
           "flee"
         ],
-        "discovery": "You run. The wolves are startled — you are halfway across the clearing before they react. The crucifix is in your hand, blazing warmth, and the nearest wolf veers away with a yelp. For a moment, the pack scatters. Then they regroup behind you, howling, following, but keeping their distance. The crucifix is holding them. Barely."
+        "discovery": "You run. The wolves are startled — you are halfway across the clearing before they react, your boots pounding on the frozen earth. The crucifix is in your hand, blazing warmth, and the nearest wolf veers away with a yelp. For a moment, the pack scatters. Then they regroup behind you, howling — a sound that splits the night and raises the hair on your neck — following, but keeping their distance. The crucifix is holding them. Barely. Your breath comes in ragged clouds."
       },
       {
         "id": "find_path",
@@ -515,7 +515,7 @@ module.exports = {
           "carfax",
           "strategy"
         ],
-        "discovery": "You sit by the frozen stream and think. The Count is going to England. Carfax Abbey. Fifty boxes of earth. He means to spread his kind — to establish a foothold in the heart of the civilized world. You cannot fight him alone. You need allies — someone who understands the occult, someone with authority, someone who will believe you. Harker's journal is your proof. The monastery ahead is your first step toward safety. From there, you must reach London. You must find Van Helsing — the name Harker mentioned in the margins, circled twice, underlined: 'A professor in Amsterdam. Expert in obscure diseases. If anyone will believe, it is he.' The plan crystallizes: survive, escape, warn, fight. In that order."
+        "discovery": "You sit by the frozen stream and think. The ice creaks beneath you, and the cold seeps through your clothes. The Count is going to England. Carfax Abbey. Fifty boxes of earth. He means to spread his kind — to establish a foothold in the heart of the civilized world. You cannot fight him alone. You need allies — someone who understands the occult, someone with authority, someone who will believe you. Harker's journal is your proof. The monastery ahead is your first step toward safety. From there, you must reach London. You must find Van Helsing — the name Harker mentioned in the margins, circled twice, underlined: 'A professor in Amsterdam. Expert in obscure diseases. If anyone will believe, it is he.' The plan crystallizes: survive, escape, warn, fight. In that order. The stream murmurs under the ice, and somewhere in the forest, a branch snaps."
       }
     ],
     "exitAction": "enter_monastery",

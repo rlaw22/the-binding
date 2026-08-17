@@ -686,7 +686,7 @@ async function createServer(options = {}) {
 
       session.state = 'active';
       const rejoinCode = generateRejoinCode('digital_dm');
-      sessions.set(session.id, { session, game, coinPool: null, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: null, gameMode: 'digital_dm', modeConfig });
+      sessions.set(session.id, { session, game, coinPool: null, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: game.inventory, difficulty: new DynamicDifficulty(), difficultyProfile: null, gameMode: 'digital_dm', modeConfig });
       rejoinCodes.set(rejoinCode, session.id);
       if (tokenCode) TokenStore.recordSession(tokenCode);
       session._rejoinCode = rejoinCode;
@@ -847,7 +847,7 @@ async function createServer(options = {}) {
     session.state = 'active';
     // Pre-adventure difficulty calibration (design doc #8): silently sets baseline
     const advDiffProfile = preAdventureDifficulty(player.character.level || 1, adventureId);
-    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: Inventory.createInventory(), difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile, gameMode: resolvedGameMode, modeConfig });
+    sessions.set(session.id, { session, game, coinPool, sceneCoins: [], currentSceneCoins: [], runningCoinTotal: 0, completedScenes: [], history: [], inventory: game.inventory, difficulty: new DynamicDifficulty(), difficultyProfile: advDiffProfile, gameMode: resolvedGameMode, modeConfig });
     rejoinCodes.set(rejoinCode, session.id);
     if (tokenCode) TokenStore.recordSession(tokenCode);
     session._rejoinCode = rejoinCode;

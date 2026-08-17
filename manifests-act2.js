@@ -15,8 +15,7 @@ module.exports = {
           "examine",
           "inspect",
           "stone"
-        ],
-        "discovery": "You lean over the nearest tomb and push your hand into the soil. It is warm — body-warm — and damp in a way that earth should not be inside a castle. Your fingers brush something hard beneath the surface. A fingernail. Long, yellowed, curled. You pull your hand back and wipe it on your clothes, but the feeling lingers. Someone — something — has been lying in this earth. Recently."
+        ], "outcome": "positive", "discovery": "You lean over the nearest tomb and push your hand into the soil. It is warm — body-warm — and damp in a way that earth should not be inside a castle. Your fingers brush something hard beneath the surface. A fingernail. Long, yellowed, curled. You pull your hand back and wipe it on your clothes, but the feeling lingers. Someone — something — has been lying in this earth. Recently."
       },
       {
         "id": "find_journal",
@@ -29,8 +28,7 @@ module.exports = {
           "read",
           "paper",
           "harker"
-        ],
-        "discovery": "You blow the dust from the journal and open it carefully. The handwriting is steady at first — a young solicitor recording his journey. But as the pages turn, the writing grows jagged, desperate. 'He is not human. I have seen what sleeps in those coffins. I have seen the children in the courtyard — the ones with crimson lips. God help me.' The final entry is dated three months ago. It ends mid-sentence."
+        ], "outcome": "positive", "discovery": "You blow the dust from the journal and open it carefully. The handwriting is steady at first — a young solicitor recording his journey. But as the pages turn, the writing grows jagged, desperate. 'He is not human. I have seen what sleeps in those coffins. I have seen the children in the courtyard — the ones with crimson lips. God help me.' The final entry is dated three months ago. It ends mid-sentence."
       },
       {
         "id": "inspect_lock",
@@ -43,8 +41,7 @@ module.exports = {
           "marks",
           "examine",
           "key"
-        ],
-        "discovery": "The lock is iron, ancient but functional — three tumblers, well-oiled. The scratch marks around the jamb are deep and frantic. You run your finger along them. They are on the OUTSIDE. Someone — or something — was trying to get IN. The lock held. For now."
+        ], "outcome": "positive", "discovery": "The lock is iron, ancient but functional — three tumblers, well-oiled. The scratch marks around the jamb are deep and frantic. You run your finger along them. They are on the OUTSIDE. Someone — or something — was trying to get IN. The lock held. For now."
       },
       {
         "id": "listen_at_door",
@@ -56,10 +53,37 @@ module.exports = {
           "sound",
           "silence",
           "quiet"
-        ],
-        "discovery": "You press your ear against the cold oak. At first, nothing. Then — a sound so faint you might have imagined it. Breathing. Slow, deep, rhythmic, coming from somewhere below the floor. It stops. A long silence. Then a voice, muffled by stone and earth, whispers a single word you cannot understand. The hair on your arms stands up."
+        ], "outcome": "positive", "discovery": "You press your ear against the cold oak. At first, nothing. Then — a sound so faint you might have imagined it. Breathing. Slow, deep, rhythmic, coming from somewhere below the floor. It stops. A long silence. Then a voice, muffled by stone and earth, whispers a single word you cannot understand. The hair on your arms stands up."
       }
-    ],
+    ,
+{
+        "id": "touch_coffin_lid",
+        "label": "Run your fingers along the coffin lid carvings",
+        "keywords": [
+                "touch",
+                "coffin",
+                "lid",
+                "carvings",
+                "run",
+                "fingers"
+        ],
+        "outcome": "empty",
+        "discovery": null
+},
+{
+        "id": "check_journal_binding",
+        "label": "Examine the leather binding of the journal",
+        "keywords": [
+                "check",
+                "journal",
+                "binding",
+                "leather",
+                "examine"
+        ],
+        "outcome": "empty",
+        "discovery": null
+}
+      ],
     "exitAction": "leave_forbidden_wing",
     "exitLabel": "Return upstairs before dawn",
     "hardExitNarration": "The light through the corridor windows is fading fast. You race back to your chamber, bar the door, and collapse onto the bed. Sleep comes eventually, fitful and haunted. You wake in darkness. The fire has died to embers. Something is wrong with the shadows in the corner of the room. They are deeper than they should be. They are moving.",
@@ -127,8 +151,7 @@ module.exports = {
           "press",
           "ward",
           "protect"
-        ],
-        "discovery": "You thrust the crucifix forward and the nearest sister screams — a sound that is not human, not animal, but something that has no right to come from a beautiful mouth. Her skin blisters where the shadow of the cross falls. But the other two are behind you now. Cold hands grip your shoulders. The crucifix glows white-hot and you nearly drop it. It is working — but it will not last."
+        ], "outcome": "positive", "discovery": "You thrust the crucifix forward and the nearest sister screams — a sound that is not human, not animal, but something that has no right to come from a beautiful mouth. Her skin blisters where the shadow of the cross falls. But the other two are behind you now. Cold hands grip your shoulders. The crucifix glows white-hot and you nearly drop it. It is working — but it will not last."
       },
       {
         "id": "fight_sisters",
@@ -142,8 +165,7 @@ module.exports = {
           "attack",
           "strike",
           "weapon"
-        ],
-        "discovery": "You lunge for the fireplace and your fingers close around the iron poker — heavy, cold, solid. You swing it at the nearest sister and the metal bites into her shoulder. She shrieks — a sound that cracks the windowpane — and recoils, her porcelain skin splitting to reveal something dark and ancient beneath. But the other two are on you in an instant. Cold hands grip your arms, your throat. Their beauty is terrifying up close: perfect features, crimson lips, eyes that burn with a hunger older than civilization. The youngest sister leans close to your ear and whispers something in a language that predates Latin. You do not understand the words but your body does — every hair stands on end, every nerve screams. You swing the poker again and again, fighting not just their strength but their impossible grace. They move like smoke, like water, like something that was never human."
+        ], "outcome": "positive", "discovery": "You lunge for the fireplace and your fingers close around the iron poker — heavy, cold, solid. You swing it at the nearest sister and the metal bites into her shoulder. She shrieks — a sound that cracks the windowpane — and recoils, her porcelain skin splitting to reveal something dark and ancient beneath. But the other two are on you in an instant. Cold hands grip your arms, your throat. Their beauty is terrifying up close: perfect features, crimson lips, eyes that burn with a hunger older than civilization. The youngest sister leans close to your ear and whispers something in a language that predates Latin. You do not understand the words but your body does — every hair stands on end, every nerve screams. You swing the poker again and again, fighting not just their strength but their impossible grace. They move like smoke, like water, like something that was never human."
       },
       {
         "id": "call_for_dracula",
@@ -155,8 +177,7 @@ module.exports = {
           "call",
           "help",
           "scream"
-        ],
-        "discovery": "You shout the Count's name and the effect is immediate. The three sisters freeze. Their heads snap toward the door in perfect unison. The Count stands in the doorway, his face a mask of cold fury. But the fury is not directed at the sisters — it is directed at you. 'Did I not say the forbidden wing was dangerous?' he says softly. The sisters bow their heads. 'Master,' the first whispers. 'We were hungry.' The Count turns his gaze on you. 'These are my daughters,' he says. 'And you are in their home. I suggest you remember that.'"
+        ], "outcome": "positive", "discovery": "You shout the Count's name and the effect is immediate. The three sisters freeze. Their heads snap toward the door in perfect unison. The Count stands in the doorway, his face a mask of cold fury. But the fury is not directed at the sisters — it is directed at you. 'Did I not say the forbidden wing was dangerous?' he says softly. The sisters bow their heads. 'Master,' the first whispers. 'We were hungry.' The Count turns his gaze on you. 'These are my daughters,' he says. 'And you are in their home. I suggest you remember that.'"
       },
       {
         "id": "flee_the_room",
@@ -168,10 +189,23 @@ module.exports = {
           "door",
           "corridor",
           "hallway"
-        ],
-        "discovery": "You bolt for the door. The corridor beyond is pitch black — the candles have guttered out, as if the darkness itself swallowed them. You run blind, one hand trailing along the cold stone wall, your feet catching on uneven flagstones. Behind you, the sisters do not follow. They laugh — a sound that echoes from every direction, bouncing off the walls, seeming to come from ahead of you and behind you at once. The corridor twists. A staircase appears in the gloom, spiraling downward. You take it two steps at a time, nearly falling, the iron poker clanging against the wall. The laughter fades. The darkness thins. You burst through a door and find yourself in the great hall, gasping, your heart hammering against your ribs. The fire has been rekindled. You are alone. But the laughter still rings in your ears."
+        ], "outcome": "positive", "discovery": "You bolt for the door. The corridor beyond is pitch black — the candles have guttered out, as if the darkness itself swallowed them. You run blind, one hand trailing along the cold stone wall, your feet catching on uneven flagstones. Behind you, the sisters do not follow. They laugh — a sound that echoes from every direction, bouncing off the walls, seeming to come from ahead of you and behind you at once. The corridor twists. A staircase appears in the gloom, spiraling downward. You take it two steps at a time, nearly falling, the iron poker clanging against the wall. The laughter fades. The darkness thins. You burst through a door and find yourself in the great hall, gasping, your heart hammering against your ribs. The fire has been rekindled. You are alone. But the laughter still rings in your ears."
       }
-    ],
+    ,
+{
+        "id": "search_chamber",
+        "label": "Search your chamber for anything useful",
+        "keywords": [
+                "search",
+                "chamber",
+                "room",
+                "useful",
+                "look"
+        ],
+        "outcome": "empty",
+        "discovery": null
+}
+      ],
     "exitAction": "survive_sisters",
     "exitLabel": "Flee through the open door",
     "hardExitNarration": "The Count draws the sisters away with a single gesture. 'Go,' he says to you, without looking back. 'Sleep in the great hall tonight. Lock the door. Do not come upstairs again after dark.' His voice carries the weight of command that is older than language.",
@@ -241,8 +275,7 @@ module.exports = {
           "how",
           "kill",
           "destroy"
-        ],
-        "discovery": "You turn to the section Harker titled 'THE CREATURE'S NATURE'. He writes: 'Crucifixes cause pain and retreat. Garlic burns the flesh. Holy water is acid to them. But these are merely deterrents. To destroy one: stake the heart, pin it to the earth. Then decapitate. Then fill the mouth with garlic. There is no other way.'"
+        ], "outcome": "positive", "discovery": "You turn to the section Harker titled 'THE CREATURE'S NATURE'. He writes: 'Crucifixes cause pain and retreat. Garlic burns the flesh. Holy water is acid to them. But these are merely deterrents. To destroy one: stake the heart, pin it to the earth. Then decapitate. Then fill the mouth with garlic. There is no other way.'"
       },
       {
         "id": "study_map",
@@ -255,8 +288,7 @@ module.exports = {
           "property",
           "examine",
           "draw"
-        ],
-        "discovery": "Harker has drawn a rough map of Carfax Abbey. The building sits on a hill near the Thames, surrounded by dense trees. He marked: the chapel (sealed), the cellar (where the Count stores his earth boxes), a tunnel connecting to the river, and — circled in red — a room labeled 'DO NOT ENTER.' Below: 'Find the earth boxes and destroy them. Without his native soil, the Count cannot rest. Without rest, he can be killed.'"
+        ], "outcome": "positive", "discovery": "Harker has drawn a rough map of Carfax Abbey. The building sits on a hill near the Thames, surrounded by dense trees. He marked: the chapel (sealed), the cellar (where the Count stores his earth boxes), a tunnel connecting to the river, and — circled in red — a room labeled 'DO NOT ENTER.' Below: 'Find the earth boxes and destroy them. Without his native soil, the Count cannot rest. Without rest, he can be killed.'"
       },
       {
         "id": "read_entries",
@@ -269,8 +301,7 @@ module.exports = {
           "start",
           "journal",
           "diary"
-        ],
-        "discovery": "You read from the beginning. Harker's early entries are precise, professional — a solicitor documenting a property transaction. But as the dates progress, the handwriting deteriorates. The entries grow shorter. He mentions the Count's nocturnal habits, the strange absence of mirrors, the women at the castle. The final entry is nearly illegible: \"I am a prisoner. God help me. I do not think I will leave this place alive.\""
+        ], "outcome": "positive", "discovery": "You read from the beginning. Harker's early entries are precise, professional — a solicitor documenting a property transaction. But as the dates progress, the handwriting deteriorates. The entries grow shorter. He mentions the Count's nocturnal habits, the strange absence of mirrors, the women at the castle. The final entry is nearly illegible: \"I am a prisoner. God help me. I do not think I will leave this place alive.\""
       },
       {
         "id": "copy_notes",
@@ -283,10 +314,37 @@ module.exports = {
           "take",
           "pocket",
           "notes"
-        ],
-        "discovery": "You tear out the final six pages — the ones describing the castle, the boxes of earth, the strange women, the Count's plans for England. Your hands shake as you fold them into your coat. This is evidence. If you survive, someone must read this."
+        ], "outcome": "positive", "discovery": "You tear out the final six pages — the ones describing the castle, the boxes of earth, the strange women, the Count's plans for England. Your hands shake as you fold them into your coat. This is evidence. If you survive, someone must read this."
       }
-    ],
+    ,
+{
+        "id": "examine_fire",
+        "label": "Study the rekindled fire in the hearth",
+        "keywords": [
+                "study",
+                "fire",
+                "hearth",
+                "rekindled",
+                "examine"
+        ],
+        "outcome": "empty",
+        "discovery": null
+},
+{
+        "id": "search_great_hall",
+        "label": "Search the great hall for hidden passages",
+        "keywords": [
+                "search",
+                "great",
+                "hall",
+                "hidden",
+                "passages",
+                "walls"
+        ],
+        "outcome": "empty",
+        "discovery": null
+}
+      ],
     "exitAction": "close_journal",
     "exitLabel": "Close the journal and plan your escape",
     "hardExitNarration": "The shadows are growing longer. The Count will wake soon. You cannot be here when he does. You tuck the journal inside your coat and move toward the window.",
@@ -354,8 +412,7 @@ module.exports = {
           "window",
           "stone",
           "handholds"
-        ],
-        "discovery": "The wall is rough stone, but the mortar crumbles under your fingers. You lower yourself inch by inch, feet searching for holds in the dark. Fifty feet down, a stone gives way and you drop — catching yourself on raw, bleeding fingers. Below, the wolves stir. Their eyes turn upward. They have heard you."
+        ], "outcome": "positive", "discovery": "The wall is rough stone, but the mortar crumbles under your fingers. You lower yourself inch by inch, feet searching for holds in the dark. Fifty feet down, a stone gives way and you drop — catching yourself on raw, bleeding fingers. Below, the wolves stir. Their eyes turn upward. They have heard you."
       },
       {
         "id": "dodge_wolves",
@@ -369,8 +426,7 @@ module.exports = {
           "tree",
           "forest",
           "flee"
-        ],
-        "discovery": "You run. The wolves are startled — you are halfway across the clearing before they react. The crucifix is in your hand, blazing warmth, and the nearest wolf veers away with a yelp. For a moment, the pack scatters. Then they regroup behind you, howling, following, but keeping their distance. The crucifix is holding them. Barely."
+        ], "outcome": "positive", "discovery": "You run. The wolves are startled — you are halfway across the clearing before they react. The crucifix is in your hand, blazing warmth, and the nearest wolf veers away with a yelp. For a moment, the pack scatters. Then they regroup behind you, howling, following, but keeping their distance. The crucifix is holding them. Barely."
       },
       {
         "id": "find_path",
@@ -383,8 +439,7 @@ module.exports = {
           "find",
           "trail",
           "descend"
-        ],
-        "discovery": "You push through the undergrowth, branches whipping your face. The ground slopes steeply — you're on a mountain path, barely a track, winding between ancient oaks. The moon breaks through the clouds and for a moment you see it: a narrow trail descending through the trees toward a distant valley. The wolves are closer now. You run."
+        ], "outcome": "positive", "discovery": "You push through the undergrowth, branches whipping your face. The ground slopes steeply — you're on a mountain path, barely a track, winding between ancient oaks. The moon breaks through the clouds and for a moment you see it: a narrow trail descending through the trees toward a distant valley. The wolves are closer now. You run."
       },
       {
         "id": "use_journal",
@@ -397,10 +452,23 @@ module.exports = {
           "follow",
           "map",
           "notes"
-        ],
-        "discovery": "You pull the journal from your coat and flip to the pages where Harker described his own escape — the route he mapped in desperation, the landmarks he clung to. 'The mountain path descends west from the courtyard gate, past a broken shrine, through a stand of dead oaks.' You hold the journal open in one hand and the crucifix in the other, and you follow his words like a prayer. The broken shrine appears — a stone Madonna with her face worn smooth. The dead oaks stand like sentinels. Harker's handwriting becomes your compass, his terror your guide. Without these pages, you would be lost in the dark with the wolves. With them, you have a chance. The journal is not just evidence. It is a lifeline."
+        ], "outcome": "positive", "discovery": "You pull the journal from your coat and flip to the pages where Harker described his own escape — the route he mapped in desperation, the landmarks he clung to. 'The mountain path descends west from the courtyard gate, past a broken shrine, through a stand of dead oaks.' You hold the journal open in one hand and the crucifix in the other, and you follow his words like a prayer. The broken shrine appears — a stone Madonna with her face worn smooth. The dead oaks stand like sentinels. Harker's handwriting becomes your compass, his terror your guide. Without these pages, you would be lost in the dark with the wolves. With them, you have a chance. The journal is not just evidence. It is a lifeline."
       }
-    ],
+    ,
+{
+        "id": "check_window_sill",
+        "label": "Search the windowsill for anything Harker left behind",
+        "keywords": [
+                "search",
+                "windowsill",
+                "harker",
+                "left",
+                "behind"
+        ],
+        "outcome": "empty",
+        "discovery": null
+}
+      ],
     "exitAction": "reach_mountain_path",
     "exitLabel": "Plunge into the dark forest",
     "hardExitNarration": "The castle door crashes open below. You do not look back. You run into the forest, branches tearing at your clothes, the wolves behind you and the darkness ahead, and you do not stop until the castle is a silhouette against the sky and the howling has faded to nothing.",
@@ -471,8 +539,7 @@ module.exports = {
           "enter",
           "door",
           "wall"
-        ],
-        "discovery": "You walk toward the monastery as dawn breaks over the mountains, painting the stone walls in gold and rose. The building is ancient — older than the castle, perhaps — its walls thick with lichen, its iron gate studded with rivets the size of a man's fist. Bells ring from the tower, deep and resonant, and the sound washes over you like warm water. Monks move in the courtyard beyond the gate, their dark robes swaying, their voices raised in a chant that vibrates in your chest. The air smells of beeswax, incense, and baking bread — the smells of civilization, of safety, of a world where the dead stay dead. Your legs buckle. You have been walking for hours — or days — and the sight of human habitation, of ordinary life, breaks something open in you that the castle and the wolves could not."
+        ], "outcome": "positive", "discovery": "You walk toward the monastery as dawn breaks over the mountains, painting the stone walls in gold and rose. The building is ancient — older than the castle, perhaps — its walls thick with lichen, its iron gate studded with rivets the size of a man's fist. Bells ring from the tower, deep and resonant, and the sound washes over you like warm water. Monks move in the courtyard beyond the gate, their dark robes swaying, their voices raised in a chant that vibrates in your chest. The air smells of beeswax, incense, and baking bread — the smells of civilization, of safety, of a world where the dead stay dead. Your legs buckle. You have been walking for hours — or days — and the sight of human habitation, of ordinary life, breaks something open in you that the castle and the wolves could not."
       },
       {
         "id": "rest_by_stream",
@@ -485,8 +552,7 @@ module.exports = {
           "catch",
           "breath",
           "recover"
-        ],
-        "discovery": "You sit on a rock by the frozen stream and try to stop shaking. You pull out the journal and check it is still intact. The pages are damp but readable. As you tuck it back, you notice something in the stream bed: a small wooden cross, half-buried in ice. Someone dropped it here — a traveler who prayed and then kept walking. You pick it up. A reminder that faith exists outside of vampires and castles and darkness."
+        ], "outcome": "positive", "discovery": "You sit on a rock by the frozen stream and try to stop shaking. You pull out the journal and check it is still intact. The pages are damp but readable. As you tuck it back, you notice something in the stream bed: a small wooden cross, half-buried in ice. Someone dropped it here — a traveler who prayed and then kept walking. You pick it up. A reminder that faith exists outside of vampires and castles and darkness."
       },
       {
         "id": "read_journal_again",
@@ -499,8 +565,7 @@ module.exports = {
           "passage",
           "carfax",
           "weakness"
-        ],
-        "discovery": "You sit on a rock and open the journal to the passages you tore out. Harker's words are steadier now that you read them in daylight, in safety. 'The Count cannot rest without his native earth. He has purchased fifty boxes of Transylvanian soil and shipped them to Carfax Abbey. Destroy the earth and you destroy his sanctuary.' Below, a note: 'He fears crucifixes, garlic, holy water. He cannot enter a home uninvited. He has no reflection. He casts no shadow.' You read the passages twice, three times, committing them to memory. This is your arsenal. This is how you fight what cannot be fought with fists and steel."
+        ], "outcome": "positive", "discovery": "You sit on a rock and open the journal to the passages you tore out. Harker's words are steadier now that you read them in daylight, in safety. 'The Count cannot rest without his native earth. He has purchased fifty boxes of Transylvanian soil and shipped them to Carfax Abbey. Destroy the earth and you destroy his sanctuary.' Below, a note: 'He fears crucifixes, garlic, holy water. He cannot enter a home uninvited. He has no reflection. He casts no shadow.' You read the passages twice, three times, committing them to memory. This is your arsenal. This is how you fight what cannot be fought with fists and steel."
       },
       {
         "id": "plan_next_move",
@@ -513,10 +578,37 @@ module.exports = {
           "london",
           "carfax",
           "strategy"
-        ],
-        "discovery": "You sit by the frozen stream and think. The Count is going to England. Carfax Abbey. Fifty boxes of earth. He means to spread his kind — to establish a foothold in the heart of the civilized world. You cannot fight him alone. You need allies — someone who understands the occult, someone with authority, someone who will believe you. Harker's journal is your proof. The monastery ahead is your first step toward safety. From there, you must reach London. You must find Van Helsing — the name Harker mentioned in the margins, circled twice, underlined: 'A professor in Amsterdam. Expert in obscure diseases. If anyone will believe, it is he.' The plan crystallizes: survive, escape, warn, fight. In that order."
+        ], "outcome": "positive", "discovery": "You sit by the frozen stream and think. The Count is going to England. Carfax Abbey. Fifty boxes of earth. He means to spread his kind — to establish a foothold in the heart of the civilized world. You cannot fight him alone. You need allies — someone who understands the occult, someone with authority, someone who will believe you. Harker's journal is your proof. The monastery ahead is your first step toward safety. From there, you must reach London. You must find Van Helsing — the name Harker mentioned in the margins, circled twice, underlined: 'A professor in Amsterdam. Expert in obscure diseases. If anyone will believe, it is he.' The plan crystallizes: survive, escape, warn, fight. In that order."
       }
-    ],
+    ,
+{
+        "id": "search_rocks",
+        "label": "Search the rocks along the stream bed",
+        "keywords": [
+                "search",
+                "rocks",
+                "stream",
+                "bed",
+                "around"
+        ],
+        "outcome": "empty",
+        "discovery": null
+},
+{
+        "id": "listen_wilderness",
+        "label": "Listen to the sounds of the wilderness",
+        "keywords": [
+                "listen",
+                "sounds",
+                "wilderness",
+                "forest",
+                "quiet",
+                "silence"
+        ],
+        "outcome": "empty",
+        "discovery": null
+}
+      ],
     "exitAction": "enter_monastery",
     "exitLabel": "Seek refuge at the monastery",
     "hardExitNarration": "The monastery gate opens at your knock. A monk takes one look at you — torn clothes, bleeding hands, wild eyes — and pulls you inside without a word. The gate closes behind you. For the first time since Bistritz, you are safe. But safety is temporary. England is waiting.",

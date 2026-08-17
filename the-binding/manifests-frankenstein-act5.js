@@ -176,7 +176,7 @@ module.exports = {
           "confession",
           "warning"
         ],
-        "discovery": "You sit at the kitchen table and write. Not a letter — a confession. Everything. The laboratory. The creation. The creature. The demand. The destruction. The murders. You write it all in a hand that does not shake, because the shaking has stopped. When you finish, you read it back. It is twenty pages long. It is the story of a man who tried to conquer death and instead created it. You fold the pages and place them on the table, weighted with a stone. If anyone finds this, they will know the truth. They will know that Victor Frankenstein was not a murderer — he was something worse. He was a creator. And his creation destroyed everything he loved."
+        "discovery": "You sit at the kitchen table and write. The wood is rough beneath your forearms, the candle flickering. Not a letter — a confession. Everything. The laboratory. The creation. The creature. The demand. The destruction. The murders. You write it all in a hand that does not shake, because the shaking has stopped. When you finish, you read it back. It is twenty pages long. The ink is still wet, glistening in the candlelight. It is the story of a man who tried to conquer death and instead created it. You fold the pages and place them on the table, weighted with a stone. The night wind moans outside. If anyone finds this, they will know the truth. They will know that Victor Frankenstein was not a murderer — he was something worse. He was a creator. And his creation destroyed everything he loved."
       }
     ],
     "exitAction": "begin_pursuit",

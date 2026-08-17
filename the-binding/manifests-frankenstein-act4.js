@@ -159,7 +159,7 @@ module.exports = {
           "see",
           "check"
         ],
-        "discovery": "You go to the window. The headland stretches out to a point of grey rock where the sea breaks in white spray. And there — standing at the very edge, silhouetted against the grey sky — is the creature. He is watching the cottage. He has been watching the cottage every day since you arrived. He does not approach. He does not speak. He simply stands there, a dark shape against the sky, waiting. Watching. Making sure you keep your promise. The sight of him fills you with a complex emotion — not just fear, not just guilt, but something deeper. He is your creation. Your child. Your sin. And he is waiting for you to give him the only thing in the world that might make his existence bearable."
+        "discovery": "You go to the window. The glass is cold and salt-streaked. The headland stretches out to a point of grey rock where the sea breaks in white spray — you can hear the waves, a distant, rhythmic roar. And there — standing at the very edge, silhouetted against the grey sky — is the creature. He is watching the cottage. He has been watching the cottage every day since you arrived. He does not approach. He does not speak. He simply stands there, a dark shape against the sky, waiting. Watching. Making sure you keep your promise. The sight of him fills you with a complex emotion — not just fear, not just guilt, but something deeper. He is your creation. Your child. Your sin. And he is waiting for you to give him the only thing in the world that might make his existence bearable."
       },
       {
         "id": "write_to_elizabeth",
@@ -287,7 +287,7 @@ module.exports = {
           "floor",
           "overwhelm"
         ],
-        "discovery": "Your legs give way. You slide to the floor and sit in the wreckage of your laboratory — the torn body, the scattered organs, the broken equipment — and you weep. Not for the female creature. Not even for the first creature. You weep for yourself. For the man you were in Geneva, reading Agrippa by the fire while Elizabeth read poetry. For the student who sat in Waldman's lecture hall and dreamed of conquering death. For the son who loved his mother and wanted to bring her back. That man is dead. He died in the laboratory in Ingolstadt, on the night you pulled the switch. And the thing that sits on the floor of this ruined cottage, weeping into its hands, is something else entirely. Something you do not recognize. Something you do not like."
+        "discovery": "Your legs give way. You slide to the floor and sit in the wreckage of your laboratory — the torn body, the scattered organs, the broken equipment — and you weep. The floor is cold stone, gritty beneath your hands. Not for the female creature. Not even for the first creature. You weep for yourself. For the man you were in Geneva, reading Agrippa by the fire while Elizabeth read poetry. For the student who sat in Waldman's lecture hall and dreamed of conquering death. For the son who loved his mother and wanted to bring her back. That man is dead. He died in the laboratory in Ingolstadt, on the night you pulled the switch. And the thing that sits on the floor of this ruined cottage, weeping into its hands, is something else entirely. Something you do not recognize. Something you do not like. The smell of burned chemicals hangs in the air."
       }
     ],
     "exitAction": "face_consequences",
@@ -384,7 +384,7 @@ module.exports = {
           "caused",
           "created"
         ],
-        "discovery": "The truth settles over you like a burial shroud. You created the creature. You abandoned it. You refused its demand. And now it has taken Clerval — not randomly, not in desperation, but deliberately. It told you: \"I will take from you what you have taken from me.\" It is punishing you. The way a child punishes a parent who abandoned it. And the punishment will not stop here. The creature promised to be with you on your wedding night. Elizabeth. It will come for Elizabeth. And you cannot stop it. You cannot warn her. You cannot protect her. Because the creature is your creation, and everything it does is your fault."
+        "discovery": "The truth settles over you like a burial shroud. You created the creature. You abandoned it. You refused its demand. And now it has taken Clerval — not randomly, not in desperation, but deliberately. You can smell the river on his coat — cold water and mud and something chemical, like the reek of the laboratory you thought you had left behind. It told you: \"I will take from you what you have taken from me.\" It is punishing you. The way a child punishes a parent who abandoned it. And the punishment will not stop here. The creature promised to be with you on your wedding night. Elizabeth. It will come for Elizabeth. And you cannot stop it. You cannot warn her. You cannot protect her. Because the creature is your creation, and everything it does is your fault. The candle on the desk gutters, and your shadow trembles on the wall."
       },
       {
         "id": "found_unconscious",
@@ -496,7 +496,7 @@ module.exports = {
           "night",
           "defend"
         ],
-        "discovery": "You lie in bed and plan. The creature said he would be with you on your wedding night. But what does that mean? Will he come to the wedding? To the bedroom? Will he attack you, or Elizabeth, or both? You think of weapons — pistols, knives, a garrote. You think of guards — hired men, armed, posted at every door. You think of running — taking Elizabeth and fleeing to the farthest corner of the world. But the creature found you on a mountain in the Alps. He found you on an island in the Orkneys. He found you in Ireland. There is no corner of the world far enough. The only way to protect Elizabeth is to face the creature. To be ready. To fight. And if you cannot fight — to die. You will die for her. You will die to protect her. And maybe — maybe — the creature will be satisfied with your death and leave her alive."
+        "discovery": "You lie in bed and plan. The sheets are damp with night sweat. The creature said he would be with you on your wedding night. But what does that mean? Will he come to the wedding? To the bedroom? Will he attack you, or Elizabeth, or both? You think of weapons — pistols, knives, a garrote. You think of guards — hired men, armed, posted at every door. You think of running — taking Elizabeth and fleeing to the farthest corner of the world. But the creature found you on a mountain in the Alps. He found you on an island in the Orkneys. He found you in Ireland. There is no corner of the world far enough. The only way to protect Elizabeth is to face the creature. To be ready. To fight. And if you cannot fight — to die. You will die for her. You will die to protect her. And maybe — maybe — the creature will be satisfied with your death and leave her alive. The wind outside rattles the window frame."
       },
       {
         "id": "write_will",
@@ -510,7 +510,7 @@ module.exports = {
           "death",
           "open"
         ],
-        "discovery": "You sit at the desk and write. Not to Elizabeth — to your father. \"Dear Father — if I do not survive my wedding night, please give this letter to Elizabeth. She deserves to know the truth.\" You write everything. The creature. The laboratory. The creation. The demand. The threat. You write it all in a hand that does not shake, because the shaking has stopped. You are calm now. Calm with the clarity of a man who has accepted his fate. You seal the letter and give it to your father. \"Keep this,\" you say. \"Do not open it. But if anything happens to me — give it to Elizabeth.\" Your father takes the letter with a puzzled frown. \"Victor, what is this about?\" You smile. It is the saddest smile you have ever smiled. \"Insurance,\" you say."
+        "discovery": "You sit at the desk and write. The ink is thick, black, and smells of iron gall. Not to Elizabeth — to your father. \"Dear Father — if I do not survive my wedding night, please give this letter to Elizabeth. She deserves to know the truth.\" You write everything. The creature. The laboratory. The creation. The demand. The threat. You write it all in a hand that does not shake, because the shaking has stopped. You are calm now. Calm with the clarity of a man who has accepted his fate. You seal the letter — the wax is warm, the signet cold against your thumb — and give it to your father. \"Keep this,\" you say. \"Do not open it. But if anything happens to me — give it to Elizabeth.\" Your father takes the letter with a puzzled frown. \"Victor, what is this about?\" You smile. It is the saddest smile you have ever smiled. \"Insurance,\" you say."
       }
     ],
     "exitAction": "return_to_geneva",

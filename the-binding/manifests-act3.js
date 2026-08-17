@@ -72,7 +72,7 @@ module.exports = {
           "group",
           "fight"
         ],
-        "discovery": "Van Helsing nods gravely. 'Yes. We will need allies. Dr. Seward — Lucy's doctor — is a good man, though he does not yet understand what he faces. Lord Godalming, Lucy's fiancé, is brave and resourceful. And Jonathan Harker — the man whose journal you carry — escaped the Count's castle before you. He knows the creature better than any living man.' He grips your arm. 'But we must move quickly. Every night the Count feeds, he grows stronger. And Lucy grows weaker.'"
+        "discovery": "Van Helsing nods gravely. His spectacles catch the lamplight. 'Yes. We will need allies. Dr. Seward — Lucy's doctor — is a good man, though he does not yet understand what he faces. Lord Godalming, Lucy's fiancé, is brave and resourceful. And Jonathan Harker — the man whose journal you carry — escaped the Count's castle before you. He knows the creature better than any living man.' He grips your arm — his fingers are surprisingly strong. 'But we must move quickly. Every night the Count feeds, he grows stronger. And Lucy grows weaker.' The clock on the mantel ticks, each second loud in the quiet room."
       }
     ],
     "exitAction": "leave_van_helsing",
@@ -144,7 +144,7 @@ module.exports = {
           "examine",
           "neck"
         ],
-        "discovery": "You lean close. Two puncture marks, slightly inflamed, placed precisely over the jugular. Not insect bites. The marks of teeth — driven with a force no human possesses. Lucy's eyes flutter open. 'He comes at night,' she whispers. 'So handsome. So kind. He says he loves me.' Her eyes close again."
+        "discovery": "You lean close. The room smells of camphor and lilies — funeral flowers, already placed at her bedside. Two puncture marks, slightly inflamed, placed precisely over the jugular. Not insect bites. The marks of teeth — driven with a force no human possesses. Lucy's skin is pale as parchment, almost translucent. Her eyes flutter open. 'He comes at night,' she whispers, her breath cold against your cheek. 'So handsome. So kind. He says he loves me.' Her eyes close again."
       },
       {
         "id": "check_window",
@@ -270,7 +270,7 @@ module.exports = {
           "tell",
           "count"
         ],
-        "discovery": "Renfield leans forward. 'The Master is ancient. Older than the churches. He speaks to me — in dreams, in the spaces between breaths. He says the time is coming. The boxes are here. The earth is here. England will be his.' He catches a fly and eats it. 'He is grateful to those who serve him. But he is not grateful to those who oppose him. Ask Harker. Oh wait — you already have.'"
+        "discovery": "Renfield leans forward. His reek fills the cell — sweat and something sweeter, like rotting fruit. 'The Master is ancient. Older than the churches. He speaks to me — in dreams, in the spaces between breaths. He says the time is coming. The boxes are here. The earth is here. England will be his.' He catches a fly and eats it, the crunch audible in the silence. 'He is grateful to those who serve him. But he is not grateful to those who oppose him. Ask Harker. Oh wait — you already have.'"
       },
       {
         "id": "ask_about_lucy_renfield",
@@ -308,7 +308,7 @@ module.exports = {
           "sympathy",
           "help"
         ],
-        "discovery": "You sit on the floor across from Renfield and speak to him as a human being. His eyes fill with tears. 'No one has spoken to me like that in years.' He reaches into his pocket. 'The schedule. The boxes arrive at Carfax by ship — the Vesta, from Varna. Three days from now. Be there when the ship docks.'"
+        "discovery": "You sit on the floor across from Renfield and speak to him as a human being. The stone is cold and gritty beneath you. His eyes fill with tears — you can hear him sniff, a wet, broken sound. 'No one has spoken to me like that in years.' He reaches into his pocket with trembling fingers. 'The schedule. The boxes arrive at Carfax by ship — the Vesta, from Varna. Three days from now. Be there when the ship docks.' His hand shakes as he presses the paper into yours."
       }
     ],
     "exitAction": "leave_asylum",
@@ -498,7 +498,7 @@ module.exports = {
           "hand",
           "grief"
         ],
-        "discovery": "Seward rounds on you, eyes wild with grief. 'Don't tell me she's at peace.' Then his fury collapses and he is just a young man who has lost the woman he loved. Van Helsing kneels beside him. 'I am sorry, my boy. But what will rise is a monster wearing her face.'"
+        "discovery": "Seward rounds on you, eyes wild with grief. 'Don't tell me she's at peace.' His voice cracks, raw and hoarse. Then his fury collapses and he is just a young man who has lost the woman he loved. Van Helsing kneels beside him — you hear the old man's knees pop as he lowers himself. 'I am sorry, my boy. But what will rise is a monster wearing her face.' The candle on the table flickers, and Seward's shadow trembles on the wall."
       },
       {
         "id": "agree_with_van_helsing",

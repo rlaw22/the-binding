@@ -73,7 +73,7 @@ module.exports = {
           "watch",
           "presence"
         ],
-        "discovery": "You step outside and scan the street. The fog is thick, the gas lamps haloed in mist. At first you see nothing. Then — across the road, in the doorway of a shuttered shop — a shape. Tall. Still. Watching the house. As you stare, it steps forward into the lamplight. A man in a dark coat. His face is pale, his eyes burn red. He smiles. Then the fog thickens and he is gone. But you saw him. Dracula knows exactly where Mina is. He is not hunting her. He is waiting."
+        "discovery": "You step outside and scan the street. The fog is thick, cold on your face, the gas lamps haloed in mist. At first you see nothing. Then — across the road, in the doorway of a shuttered shop — a shape. Tall. Still. Watching the house. As you stare, it steps forward into the lamplight. A man in a dark coat. His face is pale, his eyes burn red. He smiles — a slow, deliberate curve of the lips. Then the fog thickens and he is gone, the wet cobblestones gleaming where he stood. But you saw him. Dracula knows exactly where Mina is. He is not hunting her. He is waiting."
       }
     ],
     "exitAction": "leave_mina_lodgings",
@@ -278,7 +278,7 @@ module.exports = {
           "ward",
           "push"
         ],
-        "discovery": "You thrust the crucifix forward and the Szgany recoil — but not as a vampire would. They are human. The crucifix's power over them is fear, not holy force. They mutter in a language you do not understand. One, bolder than the rest, steps forward and spits at the ground. 'Nozferatu,' he hisses. 'Master sleep. You go. Now.' Van Helsing speaks to him in rapid Romanian. The man's eyes widen. He says one word — 'Vanatorul' — the hunter — and the Szgany part like water, melting into the shadows of the nave. They do not leave. They wait."
+        "discovery": "You thrust the crucifix forward and the Szgany recoil — but not as a vampire would. They are human. The crucifix's power over them is fear, not holy force. They mutter in a language you do not understand, the guttural syllables harsh in the cold nave air. One, bolder than the rest, steps forward and spits at the ground — you hear it hiss on the stone. 'Nozferatu,' he hisses. 'Master sleep. You go. Now.' Van Helsing speaks to him in rapid Romanian. The man's eyes widen. He says one word — 'Vanatorul' — the hunter — and the Szgany part like water, melting into the shadows of the nave. Their footsteps echo and fade. They do not leave. They wait."
       },
       {
         "id": "descend_to_cellar",
@@ -574,7 +574,7 @@ module.exports = {
           "stigmata",
           "sacred"
         ],
-        "discovery": "Where the communion wafers touched Mina's skin, the burns have formed a pattern — not random scarring but deliberate marks, like letters in an alphabet you do not recognize. Van Helsing examines them with growing horror. 'These are not burn marks,' he whispers. 'They are the Count's mark. His brand. He is claiming her — not just through the bond but through the sacred elements themselves. Every time we use holy water or a wafer to fight the infection, we also reinforce his claim.' He steps back. 'We need a different approach. We need to break the bond at its source. By destroying him.'"
+        "discovery": "Where the communion wafers touched Mina's skin, the burns have formed a pattern — not random scarring but deliberate marks, like letters in an alphabet you do not recognize. The skin is raised and hot to the touch. Van Helsing examines them with growing horror, his breath sharp and quick. 'These are not burn marks,' he whispers. 'They are the Count's mark. His brand. He is claiming her — not just through the bond but through the sacred elements themselves. Every time we use holy water or a wafer to fight the infection, we also reinforce his claim.' He steps back. The room smells of camphor and burned flesh. 'We need a different approach. We need to break the bond at its source. By destroying him.'"
       }
     ],
     "exitAction": "leave_church",

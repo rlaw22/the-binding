@@ -33,7 +33,7 @@ module.exports = {
           "ask",
           "holmes"
         ],
-        "discovery": "Holmes opens a leather case he has brought from London. Inside, nestled in oilcloth, are two revolvers and a hunting rifle. \"The revolvers are for you and Lestrade. The rifle is mine — I am a fair shot, as you know, and at fifty yards I will not miss.\" He pauses. \"But bullets alone may not stop this creature. It is large, it is desperate, and it has been bred for savagery. We must also be prepared for the possibility that it is coated in phosphorus — in which case, a single well-placed shot should ignite the substance and cause the animal considerable distress.\" He checks the rifle's action with practised hands. \"Aim for the head, Watson. Always the head.\""
+        "discovery": "Holmes opens a leather case he has brought from London. The brass hinges creak as he lifts the lid. Inside, nestled in oilcloth that smells of gun oil and machine grease, are two revolvers and a hunting rifle. The metal gleams dully in the lamplight. \"The revolvers are for you and Lestrade. The rifle is mine — I am a fair shot, as you know, and at fifty yards I will not miss.\" He pauses. \"But bullets alone may not stop this creature. It is large, it is desperate, and it has been bred for savagery. We must also be prepared for the possibility that it is coated in phosphorus — in which case, a single well-placed shot should ignite the substance and cause the animal considerable distress.\" He checks the rifle's action with practised hands — the bolt slides smooth and cold. \"Aim for the head, Watson. Always the head.\""
       },
       {
         "id": "talk_to_sir_henry",
@@ -368,7 +368,7 @@ module.exports = {
           "inspect",
           "body"
         ],
-        "discovery": "You kneel beside the fallen hound. It is enormous — even dead, its body radiates a terrible vitality. The phosphorus paste is thick and greasy, coating every inch of the animal's coat. Beneath the paste, the fur is short and brindled — a mastiff, purebred, bred for size and aggression. Its collar is leather, studded with brass, and stamped with a name: \"Grim.\" There are scars on its muzzle and forelegs — old wounds, healed over. This animal has been in fights before. It was not merely a pet. It was a weapon, honed and maintained for a single purpose: to terrify and to kill."
+        "discovery": "You kneel beside the fallen hound. It is enormous — even dead, its body radiates a terrible vitality. The phosphorus paste is thick and greasy, coating every inch of the animal's coat, and it stinks of chemical sweetness — like rotten phosphorus mixed with tallow. The paste is warm to the touch, still reacting with the air. Beneath the paste, the fur is short and brindled — a mastiff, purebred, bred for size and aggression. Its collar is leather, studded with brass, and stamped with a name: \"Grim.\" The brass is scratched and tarnished. There are scars on its muzzle and forelegs — old wounds, healed over, the skin raised and white. This animal has been in fights before. It was not merely a pet. It was a weapon, honed and maintained for a single purpose: to terrify and to kill."
       },
       {
         "id": "check_sir_henry",

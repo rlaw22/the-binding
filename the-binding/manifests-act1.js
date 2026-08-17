@@ -15,7 +15,7 @@ module.exports = {
           "nobleman",
           "instructions"
         ],
-        "discovery": "The letter is written in excellent English, though the phrasing is occasionally archaic. The client, Count Dracula, asks that you arrive before the end of the month. He is precise about routes — take the diligence from Bistritz to the Borgo Pass, where his carriage will meet you. The letter closes: 'I pray that the wolves of my country do not trouble you.'"
+        "discovery": "The letter is written in excellent English, though the phrasing is occasionally archaic — the ink dark and deliberate, each stroke pressed hard into the cream paper. The client, Count Dracula, asks that you arrive before the end of the month. He is precise about routes — take the diligence from Bistritz to the Borgo Pass, where his carriage will meet you. The paper smells faintly of something earthy — old stone, perhaps, or damp soil. The letter closes: 'I pray that the wolves of my country do not trouble you.' Your fingers tingle where they hold the page, as though the ink itself carries a charge."
       },
       {
         "id": "examine_seal",
@@ -48,7 +48,7 @@ module.exports = {
           "pack",
           "legal"
         ],
-        "discovery": "The surveyor's report on Carfax is thorough but strange — several pages describe the chapel as 'structurally sound but atmospherically oppressive.' The estate is surrounded by a high wall and the iron gate is rusted shut. No one has entered Carfax in living memory."
+        "discovery": "The surveyor's report on Carfax is thorough but strange — several pages describe the chapel as 'structurally sound but atmospherically oppressive.' The paper is crisp, official, stamped with a London solicitor's seal. The estate is surrounded by a high wall and the iron gate is rusted shut, according to the sketch. No one has entered Carfax in living memory. The report smells of desk drawers and old tobacco."
       }
     ],
     "exitAction": "prepare_journey",
@@ -111,7 +111,7 @@ module.exports = {
           "words",
           "language"
         ],
-        "discovery": "The phrasebook is rudimentary but useful. Common greetings, directions, pleas for help. One phrase catches your eye: 'Nu va duceti acolo.' Do not go there. It is listed as a warning, not a phrase for travelers. Someone has underlined it in pencil."
+        "discovery": "The phrasebook is rudimentary but useful — a slim volume with a soft blue cover, the pages thin as onion skin. Common greetings, directions, pleas for help. One phrase catches your eye: 'Nu va duceti acolo.' Do not go there. It is listed as a warning, not a phrase for travelers. Someone has underlined it in pencil, pressing so hard the graphite has torn the paper. The pencil mark feels rough under your fingertip."
       },
       {
         "id": "observe_landscape",
@@ -135,7 +135,7 @@ module.exports = {
           "pass",
           "consult"
         ],
-        "discovery": "The map shows the road from Bistritz climbing steadily northeast through the Bargau Valley. The Borgo Pass is marked at the top — a narrow saddle between two peaks. Beyond it, the map shows only mountains and forest. The road to the pass is marked as 'impassable in winter.' It is late autumn."
+        "discovery": "The map is printed on heavy linen paper, creased from folding, with the roads marked in faded brown ink. The route from Bistritz climbs steadily northeast through the Bargau Valley, the contour lines tightening as the elevation rises. The Borgo Pass is marked at the top — a narrow saddle between two peaks, annotated in a spidery hand: 'Carriage awaits.' Beyond it, the map shows only mountains and forest, the roads thinning to dotted tracks. The paper smells of dust and age. The road to the pass is marked as 'impassable in winter.' It is late autumn. Your thumb rests on the Borgo Pass, and the paper beneath it feels cold."
       },
       {
         "id": "speak_to_locals",
@@ -147,7 +147,7 @@ module.exports = {
           "borgo",
           "pass"
         ],
-        "discovery": "The innkeeper wrings her hands. 'The Borgo Pass at night? In his carriage? God protect you, young sir.' She tells you that the wolves in the mountains have been unusually bold this season. Three shepherds have vanished. She crosses herself and adds, 'And the coachman — they say his horses are black as midnight and his face cannot be seen.'"
+        "discovery": "The innkeeper wrings her hands — you can hear the dry rasp of skin on skin. 'The Borgo Pass at night? In his carriage? God protect you, young sir.' Her voice is thin, frightened. She tells you that the wolves in the mountains have been unusually bold this season. Three shepherds have vanished. The fire behind her pops and spits. She crosses herself and adds, 'And the coachman — they say his horses are black as midnight and his face cannot be seen.' The smell of cooking fat and candle wax hangs heavy in the air."
       }
     ],
     "exitAction": "depart_inn",
@@ -212,7 +212,7 @@ module.exports = {
           "drive",
           "wolves"
         ],
-        "discovery": "The flames flare and the wolves flinch. Fire — they fear fire. You swing the torch in a wide arc and the nearest wolf yelps and retreats. But there are more now, circling, and the torch is burning low. You need to reach the carriage at the summit."
+        "discovery": "The flames flare and the wolves flinch — you hear the fire roar and the wolves snarl in response. Fire — they fear fire. You swing the torch in a wide arc and the nearest wolf yelps and retreats, its eyes flashing green in the light. But there are more now, circling, their paws silent on the frozen ground, and the torch is burning low. The heat singes your knuckles. You need to reach the carriage at the summit."
       },
       {
         "id": "call_for_help",
@@ -236,7 +236,7 @@ module.exports = {
           "gun",
           "wolf"
         ],
-        "discovery": "The shot cracks through the mountain air. The lead wolf drops and the pack scatters — but only for a moment. They are hungry, and the sound of the gun has only made them angrier. You have five rounds left."
+        "discovery": "The shot cracks through the mountain air, the recoil jolting your wrist. The lead wolf drops and the pack scatters — but only for a moment. They are hungry, and the sound of the gun has only made them angrier. The smell of gunpowder stings your nostrils. You have five rounds left. The wolves regroup in the darkness, their eyes glinting like embers."
       },
       {
         "id": "climb_tree",
@@ -311,7 +311,7 @@ module.exports = {
           "coachman",
           "see"
         ],
-        "discovery": "You lean forward and peer through the glass. The coachman turns — just slightly — and for one frozen instant you see the outline of a face: high cheekbones, a thin cruel mouth, eyes that burn like red coals in the lamplight. Then the hood falls back into shadow. Your heart is hammering."
+        "discovery": "You lean forward and peer through the glass — it is cold to the touch, beaded with condensation. The coachman turns — just slightly — and for one frozen instant you see the outline of a face: high cheekbones, a thin cruel mouth, eyes that burn like red coals in the lamplight. The glass fogs with your breath. Then the hood falls back into shadow. Your heart is hammering. The carriage sways, and somewhere in the darkness, the wolves have gone silent."
       },
       {
         "id": "check_windows",

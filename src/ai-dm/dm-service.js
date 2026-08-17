@@ -601,7 +601,7 @@ function createGame(options) {
     coinEngine: options.coinEngine || null,   // injected
     coinPool: null,       // initialized when adventure starts
     sceneScores: [],      // accumulated turn scores for current scene
-    inventory: createInventory(['torch', 'journal']),  // starting items
+    inventory: createInventory([]),  // P0 fix: start empty — items are added narratively during gameplay
     sceneState: null, // scene engine state — initialized when first scene starts
     validator: null, // continuity validator — initialized with first scene
     storyPlayerState: null, // StoryEngine player state — initialized for storyline mode
@@ -674,6 +674,7 @@ async function processAction(game, playerAction, character) {
   // Storyline mode: run StoryEngine deterministic logic first
   let storyResult = null;
   let atmosphereContext = null;
+  let discoveryNarration = null;
   if (isStoryline && game.sceneState && game.sceneState.storyMode) {
     const storyMode = game.sceneState.storyMode;
     const manifest = game.sceneState;
@@ -719,13 +720,45 @@ async function processAction(game, playerAction, character) {
     else {
       buttonType = 'explore';
       const content = manifest.contentItems || [];
+      // First pass: exact label match (case-insensitive)
       for (const item of content) {
-        if (item.label && actionLower.includes(item.label.toLowerCase().substring(0, 8))) {
+        if (item.label && actionLower === item.label.toLowerCase()) {
           buttonId = item.id;
           break;
         }
       }
+      // Second pass: best partial match — longest label substring found in the action
+      if (!buttonId) {
+        let bestMatch = null;
+        let bestLength = 0;
+        for (const item of content) {
+          if (!item.label) continue;
+          const labelLower = item.label.toLowerCase();
+          // Check if a significant portion of the label appears in the action
+          if (actionLower.includes(labelLower.substring(0, 12)) && labelLower.substring(0, 12).length > bestLength) {
+            bestMatch = item;
+            bestLength = labelLower.substring(0, 12).length;
+          }
+        }
+        if (bestMatch) buttonId = bestMatch.id;
+      }
       if (!buttonId) buttonId = 'explore_generic';
+    }
+
+    // Extract discovery narration from the manifest content item (if matched)
+    if (buttonType === 'explore' && buttonId !== 'explore_generic') {
+      const contentItems = manifest.contentItems || [];
+      const matchedItem = contentItems.find(i => i.id === buttonId);
+      if (matchedItem && matchedItem.discovery) {
+        discoveryNarration = matchedItem.discovery;
+      }
+    }
+
+    // P0 fix: explicitly mark content item as discovered when button matches.
+    // Previously relied on unreliable [EXPLORED:] tags from LLM or keyword matching —
+    // neither was guaranteed to fire, causing content items to repeat endlessly.
+    if (buttonType === 'explore' && buttonId !== 'explore_generic' && game.sceneState) {
+      SceneEngine.markDiscovered(game.sceneState, buttonId);
     }
 
     // Get threat definition if this is a threat scene
@@ -756,6 +789,13 @@ async function processAction(game, playerAction, character) {
 
     // Store button context for reference
     game.storyButtonContext = { type: buttonType, id: buttonId, result: storyResult };
+
+    // P0 fix: track AI-suggested action labels to prevent them repeating across turns.
+    // Previously, the same AI suggestion (e.g. "Ask the innkeeper about Castle Dracula")
+    // would reappear every turn because usedSuggestions was never populated from AI actions.
+    if (game.sceneState && playerAction) {
+      SceneEngine.markUsedSuggestion(game.sceneState, playerAction.toLowerCase());
+    }
   }
 
   // Build full context for LLM, including scene state
@@ -791,12 +831,13 @@ The deterministic game engine has already resolved the outcome. Your ONLY job is
 
 PLAYER ACTION: "${playerAction}"
 DETERMINISTIC RESULT: ${actionNarrative}${seedText}
+${discoveryNarration ? 'DISCOVERY TEXT (you MUST use this exact text, adapted minimally for tone): ' + discoveryNarration : ''}
 ${atmosphereContext.inventory.length > 0 ? 'PLAYER INVENTORY: ' + atmosphereContext.inventory.join(', ') : ''}
 ${atmosphereContext.flags && Object.keys(atmosphereContext.flags).length > 0 ? 'FLAGS: ' + JSON.stringify(atmosphereContext.flags) : ''}
 HP STATE: ${atmosphereContext.hpState} (${atmosphereContext.hp}/${atmosphereContext.maxHp})
 
 TASK: Expand the deterministic result into ${sentenceGuide}
-PRESERVE the core imagery of the seed narrative (if provided). Add sensory detail — sound, temperature, texture.
+${discoveryNarration ? 'You MUST narrate the discovery using the DISCOVERY TEXT above. Do NOT invent details, add DM directives, or leak meta-commentary.' : 'PRESERVE the core imagery of the seed narrative (if provided). Add sensory detail — sound, temperature, texture.'}
 Do NOT change the outcome, damage, or coin values.
 Do NOT generate buttons, suggestions, or new content.
 Do NOT add meta-commentary or compliments.
@@ -977,6 +1018,23 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
   }
 
   let fullSystemPrompt = systemPrompt;
+
+  // Inject discovery narration into non-storyline prompts so the LLM echoes clean manifest text
+  if (discoveryNarration && !isStoryline) {
+    fullSystemPrompt += `\n\nIMPORTANT: The player just discovered something. Use this exact text as the core of your narration (adapt minimally for tone, do NOT add DM directives or meta-commentary):\n"${discoveryNarration}"\n\nThen add 1-2 atmospheric sentences. Do NOT repeat the text verbatim or add stage directions.`;
+  }
+
+  // Inject available content IDs so the LLM can emit [EXPLORED: id] tags accurately
+  if (game.sceneState && game.sceneState.contentItems) {
+    const available = game.sceneState.contentItems
+      .filter(i => !i.discovered)
+      .map(i => `${i.id} ("${i.label}")`)
+      .join(', ');
+    if (available) {
+      fullSystemPrompt += `\n\nAVAILABLE CONTENT IDS for [EXPLORED:] tags: ${available}\nOnly tag items the player genuinely explored this turn.`;
+    }
+  }
+
   const messages = buildContext(contextManager, fullSystemPrompt);
 
   // Call LLM for narrative response
@@ -1079,7 +1137,15 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
   }
 
   // Strip [EXPLORED: ...] tags from the player-facing narrative
-  const cleanResponse = dmResponse.replace(/\[EXPLORED:[^\]]*\]/gi, '').trim();
+  let cleanResponse = dmResponse.replace(/\[EXPLORED:[^\]]*\]/gi, '').trim();
+  // Strip DM directive blocks that leaked into the LLM response
+  cleanResponse = cleanResponse.replace(/<!--\s*DM INSTRUCTIONS[\s\S]*?END DM INSTRUCTIONS\s*-->/gi, '').trim();
+  cleanResponse = cleanResponse.replace(/<!--\s*DM INSTRUCTIONS[\s\S]*?-->/gi, '').trim();
+  // Also strip bare DM instructions that the LLM might emit without HTML comments
+  cleanResponse = cleanResponse.replace(/Suggested exit when ready:.*$/gim, '').trim();
+  cleanResponse = cleanResponse.replace(/Scene pacing:.*$/gim, '').trim();
+  cleanResponse = cleanResponse.replace(/Location boundary:.*$/gim, '').trim();
+  cleanResponse = cleanResponse.replace(/NEVER include completion numbers.*$/gim, '').trim();
 
   // Add DM response to context (with tags for context, clean for display)
   addTurn(contextManager, 'assistant', dmResponse);
@@ -1394,14 +1460,20 @@ function generateShortLabel(label) {
 function generateSceneActions(sceneState, aiSuggestedActions = []) {
   const actions = [];
   const exitAction = SceneEngine.getExitAction(sceneState);
-  const undiscovered = SceneEngine.getUndiscoveredContent(sceneState);
+  const allContent = SceneEngine.getAllContentWithStatus(sceneState);
 
-  // Pick all undiscovered content items — no artificial limit
-  const contentActions = undiscovered.map(item => ({
+  // Undiscovered items first (high priority), then discovered items (filler — always present)
+  const undiscoveredActions = allContent.filter(i => i.available).map(item => ({
     label: item.label,
     shortLabel: generateShortLabel(item.label),
     type: 'exploration'
   }));
+  const discoveredActions = allContent.filter(i => i.discovered).map(item => ({
+    label: item.label,
+    shortLabel: generateShortLabel(item.label),
+    type: 'explored'
+  }));
+  const contentActions = [...undiscoveredActions, ...discoveredActions];
 
   // Add bad choice if it exists in the scene's storyMode
   const badChoiceActions = [];
@@ -1423,11 +1495,14 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     new Set(a.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w)))
   );
 
-  // Filter AI suggestions: keep only those that don't significantly overlap with content items
-  // and don't reference banned locations
+  // Filter AI suggestions: keep only those that don't significantly overlap with content items,
+  // don't reference banned locations, and haven't been used already
+  const usedLabels = sceneState.usedSuggestions || new Set();
   const contextualActions = (aiSuggestedActions || [])
     .filter(ai => {
       const aiLabel = ai.label.toLowerCase();
+      // Skip already-used suggestions to prevent loops
+      if (usedLabels.has(aiLabel)) return false;
       // Filter out suggestions that reference banned locations
       if (bannedLower.some(loc => aiLabel.includes(loc))) return false;
       const aiWords = aiLabel.split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w));

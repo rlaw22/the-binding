@@ -73,7 +73,7 @@ module.exports = {
           "pliny",
           "paracelsus"
         ],
-        "discovery": "The bookshelf is a history of obsession. Pliny's \"Natural History\" — thick with descriptions of strange creatures and alchemical processes. Paracelsus on the creation of homunculi — artificial men grown in glass vessels. Albertus Magnus on the philosopher's stone. And newer volumes — Galvani's treatise on animal electricity, showing how a spark can make dead frog legs twitch. You have read them all. Some you have read so many times the pages are soft as cloth. These are not just books. They are a map — a map of the border between life and death, and you intend to cross it."
+        "discovery": "The bookshelf is a history of obsession, the wood dark and scarred with knife marks. Pliny's \"Natural History\" — thick with descriptions of strange creatures and alchemical processes, the spine cracked from overuse. Paracelsus on the creation of homunculi — artificial men grown in glass vessels. Albertus Magnus on the philosopher's stone. And newer volumes — Galvani's treatise on animal electricity, showing how a spark can make dead frog legs twitch. You have read them all. Some you have read so many times the pages are soft as cloth, smelling of dust and old glue. These are not just books. They are a map — a map of the border between life and death, and you intend to cross it."
       }
     ],
     "exitAction": "retire_for_night",
@@ -187,7 +187,7 @@ module.exports = {
           "examine",
           "waldman"
         ],
-        "discovery": "Waldman's study is a cabinet of wonders. Glass jars line the shelves, each containing a specimen preserved in clear fluid: a human heart, a brain, a hand with tendons exposed. On his desk, a voltaic pile — a stack of copper and zinc discs — sits beside a journal filled with notes on galvanic stimulation of dead tissue. You pick up the journal and read: \"The frog's leg twitched when the current was applied. The muscle responded as if alive, though the animal had been dead for six hours. Conclusion: the galvanic fluid is not life itself, but it may be the medium through which life operates.\" Your hands tremble. This is it. This is the key. The spark of life is electrical. And electricity can be generated, stored, and applied."
+        "discovery": "Waldman's study is a cabinet of wonders. The air smells of formaldehyde and old paper. Glass jars line the shelves, each containing a specimen preserved in clear fluid: a human heart, a brain, a hand with tendons exposed. On his desk, a voltaic pile — a stack of copper and zinc discs — sits beside a journal filled with notes on galvanic stimulation of dead tissue. You pick up the journal and read: \"The frog's leg twitched when the current was applied. The muscle responded as if alive, though the animal had been dead for six hours. Conclusion: the galvanic fluid is not life itself, but it may be the medium through which life operates.\" Your hands tremble. This is it. This is the key. The spark of life is electrical. And electricity can be generated, stored, and applied."
       }
     ],
     "exitAction": "embrace_chemistry",
@@ -316,7 +316,7 @@ module.exports = {
           "unanswered",
           "set aside"
         ],
-        "discovery": "Clerval's letter sits on the corner of the desk, unopened. You know what it says — the same thing it always says: \"Victor, write to me. Tell me you are well. Tell me you are eating. Tell me you have not lost your mind.\" You cannot answer it. Not because you do not love Clerval — you do, more than almost anyone — but because the truth would destroy him. How do you tell your dearest friend that you spend your nights in charnel houses and your days assembling a body from the dead? How do you tell him that you have not slept properly in months, that your hands shake, that you talk to yourself, that you have begun to dream of the creature and it speaks to you in a voice you do not recognize? You cannot. So you set the letter aside and return to work."
+        "discovery": "Clerval's letter sits on the corner of the desk, unopened — the paper creased, the ink faded. You know what it says — the same thing it always says: \"Victor, write to me. Tell me you are well. Tell me you are eating. Tell me you have not lost your mind.\" You cannot answer it. Not because you do not love Clerval — you do, more than almost anyone — but because the truth would destroy him. How do you tell your dearest friend that you spend your nights in charnel houses and your days assembling a body from the dead? How do you tell him that you have not slept properly in months, that your hands shake, that you talk to yourself, that you have begun to dream of the creature and it speaks to you in a voice you do not recognize? You cannot. The rain drums against the windowpane. You set the letter aside and return to work."
       }
     ],
     "exitAction": "continue_work",
@@ -408,7 +408,7 @@ module.exports = {
           "verify",
           "electric"
         ],
-        "discovery": "You check each component with the obsessive precision of a man who has checked them a hundred times before. The Leyden jars are full — you charged them this morning from the voltaic pile. The copper wires run from the jars through glass insulators to the electrodes — two pads of copper mesh, designed to deliver the galvanic current to the creature's brain and spinal cord. The switch is a simple copper lever, mounted on a wooden handle. You flip it experimentally — a spark leaps between the electrodes with a crack that echoes in the empty room. The apparatus is ready. The creature is ready. The only thing missing is the storm."
+        "discovery": "You check each component with the obsessive precision of a man who has checked them a hundred times before. The Leyden jars are full — you charged them this morning from the voltaic pile, and the glass is warm to the touch. The copper wires run from the jars through glass insulators to the electrodes — two pads of copper mesh, designed to deliver the galvanic current to the creature's brain and spinal cord. The switch is a simple copper lever, mounted on a wooden handle. You flip it experimentally — a spark leaps between the electrodes with a crack that echoes in the empty room, and the smell of ozone stings your nostrils. The apparatus is ready. The creature is ready. The only thing missing is the storm."
       },
       {
         "id": "read_journal_lab",
@@ -422,7 +422,7 @@ module.exports = {
           "process",
           "diary"
         ],
-        "discovery": "You flip through your journal. The early entries are clinical, excited: \"The muscle tissue responds to galvanic stimulation. The nerve fibers conduct. The brain — I have built a brain from the finest materials.\" But the later entries grow darker: \"I have not left the laboratory in weeks. Clerval visits but I send him away. Elizabeth writes. I do not answer. I dream of the creature and it speaks to me in a voice I do not recognize.\" The most recent entry, written yesterday: \"I have become so consumed by the creation that I have forgotten the creator. What manner of man builds a man from the dead? And what manner of man will that dead man become?\""
+        "discovery": "You flip through your journal, the pages stiff with dried ink. The early entries are clinical, excited: \"The muscle tissue responds to galvanic stimulation. The nerve fibers conduct. The brain — I have built a brain from the finest materials.\" But the later entries grow darker, the handwriting more erratic: \"I have not left the laboratory in weeks. Clerval visits but I send him away. Elizabeth writes. I do not answer. I dream of the creature and it speaks to me in a voice I do not recognize.\" The most recent entry, written yesterday: \"I have become so consumed by the creation that I have forgotten the creator. What manner of man builds a man from the dead? And what manner of man will that dead man become?\" The candle beside you gutters, and your hand trembles."
       },
       {
         "id": "look_out_window",
@@ -541,7 +541,7 @@ module.exports = {
           "think",
           "doubt"
         ],
-        "discovery": "Your hand trembles on the switch. You step back. The creature lies still, inert, a collection of dead tissue and stolen parts. You think of your mother, dead. Of the graves you opened, the charnel houses you visited, the things you did in the name of science. And now you stand on the threshold of the greatest achievement in human history — and you are afraid. Not of failure. Of success. What will it think? What will it feel? What have you given it, besides a body made from the dead and a mind that will wake in a world that will recoil from it in horror?"
+        "discovery": "Your hand trembles on the switch — the copper is cold and smooth beneath your fingers. You step back. The creature lies still, inert, a collection of dead tissue and stolen parts. You think of your mother, dead. Of the graves you opened, the charnel houses you visited, the things you did in the name of science. And now you stand on the threshold of the greatest achievement in human history — and you are afraid. Not of failure. Of success. What will it think? What will it feel? The laboratory smells of chemicals and old blood. What have you given it, besides a body made from the dead and a mind that will wake in a world that will recoil from it in horror?"
       },
       {
         "id": "check_apparatus_final",
