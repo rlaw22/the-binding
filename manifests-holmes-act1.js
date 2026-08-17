@@ -16,7 +16,7 @@ module.exports = {
           "please",
           "enter"
         ],
-        "discovery": "You gesture toward the chair opposite Holmes. Mortimer sits, placing his portfolio on his knees with the careful precision of a man who values order. His hands are steady — a surgeon's hands, you note — but there is a tension in his shoulders that speaks of sleepless nights. \"Thank you,\" he says. \"I must confess I was not sure whether to come. The matter is so... unusual. I feared you would think me mad.\" Holmes waves this away with a long, pale hand. \"The more unusual, the better, Dr. Mortimer. I am sick of the commonplace. Pray, begin.\""
+        "discovery": "You gesture toward the chair opposite Holmes. Mortimer sits, placing his portfolio on his knees with the careful precision of a man who values order. His hands are steady — a surgeon's hands, you note — but there is a tension in his shoulders that speaks of sleepless nights. The scent of country air and leather clings to his tweed coat. \"Thank you,\" he says, his voice low and slightly hoarse. \"I must confess I was not sure whether to come. The matter is so... unusual. I feared you would think me mad.\" Holmes waves this away with a long, pale hand. \"The more unusual, the better, Dr. Mortimer. I am sick of the commonplace. Pray, begin.\""
       },
       {
         "id": "examine_mortimer",
@@ -129,7 +129,7 @@ module.exports = {
           "tale",
           "baskerville"
         ],
-        "discovery": "Mortimer reads in a low, measured voice: \"Sir Hugo and his companions rode out across the moor in pursuit of the girl. The night was clear and the moon full. They heard her scream — and then another sound. A howl. Not of any beast known to natural history. Sir Hugo's horse bolted. When his companions found him, he was dead — his face twisted in an expression of such terror that two of the party fainted at the sight. Beside him, on the turf, they saw the marks of an enormous hound. The creature was never seen. But from that night to this, the Baskerville family has been haunted by a hound of supernatural aspect and malevolent purpose.\" Mortimer lowers the manuscript. The room is silent except for the crackle of the fire."
+        "discovery": "Mortimer reads in a low, measured voice, the parchment crackling softly as he turns the pages: \"Sir Hugo and his companions rode out across the moor in pursuit of the girl. The night was clear and the moon full. They heard her scream — and then another sound. A howl. Not of any beast known to natural history. Sir Hugo's horse bolted. When his companions found him, he was dead — his face twisted in an expression of such terror that two of the party fainted at the sight. Beside him, on the turf, they saw the marks of an enormous hound. The creature was never seen. But from that night to this, the Baskerville family has been haunted by a hound of supernatural aspect and malevolent purpose.\" Mortimer lowers the manuscript. The room is silent except for the crackle of the fire."
       },
       {
         "id": "examine_manuscript",
@@ -158,7 +158,7 @@ module.exports = {
           "hound",
           "legend"
         ],
-        "discovery": "Mortimer removes his spectacles and polishes them — a nervous habit, you suspect. \"As a man of science,\" he says carefully, \"I do not believe in the supernatural. As a man who has lived on Dartmoor for twenty years and who knew Sir Charles Baskerville intimately — I am not so certain.\" He replaces his spectacles. \"Sir Charles believed. He believed absolutely. And on the night of May the fourth, he was found dead at the gate of Baskerville Hall with an expression on his face that I have never seen on any corpse in twenty years of medical practice. An expression of pure, absolute terror.\""
+        "discovery": "Mortimer removes his spectacles and polishes them with a handkerchief — a nervous habit, you suspect. His fingers tremble slightly, and you catch the faint scent of pipe tobacco on his clothes. \"As a man of science,\" he says carefully, \"I do not believe in the supernatural. As a man who has lived on Dartmoor for twenty years and who knew Sir Charles Baskerville intimately — I am not so certain.\" He replaces his spectacles. \"Sir Charles believed. He believed absolutely. And on the night of May the fourth, he was found dead at the gate of Baskerville Hall with an expression on his face that I have never seen on any corpse in twenty years of medical practice. An expression of pure, absolute terror.\""
       },
       {
         "id": "ask_about_sir_charles",
@@ -173,7 +173,7 @@ module.exports = {
           "gate",
           "night"
         ],
-        "discovery": "Mortimer's voice drops. \"Sir Charles was found at the garden gate of the Hall. He was lying face down, his arms extended, his fingers dug into the ground. There were no marks of violence on his body. His heart — which was already weak — had simply stopped. But his face...\" He pauses. \"His face was contorted into an expression of such horror that I could not bring myself to record it in my official report. I wrote 'heart failure,' which was technically true. But something killed Sir Charles Baskerville that night, and it was not his heart alone.\" He looks at Holmes. \"Near the body, in the soft earth, I found the prints of an enormous hound.\""
+        "discovery": "Mortimer's voice drops to barely a whisper, and the fire crackles in the sudden silence. \"Sir Charles was found at the garden gate of the Hall. He was lying face down, his arms extended, his fingers dug into the ground. There were no marks of violence on his body. His heart — which was already weak — had simply stopped. But his face...\" He pauses. \"His face was contorted into an expression of such horror that I could not bring myself to record it in my official report. I wrote 'heart failure,' which was technically true. But something killed Sir Charles Baskerville that night, and it was not his heart alone.\" He looks at Holmes. \"Near the body, in the soft earth, I found the prints of an enormous hound.\""
       }
     ],
     "exitAction": "consider_case",
@@ -275,7 +275,7 @@ module.exports = {
           "money",
           "property"
         ],
-        "discovery": "Sir Henry leans forward. \"The estate is considerable — the Hall, the lands, and a fortune of some seven hundred and forty thousand pounds. I am the sole heir. Sir Charles had no children, and I am the last of the direct line.\" He pauses. \"There are other Baskervilles, distant cousins and such, but none with a claim. It all comes to me.\" He looks at Holmes. \"I know what you're thinking, Mr. Holmes. That someone might want me out of the way for the money. But who? The estate is entailed — it cannot be sold or divided. If I die without heirs, it goes to some distant relation no one has ever heard of.\""
+        "discovery": "Sir Henry leans forward, the leather of his chair creaking under his weight. \"The estate is considerable — the Hall, the lands, and a fortune of some seven hundred and forty thousand pounds. I am the sole heir. Sir Charles had no children, and I am the last of the direct line.\" He pauses. \"There are other Baskervilles, distant cousins and such, but none with a claim. It all comes to me.\" He looks at Holmes. \"I know what you're thinking, Mr. Holmes. That someone might want me out of the way for the money. But who? The estate is entailed — it cannot be sold or divided. If I die without heirs, it goes to some distant relation no one has ever heard of.\""
       },
       {
         "id": "ask_about_letters",
@@ -289,7 +289,7 @@ module.exports = {
           "warning",
           "threat"
         ],
-        "discovery": "Sir Henry reaches into his coat pocket and produces a folded sheet of paper. \"I received this at my hotel this morning,\" he says. \"It was among my letters — I cannot think how it came there.\" He unfolds it and holds it out. The message is composed of words cut from a newspaper and pasted in a rough line: \"As you value your life or your reason, keep away from the moor.\" The words are stark, black, unmistakable. Holmes takes the paper and examines it with intense concentration, holding it close to the lamp. \"Interesting,\" he murmurs. \"The words are from yesterday's Times. The paste is still fresh. This was assembled last night.\""
+        "discovery": "Sir Henry reaches into his coat pocket and produces a folded sheet of paper. The paper is cheap — thin, slightly damp — and the words on it are cut from newsprint. \"I received this at my hotel this morning,\" he says. \"It was among my letters — I cannot think how it came there.\" He unfolds it and holds it out. The message is composed of words cut from a newspaper and pasted in a rough line: \"As you value your life or your reason, keep away from the moor.\" The words are stark, black, unmistakable. Holmes takes the paper and examines it with intense concentration, holding it close to the lamp. \"Interesting,\" he murmurs. \"The words are from yesterday's Times. The paste is still fresh. This was assembled last night.\""
       }
     ],
     "exitAction": "receive_warning",
@@ -366,7 +366,7 @@ module.exports = {
           "thorough",
           "under"
         ],
-        "discovery": "You search the room with methodical care — under the bed, behind the wardrobe, beneath the cushions, in the wardrobe itself. The boot is not there. Holmes checks the window — it is latched from the inside, three floors above the street. No one could have entered that way. He examines the door lock. \"No sign of forced entry,\" he says. \"Whoever took the boot had a key, or was admitted by someone who did.\" He turns to Sir Henry. \"How many boots did you bring from Canada?\" Sir Henry counts: \"Three pairs. Two old, one new. The new brown pair I was wearing yesterday.\" Holmes nods slowly. \"And now one of the new pair is missing. Only one. Not both.\""
+        "discovery": "You search the room with methodical care — under the bed, behind the wardrobe, beneath the cushions, in the wardrobe itself. The carpet smells of dust and old wool. The boot is not there. Holmes checks the window — it is latched from the inside, three floors above the street. No one could have entered that way. He examines the door lock. \"No sign of forced entry,\" he says. \"Whoever took the boot had a key, or was admitted by someone who did.\" He turns to Sir Henry. \"How many boots did you bring from Canada?\" Sir Henry counts: \"Three pairs. Two old, one new. The new brown pair I was wearing yesterday.\" Holmes nods slowly. \"And now one of the new pair is missing. Only one. Not both.\""
       },
       {
         "id": "question_staff",
@@ -381,7 +381,7 @@ module.exports = {
           "maid",
           "hotel"
         ],
-        "discovery": "The hotel porter — a dignified man with impressive side-whiskers — denies all knowledge. \"No one has entered Mr. Baskerville's rooms this morning except the chambermaid, and she would not touch a guest's belongings, sir.\" The chambermaid, when questioned, is equally emphatic: she made the bed, dusted the furniture, and did not see any boot on the dressing table. Holmes watches both of them with his head tilted and his eyes half-closed. When they leave, he says: \"They are telling the truth, Watson. Neither of them took the boot. Someone else was in this room — someone the staff did not see.\""
+        "discovery": "The hotel porter — a dignified man with impressive side-whiskers and the faint smell of mothballs — denies all knowledge. His voice is firm but his eyes dart to the floor. \"No one has entered Mr. Baskerville's rooms this morning except the chambermaid, and she would not touch a guest's belongings, sir.\" The chambermaid, when questioned, is equally emphatic: she made the bed, dusted the furniture, and did not see any boot on the dressing table. Holmes watches both of them with his head tilted and his eyes half-closed. When they leave, he says: \"They are telling the truth, Watson. Neither of them took the boot. Someone else was in this room — someone the staff did not see.\""
       },
       {
         "id": "examine_door",
@@ -411,7 +411,7 @@ module.exports = {
           "reason",
           "purpose"
         ],
-        "discovery": "Holmes paces the room, his hands behind his back. \"A single boot,\" he muses. \"Not valuable in itself. Not sentimental. Not containing any hidden document or secret compartment — I have examined the other boot and it is perfectly ordinary.\" He stops at the window and looks down at the street. \"There are two possibilities, Watson. Either the thief wanted something that was on the boot — a scent, a trace, a sample of leather or polish — or the theft was a test. A test to see how Sir Henry would react. To see if he was being watched. To see if he was afraid.\" He turns. \"In either case, it tells us something important: whoever took that boot knows Sir Henry is in London, knows where he is staying, and is paying very close attention to his movements.\""
+        "discovery": "Holmes paces the room, his hands behind his back, his footsteps muffled on the carpet. The smell of his pipe tobacco lingers in the air. \"A single boot,\" he muses. \"Not valuable in itself. Not sentimental. Not containing any hidden document or secret compartment — I have examined the other boot and it is perfectly ordinary.\" He stops at the window and looks down at the street. \"There are two possibilities, Watson. Either the thief wanted something that was on the boot — a scent, a trace, a sample of leather or polish — or the theft was a test. A test to see how Sir Henry would react. To see if he was being watched. To see if he was afraid.\" He turns. \"In either case, it tells us something important: whoever took that boot knows Sir Henry is in London, knows where he is staying, and is paying very close attention to his movements.\""
       }
     ],
     "exitAction": "return_baker_street",
@@ -501,7 +501,7 @@ module.exports = {
           "load",
           "prepare"
         ],
-        "discovery": "You draw your service revolver from the drawer where Holmes keeps it — a Webley Mark I, well-oiled, its cylinder turning smoothly. You check the chambers: six rounds, all loaded. You slip a box of spare cartridges into your coat pocket. Holmes watches you with approval. \"Good man,\" he says. \"I do not think you will need it — but if you do, you will need it badly.\" He pauses. \"There is one more thing. I have made enquiries about the Baskerville estate. The heir after Sir Henry, should anything happen to him, is a man named Rodger Baskerville — a distant cousin who lives somewhere in the Americas. Or so the records say.\" His eyes narrow. \"I intend to find out more.\""
+        "discovery": "You draw your service revolver from the drawer where Holmes keeps it — a Webley Mark I, well-oiled, its cylinder turning smoothly. The cold steel sits heavy and reassuring in your palm. You check the chambers: six rounds, all loaded. You slip a box of spare cartridges into your coat pocket. Holmes watches you with approval. \"Good man,\" he says. \"I do not think you will need it — but if you do, you will need it badly.\" He pauses. \"There is one more thing. I have made enquiries about the Baskerville estate. The heir after Sir Henry, should anything happen to him, is a man named Rodger Baskerville — a distant cousin who lives somewhere in the Americas. Or so the records say.\" His eyes narrow. \"I intend to find out more.\""
       },
       {
         "id": "talk_to_mortimer",
@@ -516,7 +516,7 @@ module.exports = {
           "advice",
           "local"
         ],
-        "discovery": "Mortimer is eager to help. \"The Hall is a fine old house,\" he says, \"though it can be gloomy in winter. The Barrymores — the butler and his wife — are excellent servants, devoted to the family. You will be well looked after.\" He pauses. \"But Dr. Watson, I must warn you: the moor is not like other places. It is vast, and empty, and ancient. There are bogs that can swallow a man whole. There are ruins that predate recorded history. And at night...\" He trails off. \"At night, the moor belongs to itself. No one who lives near it walks there after dark. No one.\""
+        "discovery": "Mortimer is eager to help, leaning forward with his hands clasped tightly. His eyes are bright with worry. \"The Hall is a fine old house,\" he says, \"though it can be gloomy in winter. The Barrymores — the butler and his wife — are excellent servants, devoted to the family. You will be well looked after.\" He pauses. \"But Dr. Watson, I must warn you: the moor is not like other places. It is vast, and empty, and ancient. There are bogs that can swallow a man whole. There are ruins that predate recorded history. And at night...\" He trails off. \"At night, the moor belongs to itself. No one who lives near it walks there after dark. No one.\""
       },
       {
         "id": "say_farewell",
@@ -530,7 +530,7 @@ module.exports = {
           "leave",
           "part"
         ],
-        "discovery": "You take Holmes's hand. His grip is firm, his eyes steady. \"Write to me, Watson,\" he says. \"Every detail. What you see, what you hear, what you feel. The smallest observation may be the key to the whole affair.\" He holds your gaze for a moment longer than usual. \"And Watson — be careful. I have a feeling about this case. A feeling I do not often have.\" He releases your hand and turns to the window. \"The game is afoot, Watson. The game is afoot.\""
+        "discovery": "You take Holmes's hand. His grip is firm, his fingers cool and dry, his eyes steady. \"Write to me, Watson,\" he says. \"Every detail. What you see, what you hear, what you feel. The smallest observation may be the key to the whole affair.\" He holds your gaze for a moment longer than usual. \"And Watson — be careful. I have a feeling about this case. A feeling I do not often have.\" He releases your hand and turns to the window. \"The game is afoot, Watson. The game is afoot.\""
       }
     ],
     "exitAction": "depart_for_dartmoor",

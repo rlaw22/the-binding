@@ -31,7 +31,7 @@ module.exports = {
           "ask",
           "household"
         ],
-        "discovery": "Barrymore is courteous but distant. He answers your questions with the precision of a man who has rehearsed his responses. \"The Hall has been closed since Sir Charles's death, sir. My wife and I maintained it in readiness.\" When you ask about Sir Charles's final evening, his hand trembles — barely, but you notice. \"He went for his customary walk on the moor, sir. He did not return.\" His wife makes a small sound from the doorway. Barrymore does not turn around."
+        "discovery": "Barrymore is courteous but distant, standing stiffly in the cold hallway. He answers your questions with the precision of a man who has rehearsed his responses, his breath misting faintly in the chill air. \"The Hall has been closed since Sir Charles's death, sir. My wife and I maintained it in readiness.\" When you ask about Sir Charles's final evening, his hand trembles — barely, but you notice. \"He went for his customary walk on the moor, sir. He did not return.\" His wife makes a small sound from the doorway. Barrymore does not turn around."
       },
       {
         "id": "inspect_hall",
@@ -380,7 +380,7 @@ module.exports = {
           "ask",
           "go back"
         ],
-        "discovery": "You find a moment when Stapleton is distracted by a butterfly and approach Beryl. Her hands are trembling. \"I should not have said what I said,\" she whispers, not meeting your eyes. \"My brother — \" She stops. Corrects herself. \"Mr. Stapleton would be angry if he knew I spoke to you that way.\" You ask why she is afraid. She glances toward Stapleton, who is pinning a specimen with careful, precise fingers. \"This moor is dangerous,\" she says. \"Not just the bogs. Not just the weather. There are things here that — \" Stapleton calls her name. She flinches. \"Please,\" she says quickly. \"If you have any sense, leave this place.\""
+        "discovery": "You find a moment when Stapleton is distracted by a butterfly and approach Beryl. Her hands are trembling, and you smell the faint salt of tears on her cheeks. \"I should not have said what I said,\" she whispers, not meeting your eyes. \"My brother — \" She stops. Corrects herself. \"Mr. Stapleton would be angry if he knew I spoke to you that way.\" You ask why she is afraid. She glances toward Stapleton, who is pinning a specimen with careful, precise fingers. \"This moor is dangerous,\" she says. \"Not just the bogs. Not just the weather. There are things here that — \" Stapleton calls her name. She flinches. \"Please,\" she says quickly. \"If you have any sense, leave this place.\""
       },
       {
         "id": "examine_stapleton",
@@ -408,7 +408,7 @@ module.exports = {
           "friend",
           "baskerville"
         ],
-        "discovery": "When you mention Sir Charles, Stapleton's manner becomes solemn. \"A great loss,\" he says quietly. \"I knew him well. We were... friends, of a sort. He was a kind man, a generous man, but he had one obsession that I could never cure him of.\" You ask what that was. Stapleton looks out across the moor. \"The legend,\" he says. \"The hound. He believed it. He was terrified of the moor after dark. I told him it was nonsense — local superstition, nothing more. But he would not listen.\" He pauses. \"The night he died, he was waiting at the gate of the Hall. Waiting for someone. I have often wondered who.\""
+        "discovery": "When you mention Sir Charles, Stapleton's manner becomes solemn. The wind drops suddenly, and the moor falls silent around you. \"A great loss,\" he says quietly. \"I knew him well. We were... friends, of a sort. He was a kind man, a generous man, but he had one obsession that I could never cure him of.\" You ask what that was. Stapleton looks out across the moor. \"The legend,\" he says. \"The hound. He believed it. He was terrified of the moor after dark. I told him it was nonsense — local superstition, nothing more. But he would not listen.\" He pauses. \"The night he died, he was waiting at the gate of the Hall. Waiting for someone. I have often wondered who.\""
       }
     ],
     "exitAction": "stapleton_leaves",
@@ -494,7 +494,7 @@ module.exports = {
           "look",
           "study"
         ],
-        "discovery": "You crouch behind a boulder and study the convict. He is thin — thinner than a man should be — and his clothes are rags. He has been living rough on the moor for days, perhaps weeks. But it is his expression that strikes you: not the blank menace of a murderer, but the wide-eyed, flinching terror of a hunted animal. He keeps looking over his shoulder, toward the Mire. Not at the prison. Not at the road. At the Mire. As if something out there frightens him more than the law, more than capture, more than the gallows."
+        "discovery": "You crouch behind a boulder, the granite cold and rough against your palm, and study the convict. He is thin — thinner than a man should be — and his clothes are rags, stained with mud and sweat. He has been living rough on the moor for days, perhaps weeks. But it is his expression that strikes you: not the blank menace of a murderer, but the wide-eyed, flinching terror of a hunted animal. He keeps looking over his shoulder, toward the Mire. Not at the prison. Not at the road. At the Mire. As if something out there frightens him more than the law, more than capture, more than the gallows."
       },
       {
         "id": "confront_barrymore_signal",
@@ -508,7 +508,7 @@ module.exports = {
           "accuse",
           "selden"
         ],
-        "discovery": "You burst into the study where Barrymore stands at the window. \"Selden,\" you say. \"The escaped convict. You have been signalling to him.\" Barrymore's composure finally breaks. He sinks into a chair and covers his face with his hands. \"He is my wife's brother,\" he says, his voice muffled. \"Her younger brother. She raised him after their parents died. He is a murderer, yes — I know what he has done. But he is her blood. She begged me. I could not refuse her.\" He looks up. \"He is leaving tomorrow. We have arranged passage on a ship. Please, sir — one more night. That is all we ask.\""
+        "discovery": "You burst into the study where Barrymore stands at the window. The lamp on the desk throws long shadows across his face. \"Selden,\" you say. \"The escaped convict. You have been signalling to him.\" Barrymore's composure finally breaks. He sinks into a chair and covers his face with his hands. \"He is my wife's brother,\" he says, his voice muffled. \"Her younger brother. She raised him after their parents died. He is a murderer, yes — I know what he has done. But he is her blood. She begged me. I could not refuse her.\" He looks up. \"He is leaving tomorrow. We have arranged passage on a ship. Please, sir — one more night. That is all we ask.\""
       },
       {
         "id": "find_selden_camp",

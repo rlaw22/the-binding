@@ -45,7 +45,7 @@ module.exports = {
           "watching",
           "naturalist"
         ],
-        "discovery": "Holmes's expression sharpens. \"Stapleton is not what he appears, Watson. He is a man of education and refinement posing as a simple naturalist. His knowledge of entomology is genuine — he collects butterflies and moths with real expertise — but his interest in the moor goes far beyond science. I have watched him enter the Grimpen Mire by paths that no casual walker would know. He has a hiding place in there — somewhere among the bogs, where no one would think to look. And Watson — \" Holmes pauses. \"He has a dog. A very large dog. I have not seen it, but I have heard it. At night, from the direction of the Mire.\""
+        "discovery": "Holmes's expression sharpens, his grey eyes narrowing like a hawk sighting prey. \"Stapleton is not what he appears, Watson. He is a man of education and refinement posing as a simple naturalist. His knowledge of entomology is genuine — he collects butterflies and moths with real expertise — but his interest in the moor goes far beyond science. I have watched him enter the Grimpen Mire by paths that no casual walker would know. He has a hiding place in there — somewhere among the bogs, where no one would think to look. And Watson — \" Holmes pauses. \"He has a dog. A very large dog. I have not seen it, but I have heard it. At night, from the direction of the Mire.\""
       },
       {
         "id": "examine_stone_circle",
@@ -132,7 +132,7 @@ module.exports = {
           "situation",
           "woman"
         ],
-        "discovery": "Holmes's expression softens — as much as Holmes's expression ever softens. \"She is a prisoner, Watson. Not in chains, but in fear. Stapleton controls her absolutely. She obeys him because she has seen what he is capable of. But she has a conscience — I have watched her from hiding, and I have seen her weep when she thinks no one is watching. She tried to warn Sir Henry. That tells me everything I need to know about her character. When this is over, she will need our protection.\""
+        "discovery": "Holmes's expression softens — as much as Holmes's expression ever softens. He taps his pipe against the hearth, scattering ash. \"She is a prisoner, Watson. Not in chains, but in fear. Stapleton controls her absolutely. She obeys him because she has seen what he is capable of. But she has a conscience — I have watched her from hiding, and I have seen her weep when she thinks no one is watching. She tried to warn Sir Henry. That tells me everything I need to know about her character. When this is over, she will need our protection.\""
       },
       {
         "id": "ask_butterflies",
@@ -146,7 +146,7 @@ module.exports = {
           "stapleton",
           "naturalist"
         ],
-        "discovery": "Holmes nods. \"The butterfly collection is genuine — Stapleton is a real entomologist, and a good one. But it serves a purpose beyond science. The Grimpen Mire is one of the few habitats in England for certain rare species. It gives him a reason — an innocent, scholarly reason — to spend hours in the Mire, alone, unmolested. No one questions a naturalist with a collecting net. No one follows him into the bogs. It is the perfect cover for whatever he is really doing in there.\" Holmes pauses. \"I have seen him carry something into the Mire wrapped in sacking. Something heavy. Something that whimpered.\""
+        "discovery": "Holmes nods, the firelight catching the sharp angles of his face. \"The butterfly collection is genuine — Stapleton is a real entomologist, and a good one. But it serves a purpose beyond science. The Grimpen Mire is one of the few habitats in England for certain rare species. It gives him a reason — an innocent, scholarly reason — to spend hours in the Mire, alone, unmolested. No one questions a naturalist with a collecting net. No one follows him into the bogs. It is the perfect cover for whatever he is really doing in there.\" Holmes pauses. \"I have seen him carry something into the Mire wrapped in sacking. Something heavy. Something that whimpered.\""
       },
       {
         "id": "ask_evidence",
@@ -160,7 +160,7 @@ module.exports = {
           "facts",
           "know"
         ],
-        "discovery": "Holmes ticks off the points on his long fingers. \"One: Stapleton is a Baskerville heir — I am nearly certain of it, though I need one more piece of proof. Two: he has access to a large dog, bred and trained for a purpose. Three: he lured Sir Charles to the gate on the night of his death — I suspect through Laura Lyons, a woman in the village to whom he promised marriage. Four: Beryl Stapleton is his wife, not his sister, and she lives in fear of him. Five: he goes to the Mire every evening to tend to something hidden there. The picture is forming, Watson. But I need to see the dog. I need to see the lair.\""
+        "discovery": "Holmes ticks off the points on his long fingers, his voice crisp and measured. \"One: Stapleton is a Baskerville heir — I am nearly certain of it, though I need one more piece of proof. Two: he has access to a large dog, bred and trained for a purpose. Three: he lured Sir Charles to the gate on the night of his death — I suspect through Laura Lyons, a woman in the village to whom he promised marriage. Four: Beryl Stapleton is his wife, not his sister, and she lives in fear of him. Five: he goes to the Mire every evening to tend to something hidden there. The picture is forming, Watson. But I need to see the dog. I need to see the lair.\""
       },
       {
         "id": "express_concern",
@@ -174,7 +174,7 @@ module.exports = {
           "protect",
           "danger"
         ],
-        "discovery": "Holmes places a hand on your shoulder. \"Sir Henry is in danger, Watson. Grave danger. But he is safer now than he was before — because now he has us. And we know what we are looking for.\" He looks out across the moor toward the distant shape of Baskerville Hall. \"Stapleton will make his move soon. He must — Sir Henry is the last obstacle between him and the Baskerville fortune. When he strikes, we must be ready. We must be watching. And we must have proof that will stand in a court of law, not just a dead hound and a dead man.\""
+        "discovery": "Holmes places a hand on your shoulder. His grip is firm and steadying, his palm cool through your coat. \"Sir Henry is in danger, Watson. Grave danger. But he is safer now than he was before — because now he has us. And we know what we are looking for.\" He looks out across the moor toward the distant shape of Baskerville Hall. \"Stapleton will make his move soon. He must — Sir Henry is the last obstacle between him and the Baskerville fortune. When he strikes, we must be ready. We must be watching. And we must have proof that will stand in a court of law, not just a dead hound and a dead man.\""
       }
     ],
     "exitAction": "continue_investigation",
@@ -276,7 +276,7 @@ module.exports = {
           "study",
           "navigate"
         ],
-        "discovery": "Holmes's cairns are small but precise — three stones stacked on a larger base, placed every twenty yards along the safe route. \"The Mire has a logic to it,\" he explains. \"The solid ground follows the old rock formations beneath the surface. Once you learn to read the vegetation — the colour, the density, the species — you can predict where the ground will hold and where it will not. Stapleton has spent years learning these paths. I have had three days. But three days of careful observation are worth more than years of careless habit.\""
+        "discovery": "Holmes's cairns are small but precise — three stones stacked on a larger base, the granite rough and lichen-covered, placed every twenty yards along the safe route. The wind whistles softly through the heather. \"The Mire has a logic to it,\" he explains. \"The solid ground follows the old rock formations beneath the surface. Once you learn to read the vegetation — the colour, the density, the species — you can predict where the ground will hold and where it will not. Stapleton has spent years learning these paths. I have had three days. But three days of careful observation are worth more than years of careless habit.\""
       },
       {
         "id": "smell_phosphorus",
@@ -494,7 +494,7 @@ module.exports = {
           "what",
           "do"
         ],
-        "discovery": "Holmes paces the hall, his disguise forgotten, his mind working at full speed. \"We need to force Stapleton's hand. He has been patient — methodical — picking off the Baskervilles one by one. But if we make Sir Henry vulnerable, visible, alone on the moor at night, Stapleton will not be able to resist. He will send the hound. And we will be waiting.\" He stops pacing and looks at you. \"It is dangerous, Watson. For Sir Henry, for you, for me. But we have no choice. We cannot prove a case based on a portrait and a confession from Laura Lyons. We need to catch him in the act. We need the hound.\""
+        "discovery": "Holmes paces the hall, his disguise forgotten, his mind working at full speed. His footsteps echo on the stone floor, and you smell the damp mortar of the ancient walls. \"We need to force Stapleton's hand. He has been patient — methodical — picking off the Baskervilles one by one. But if we make Sir Henry vulnerable, visible, alone on the moor at night, Stapleton will not be able to resist. He will send the hound. And we will be waiting.\" He stops pacing and looks at you. \"It is dangerous, Watson. For Sir Henry, for you, for me. But we have no choice. We cannot prove a case based on a portrait and a confession from Laura Lyons. We need to catch him in the act. We need the hound.\""
       },
       {
         "id": "examine_family_tree",

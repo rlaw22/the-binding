@@ -60,7 +60,7 @@ module.exports = {
           "happened",
           "end"
         ],
-        "discovery": "You stand at the edge of the Grimpen Mire and look out into the fog. Somewhere beneath that green, innocent surface, Stapleton lies in the dark, claimed by the same moor he used as his weapon. The Mire was his ally — his hiding place, his kennel, his fortress. And in the end, it was his grave. There is a symmetry to it that feels less like justice and more like the moor itself passing sentence. Holmes stands beside you, silent for a long time. Then he says, \"The moor does not forgive, Watson. It does not forget. And it does not distinguish between the innocent and the guilty.\""
+        "discovery": "You stand at the edge of the Grimpen Mire and look out into the fog. The air is thick with the smell of peat and stagnant water. Somewhere beneath that green, innocent surface, Stapleton lies in the dark, claimed by the same moor he used as his weapon. The Mire was his ally — his hiding place, his kennel, his fortress. And in the end, it was his grave. There is a symmetry to it that feels less like justice and more like the moor itself passing sentence. Holmes stands beside you, silent for a long time. Then he says, \"The moor does not forgive, Watson. It does not forget. And it does not distinguish between the innocent and the guilty.\""
       }
     ],
     "exitAction": "leave_mire",
@@ -131,7 +131,7 @@ module.exports = {
           "holmes",
           "history"
         ],
-        "discovery": "Holmes retrieves the forged documents from the satchel. \"Stapleton was educated at Cambridge — I have confirmed this through my contacts. He studied natural sciences, which gave him his cover as a naturalist. He was brilliant, by all accounts — a first-class mind wasted on a single, poisonous obsession. After Cambridge, he disappeared. Changed his name. Moved to Dartmoor. Spent three years establishing himself as a harmless eccentric with a butterfly net.\" He pauses. \"The tragedy, Watson, is that he was genuinely talented. His entomological work was published in several journals. He could have had a legitimate career. Instead, he chose murder.\""
+        "discovery": "Holmes retrieves the forged documents from the satchel. The papers are crisp, the ink still sharp and black. \"Stapleton was educated at Cambridge — I have confirmed this through my contacts. He studied natural sciences, which gave him his cover as a naturalist. He was brilliant, by all accounts — a first-class mind wasted on a single, poisonous obsession. After Cambridge, he disappeared. Changed his name. Moved to Dartmoor. Spent three years establishing himself as a harmless eccentric with a butterfly net.\" He pauses. \"The tragedy, Watson, is that he was genuinely talented. His entomological work was published in several journals. He could have had a legitimate career. Instead, he chose murder.\""
       },
       {
         "id": "ask_about_hound_breeding",
@@ -175,7 +175,7 @@ module.exports = {
           "inheritance",
           "land"
         ],
-        "discovery": "Sir Henry sets down his untouched brandy. \"The estate is mine,\" he says quietly. \"But it does not feel like a victory.\" He looks at the portraits on the wall — the generations of Baskervilles staring down from their gilt frames. \"My great-uncle died on this moor. Stapleton died in the Mire. Two men dead over money and land and a family name.\" He turns to Holmes. \"I intend to be a different kind of Baskerville, Mr. Holmes. I will live here. I will tend the land. And I will make sure that no one dies because of this family again.\" Holmes nods. \"That, Sir Henry, is the best possible outcome.\""
+        "discovery": "Sir Henry sets down his untouched brandy. The spirit gleams amber in the firelight, and you smell its warm, oaky fragrance. \"The estate is mine,\" he says quietly. \"But it does not feel like a victory.\" He looks at the portraits on the wall — the generations of Baskervilles staring down from their gilt frames. \"My great-uncle died on this moor. Stapleton died in the Mire. Two men dead over money and land and a family name.\" He turns to Holmes. \"I intend to be a different kind of Baskerville, Mr. Holmes. I will live here. I will tend the land. And I will make sure that no one dies because of this family again.\" Holmes nods. \"That, Sir Henry, is the best possible outcome.\""
       }
     ],
     "exitAction": "leave_study",
@@ -248,7 +248,7 @@ module.exports = {
           "letter",
           "go back"
         ],
-        "discovery": "Beryl's eyes fill with tears. \"The day Sir Henry arrived, I walked to the Hall. I was going to warn him — to tell him everything. But Stapleton followed me. He saw me speak to Sir Henry. He was furious.\" She touches her wrist, and you see the faint marks of fingers — bruises, old but not old enough. \"That night, he tied me to the stake in the Mire. He said I would stay there until the work was done. Until Sir Henry was dead.\" She looks at you. \"I thought I would die there. I thought no one would find me.\" Her voice breaks. \"Thank you. Thank you for finding me.\""
+        "discovery": "Beryl's eyes fill with tears. She touches her wrist absently, and you see the faint yellow-green marks of old bruises. \"The day Sir Henry arrived, I walked to the Hall. I was going to warn him — to tell him everything. But Stapleton followed me. He saw me speak to Sir Henry. He was furious.\" She touches her wrist, and you see the faint marks of fingers — bruises, old but not old enough. \"That night, he tied me to the stake in the Mire. He said I would stay there until the work was done. Until Sir Henry was dead.\" She looks at you. \"I thought I would die there. I thought no one would find me.\" Her voice breaks. \"Thank you. Thank you for finding me.\""
       },
       {
         "id": "ask_about_life_with_stapleton",
@@ -278,7 +278,7 @@ module.exports = {
           "plans",
           "free"
         ],
-        "discovery": "Beryl looks out the window at the moor — the vast, beautiful, terrible moor that has been her prison for three years. \"I want to go somewhere green,\" she says quietly. \"Somewhere with trees and rivers and no heather. Somewhere I can sleep without hearing the hound.\" She turns to Holmes. \"I have a sister in Edinburgh. I have not spoken to her in years — Stapleton forbade it. But she would take me in. I know she would.\" Holmes nods. \"I will arrange it,\" he says. \"You will have funds, a railway ticket, and a letter of introduction. You will never have to set foot on this moor again.\" Beryl's composure finally breaks. She covers her face with her hands and weeps — not the desperate weeping of a prisoner, but the quiet, relieved weeping of a woman who is, at last, free."
+        "discovery": "Beryl looks out the window at the moor — the vast, beautiful, terrible moor that has been her prison for three years. The glass is cold, and her breath mists against it. \"I want to go somewhere green,\" she says quietly. \"Somewhere with trees and rivers and no heather. Somewhere I can sleep without hearing the hound.\" She turns to Holmes. \"I have a sister in Edinburgh. I have not spoken to her in years — Stapleton forbade it. But she would take me in. I know she would.\" Holmes nods. \"I will arrange it,\" he says. \"You will have funds, a railway ticket, and a letter of introduction. You will never have to set foot on this moor again.\" Beryl's composure finally breaks. She covers her face with her hands and weeps — not the desperate weeping of a prisoner, but the quiet, relieved weeping of a woman who is, at last, free."
       },
       {
         "id": "offer_comfort",
@@ -292,7 +292,7 @@ module.exports = {
           "kind",
           "safe"
         ],
-        "discovery": "You speak to Beryl gently, telling her that she is safe now, that Stapleton cannot hurt her, that her courage in trying to warn Sir Henry saved his life. She listens with her head bowed, her hands clasped in her lap. When you finish, she looks up and manages a smile — the first genuine smile you have seen from her. \"You are kind, Doctor,\" she says. \"Both of you. Mr. Holmes, Dr. Watson — you have given me back my life. I did not think that was possible.\" She reaches out and takes your hand. Her grip is fragile but real. \"I will remember this,\" she says. \"For as long as I live, I will remember what you did for me.\""
+        "discovery": "You speak to Beryl gently, telling her that she is safe now, that Stapleton cannot hurt her, that her courage in trying to warn Sir Henry saved his life. She listens with her head bowed, her hands clasped so tightly in her lap that her knuckles are white. When you finish, she looks up and manages a smile — the first genuine smile you have seen from her. \"You are kind, Doctor,\" she says. \"Both of you. Mr. Holmes, Dr. Watson — you have given me back my life. I did not think that was possible.\" She reaches out and takes your hand. Her grip is fragile but real. \"I will remember this,\" she says. \"For as long as I live, I will remember what you did for me.\""
       }
     ],
     "exitAction": "leave_morning_room",
@@ -362,7 +362,7 @@ module.exports = {
           "review",
           "stapleton"
         ],
-        "discovery": "Holmes folds his newspaper and regards you with the look that means he is about to be expansive. \"The case had everything, Watson. A classic villain — intelligent, patient, methodical. A classic victim — brave, naive, trusting. A classic setting — the moor, the Mire, the Hall. And a classic method — fear. Stapleton understood that the most powerful weapon is not a knife or a gun but an idea. The idea that the Baskerville curse was real. That a hellhound walked the moor. That the dead could reach out and kill the living.\" He pauses. \"It was, in its way, a masterpiece. A terrible, wasted masterpiece.\""
+        "discovery": "Holmes folds his newspaper — the ink smudging his fingertips — and regards you with the look that means he is about to be expansive. \"The case had everything, Watson. A classic villain — intelligent, patient, methodical. A classic victim — brave, naive, trusting. A classic setting — the moor, the Mire, the Hall. And a classic method — fear. Stapleton understood that the most powerful weapon is not a knife or a gun but an idea. The idea that the Baskerville curse was real. That a hellhound walked the moor. That the dead could reach out and kill the living.\" He pauses. \"It was, in its way, a masterpiece. A terrible, wasted masterpiece.\""
       },
       {
         "id": "read_newspaper",
@@ -376,7 +376,7 @@ module.exports = {
           "article",
           "press"
         ],
-        "discovery": "Holmes hands you the paper. The headline reads: \"MYSTERIOUS DEATH ON DARTMOOR — Naturalist Lost in Bog.\" The article describes Stapleton as a respected local naturalist who wandered into the Grimpen Mire during fog and was presumed drowned. No mention of the hound, no mention of the Baskerville connection, no mention of murder. Holmes catches your expression. \"The official version, Watson. Lestrade has been thorough. The inquest will record an accidental death. Sir Henry's name will not appear. The Baskerville legend will fade into the obscurity it deserves.\" He takes back the paper. \"Some truths are better served by discretion than by headlines.\""
+        "discovery": "Holmes hands you the paper. It is still warm from the press, smelling of fresh ink. The headline reads: \"MYSTERIOUS DEATH ON DARTMOOR — Naturalist Lost in Bog.\" The article describes Stapleton as a respected local naturalist who wandered into the Grimpen Mire during fog and was presumed drowned. No mention of the hound, no mention of the Baskerville connection, no mention of murder. Holmes catches your expression. \"The official version, Watson. Lestrade has been thorough. The inquest will record an accidental death. Sir Henry's name will not appear. The Baskerville legend will fade into the obscurity it deserves.\" He takes back the paper. \"Some truths are better served by discretion than by headlines.\""
       },
       {
         "id": "plan_account",
@@ -474,7 +474,7 @@ module.exports = {
           "holmes",
           "supernatural"
         ],
-        "discovery": "Holmes listens to your answer with his head tilted and his eyes half-closed. Then he nods slowly. \"No,\" he says. \"Nor do I. And yet — \" He pauses, and for a moment his expression is not that of a scientist or a detective but of a man who has spent too many nights on a dark moor. \"And yet, Watson, there are nights when I think the moor itself is alive. Not in any supernatural sense. But in the way that a place can hold a memory. A grief. A violence. The Mire has been swallowing things for ten thousand years. Perhaps it remembers.\" He shakes himself, and the moment passes. \"Nonsense,\" he says briskly. \"Pass the tea.\""
+        "discovery": "Holmes listens to your answer with his head tilted and his eyes half-closed, the firelight flickering across his sharp features. Then he nods slowly. \"No,\" he says. \"Nor do I. And yet — \" He pauses, and for a moment his expression is not that of a scientist or a detective but of a man who has spent too many nights on a dark moor. \"And yet, Watson, there are nights when I think the moor itself is alive. Not in any supernatural sense. But in the way that a place can hold a memory. A grief. A violence. The Mire has been swallowing things for ten thousand years. Perhaps it remembers.\" He shakes himself, and the moment passes. \"Nonsense,\" he says briskly. \"Pass the tea.\""
       },
       {
         "id": "discuss_legacy",
@@ -502,7 +502,7 @@ module.exports = {
           "client",
           "adventure"
         ],
-        "discovery": "Holmes reaches into the pocket of his dressing gown and produces a small stack of letters. \"Three,\" he says. \"A missing pearl necklace in Mayfair. A threatening letter received by a bishop in Surrey. And — \" he holds up the last letter and you see his eyes gleam \" — a most singular communication from a young woman in滠 who claims her fiancé has been replaced by an impostor. An exact physical duplicate, she says, but with a different personality.\" He sets down his pipe. \"The game, Watson, as they say, is afoot.\" But he does not rise. Not yet. For now, the fire is warm, the tea is hot, and the moor is far away."
+        "discovery": "Holmes reaches into the silk pocket of his dressing gown and produces a small stack of letters. The envelopes are crisp, the handwriting varied — three different hands, three different problems. \"Three,\" he says. \"A missing pearl necklace in Mayfair. A threatening letter received by a bishop in Surrey. And — \" he holds up the last letter and you see his eyes gleam \" — a most singular communication from a young woman in滠 who claims her fiancé has been replaced by an impostor. An exact physical duplicate, she says, but with a different personality.\" He sets down his pipe. \"The game, Watson, as they say, is afoot.\" But he does not rise. Not yet. For now, the fire is warm, the tea is hot, and the moor is far away."
       },
       {
         "id": "reflect_on_moors",

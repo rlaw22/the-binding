@@ -17,7 +17,7 @@ module.exports = {
           "plan",
           "route"
         ],
-        "discovery": "Holmes has marked the map with meticulous care. Three positions are circled in red ink: one behind a granite outcrop fifty yards from the path, one in a shallow depression in the heather, and one behind a ruined wall near the Hall grounds. \"Watson, you will take the outcrop. Lestrade, the depression. I will be closest to the path, behind the wall.\" He draws a line from Merripit House to the Hall. \"Stapleton will release the hound somewhere along this line. The creature will follow Sir Henry's scent. When it passes our positions, we close in.\" He looks up. \"The hound must not reach Sir Henry. That is absolute.\""
+        "discovery": "Holmes has marked the map with meticulous care. Three positions are circled in red ink that smells faintly of iron gall: one behind a granite outcrop fifty yards from the path, one in a shallow depression in the heather, and one behind a ruined wall near the Hall grounds. \"Watson, you will take the outcrop. Lestrade, the depression. I will be closest to the path, behind the wall.\" He draws a line from Merripit House to the Hall. \"Stapleton will release the hound somewhere along this line. The creature will follow Sir Henry's scent. When it passes our positions, we close in.\" He looks up. \"The hound must not reach Sir Henry. That is absolute.\""
       },
       {
         "id": "discuss_weapons",
@@ -32,7 +32,7 @@ module.exports = {
           "ask",
           "holmes"
         ],
-        "discovery": "Holmes opens a leather case he has brought from London. Inside, nestled in oilcloth, are two revolvers and a hunting rifle. \"The revolvers are for you and Lestrade. The rifle is mine — I am a fair shot, as you know, and at fifty yards I will not miss.\" He pauses. \"But bullets alone may not stop this creature. It is large, it is desperate, and it has been bred for savagery. We must also be prepared for the possibility that it is coated in phosphorus — in which case, a single well-placed shot should ignite the substance and cause the animal considerable distress.\" He checks the rifle's action with practised hands. \"Aim for the head, Watson. Always the head.\""
+        "discovery": "Holmes opens a leather case he has brought from London. The case smells of beeswax and gun oil. Inside, nestled in oilcloth that crinkles softly, are two revolvers and a hunting rifle. \"The revolvers are for you and Lestrade. The rifle is mine — I am a fair shot, as you know, and at fifty yards I will not miss.\" He pauses. \"But bullets alone may not stop this creature. It is large, it is desperate, and it has been bred for savagery. We must also be prepared for the possibility that it is coated in phosphorus — in which case, a single well-placed shot should ignite the substance and cause the animal considerable distress.\" He checks the rifle's action with practised hands. \"Aim for the head, Watson. Always the head.\""
       },
       {
         "id": "talk_to_sir_henry",
@@ -46,7 +46,7 @@ module.exports = {
           "brave",
           "concern"
         ],
-        "discovery": "You find Sir Henry standing at the window, looking out at the moor. His reflection in the glass is ghostly, transparent. \"I know what you're going to say, Doctor,\" he says without turning. \"That this is dangerous. That I might die.\" You confirm both. He nods. \"My great-uncle died on this moor. Alone. Afraid. If I run now, I will spend the rest of my life looking over my shoulder.\" He turns to face you. His eyes are steady. \"I am a Baskerville. This is my land. I will not surrender it to a coward with a painted dog.\" He extends his hand. You shake it. His grip is firm."
+        "discovery": "You find Sir Henry standing at the window, looking out at the moor. His reflection in the glass is ghostly, transparent. The cold from the pane radiates into the room. \"I know what you're going to say, Doctor,\" he says without turning. \"That this is dangerous. That I might die.\" You confirm both. He nods. \"My great-uncle died on this moor. Alone. Afraid. If I run now, I will spend the rest of my life looking over my shoulder.\" He turns to face you. His eyes are steady. \"I am a Baskerville. This is my land. I will not surrender it to a coward with a painted dog.\" He extends his hand. You shake it. His grip is firm."
       },
       {
         "id": "review_plan",
@@ -60,7 +60,7 @@ module.exports = {
           "timing",
           "confirm"
         ],
-        "discovery": "Holmes reviews the plan with the precision of a military commander. \"Sir Henry dines at Merripit at eight. He leaves at eleven. The walk takes approximately thirty minutes at a normal pace. We take our positions at ten-thirty. No lanterns. No cigarettes. No sound. The moor must be silent — any noise will warn Stapleton.\" He fixes you with a hard stare. \"Watson, I must impress upon you: when the hound appears, do not fire until I do. If we scatter our shots, the creature may reach Sir Henry before we can stop it. Wait for my signal. Then fire for the head.\" He pauses. \"And Watson — if something goes wrong, if the plan fails — get Sir Henry to the Hall and bar the doors. Do not come back for me.\""
+        "discovery": "Holmes reviews the plan with the precision of a military commander, his finger tracing the route on the map. The scratch of his pencil on paper is the only sound in the room. \"Sir Henry dines at Merripit at eight. He leaves at eleven. The walk takes approximately thirty minutes at a normal pace. We take our positions at ten-thirty. No lanterns. No cigarettes. No sound. The moor must be silent — any noise will warn Stapleton.\" He fixes you with a hard stare. \"Watson, I must impress upon you: when the hound appears, do not fire until I do. If we scatter our shots, the creature may reach Sir Henry before we can stop it. Wait for my signal. Then fire for the head.\" He pauses. \"And Watson — if something goes wrong, if the plan fails — get Sir Henry to the Hall and bar the doors. Do not come back for me.\""
       }
     ],
     "exitAction": "prepare_for_ambush",
@@ -395,7 +395,7 @@ module.exports = {
           "case",
           "stapleton"
         ],
-        "discovery": "Holmes wipes the phosphorus from his glove with a handkerchief. \"We have proven that the hound is real — and that it is mortal,\" he says. \"But we have not yet proven that Stapleton set it loose. For that, we need his lair. We need the chains, the kennel, the breeding records. We need evidence that will stand before a judge.\" He looks toward the Grimpen Mire, a dark mass on the western horizon. \"Stapleton will have fled by now. He will have heard the shots. He will know the hound is dead.\" His eyes narrow. \"But he cannot have gone far. Not in the dark. Not on this moor. And I know where he is going.\""
+        "discovery": "Holmes wipes the phosphorus from his glove with a handkerchief. A faint greenish glow clings to the fabric before fading. The chemical smell is sharp and acrid. \"We have proven that the hound is real — and that it is mortal,\" he says. \"But we have not yet proven that Stapleton set it loose. For that, we need his lair. We need the chains, the kennel, the breeding records. We need evidence that will stand before a judge.\" He looks toward the Grimpen Mire, a dark mass on the western horizon. \"Stapleton will have fled by now. He will have heard the shots. He will know the hound is dead.\" His eyes narrow. \"But he cannot have gone far. Not in the dark. Not on this moor. And I know where he is going.\""
       },
       {
         "id": "collect_evidence",
@@ -409,7 +409,7 @@ module.exports = {
           "coat",
           "take"
         ],
-        "discovery": "You scrape a sample of the phosphorus paste into a handkerchief and wrap it carefully. Holmes nods approvingly. \"Good, Watson. That is evidence. A chemist will confirm it is phosphorus mixed with some kind of greasy base — lard, perhaps, or fish oil — to make it adhere to the animal's coat.\" He takes a second sample himself. \"We will also want the collar, the chain marks on its legs — see here, where a heavy chain has worn the fur away — and any other evidence we can find at the kennel. Stapleton was thorough, but he was not thorough enough. He left a trail, and we will follow it.\""
+        "discovery": "You scrape a sample of the phosphorus paste into a handkerchief, the gritty paste rasping against the stone, and wrap it carefully. Holmes nods approvingly. \"Good, Watson. That is evidence. A chemist will confirm it is phosphorus mixed with some kind of greasy base — lard, perhaps, or fish oil — to make it adhere to the animal's coat.\" He takes a second sample himself. \"We will also want the collar, the chain marks on its legs — see here, where a heavy chain has worn the fur away — and any other evidence we can find at the kennel. Stapleton was thorough, but he was not thorough enough. He left a trail, and we will follow it.\""
       }
     ],
     "exitAction": "pursue_stapleton",
@@ -513,7 +513,7 @@ module.exports = {
           "journal",
           "notes"
         ],
-        "discovery": "The notebook is meticulous. Stapleton recorded everything: the mastiff's weight, diet, training regimen, and — most chillingly — the dates on which he exposed the animal to Sir Henry's scent. A glove, stolen from the Hall. A boot, borrowed and returned. The scent of Sir Henry's tobacco. Page after page of careful, methodical preparation for murder. The final entry is dated yesterday: \"Tomorrow night. The path from Merripit. The scent is strong. The beast is ready. By morning, the Baskerville line ends.\" Holmes reads it over your shoulder. \"Three years,\" he says. \"Three years of patient, methodical preparation. The man is a monster — but he is a disciplined monster.\""
+        "discovery": "The notebook is meticulous, its pages yellowed and smelling of dog. Stapleton recorded everything: the mastiff's weight, diet, training regimen, and — most chillingly — the dates on which he exposed the animal to Sir Henry's scent. A glove, stolen from the Hall. A boot, borrowed and returned. The scent of Sir Henry's tobacco. Page after page of careful, methodical preparation for murder. The final entry is dated yesterday: \"Tomorrow night. The path from Merripit. The scent is strong. The beast is ready. By morning, the Baskerville line ends.\" Holmes reads it over your shoulder. \"Three years,\" he says. \"Three years of patient, methodical preparation. The man is a monster — but he is a disciplined monster.\""
       },
       {
         "id": "examine_original_hound",
@@ -528,7 +528,7 @@ module.exports = {
           "first",
           "dog"
         ],
-        "discovery": "The remains are wrapped in sacking — a dog's skeleton, smaller than the mastiff, with a heavy skull and powerful jaws. A cross-bred animal, perhaps a bloodhound-mastiff mix. Holmes examines it briefly. \"This was his first attempt,\" he says. \"The prototype. He bred it, trained it, and when it was no longer useful — when he had produced something larger, something more terrifying — he killed it and kept the bones. As a reminder. As a trophy.\" He rewraps the remains carefully. \"This will be entered as evidence. Every piece of it.\""
+        "discovery": "The remains are wrapped in rough sacking that scratches your fingers — a dog's skeleton, smaller than the mastiff, with a heavy skull and powerful jaws. The bones smell of earth and decay. A cross-bred animal, perhaps a bloodhound-mastiff mix. Holmes examines it briefly. \"This was his first attempt,\" he says. \"The prototype. He bred it, trained it, and when it was no longer useful — when he had produced something larger, something more terrifying — he killed it and kept the bones. As a reminder. As a trophy.\" He rewraps the remains carefully. \"This will be entered as evidence. Every piece of it.\""
       }
     ],
     "exitAction": "carry_beryl_to_safety",
