@@ -841,6 +841,8 @@ ${discoveryNarration ? 'You MUST narrate the discovery using the DISCOVERY TEXT 
 Do NOT change the outcome, damage, or coin values.
 Do NOT generate buttons, suggestions, or new content.
 Do NOT add meta-commentary or compliments.
+Do NOT re-describe locations, NPCs, or objects the player has already encountered in this scene. Move the narrative forward.
+Do NOT generate a SUGGESTED ACTIONS block — buttons are handled by the game engine.
 Stay in the world. Be concise.`;
   } else if (isStoryline && !storyResult) {
     // Storyline mode but no StoryEngine match (free-text action not matching any button)
@@ -879,7 +881,9 @@ STRICT RULES FOR FREE-TEXT ACTIONS:
 - Do NOT invent new items, objects, or NPCs that are not already described in the scene.
 - Do NOT narrate the player finding, picking up, or acquiring items unless they are explicitly listed in the scene description or player inventory.
 - If the player's action is impossible in the current setting (e.g. searching the ground while inside a moving vehicle), narrate WHY it cannot be done — do not hallucinate a result.
-- Keep the response to 2-3 sentences maximum.`;
+- Keep the response to 2-3 sentences maximum.
+- Do NOT generate a SUGGESTED ACTIONS block — buttons are handled by the game engine.
+- Do NOT re-describe locations, NPCs, or objects the player has already encountered. Advance the narrative.`;
   } else if (isDm) {
     // === DIGITAL DM MODE: scenario-based play ===
     const scenario = game.digitalDMScenario;
@@ -1462,20 +1466,15 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   const exitAction = SceneEngine.getExitAction(sceneState);
   const allContent = SceneEngine.getAllContentWithStatus(sceneState);
 
-  // Undiscovered items first (high priority), then discovered items (filler — always present)
-  const undiscoveredActions = allContent.filter(i => i.available).map(item => ({
+  // STORYLINE MODE: Only show undiscovered items. Once explored, buttons vanish.
+  // AI suggestions are completely excluded — they caused repetition and scene-irrelevant noise.
+  const contentActions = allContent.filter(i => i.available).map(item => ({
     label: item.label,
     shortLabel: generateShortLabel(item.label),
     type: 'exploration'
   }));
-  const discoveredActions = allContent.filter(i => i.discovered).map(item => ({
-    label: item.label,
-    shortLabel: generateShortLabel(item.label),
-    type: 'explored'
-  }));
-  const contentActions = [...undiscoveredActions, ...discoveredActions];
 
-  // Add bad choice if it exists in the scene's storyMode
+  // Add bad choice if it exists in the scene's storyMode (visible from the start)
   const badChoiceActions = [];
   if (sceneState.storyMode && sceneState.storyMode.badChoice) {
     badChoiceActions.push({
@@ -1485,55 +1484,23 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     });
   }
 
-  // Get banned location keywords for filtering suggestions
-  const bannedLocations = (sceneState.locationKeywords && sceneState.locationKeywords.banned) || [];
-  const bannedLower = bannedLocations.map(l => l.toLowerCase());
-
-  // Build a set of significant words from content items for deduplication
-  const genericWords = new Set(['the', 'and', 'for', 'with', 'from', 'that', 'this', 'your', 'have', 'will', 'into', 'onto', 'back', 'out', 'about', 'through', 'every']);
-  const contentWordSets = contentActions.map(a =>
-    new Set(a.label.toLowerCase().split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w)))
-  );
-
-  // Filter AI suggestions: keep only those that don't significantly overlap with content items,
-  // don't reference banned locations, and haven't been used already
-  const usedLabels = sceneState.usedSuggestions || new Set();
-  const contextualActions = (aiSuggestedActions || [])
-    .filter(ai => {
-      const aiLabel = ai.label.toLowerCase();
-      // Skip already-used suggestions to prevent loops
-      if (usedLabels.has(aiLabel)) return false;
-      // Filter out suggestions that reference banned locations
-      if (bannedLower.some(loc => aiLabel.includes(loc))) return false;
-      const aiWords = aiLabel.split(/\s+/).filter(w => w.length > 3 && !genericWords.has(w));
-      if (aiWords.length === 0) return false;
-      // Count how many significant AI words appear in any content item
-      const overlap = aiWords.filter(w =>
-        contentWordSets.some(cws => [...cws].some(cw => cw.includes(w) || w.includes(cw)))
-      ).length;
-      // If more than half the words overlap, it's a duplicate
-      return overlap < Math.ceil(aiWords.length / 2);
-    })
-    .map(ai => ({ label: ai.label, shortLabel: generateShortLabel(ai.label), type: 'contextual' }));
-
+  // Exit button: always visible. Position depends on pressure level.
   if (exitAction && exitAction.priority === 1) {
     // Strong/forced pressure — exit goes first
     actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
     actions.push(...contentActions);
-    actions.push(...contextualActions);
-  } else {
-    // Background/gentle — content first, contextual next, exit last
+  } else if (exitAction) {
+    // Background/gentle — content first, exit last
     actions.push(...contentActions);
-    actions.push(...contextualActions);
-    if (exitAction) {
-      actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
-    }
+    actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
+  } else {
+    // No exit defined — just content
+    actions.push(...contentActions);
   }
 
-  // Add bad choice last — it's a trap, should be visually distinct and last in the list
+  // Bad choice always last — it's a trap, should be visually distinct
   actions.push(...badChoiceActions);
 
-  // Return all available actions — no filler, no artificial limit
   return actions;
 }
 

@@ -1296,6 +1296,8 @@ async function createServer(options = {}) {
 
       // Record narrative (with scene image if available — only show once per scene)
       const narrationOpts = game._lastSceneImage ? { sceneImageUrl: game._lastSceneImage } : {};
+      // Flag new scene for client-side dedup reset
+      if (result.sceneTransition) narrationOpts.newScene = true;
       recordMessage(sessionId, MessageRouter.narration(result.narrative, narrationOpts));
       // Clear the scene image after showing it once to prevent repeats
       if (game._lastSceneImage) {

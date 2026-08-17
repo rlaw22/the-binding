@@ -309,13 +309,13 @@ test('getUIConfig: Storyline mode — minimal UI', function (t) {
   const ui = getUIConfig(GameMode.STORYLINE);
   t.equal(ui.showHpBar, false, 'no HP bar');
   t.equal(ui.showCoinBar, false, 'no coin bar');
-  t.equal(ui.showInventoryPanel, false, 'no inventory panel');
+  t.equal(ui.showInventoryPanel, true, 'inventory panel shown');
   t.equal(ui.showShopButton, false, 'no shop button');
   t.equal(ui.showMapPanel, false, 'no map panel');
   t.equal(ui.showJournalButton, false, 'no journal button');
   t.equal(ui.showQuestTracker, false, 'no quest tracker');
   t.equal(ui.showCharacterSheet, false, 'no character sheet');
-  t.equal(ui.showVoiceInputButton, false, 'no voice input button');
+  t.equal(ui.showVoiceInputButton, true, 'voice input button shown');
   t.equal(ui.showFreeTextEntry, false, 'no free text entry');
   t.equal(ui.showDiceRoller, false, 'no dice roller');
   t.equal(ui.allowClassSelection, false, 'no class selection');

@@ -95,7 +95,7 @@ const MODE_CONFIG = {
     // Additional behavior flags derived from the matrix
     showHpBar: false,
     showCoinBar: false,
-    showInventoryPanel: false,
+    showInventoryPanel: true,
     showShopButton: false,
     showMapPanel: false,
     showJournalButton: false,
