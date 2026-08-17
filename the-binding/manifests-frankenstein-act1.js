@@ -112,11 +112,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "refuse_passage",
-            "label": "Refuse to take the stranger aboard",
-            "consequence": "The ice closes in. The man on the floe raises one hand, then slips beneath the water. You sail on, haunted by what you did not do.",
+            "label": "Ignore the gathering storm and stay in the garden",
+            "consequence": "You linger among the roses too long. By the time you return inside, the bookshelf that called to you has been cleared — your father has locked away the old volumes of natural philosophy, worried about your obsession. The spark of curiosity dims.",
             "coinCost": 3,
             "flagSet": {
-                  "refused_stranger": true
+                  "lost_curiosity": true
             }
       },
       "isHealing": false,
@@ -226,11 +226,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "dismiss_victors_story",
-            "label": "Dismiss Victor's story as fevered delusion",
-            "consequence": "\"You think me mad,\" Victor whispers. He turns to the wall and will not speak again. His warning dies with him.",
+            "label": "Side with Krempe and dismiss the old alchemists",
+            "consequence": "Krempe nods approvingly, but Waldman's interest cools. Without his mentorship, your path to unlocking the secret of life grows longer and lonelier.",
             "coinCost": 3,
             "flagSet": {
-                  "ignored_warning": true
+                  "lost_mentor": true
             }
       },
       "isHealing": false,
@@ -360,11 +360,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "steal_the_book",
-            "label": "Steal the forbidden alchemical text",
-            "consequence": "The old volume crumbles in your hands. The knowledge within is dangerous and incomplete — enough to inspire, not enough to warn.",
+            "label": "Read your father's letter and return to Geneva",
+            "consequence": "You tear open the letter. Your father's handwriting is trembling: \"Come home, Victor. Your mother is ill.\" You pack your bags. The creature will have to wait. The obsession festers in your absence.",
             "coinCost": 3,
             "flagSet": {
-                  "stolen_knowledge": true
+                  "abandoned_work": true
             }
       },
       "isHealing": true,
@@ -478,11 +478,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "neglect_elizabeth",
-            "label": "Neglect Elizabeth for your experiments",
-            "consequence": "Elizabeth waits alone in the garden. Each night, her window darkens before yours. The distance between you grows like a living thing.",
+            "label": "Flee the laboratory in disgust",
+            "consequence": "You run. Down the stairs, into the rain, through the dark streets of Ingolstadt. You do not stop until your lungs burn. When you return at dawn, the creature is still on the table — but its eyes are open. It has been watching the door. Waiting.",
             "coinCost": 3,
             "flagSet": {
-                  "neglected_love": true
+                  "fled_laboratory": true
             }
       },
       "isHealing": false,
@@ -612,11 +612,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "ignore_clervals_concern",
-            "label": "Ignore Clerval's concern for your health",
-            "consequence": "\"You look deathly,\" Clerval says. You laugh and return to work. Your hands tremble. Your reflection is a stranger.",
+            "label": "Pull the switch before the storm peaks",
+            "consequence": "Lightning has not yet struck. The voltaic apparatus sputters — not enough charge. The creature twitches, groans, then goes still. You have wasted the galvanic cells. You must wait weeks to recharge them, haunted by what almost was.",
             "coinCost": 3,
             "flagSet": {
-                  "ignored_friend": true
+                  "premature_switch": true
             }
       },
       "isHealing": false,

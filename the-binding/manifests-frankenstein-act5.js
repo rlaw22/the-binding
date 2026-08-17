@@ -100,11 +100,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "confess_to_authorities",
-            "label": "Confess everything to the authorities",
-            "consequence": "They do not believe you. A judge orders a psychiatric evaluation. Clerval bails you out, but the look on his face tells you he is afraid of you now.",
+            "label": "Open the window and face whatever is coming",
+            "consequence": "You throw open the casement. The night air rushes in — cold, sharp, smelling of jasmine and lake water. Below, in the moonlit garden, nothing moves. Then you see it: a shape at the far end of the path, watching. The creature raises one hand — not in threat, but in greeting. It has come to remind you of its promise.",
             "coinCost": 3,
             "flagSet": {
-                  "discredited": true
+                  "faced_creature": true
             }
       },
       "isHealing": false,

@@ -111,11 +111,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "follow_the_fog",
-            "label": "Walk alone into the Whitby fog",
-            "consequence": "The fog is thick as wool. You hear scratching on stone, breathing close to your ear. When it clears, you are standing at the cliff edge, one step from the drop.",
+            "label": "Dismiss Van Helsing's warnings as superstition",
+            "consequence": "You leave the townhouse convinced the old man is deluded. But that night, Lucy Westenra's condition worsens. By morning, she is paler, weaker — and the bite marks on her throat are fresh.",
             "coinCost": 3,
             "flagSet": {
-                  "lost_in_fog": true
+                  "dismissed_helsing": true
             }
       },
       "isHealing": false,

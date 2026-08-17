@@ -119,11 +119,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "mock_krempe",
-            "label": "Mock Professor Krempe's caution",
-            "consequence": "Krempe's face hardens. \"You are not the first arrogant student I have seen destroy himself,\" he says. He marks your file. Doors begin to close.",
+            "label": "Hesitate and let the moment pass",
+            "consequence": "Your hand freezes on the switch. The storm outside fades. The galvanic cells drain slowly, uselessly. The creature lies still — not dead, not alive. A monument to your cowardice. You collapse beside it and do not rise until morning.",
             "coinCost": 3,
             "flagSet": {
-                  "made_enemy": true
+                  "hesitated_switch": true
             }
       },
       "isHealing": false,
@@ -234,11 +234,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "skip_the_lecture",
-            "label": "Skip Waldman's lecture to work alone",
-            "consequence": "Waldman's demonstration of galvanism is legendary — and you miss it. Without his guidance, your early experiments are crude and dangerous.",
+            "label": "Try to destroy the creature in its first moments",
+            "consequence": "You grab a scalpel and lunge. The creature is faster than you expected — eight feet of muscle and desperation. It catches your wrist. Its grip is gentle, confused. Its pale blue eyes search yours for something — recognition, perhaps, or love. You feel its pulse through its fingers. It does not understand why you are afraid.",
             "coinCost": 3,
             "flagSet": {
-                  "missed_guidance": true
+                  "attacked_creature": true
             }
       },
       "isHealing": false,

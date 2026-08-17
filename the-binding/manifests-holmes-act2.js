@@ -219,11 +219,11 @@ module.exports = {
       },
       "badChoice": {
             "id": "insult_stapleton",
-            "label": "Accuse Stapleton of being the murderer at dinner",
-            "consequence": "Stapleton's smile never wavers. \"You must be tired from the journey,\" he says smoothly. But his eyes go cold. You have shown your hand too early.",
+            "label": "Confront Barrymore about the midnight signal",
+            "consequence": "Barrymore breaks down. His wife begs you to keep their secret — her brother Selden, the escaped convict, is hiding on the moor. They have been feeding him. You have gained the truth, but lost the element of surprise. If anyone is watching, they know you are asking questions.",
             "coinCost": 4,
             "flagSet": {
-                  "tipped_off_stapleton": true
+                  "alerted_moors": true
             }
       },
       "isHealing": true,
