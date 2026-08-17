@@ -30,10 +30,10 @@ assert(typeof getVoiceForCharacter === 'function', 'getVoiceForCharacter is expo
 section('Profile Mapping');
 
 assertEq(CHARACTER_VOICE_PRESETS.narrator, { voice: 'nova', pitch: 1.0, rate: 0.9 }, 'narrator profile has correct settings');
-assertEq(CHARACTER_VOICE_PRESETS.villain, { voice: 'onyx', pitch: 0.8, rate: 0.85 }, 'villain profile has correct settings');
+assertEq(CHARACTER_VOICE_PRESETS.villain, { voice: 'ash', pitch: 0.8, rate: 0.85 }, 'villain profile has correct settings');
 assertEq(CHARACTER_VOICE_PRESETS.ally, { voice: 'shimmer', pitch: 1.1, rate: 1.0 }, 'ally profile has correct settings');
 assertEq(CHARACTER_VOICE_PRESETS.merchant, { voice: 'alloy', pitch: 0.95, rate: 1.1 }, 'merchant profile has correct settings');
-assertEq(CHARACTER_VOICE_PRESETS.monster, { voice: 'onyx', pitch: 0.7, rate: 0.8 }, 'monster profile has correct settings');
+assertEq(CHARACTER_VOICE_PRESETS.monster, { voice: 'ash', pitch: 0.7, rate: 0.8 }, 'monster profile has correct settings');
 
 assert(Object.keys(CHARACTER_VOICE_PRESETS).length === 5, 'CHARACTER_VOICE_PRESETS has exactly 5 character types');
 
@@ -46,14 +46,14 @@ assertEq(DEFAULT_VOICE_SETTINGS, { voice: 'nova', pitch: 1.0, rate: 1.0 }, 'DEFA
 section('Character Type Resolution');
 
 assertEq(getVoiceForCharacter('narrator'), { voice: 'nova', pitch: 1.0, rate: 0.9 }, 'getVoiceForCharacter returns narrator profile');
-assertEq(getVoiceForCharacter('villain'), { voice: 'onyx', pitch: 0.8, rate: 0.85 }, 'getVoiceForCharacter returns villain profile');
+assertEq(getVoiceForCharacter('villain'), { voice: 'ash', pitch: 0.8, rate: 0.85 }, 'getVoiceForCharacter returns villain profile');
 assertEq(getVoiceForCharacter('ally'), { voice: 'shimmer', pitch: 1.1, rate: 1.0 }, 'getVoiceForCharacter returns ally profile');
 assertEq(getVoiceForCharacter('merchant'), { voice: 'alloy', pitch: 0.95, rate: 1.1 }, 'getVoiceForCharacter returns merchant profile');
-assertEq(getVoiceForCharacter('monster'), { voice: 'onyx', pitch: 0.7, rate: 0.8 }, 'getVoiceForCharacter returns monster profile');
+assertEq(getVoiceForCharacter('monster'), { voice: 'ash', pitch: 0.7, rate: 0.8 }, 'getVoiceForCharacter returns monster profile');
 
 // Test case insensitivity
 assertEq(getVoiceForCharacter('NARRATOR'), { voice: 'nova', pitch: 1.0, rate: 0.9 }, 'getVoiceForCharacter handles uppercase');
-assertEq(getVoiceForCharacter('Villain'), { voice: 'onyx', pitch: 0.8, rate: 0.85 }, 'getVoiceForCharacter handles mixed case');
+assertEq(getVoiceForCharacter('Villain'), { voice: 'ash', pitch: 0.8, rate: 0.85 }, 'getVoiceForCharacter handles mixed case');
 
 // Test whitespace trimming
 assertEq(getVoiceForCharacter('  merchant  '), { voice: 'alloy', pitch: 0.95, rate: 1.1 }, 'getVoiceForCharacter trims whitespace');
