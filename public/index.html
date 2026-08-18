@@ -545,6 +545,8 @@ body.game-active #auto-rejoin-banner{display:none;}
 .story-btn-ability:hover:not(:disabled) { background: #6B5CE722; box-shadow: 0 4px 12px #6B5CE733; }
 .story-btn-bad_choice { border-color: #C9A84C44; color: #C9A84C; }
 .story-btn-bad_choice:hover:not(:disabled) { background: #C9A84C22; }
+.story-btn-exit { border-color: #8B7355; color: #8B7355; font-style: italic; }
+.story-btn-exit:hover:not(:disabled) { background: #8B735522; }
 
 /* ── Storyline Combined Setup Screen ──────────────────────────────────────── */
 #storyline-setup-screen {
@@ -2791,7 +2793,7 @@ function handleMessage(msg) {
         // Storyline mode: convert server actions to story button format, preserving server types
         var rawActions = (msg.metadata && msg.metadata.actions) || [];
         // Map server types to frontend types
-        var typeMap = { 'exploration': 'explore', 'explored': 'explored', 'exit': 'exit', 'bad_choice': 'bad_choice', 'contextual': 'explore', 'free': 'explore' };
+        var typeMap = { 'exploration': 'explore', 'explored': 'explored', 'exit': 'exit', 'bad_choice': 'bad_choice', 'contextual': 'explore', 'free': 'explore', 'filler': 'explore' };
         // Client-side dedup: track seen labels across this session
         if (!window._seenActionLabels) window._seenActionLabels = new Set();
         var storyBtns = [];

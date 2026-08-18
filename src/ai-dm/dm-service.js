@@ -843,6 +843,7 @@ Do NOT generate buttons, suggestions, or new content.
 Do NOT add meta-commentary or compliments.
 Do NOT re-describe locations, NPCs, or objects the player has already encountered in this scene. Move the narrative forward.
 Do NOT generate a SUGGESTED ACTIONS block — buttons are handled by the game engine.
+Do NOT reference NPCs, objects, or events from PREVIOUS scenes. You are narrating ONLY the current scene: "${atmosphereContext.sceneName || 'the current location'}". The innkeeper is not here. The old woman is not here. Stay in THIS scene.
 Stay in the world. Be concise.`;
   } else if (isStoryline && !storyResult) {
     // Storyline mode but no StoryEngine match (free-text action not matching any button)
@@ -1474,14 +1475,93 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     type: 'exploration'
   }));
 
+  // FILLER SYSTEM: Generate atmospheric explore actions to keep button count >= 3.
+  // These don't advance completion — they just keep the player feeling in control.
+  const FILLER_ACTIONS = {
+    inn: [
+      { label: 'Take a careful look around the room', shortLabel: 'Look around' },
+      { label: 'Listen to the sounds of the inn', shortLabel: 'Listen' },
+      { label: 'Check the exits and windows', shortLabel: 'Check exits' },
+      { label: 'Study the other patrons quietly', shortLabel: 'Watch patrons' },
+      { label: 'Adjust your gear and steady your nerves', shortLabel: 'Steady yourself' },
+    ],
+    travel: [
+      { label: 'Study the passing landscape', shortLabel: 'Watch scenery' },
+      { label: 'Check your belongings', shortLabel: 'Check gear' },
+      { label: 'Rest your eyes for a moment', shortLabel: 'Rest briefly' },
+      { label: 'Note the direction of the road', shortLabel: 'Check direction' },
+      { label: 'Listen to the sounds outside', shortLabel: 'Listen outside' },
+    ],
+    castle: [
+      { label: 'Study the stonework and carvings', shortLabel: 'Study carvings' },
+      { label: 'Test the floor for loose stones', shortLabel: 'Test floor' },
+      { label: 'Listen for sounds in the walls', shortLabel: 'Listen to walls' },
+      { label: 'Check the drafts for hidden passages', shortLabel: 'Check drafts' },
+      { label: 'Examine the dust and tracks on the floor', shortLabel: 'Check dust' },
+    ],
+    outdoor: [
+      { label: 'Scan the treeline for movement', shortLabel: 'Scan trees' },
+      { label: 'Check the wind direction', shortLabel: 'Check wind' },
+      { label: 'Listen for animal sounds', shortLabel: 'Listen for animals' },
+      { label: 'Test the ground beneath your feet', shortLabel: 'Test ground' },
+      { label: 'Look for tracks or signs of passage', shortLabel: 'Look for tracks' },
+    ],
+    generic: [
+      { label: 'Take a moment to observe your surroundings', shortLabel: 'Observe' },
+      { label: 'Check your gear and provisions', shortLabel: 'Check gear' },
+      { label: 'Listen carefully to the ambient sounds', shortLabel: 'Listen' },
+      { label: 'Study the light and shadows around you', shortLabel: 'Study shadows' },
+      { label: 'Steady your breathing and focus', shortLabel: 'Focus' },
+    ]
+  };
+
+  // Pick filler category based on scene name
+  const sceneLower = (sceneState.sceneName || '').toLowerCase();
+  let fillerPool = FILLER_ACTIONS.generic;
+  if (sceneLower.includes('inn') || sceneLower.includes('tavern') || sceneLower.includes('krone') || sceneLower.includes('room')) fillerPool = FILLER_ACTIONS.inn;
+  else if (sceneLower.includes('journey') || sceneLower.includes('train') || sceneLower.includes('coach') || sceneLower.includes('carriage') || sceneLower.includes('passage')) fillerPool = FILLER_ACTIONS.travel;
+  else if (sceneLower.includes('castle') || sceneLower.includes('crypt') || sceneLower.includes('tower') || sceneLower.includes('hall')) fillerPool = FILLER_ACTIONS.castle;
+  else if (sceneLower.includes('forest') || sceneLower.includes('road') || sceneLower.includes('pass') || sceneLower.includes('mountain')) fillerPool = FILLER_ACTIONS.outdoor;
+
+  // Add filler if content count < 3, or if we've explored most items (keep options open)
+  const MIN_BUTTONS = 3;
+  const exploredCount = allContent.filter(i => i.discovered).length;
+  const totalContent = allContent.length;
+  // Add more filler as the player explores more (keep button count steady)
+  const fillerNeeded = Math.max(MIN_BUTTONS - contentActions.length, Math.floor(exploredCount * 0.5));
+  if (fillerNeeded > 0) {
+    // Use scene state to track which fillers have been shown
+    if (!sceneState._shownFillers) sceneState._shownFillers = new Set();
+    const available = fillerPool.filter(f => !sceneState._shownFillers.has(f.label));
+    // Shuffle available fillers
+    for (let i = available.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [available[i], available[j]] = [available[j], available[i]];
+    }
+    const toAdd = available.slice(0, fillerNeeded);
+    for (const filler of toAdd) {
+      sceneState._shownFillers.add(filler.label);
+      contentActions.push({
+        label: filler.label,
+        shortLabel: filler.shortLabel || generateShortLabel(filler.label),
+        type: 'filler'
+      });
+    }
+  }
+
   // Add bad choice if it exists in the scene's storyMode (visible from the start)
-  const badChoiceActions = [];
   if (sceneState.storyMode && sceneState.storyMode.badChoice) {
-    badChoiceActions.push({
+    contentActions.push({
       label: sceneState.storyMode.badChoice.label,
       shortLabel: generateShortLabel(sceneState.storyMode.badChoice.label),
       type: 'bad_choice'
     });
+  }
+
+  // Shuffle content actions so bad choice isn't in a predictable position
+  for (let i = contentActions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [contentActions[i], contentActions[j]] = [contentActions[j], contentActions[i]];
   }
 
   // Exit button: always visible. Position depends on pressure level.
@@ -1497,9 +1577,6 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     // No exit defined — just content
     actions.push(...contentActions);
   }
-
-  // Bad choice always last — it's a trap, should be visually distinct
-  actions.push(...badChoiceActions);
 
   return actions;
 }
