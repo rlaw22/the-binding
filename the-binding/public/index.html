@@ -145,7 +145,7 @@ body.storyline-active #app::before{
 #questionnaire-screen{text-align:center;padding:20px;display:flex;flex-direction:column;align-items:center;gap:16px;overflow-y:auto;flex:1;}
 #questionnaire-screen h2{color:#C9A84C;font-size:1.3em;letter-spacing:2px;}
 #questionnaire-screen .q-sub{color:#F5F0E1aa;max-width:400px;font-size:0.92em;line-height:1.5;}
-#mode-select-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+#mode-select-screen{text-align:center;padding:40px 20px;display:flex;flex-direction:column;align-items:center;gap:24px;overflow-y:auto;overflow-x:hidden;flex:1;min-height:0;box-sizing:border-box;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
 #mode-select-screen h2{color:#C9A84C;font-size:1.4em;letter-spacing:2px;}
 .mode-cards{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;max-width:700px;}
 .mode-card{background:#0C0B10;border:2px solid #C9A84C44;border-radius:12px;padding:24px 20px;width:200px;cursor:pointer;transition:all 0.3s;text-align:center;}
@@ -291,9 +291,10 @@ body.game-active #auto-rejoin-banner{display:none;}
   #start-form button{padding:14px 24px;font-size:1em;}
 
   /* Mode selection screen: mobile-friendly */
-  #mode-select-screen{padding:24px 16px;}
-  .mode-cards{flex-direction:column;align-items:center;gap:16px;}
-  .mode-card{width:100%;max-width:300px;padding:20px 16px;}
+  #mode-select-screen{padding:24px 16px;min-height:0;align-items:stretch;}
+  #mode-select-screen h2,#mode-select-screen>p{align-self:center;}
+  .mode-cards{flex-direction:column;align-items:center;gap:16px;width:100%;}
+  .mode-card{width:100%;max-width:300px;padding:20px 16px;box-sizing:border-box;}
 
   /* Report modal: mobile-friendly */
   #report-modal .modal-content{padding:18px;width:94%;}
@@ -304,9 +305,10 @@ body.game-active #auto-rejoin-banner{display:none;}
   #reconnect-banner .reconnect-btn{padding:10px 14px;font-size:0.85em;}
 
   /* Mode selection screen: mobile-friendly */
-  #mode-select-screen{padding:24px 16px;}
-  .mode-cards{flex-direction:column;align-items:center;gap:16px;}
-  .mode-card{width:100%;max-width:300px;padding:20px 16px;}
+  #mode-select-screen{padding:24px 16px;min-height:0;align-items:stretch;}
+  #mode-select-screen h2,#mode-select-screen>p{align-self:center;}
+  .mode-cards{flex-direction:column;align-items:center;gap:16px;width:100%;}
+  .mode-card{width:100%;max-width:300px;padding:20px 16px;box-sizing:border-box;}
 }
 
 /* ── Mobile: very small screens (< 400px) ──────────────────────────────────── */
@@ -3638,7 +3640,9 @@ function updateHpBar() {
 var _SHORT_LABEL_BREAKPOINT = 600;
 
 function generateClientShortLabel(label) {
-  if (!label || label.length <= 16) return label;
+  // Preserve the object and scene context on Storyline buttons. The previous
+  // short-label pass reduced useful actions to vague verbs such as "Look out".
+  if (!label || label.length <= 28) return label;
   var lower = label.toLowerCase().trim();
   var verbPatterns = [
     [/^talk to\s+/i, 'Talk'], [/^speak to\s+/i, 'Talk'], [/^speak with\s+/i, 'Talk'],

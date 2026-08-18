@@ -75,8 +75,8 @@ module.exports = {
     },
     "storyMode": {
       "collectibleItem": {
-        "id": "silver_crucifix",
-        "label": "Silver Crucifix"
+        "id": "brass_crucifix",
+        "label": "Brass Crucifix"
       },
       "badChoice": {
             "id": "burn_the_letter",
