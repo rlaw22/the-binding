@@ -48,6 +48,33 @@ const { createServer } = require('../src/api/server');
       assert.notEqual(body.narrative, 'Something went wrong — try again.');
     }
 
+    // Regression: stale/malformed clients must not crash the action handler
+    // when action metadata is an object instead of a stable string ID.
+    const malformedCreated = await server.inject({
+      method: 'POST',
+      url: '/api/sessions',
+      payload: {
+        adventureId: 'dracula',
+        gameMode: 'storyline',
+        playerName: 'Law',
+        characterClass: 'cleric',
+        characterRace: 'human'
+      }
+    });
+    const malformedSession = malformedCreated.json();
+    const malformedResponse = await server.inject({
+      method: 'POST',
+      url: `/api/sessions/${malformedSession.sessionId}/actions`,
+      payload: {
+        content: 'Search the fireplace mantel',
+        actionId: { id: 'search_mantel' },
+        contentId: { id: 'search_mantel' },
+        playerId: malformedSession.playerId
+      }
+    });
+    assert.equal(malformedResponse.statusCode, 200, 'malformed metadata should fall back safely');
+    assert.equal(malformedResponse.json().ok, true, 'malformed metadata action should be accepted');
+
     console.log('✓ Storyline action API regression passed');
   } finally {
     await server.close();

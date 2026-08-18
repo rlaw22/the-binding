@@ -676,7 +676,12 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
     // retained only as a backward-compatible fallback for older clients/free text.
     const actionLower = playerAction.toLowerCase();
     buttonType = 'explore';
-    let buttonId = actionMeta.actionId || actionMeta.contentId || '';
+    // Treat browser-supplied action metadata as untrusted input. Older clients
+    // and malformed payloads may send an object here; only scalar string IDs
+    // are valid stable identities. Invalid metadata must fall back to label
+    // matching rather than crashing on String.prototype.startsWith().
+    const rawButtonId = actionMeta.actionId || actionMeta.contentId || '';
+    let buttonId = typeof rawButtonId === 'string' ? rawButtonId : '';
     if (buttonId && buttonId.startsWith('item_')) buttonType = 'item';
     else if (buttonId && buttonId.startsWith('ability_')) buttonType = 'ability';
     else if (buttonId && buttonId.startsWith('bad_')) buttonType = 'bad_choice';
