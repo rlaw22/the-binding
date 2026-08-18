@@ -143,7 +143,7 @@ CURRENT SCENE: ${currentScene}
 PLAYER: ${playerCharacter?.name || 'Unknown'} (${playerCharacter?.class || 'adventurer'}, Level ${playerCharacter?.level || 1})
 RECENT EVENTS: ${recentEvents || 'None yet'}
 
-Generate 4 specific, varied, in-character actions the player might take next.
+Generate 2-4 specific, varied, in-character actions — use more for rich scenes, fewer for simple ones.
 Mix combat/social, investigation, creative/risky, and story-advancing options.
 Each should be a single sentence written in second person ("You...").
 Return as a JSON array: [{"label": "Action text", "type": "combat|social|investigation|creative|story"}]`;
