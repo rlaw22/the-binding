@@ -4074,9 +4074,16 @@ function processStoryAction(buttonId, buttonType) {
     }
     sending = false;
     if (!resp.ok) {
-      console.warn('Story action POST returned', resp.status);
-      addMessage('error', 'Something went wrong — try again.');
-      if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+      // Read the response body so the browser console contains the real server
+      // error. The old code discarded it, making every backend failure look
+      // identical and leaving the input controls disabled.
+      return resp.json().catch(function() { return {}; }).then(function(errorBody) {
+        console.error('Story action POST failed', resp.status, errorBody);
+        addMessage('error', 'Something went wrong — try again.');
+        if (btn) { btn.disabled = false; btn.style.opacity = ''; }
+        if (sendBtn) sendBtn.disabled = false;
+        if (freeInput) freeInput.disabled = false;
+      });
     }
     // Server response arrives via polling → rich narrative + new suggested_actions
     // The suggested_actions handler already renders storyline buttons when storyModeActive is true
