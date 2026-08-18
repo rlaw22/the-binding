@@ -151,11 +151,11 @@ You check your pockets. Something warm and hard rests against your thigh — the
       hardExitNarration: 'The coach lurches to a stop. The driver gestures wordlessly toward a second coach waiting in the moonlight. You have no choice but to transfer.',
       initialFacts: {
         items: ['crucifix'],
-        metNPCs: ['innkeeper', 'driver'],
+        metNPCs: ['driver', 'priest', 'two women in shawls'],
         established: ['left the inn', 'riding in a coach at night', 'other passengers present (a priest, two women)']
       },
       locationKeywords: {
-        banned: ['great hall', 'castle dracula', 'dining hall', 'carfax abbey', 'london', 'the inn', 'bistritz']
+        banned: ['great hall', 'castle dracula', 'dining hall', 'carfax abbey', 'london', 'the inn', 'bistritz', 'innkeeper', 'old woman']
       }
     },
     scene_02: {

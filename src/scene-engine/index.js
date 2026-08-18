@@ -36,6 +36,7 @@ function enterScene(manifest) {
   return {
     sceneId: manifest.sceneId,
     sceneName: manifest.sceneName,
+    description: manifest.description || '',  // scene setting for LLM boundary enforcement
     contentItems,
     discoveredIds: new Set(),
     usedSuggestions: new Set(),   // track which suggestion labels have been used
@@ -213,6 +214,22 @@ function buildSceneContext(sceneState) {
 
   let context = `\n\nSCENE STATE:\n`;
   context += `Scene: ${sceneState.sceneName}\n`;
+
+  // Inject scene description — the authoritative setting the LLM must respect
+  if (sceneState.description) {
+    context += `Setting: ${sceneState.description.replace(/\n/g, ' ').substring(0, 500)}\n`;
+  }
+
+  // Inject scene-boundary enforcement: only these NPCs/elements exist HERE
+  if (sceneState.initialFacts) {
+    const npcs = sceneState.initialFacts.metNPCs || [];
+    const items = sceneState.initialFacts.items || [];
+    const established = sceneState.initialFacts.established || [];
+    if (npcs.length > 0) context += `NPCs present in THIS scene: ${npcs.join(', ')}. Do NOT include NPCs from other scenes.\n`;
+    if (items.length > 0) context += `Items available: ${items.join(', ')}.\n`;
+    if (established.length > 0) context += `Established facts: ${established.join('; ')}.\n`;
+  }
+
   context += `Completion: ${discovered.length} of ${sceneState.totalItems} explored\n`;
 
   if (undiscovered.length > 0) {

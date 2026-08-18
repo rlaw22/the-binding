@@ -4,7 +4,7 @@
 
 **Supersedes**: `narrative-design-spec.md`, `scene-design-framework.md`, `scene-manifest-template.md`, `scene-system-design.md` (narrative sections). Those files remain for historical reference but this document is authoritative.
 
-**Last updated**: 2026-08-17
+**Last updated**: 2026-08-18
 
 ---
 
@@ -363,6 +363,68 @@ The system prompt (`prompts.js` SYSTEM_PROMPT) says **"Provide as many as the sc
 
 > **Note**: The separate `buildSuggestionPrompt()` function requests "Generate 4 specific actions" — this contradicts the system prompt and should be cleaned up separately. The system prompt is authoritative.
 
+### LLM Button Injection — DISABLED
+
+As of 2026-08-18, the **SUGGESTED ACTIONS parser has been removed** from `dm-service.js`. The LLM can no longer inject its own buttons. If the LLM generates a `SUGGESTED ACTIONS:` block in its response, it is **stripped from the narrative** before display.
+
+**Why**: The LLM was generating buttons that contradicted the scene manifest — inventing characters from other scenes, referencing locations not in the current setting, and creating content that didn't match the curated scene design.
+
+**What this means for authors**: All buttons the player sees come exclusively from the scene manifest's `content` array. The LLM's only job is narration. This gives authors full control over what the player can do in each scene.
+
+---
+
+## Scene Boundary Enforcement
+
+The LLM must stay within the boundaries of the current scene. To enforce this, `buildSceneContext()` in the scene engine injects the following into every LLM prompt:
+
+### What Gets Injected
+
+1. **Scene setting** — the `description` field from the manifest (truncated to 500 chars)
+2. **NPC list** — `initialFacts.metNPCs` with explicit "Do NOT include NPCs from other scenes"
+3. **Established facts** — `initialFacts.established` (key plot points for this scene)
+4. **Banned locations** — `locationKeywords.banned` (places the LLM must not reference)
+
+### Example Injected Context
+
+```
+SCENE STATE:
+Scene: The Coach Ride
+Setting: The coach rattles through darkness so complete that the windows might as well be painted black...
+NPCs present in THIS scene: driver, priest, two women in shawls. Do NOT include NPCs from other scenes.
+Items available: crucifix.
+Established facts: left the inn; riding in a coach at night; other passengers present (a priest, two women).
+Completion: 0 of 6 explored
+```
+
+### Rules for `initialFacts.metNPCs`
+
+**This field must list ONLY NPCs physically present in the current scene.** It is NOT a cumulative list of everyone the player has met.
+
+| ❌ Wrong | ✅ Right |
+|---|---|
+| `['innkeeper', 'driver']` (scene_01 coach ride — innkeeper is at the inn) | `['driver', 'priest', 'two women in shawls']` |
+| `['victor', 'elizabeth', 'caroline', 'waldman', 'krempe']` (scene_02 — not everyone is in every scene) | `['victor', 'waldman']` (only who's in THIS scene) |
+
+**The engine uses this list to tell the LLM who exists in the scene.** If the innkeeper is in `metNPCs` for the coach scene, the LLM will narrate the innkeeper sitting in the coach — which is wrong.
+
+### Rules for `locationKeywords.banned`
+
+This list should include:
+- Locations the player hasn't reached yet (e.g., `'castle dracula'` in Act 1)
+- Locations from previous scenes that are no longer relevant (e.g., `'the inn'` in the coach scene)
+- **NPC names from previous scenes** that the LLM might incorrectly bring back (e.g., `'innkeeper'`, `'old woman'`)
+
+### Frankenstein & Holmes — NPC Boundary Audit Needed
+
+Both adventures currently **accumulate NPCs** across scenes instead of listing only who's present:
+
+| Adventure | Issue | Example |
+|---|---|---|
+| Frankenstein | scene_02 lists 6 NPCs from scenes 00+01 | Should only list NPCs in scene_02 |
+| Holmes | Mostly correct but should be audited | scene_03 correctly drops Mortimer |
+
+**Action required**: Run a pass over all Frankenstein and Holmes scene manifests to fix `metNPCs` to only list NPCs physically present in each scene. The scene `description` field is the authoritative source — if an NPC isn't mentioned in the description, they shouldn't be in `metNPCs`.
+
 ---
 
 ## Writing Conventions
@@ -419,6 +481,9 @@ Before committing a new scene manifest:
 - [ ] Uses `description` (not `narrative`) for opening text
 - [ ] Uses `locationKeywords.valid` (not `current`) and `locationKeywords.banned`
 - [ ] `initialFacts` uses `metNPCs` and `established` (not `npcGifts` / `flags`)
+- [ ] **`metNPCs` lists ONLY NPCs physically present in THIS scene** — not accumulated from previous scenes
+- [ ] **`locationKeywords.banned` includes NPC names from previous scenes** that the LLM might bring back
+- [ ] **`description` mentions all NPCs listed in `metNPCs`** — if they're not in the description, remove them
 - [ ] 6-8 content items minimum (3-4 discovery + 1-2 empty + 1-2 negative/mixed)
 - [ ] 1 bad choice in `storyMode.badChoice`
 - [ ] Bad choice label is unique across the entire adventure
@@ -464,9 +529,15 @@ These are documented deviations between the rules and current content. They shou
 4. **Frankenstein and Holmes have 0% `outcome` field coverage** — fields should be added for authoring clarity.
 5. **Some Dracula external manifest items lack `outcome` field** (~15% missing).
 
+### Scene Boundary Issues (CRITICAL)
+
+6. **Frankenstein `metNPCs` accumulates across scenes** — scene_02+ lists ALL NPCs from previous scenes instead of only those present. This causes the LLM to narrate characters who aren't there. Fix: audit all 25 scenes, remove NPCs not mentioned in the scene `description`.
+7. **Holmes `metNPCs` mostly correct** but should be audited to confirm each scene only lists present NPCs.
+8. **Dracula scene_01 `metNPCs` fixed** (2026-08-18) — was `['innkeeper', 'driver']`, now `['driver', 'priest', 'two women in shawls']`. Added `'innkeeper'` and `'old woman'` to `locationKeywords.banned`.
+
 ### Design Consistency
 
-6. **badChoice.coinCost is uniformly 3** — severe-tier scenes should consider higher costs (5-10).
+9. **badChoice.coinCost is uniformly 3** — severe-tier scenes should consider higher costs (5-10).
 
 ### Dead Fields (informational)
 
