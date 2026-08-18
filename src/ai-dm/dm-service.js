@@ -1348,7 +1348,9 @@ function getNextSceneId(game) {
  * Falls back to word-boundary truncation if no pattern matches.
  */
 function generateShortLabel(label) {
-  if (!label || label.length <= 16) return label;
+  // Preserve enough object/scene context for mobile buttons. A previous 16-character
+  // cutoff turned useful actions into vague labels such as "Look" or "Grab".
+  if (!label || label.length <= 28) return label;
 
   var lower = label.toLowerCase().trim();
 
