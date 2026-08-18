@@ -2796,14 +2796,12 @@ function handleMessage(msg) {
         // Map server types to frontend types
         var typeMap = { 'exploration': 'explore', 'explored': 'explored', 'exit': 'exit', 'bad_choice': 'bad_choice', 'contextual': 'explore', 'free': 'explore', 'filler': 'explore' };
         // Client-side dedup: track seen labels across this session
-        if (!window._seenActionLabels) window._seenActionLabels = new Set();
+        // Server already tracks discovery — no client-side label dedup needed.
+        // Previous dedup was filtering out unexplored buttons between turns.
         var storyBtns = [];
         for (var i = 0; i < rawActions.length; i++) {
           var a = rawActions[i];
           var label = (typeof a === 'string') ? a : (a.label || a.text || '');
-          // Skip duplicate labels
-          if (window._seenActionLabels.has(label)) continue;
-          window._seenActionLabels.add(label);
           var shortLabel = (typeof a === 'object' && a.shortLabel) ? a.shortLabel : generateClientShortLabel(label);
           var btnType = (typeof a === 'object' && a.type) ? (typeMap[a.type] || 'explore') : 'explore';
           storyBtns.push({ id: 'action_' + i, type: btnType, label: label, shortLabel: shortLabel });
