@@ -579,7 +579,7 @@ async function createServer(options = {}) {
 
   // Create a new game session (requires valid beta token when ADMIN_KEY is set)
   app.post('/api/sessions', async (request, reply) => {
-    const { adventureId, playerName, characterClass, characterRace, betaToken, gameMode } = request.body || {};
+    const { adventureId, playerName, characterClass, characterRace, betaToken, gameMode, statArray, manualAssignment } = request.body || {};
 
     // Resolve beta token code — available for both validation and session recording
     const betaTokenHeader = request.headers['x-beta-token'];
@@ -642,6 +642,8 @@ async function createServer(options = {}) {
         race: characterRace || 'human',
         characterClass: characterClass || 'fighter',
         sessionId: session.id,
+        statArray: Array.isArray(statArray) ? statArray : null,
+        manualAssignment: !!manualAssignment,
       });
 
       const player = addPlayer(session, {
@@ -999,6 +1001,19 @@ async function createServer(options = {}) {
       character: fullChar,
       gameMode: data.gameMode,
     };
+  });
+
+  // --- DICE ROLLING: 4d6-drop-lowest for character creation ---
+  app.post('/api/roll-stats', async (request, reply) => {
+    const results = [];
+    for (let i = 0; i < 6; i++) {
+      const roll = DiceService.rollDice({ type: 'd6', count: 4, context: 'stat_roll' });
+      const sorted = [...roll.rolls].sort((a, b) => b - a); // descending
+      const dropped = sorted[3]; // lowest die
+      const total = sorted[0] + sorted[1] + sorted[2]; // top 3
+      results.push({ rolls: roll.rolls, sorted, dropped, total });
+    }
+    return { results, totals: results.map(r => r.total) };
   });
 
   // Get session info (Phase 2: includes roles and suggestions)

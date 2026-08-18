@@ -408,7 +408,23 @@ body.game-active #auto-rejoin-banner{display:none;}
 #gallery-btn{background:none;border:1px solid #C9A84C44;color:#C9A84C;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:0.85em;display:flex;align-items:center;gap:4px;transition:all 0.2s;font-family:Georgia,serif;}
 #gallery-btn:hover{border-color:#C9A84C;background:#C9A84C11;}
 #gallery-btn .gallery-count{font-weight:bold;}
+#char-sheet-btn:hover{border-color:#C9A84C;background:#C9A84C11;}
 #gallery-panel{position:fixed;top:52px;left:0;right:0;max-height:0;overflow:hidden;background:#0C0B10;border-bottom:2px solid #C9A84C33;z-index:999;padding:0 16px;transition:max-height 0.3s ease,padding 0.3s ease;font-family:Georgia,serif;}
+#char-sheet-panel{position:fixed;top:52px;right:0;width:min(390px,100vw);max-height:calc(100vh - 52px);overflow-y:auto;transform:translateX(105%);background:#11101a;border-left:2px solid #C9A84C66;z-index:1001;padding:0;transition:transform 0.3s ease;box-shadow:-8px 0 28px #0009;font-family:Georgia,serif;}
+#char-sheet-panel.open{transform:translateX(0);}
+#char-sheet-panel .sheet-header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;position:sticky;top:0;background:#11101a;border-bottom:1px solid #C9A84C33;z-index:1;}
+#char-sheet-panel .sheet-header h3{margin:0;color:#C9A84C;letter-spacing:2px;font-size:1em;}
+#char-sheet-panel .sheet-close{background:none;border:0;color:#F5F0E1aa;font-size:1.5em;cursor:pointer;padding:0 6px;}
+#char-sheet-content{padding:18px;color:#F5F0E1;}
+.sheet-name{color:#C9A84C;font-size:1.35em;margin:0 0 4px;}
+.sheet-meta{color:#F5F0E199;font-size:.85em;margin-bottom:16px;}
+.sheet-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 18px;}
+.sheet-stat{background:#1A1A2E;border:1px solid #C9A84C33;border-radius:6px;text-align:center;padding:8px 4px;}
+.sheet-stat strong{display:block;color:#C9A84C;font-size:.75em;letter-spacing:1px;}
+.sheet-stat span{font-size:1.15em;}
+.sheet-section{border-top:1px solid #C9A84C22;padding-top:12px;margin-top:12px;}
+.sheet-section h4{color:#C9A84C;margin:0 0 8px;font-size:.85em;letter-spacing:1px;}
+.sheet-list{margin:0;padding-left:18px;color:#F5F0E1cc;font-size:.9em;line-height:1.6;}
 #gallery-panel.open{max-height:60vh;padding:16px;overflow-y:auto;}
 .gallery-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
 .gallery-header h3{color:#C9A84C;font-size:1em;letter-spacing:2px;margin:0;}
@@ -794,6 +810,45 @@ body.game-active #auto-rejoin-banner{display:none;}
   .storyline-class-grid { grid-template-columns: 1fr; }
   .setup-title { font-size: 1.1em; letter-spacing: 2px; }
 }
+/* ── Dice Rolling: Ability Scores (4d6 drop lowest) ────────────────── */
+.dice-overlay{position:fixed;inset:0;background:rgba(10,10,30,0.95);z-index:5001;display:none;align-items:center;justify-content:center;flex-direction:column;font-family:Georgia,serif;}
+.dice-overlay.active{display:flex;}
+.dice-panel{background:#12111a;border:1px solid #C9A84C44;border-radius:16px;padding:32px 28px;max-width:520px;width:95%;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:0 8px 40px rgba(0,0,0,0.6);}
+.dice-panel h2{color:#C9A84C;font-size:1.3em;letter-spacing:2px;margin:0 0 4px;text-align:center;}
+.dice-panel .dice-sub{color:#F5F0E1aa;font-size:0.85em;text-align:center;margin-bottom:20px;}
+.dice-abilities{display:flex;flex-direction:column;gap:8px;margin-bottom:20px;}
+.dice-ability-row{display:flex;align-items:center;gap:10px;background:#1a1a2e;border:2px solid transparent;border-radius:10px;padding:10px 14px;transition:border-color 0.2s,background 0.2s;min-height:56px;}
+.dice-ability-row.drag-over{border-color:#C9A84C;background:#C9A84C11;}
+.dice-ability-row.assigned{border-color:#27ae6044;}
+.dice-ability-label{color:#C9A84C;font-weight:bold;font-size:0.9em;min-width:48px;text-transform:uppercase;letter-spacing:1px;}
+.dice-ability-mod{color:#F5F0E1aa;font-size:0.75em;min-width:28px;}
+.dice-ability-slot{flex:1;display:flex;align-items:center;justify-content:center;min-height:40px;border:2px dashed #C9A84C33;border-radius:8px;color:#F5F0E166;font-size:0.85em;transition:all 0.2s;}
+.dice-ability-slot.filled{border-style:solid;border-color:#C9A84C;background:#C9A84C11;color:#F5F0E1;font-weight:bold;font-size:1.1em;cursor:grab;}
+.dice-ability-slot.filled:active{cursor:grabbing;}
+.dice-ability-remove{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:0.9em;padding:2px 6px;opacity:0.6;transition:opacity 0.2s;}
+.dice-ability-remove:hover{opacity:1;}
+.dice-pool{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px;}
+.dice-pool-item{display:flex;flex-direction:column;align-items:center;gap:4px;background:#1a1a2e;border:2px solid #C9A84C44;border-radius:10px;padding:10px 14px;cursor:grab;transition:all 0.2s;min-width:70px;}
+.dice-pool-item:active{cursor:grabbing;}
+.dice-pool-item:hover{border-color:#C9A84C;background:#C9A84C11;}
+.dice-pool-item.dragging{opacity:0.4;transform:scale(0.95);}
+.dice-pool-item.used{opacity:0.3;pointer-events:none;border-color:#333;}
+.dice-pool-total{color:#C9A84C;font-size:1.4em;font-weight:bold;}
+.dice-pool-rolls{display:flex;gap:3px;}
+.dice-pool-die{font-size:0.8em;color:#F5F0E1cc;background:#0C0B10;border-radius:4px;padding:2px 5px;}
+.dice-pool-die.dropped{color:#F5F0E144;text-decoration:line-through;}
+.dice-btn-row{display:flex;gap:10px;justify-content:center;margin-top:8px;}
+.dice-btn{background:#C9A84C;color:#1A1A2E;border:none;padding:12px 28px;border-radius:8px;cursor:pointer;font-weight:700;font-size:0.95em;font-family:Georgia,serif;transition:all 0.2s;}
+.dice-btn:hover{background:#E8A838;transform:translateY(-1px);}
+.dice-btn:disabled{background:#333;color:#666;cursor:not-allowed;transform:none;}
+.dice-btn.secondary{background:transparent;border:1px solid #C9A84C44;color:#C9A84C;}
+.dice-btn.secondary:hover{background:#C9A84C11;border-color:#C9A84C;}
+.dice-btn.reroll{background:#6B5CE7;color:#fff;}
+.dice-btn.reroll:hover{background:#7c6ef0;}
+.dice-total-sum{text-align:center;color:#F5F0E1aa;font-size:0.85em;margin-top:4px;}
+.dice-total-sum span{color:#C9A84C;font-weight:bold;}
+.dice-hint{text-align:center;color:#F5F0E166;font-size:0.75em;margin-bottom:12px;font-style:italic;}
+.dice-count-badge{background:#6B5CE7;color:#fff;font-size:0.7em;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:normal;}
 
 </style>
 </head>
@@ -815,6 +870,7 @@ body.game-active #auto-rejoin-banner{display:none;}
       <span style="color:#E8A838;font-size:0.85em;">Coins:</span>
       <span id="story-coin-text" style="color:#E8A838;font-weight:bold;font-size:0.95em;"></span>
       <button id="gallery-btn" class="hidden" onclick="toggleGallery()">🎨 <span class="gallery-count" id="gallery-count">0</span></button>
+      <button id="char-sheet-btn" class="hidden" onclick="openCharSheet()" title="Character Sheet" style="background:none;border:1px solid #C9A84C44;color:#C9A84C;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:0.85em;display:flex;align-items:center;gap:4px;transition:all 0.2s;font-family:Georgia,serif;">📜</button>
     </div>
   </div>
 
@@ -826,6 +882,15 @@ body.game-active #auto-rejoin-banner{display:none;}
     </div>
     <div class="gallery-grid" id="gallery-grid"></div>
   </div>
+
+  <!-- Digital DM character sheet drawer -->
+  <aside id="char-sheet-panel" aria-label="Character sheet">
+    <div class="sheet-header">
+      <h3>CHARACTER SHEET</h3>
+      <button class="sheet-close" onclick="closeCharSheet()" aria-label="Close character sheet">&times;</button>
+    </div>
+    <div id="char-sheet-content"><p>Loading character sheet...</p></div>
+  </aside>
 
 
 
@@ -1038,6 +1103,64 @@ body.game-active #auto-rejoin-banner{display:none;}
       </div>
     </div>
   </div>
+
+  <!-- Dice Rolling Overlay: Ability Scores (4d6 drop lowest) -->
+  <div id="dice-overlay" class="dice-overlay">
+    <div class="dice-panel">
+      <h2>Roll Your Ability Scores</h2>
+      <p class="dice-sub">Roll 4d6, drop the lowest die. Assign each total to an ability.</p>
+      <div class="dice-hint" id="dice-hint">Click "Roll 4d6" to begin</div>
+      <div class="dice-pool" id="dice-pool"></div>
+      <div class="dice-total-sum" id="dice-total-sum"></div>
+      <div class="dice-abilities" id="dice-abilities">
+        <div class="dice-ability-row" data-ability="str" ondrop="diceDrop(event)" ondragover="diceDragOver(event)" ondragleave="diceDragLeave(event)">
+          <span class="dice-ability-label">STR</span>
+          <span class="dice-ability-mod" id="dice-mod-str"></span>
+          <div class="dice-ability-slot" id="dice-slot-str">Drop score here</div>
+          <button class="dice-ability-remove hidden" id="dice-remove-str" onclick="diceRemoveAbility('str')">&times;</button>
+        </div>
+        <div class="dice-ability-row" data-ability="dex" ondrop="diceDrop(event)" ondragover="diceDragOver(event)" ondragleave="diceDragLeave(event)">
+          <span class="dice-ability-label">DEX</span>
+          <span class="dice-ability-mod" id="dice-mod-dex"></span>
+          <div class="dice-ability-slot" id="dice-slot-dex">Drop score here</div>
+          <button class="dice-ability-remove hidden" id="dice-remove-dex" onclick="diceRemoveAbility('dex')">&times;</button>
+        </div>
+        <div class="dice-ability-row" data-ability="con" ondrop="diceDrop(event)" ondragover="diceDragOver(event)" ondragleave="diceDragLeave(event)">
+          <span class="dice-ability-label">CON</span>
+          <span class="dice-ability-mod" id="dice-mod-con"></span>
+          <div class="dice-ability-slot" id="dice-slot-con">Drop score here</div>
+          <button class="dice-ability-remove hidden" id="dice-remove-con" onclick="diceRemoveAbility('con')">&times;</button>
+        </div>
+        <div class="dice-ability-row" data-ability="int" ondrop="diceDrop(event)" ondragover="diceDragOver(event)" ondragleave="diceDragLeave(event)">
+          <span class="dice-ability-label">INT</span>
+          <span class="dice-ability-mod" id="dice-mod-int"></span>
+          <div class="dice-ability-slot" id="dice-slot-int">Drop score here</div>
+          <button class="dice-ability-remove hidden" id="dice-remove-int" onclick="diceRemoveAbility('int')">&times;</button>
+        </div>
+        <div class="dice-ability-row" data-ability="wis" ondrop="diceDrop(event)" ondragover="diceDragOver(event)" ondragleave="diceDragLeave(event)">
+          <span class="dice-ability-label">WIS</span>
+          <span class="dice-ability-mod" id="dice-mod-wis"></span>
+          <div class="dice-ability-slot" id="dice-slot-wis">Drop score here</div>
+          <button class="dice-ability-remove hidden" id="dice-remove-wis" onclick="diceRemoveAbility('wis')">&times;</button>
+        </div>
+        <div class="dice-ability-row" data-ability="cha" ondrop="diceDrop(event)" ondragover="diceDragOver(event)" ondragleave="diceDragLeave(event)">
+          <span class="dice-ability-label">CHA</span>
+          <span class="dice-ability-mod" id="dice-mod-cha"></span>
+          <div class="dice-ability-slot" id="dice-slot-cha">Drop score here</div>
+          <button class="dice-ability-remove hidden" id="dice-remove-cha" onclick="diceRemoveAbility('cha')">&times;</button>
+        </div>
+      </div>
+      <div class="dice-btn-row">
+        <button class="dice-btn reroll" id="dice-roll-btn" onclick="rollAbilityScores()">🎲 Roll 4d6</button>
+        <button class="dice-btn secondary" id="dice-reroll-btn" onclick="rollAbilityScores()" style="display:none;">🎲 Reroll</button>
+      </div>
+      <div class="dice-btn-row" style="margin-top:12px;">
+        <button class="dice-btn secondary" onclick="hideDiceOverlay()">Back</button>
+        <button class="dice-btn" id="dice-confirm-btn" disabled onclick="confirmStatAssignment()">Confirm &amp; Continue</button>
+      </div>
+    </div>
+  </div>
+
   <div id="start-screen" class="hidden">
     <h2>Choose Your Adventure</h2>
     <p id="adventure-description">Arrive at the Golden Krone Inn in Transylvania. The innkeeper looks at you with alarm when you mention Castle Dracula.</p>
@@ -1382,9 +1505,11 @@ rejoinGame = function() {
 
 // Save session after startGame completes (patch the fetch in startGame)
 var _origStartGameFn = startGame;
-startGame = async function() {
+startGame = async function(statArray, manualAssignment) {
   var name = document.getElementById('player-name').value.trim() || 'Adventurer';
   var cls = document.getElementById('player-class').value;
+  statArray = statArray || window._pendingStatArray || null;
+  manualAssignment = manualAssignment !== undefined ? manualAssignment : !!window._pendingManualAssignment;
 
   try {
     var resp = await fetch('/api/sessions', {
@@ -1396,10 +1521,13 @@ startGame = async function() {
       body: JSON.stringify({
         adventureId: document.getElementById('adventure-select').value,
         playerName: name,
-        characterClass: cls,
+        characterClass: (selectedGameMode === 'digital_dm' && cls === 'mage') ? 'wizard' : cls,
         characterRace: 'human',
         betaToken: betaToken,
-        gameMode: selectedGameMode || 'storyline'
+        gameMode: selectedGameMode || 'storyline',
+        statArray: statArray || window._pendingStatArray || null,
+        manualAssignment: !!(manualAssignment || window._pendingManualAssignment),
+        scenarioId: window.selectedDigitalDMScenario || document.getElementById('adventure-select').value
       })
     });
     var data = await resp.json();
@@ -1421,6 +1549,7 @@ startGame = async function() {
     playerId = data.playerId;
     playerRole = 'host';
     lastMsgIndex = 0;
+    characterSheetData = data.character || null;
 
     // Save session to localStorage for rejoin
     saveSessionToStorage(sessionId, name);
@@ -1516,6 +1645,7 @@ function reconnectToSession(sid) {
       if (data.error) { showToast('Session not found: ' + data.error); return; }
       sessionId = sid;
       playerRole = 'host';
+      characterSheetData = data.character || null;
       document.getElementById('start-screen').classList.add('hidden');
       document.getElementById('storyline-setup-screen').classList.add('hidden');
       showGameUI(data.character, null, false);
@@ -1910,7 +2040,8 @@ async function loadStorylineAdventures() {
 
 async function loadAdventures() {
   try {
-    var resp = await fetch('/api/adventures');
+    var catalogUrl = selectedGameMode === 'digital_dm' ? '/api/digital-dm/scenarios' : '/api/adventures';
+    var resp = await fetch(catalogUrl);
     if (!resp.ok) return;
     var adventures = await resp.json();
     var select = document.getElementById('adventure-select');
@@ -1927,20 +2058,24 @@ async function loadAdventures() {
     // Update description when selection changes
     select.addEventListener('change', function() {
       var selected = select.options[select.selectedIndex];
+      if (selected && selectedGameMode === 'digital_dm') window.selectedDigitalDMScenario = selected.value;
       if (desc && selected) {
         desc.textContent = selected.getAttribute('data-description') || '';
       }
     });
-    // Set initial description
-    if (select.options.length > 0 && desc) {
-      desc.textContent = select.options[0].getAttribute('data-description') || '';
+    // Set initial description and remember the Digital DM scenario ID.
+    if (select.options.length > 0) {
+      if (selectedGameMode === 'digital_dm') window.selectedDigitalDMScenario = select.options[0].value;
+      if (desc) desc.textContent = select.options[0].getAttribute('data-description') || '';
     }
   } catch(e) { /* non-blocking */ }
 }
 
-async function startGame() {
+async function startGame(statArray, manualAssignment) {
   var name = document.getElementById('player-name').value.trim() || 'Adventurer';
   var cls = document.getElementById('player-class').value;
+  statArray = statArray || window._pendingStatArray || null;
+  manualAssignment = manualAssignment !== undefined ? manualAssignment : !!window._pendingManualAssignment;
 
   try {
     var resp = await fetch('/api/sessions', {
@@ -1952,10 +2087,13 @@ async function startGame() {
       body: JSON.stringify({
         adventureId: document.getElementById('adventure-select').value,
         playerName: name,
-        characterClass: cls,
+        characterClass: (selectedGameMode === 'digital_dm' && cls === 'mage') ? 'wizard' : cls,
         characterRace: 'human',
         betaToken: betaToken,
-        gameMode: selectedGameMode || 'storyline'
+        gameMode: selectedGameMode || 'storyline',
+        statArray: statArray || window._pendingStatArray || null,
+        manualAssignment: !!(manualAssignment || window._pendingManualAssignment),
+        scenarioId: window.selectedDigitalDMScenario || document.getElementById('adventure-select').value
       })
     });
     var data = await resp.json();
@@ -1978,6 +2116,7 @@ async function startGame() {
     playerId = data.playerId;
     playerRole = 'host';
     lastMsgIndex = 0;
+    characterSheetData = data.character || null;
     showGameUI(data.character, data.rejoinCode, false);
     // Store game mode for UI gating on rejoin
     if (data.gameMode) currentGameMode = data.gameMode;
@@ -2574,6 +2713,64 @@ function toggleGallery() {
   }
 }
 
+var characterSheetOpen = false;
+var characterSheetData = null;
+
+function closeCharSheet() {
+  characterSheetOpen = false;
+  var panel = document.getElementById('char-sheet-panel');
+  if (panel) panel.classList.remove('open');
+}
+
+function escapeSheetHtml(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function renderCharSheet(character) {
+  var content = document.getElementById('char-sheet-content');
+  if (!content || !character) return;
+  var stats = character.stats || {};
+  var abilities = [['STR','str'],['DEX','dex'],['CON','con'],['INT','int'],['WIS','wis'],['CHA','cha']];
+  var statsHtml = abilities.map(function(pair) {
+    var value = Number(stats[pair[1]] || 0);
+    var mod = Math.floor((value - 10) / 2);
+    return '<div class="sheet-stat"><strong>' + pair[0] + '</strong><span>' + value + ' (' + (mod >= 0 ? '+' : '') + mod + ')</span></div>';
+  }).join('');
+  var features = Array.isArray(character.features) ? character.features : [];
+  var spells = character.spells && typeof character.spells === 'object' ? Object.keys(character.spells) : [];
+  content.innerHTML = '<h2 class="sheet-name">' + escapeSheetHtml(character.name || 'Adventurer') + '</h2>' +
+    '<div class="sheet-meta">Level ' + escapeSheetHtml(character.level || 1) + ' ' + escapeSheetHtml(character.race || 'Human') + ' ' + escapeSheetHtml(character.characterClass || character.class || 'Adventurer') + '</div>' +
+    '<div class="sheet-stats">' + statsHtml + '</div>' +
+    '<div class="sheet-section"><h4>COMBAT</h4><div>HP: ' + escapeSheetHtml(character.hp && character.hp.current) + ' / ' + escapeSheetHtml(character.hp && character.hp.max) + ' &nbsp; AC: ' + escapeSheetHtml(character.ac || 10) + ' &nbsp; Speed: ' + escapeSheetHtml(character.speed || 30) + '</div></div>' +
+    '<div class="sheet-section"><h4>FEATURES</h4>' + (features.length ? '<ul class="sheet-list">' + features.map(function(f) { return '<li>' + escapeSheetHtml(typeof f === 'string' ? f : (f.name || f.id || JSON.stringify(f))) + '</li>'; }).join('') + '</ul>' : '<div>None</div>') + '</div>' +
+    (spells.length ? '<div class="sheet-section"><h4>SPELLS</h4><ul class="sheet-list">' + spells.map(function(s) { return '<li>' + escapeSheetHtml(s) + '</li>'; }).join('') + '</ul></div>' : '') +
+    '<div class="sheet-section"><h4>LANGUAGES</h4><div>' + escapeSheetHtml((character.languages || []).join ? character.languages.join(', ') : '') + '</div></div>';
+}
+
+async function openCharSheet() {
+  var panel = document.getElementById('char-sheet-panel');
+  if (!panel) return;
+  characterSheetOpen = true;
+  panel.classList.add('open');
+  var content = document.getElementById('char-sheet-content');
+  if (characterSheetData) { renderCharSheet(characterSheetData); return; }
+  if (!sessionId) { if (content) content.innerHTML = '<p>No active character session.</p>'; return; }
+  if (content) content.innerHTML = '<p>Loading character sheet...</p>';
+  try {
+    var resp = await fetch('/api/sessions/' + encodeURIComponent(sessionId) + '/character');
+    var data = await resp.json();
+    if (!resp.ok || data.error) throw new Error(data.error || 'Unable to load character');
+    characterSheetData = data.character;
+    renderCharSheet(characterSheetData);
+  } catch (err) {
+    if (content) content.innerHTML = '<p>Unable to load character sheet.</p>';
+  }
+}
+
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && characterSheetOpen) closeCharSheet(); });
+
 function addToGallery(imageUrl, sceneName, sceneDesc) {
   galleryImages.push({ url: imageUrl, name: sceneName, desc: sceneDesc || '' });
   document.getElementById('gallery-count').textContent = galleryImages.length;
@@ -3043,6 +3240,300 @@ var storyCurrentSceneId = null;
 var isAdventureMode = false;
 
 
+// ── Chunk 2b: Dice Rolling (4d6 drop lowest) ───────────────────────
+
+var diceState = {
+  rolled: false,
+  results: [],     // [{rolls, sorted, dropped, total}, ...]
+  assignment: {},  // {str: total, dex: total, ...}
+  assignmentIndex: {}, // {str: pool item index, ...}; keeps duplicate totals distinct
+  pool: []         // unassigned totals
+};
+
+function showDiceOverlay() {
+  var overlay = document.getElementById('dice-overlay');
+  if (overlay) { overlay.classList.remove('hidden'); overlay.style.display = 'flex'; }
+  // Reset state
+  diceState = { rolled: false, results: [], assignment: {}, assignmentIndex: {}, pool: [] };
+  document.getElementById('dice-pool').innerHTML = '';
+  document.getElementById('dice-hint').style.display = 'block';
+  document.getElementById('dice-hint').textContent = 'Click "Roll 4d6" to begin';
+  document.getElementById('dice-total-sum').textContent = '';
+  document.getElementById('dice-confirm-btn').disabled = true;
+  var abilities = ['str','dex','con','int','wis','cha'];
+  for (var i = 0; i < abilities.length; i++) {
+    var slot = document.getElementById('dice-slot-' + abilities[i]);
+    var mod = document.getElementById('dice-mod-' + abilities[i]);
+    var rm = document.getElementById('dice-remove-' + abilities[i]);
+    if (slot) slot.textContent = 'Drop score here';
+    if (slot) slot.classList.remove('dice-ability-slot--filled');
+    if (mod) mod.textContent = '';
+    if (rm) rm.classList.add('hidden');
+    // Remove drag-drop highlight
+    var row = slot ? slot.closest('.dice-ability-row') : null;
+    if (row) row.classList.remove('dice-ability-row--dragover');
+  }
+}
+
+function hideDiceOverlay() {
+  var overlay = document.getElementById('dice-overlay');
+  if (overlay) { overlay.classList.add('hidden'); overlay.style.display = 'none'; }
+}
+
+async function rollAbilityScores() {
+  var hint = document.getElementById('dice-hint');
+  var pool = document.getElementById('dice-pool');
+  var sumEl = document.getElementById('dice-total-sum');
+  hint.textContent = 'Rolling...';
+  hint.style.display = 'block';
+  try {
+    var resp = await fetch('/api/roll-stats', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-beta-token': betaToken || '' }
+    });
+    var data = await resp.json();
+    if (!data.results) { hint.textContent = 'Error rolling dice.'; return; }
+    diceState.results = data.results;
+    diceState.pool = data.results.map(function(r) { return r.total; });
+    diceState.assignment = {};
+    diceState.assignmentIndex = {};
+    diceState.rolled = true;
+    // Render dice pool
+    pool.innerHTML = '';
+    hint.style.display = 'none';
+    for (var i = 0; i < data.results.length; i++) {
+      var r = data.results[i];
+      var item = document.createElement('div');
+      item.className = 'dice-pool-item';
+      item.draggable = true;
+      item.setAttribute('data-value', r.total);
+      item.setAttribute('data-index', i);
+      item.id = 'dice-pool-' + i;
+      item.ondragstart = diceDragStart;
+      item.ondragend = diceDragEnd;
+      // Show 4 dice with dropped one dimmed
+      var diceHtml = '';
+      for (var d = 0; d < 4; d++) {
+        var val = r.rolls[d];
+        var isDropped = (val === r.dropped && r.sorted[3] === val);
+        // If multiple dice have the dropped value, mark only the last occurrence
+        if (val === r.dropped) {
+          // Check if this specific die index is the lowest
+          var sortedCopy = r.rolls.slice().sort(function(a,b){return a-b;});
+          if (r.rolls[d] === sortedCopy[0]) {
+            isDropped = true;
+          } else {
+            isDropped = false;
+          }
+        }
+        diceHtml += '<span class="dice-die' + (isDropped ? ' dice-die--dropped' : '') + '">' + val + '</span>';
+      }
+      diceHtml += '<span class="dice-pool-total">' + r.total + '</span>';
+      item.innerHTML = diceHtml;
+      pool.appendChild(item);
+    }
+    // Show total sum
+    var sum = data.results.reduce(function(s, r) { return s + r.total; }, 0);
+    sumEl.textContent = 'Total: ' + sum + ' (avg ' + (sum / 6).toFixed(1) + ')';
+    // Reset assignments
+    var abilities = ['str','dex','con','int','wis','cha'];
+    for (var a = 0; a < abilities.length; a++) {
+      var slot = document.getElementById('dice-slot-' + abilities[a]);
+      var mod = document.getElementById('dice-mod-' + abilities[a]);
+      var rm = document.getElementById('dice-remove-' + abilities[a]);
+      if (slot) { slot.textContent = 'Drop score here'; slot.classList.remove('dice-ability-slot--filled'); }
+      if (mod) mod.textContent = '';
+      if (rm) rm.classList.add('hidden');
+    }
+    document.getElementById('dice-confirm-btn').disabled = true;
+  } catch(e) {
+    hint.textContent = 'Network error: ' + e.message;
+    hint.style.display = 'block';
+  }
+}
+
+function diceDragStart(e) {
+  e.dataTransfer.setData('text/plain', e.target.getAttribute('data-value'));
+  e.dataTransfer.setData('text/index', e.target.getAttribute('data-index'));
+  e.target.style.opacity = '0.5';
+}
+
+function diceDragEnd(e) {
+  e.target.style.opacity = '1';
+}
+
+function diceDragOver(e) {
+  e.preventDefault();
+  var row = e.target.closest('.dice-ability-row');
+  if (row) row.classList.add('dice-ability-row--dragover');
+}
+
+function diceDragLeave(e) {
+  var row = e.target.closest('.dice-ability-row');
+  if (row) row.classList.remove('dice-ability-row--dragover');
+}
+
+function diceDrop(e) {
+  e.preventDefault();
+  var row = e.target.closest('.dice-ability-row');
+  if (!row) return;
+  row.classList.remove('dice-ability-row--dragover');
+  var ability = row.getAttribute('data-ability');
+  var value = parseInt(e.dataTransfer.getData('text/plain'), 10);
+  var idx = e.dataTransfer.getData('text/index');
+  if (!ability || isNaN(value)) return;
+  // If this ability already has a value, return its specific pool item first.
+  if (diceState.assignment[ability] !== undefined) {
+    var oldIdx = diceState.assignmentIndex[ability];
+    var oldItem = document.getElementById('dice-pool-' + oldIdx);
+    if (oldItem) oldItem.style.display = '';
+    var oldPoolIdx = diceState.pool.indexOf(diceState.assignment[ability]);
+    if (oldPoolIdx === -1) diceState.pool.push(diceState.assignment[ability]);
+  }
+  // Do not allow a pool item already assigned to another ability.
+  var assignedAbilities = Object.keys(diceState.assignment);
+  for (var ai = 0; ai < assignedAbilities.length; ai++) {
+    if (diceState.assignmentIndex[assignedAbilities[ai]] === String(idx) && assignedAbilities[ai] !== ability) return;
+  }
+  // Assign value and its unique pool index.
+  diceState.assignment[ability] = value;
+  diceState.assignmentIndex[ability] = String(idx);
+  var poolIdx = diceState.pool.indexOf(value);
+  if (poolIdx > -1) diceState.pool.splice(poolIdx, 1);
+  var poolItem = document.getElementById('dice-pool-' + idx);
+  if (poolItem) poolItem.style.display = 'none';
+  // Update slot display
+  var slot = document.getElementById('dice-slot-' + ability);
+  var mod = document.getElementById('dice-mod-' + ability);
+  var rm = document.getElementById('dice-remove-' + ability);
+  if (slot) { slot.textContent = value; slot.classList.add('dice-ability-slot--filled'); }
+  if (mod) { var modVal = Math.floor((value - 10) / 2); mod.textContent = (modVal >= 0 ? '+' : '') + modVal; }
+  if (rm) rm.classList.remove('hidden');
+  // Check if all assigned
+  _checkDiceConfirmReady();
+}
+
+function diceRemoveAbility(ability) {
+  if (diceState.assignment[ability] === undefined) return;
+  var value = diceState.assignment[ability];
+  var assignedIndex = diceState.assignmentIndex[ability];
+  delete diceState.assignment[ability];
+  delete diceState.assignmentIndex[ability];
+  diceState.pool.push(value);
+  // Show the exact pool item again, even when totals are duplicates.
+  var el = document.getElementById('dice-pool-' + assignedIndex);
+  if (el) el.style.display = '';
+  // Reset slot
+  var slot = document.getElementById('dice-slot-' + ability);
+  var mod = document.getElementById('dice-mod-' + ability);
+  var rm = document.getElementById('dice-remove-' + ability);
+  if (slot) { slot.textContent = 'Drop score here'; slot.classList.remove('dice-ability-slot--filled'); }
+  if (mod) mod.textContent = '';
+  if (rm) rm.classList.add('hidden');
+  document.getElementById('dice-confirm-btn').disabled = true;
+}
+
+function _checkDiceConfirmReady() {
+  var abilities = ['str','dex','con','int','wis','cha'];
+  var allAssigned = true;
+  for (var i = 0; i < abilities.length; i++) {
+    if (diceState.assignment[abilities[i]] === undefined) { allAssigned = false; break; }
+  }
+  document.getElementById('dice-confirm-btn').disabled = !allAssigned;
+}
+
+function confirmStatAssignment() {
+  // Build stat array in ability order: STR, DEX, CON, INT, WIS, CHA
+  var statArray = [
+    diceState.assignment.str,
+    diceState.assignment.dex,
+    diceState.assignment.con,
+    diceState.assignment.int,
+    diceState.assignment.wis,
+    diceState.assignment.cha
+  ];
+  hideDiceOverlay();
+  // Store for startGame to use
+  window._pendingStatArray = statArray;
+  window._pendingManualAssignment = true;
+  // Proceed to start the game
+  beginStoryWithStats();
+}
+
+// Mobile tap-to-assign: click a pool item then click an ability row
+var _diceTapValue = null;
+var _diceTapIndex = null;
+
+function dicePoolClick(e) {
+  var item = e.target.closest('.dice-pool-item');
+  if (!item) return;
+  // Deselect previous
+  var prev = document.querySelector('.dice-pool-item--selected');
+  if (prev) prev.classList.remove('dice-pool-item--selected');
+  item.classList.add('dice-pool-item--selected');
+  _diceTapValue = parseInt(item.getAttribute('data-value'), 10);
+  _diceTapIndex = item.getAttribute('data-index');
+}
+
+function diceAbilityClick(e) {
+  if (_diceTapValue === null) return;
+  var row = e.target.closest('.dice-ability-row');
+  if (!row) return;
+  var ability = row.getAttribute('data-ability');
+  if (!ability) return;
+  // Simulate drop
+  var fakeEvent = {
+    preventDefault: function() {},
+    target: row,
+    dataTransfer: {
+      getData: function(type) { return type === 'text/plain' ? String(_diceTapValue) : _diceTapIndex; }
+    }
+  };
+  diceDrop(fakeEvent);
+  // Clear selection
+  var sel = document.querySelector('.dice-pool-item--selected');
+  if (sel) sel.classList.remove('dice-pool-item--selected');
+  _diceTapValue = null;
+  _diceTapIndex = null;
+}
+
+// Wire up tap-to-assign after DOM ready
+document.addEventListener('DOMContentLoaded', function() {
+  var poolEl = document.getElementById('dice-pool');
+  if (poolEl) poolEl.addEventListener('click', dicePoolClick);
+  var abilitiesEl = document.getElementById('dice-abilities');
+  if (abilitiesEl) abilitiesEl.addEventListener('click', diceAbilityClick);
+});
+
+function beginStoryWithStats() {
+  var btn = document.getElementById('begin-adventure-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Starting...'; }
+  var inputRow = document.getElementById('input-row');
+  if (inputRow) inputRow.style.display = 'none';
+  startGame().then(function() {
+    storyModeActive = true;
+    document.body.classList.add('storyline-active');
+    var inputRow2 = document.getElementById('input-row');
+    if (inputRow2) inputRow2.style.display = 'none';
+    var actionBtns = document.getElementById('action-buttons');
+    if (actionBtns) actionBtns.classList.add('storyline-actions');
+    if (window.StoryEngine && storySelectedClass) {
+      storyPlayerState = window.StoryEngine.createPlayerState(storySelectedClass);
+      var charBar = document.getElementById('char-bar');
+      if (charBar) charBar.classList.add('hidden');
+      var coinBar = document.getElementById('coin-bar');
+      if (coinBar) coinBar.classList.add('hidden');
+      showHpBar();
+      // Show character sheet button
+      var charSheetBtn = document.getElementById('char-sheet-btn');
+      if (charSheetBtn) charSheetBtn.classList.remove('hidden');
+      updateHpBar();
+    }
+  }).catch(function() {
+    if (btn) { btn.disabled = false; btn.textContent = 'Begin Adventure'; }
+  });
+}
+
 // ── Chunk 3: Class Selection ────────────────────────────────────────
 
 function showClassSelection() {
@@ -3067,8 +3558,12 @@ function selectStoryClass(classId) {
   // Set the hidden select field so the server gets the class too
   var sel = document.getElementById('player-class');
   if (sel) sel.value = classId;
-  // Now proceed to start the game
-  beginStoryAdventure();
+  // For Digital DM, show dice rolling overlay first (manual stat assignment)
+  if (selectedGameMode === 'digital_dm') {
+    showDiceOverlay();
+  } else {
+    beginStoryAdventure();
+  }
 }
 
 function beginStoryAdventure() {
@@ -3094,6 +3589,8 @@ function beginStoryAdventure() {
       var coinBar = document.getElementById('coin-bar');
       if (coinBar) coinBar.classList.add('hidden');
       showHpBar();
+      var sheetBtn = document.getElementById('char-sheet-btn');
+      if (sheetBtn) sheetBtn.classList.remove('hidden');
       updateHpBar();
     }
   }).catch(function() {
