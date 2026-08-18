@@ -775,7 +775,7 @@ body.game-active #auto-rejoin-banner{display:none;}
 }
 
 /* Digital DM Scenario Selector */
-#scenario-select-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+#scenario-select-screen { text-align: center; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; min-height: 0; overscroll-behavior: contain; }
 #scenario-select-screen h2 { color: #C9A84C; font-size: 1.4em; }
 #scenario-select-screen p { color: #F5F0E1aa; max-width: 500px; font-size: 1.05em; line-height: 1.6; }
 .scenario-section-title { color: #C9A84C; font-size: 1.1em; margin: 10px 0 6px; text-transform: uppercase; letter-spacing: 2px; font-family: Georgia, serif; }
@@ -799,6 +799,44 @@ body.game-active #auto-rejoin-banner{display:none;}
 .scenario-begin-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 #scenario-back-btn { background: none; border: 1px solid #C9A84C44; color: #C9A84C; padding: 10px 24px; border-radius: 8px; cursor: pointer; font-family: Georgia, serif; font-size: 0.9em; }
 #scenario-back-btn:hover { border-color: #C9A84C; }
+
+/* ── Digital DM Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+  #scenario-select-screen { padding: 24px 16px; gap: 18px; }
+  #scenario-select-screen h2 { font-size: 1.2em; }
+  .scenario-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+  .scenario-card { padding: 16px; }
+  .race-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .char-class-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .char-review-card { padding: 18px; }
+  .review-stats { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+}
+@media (max-width: 480px) {
+  #scenario-select-screen { padding: 16px 12px; gap: 14px; }
+  .scenario-grid { grid-template-columns: 1fr; }
+  .scenario-card { padding: 14px; }
+  .scenario-card .sc-icon { font-size: 1.6em; }
+  .race-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .race-card { padding: 10px; }
+  .rc-icon { font-size: 1.4em; }
+  .rc-desc { font-size: 0.7em; }
+  .char-class-grid { grid-template-columns: 1fr; }
+  .char-class-card { padding: 14px; }
+  .char-builder-nav { flex-direction: column; gap: 10px; }
+  .char-builder-nav button { width: 100%; max-width: 300px; }
+  .scenario-name-input, .scenario-class-select, .scenario-begin-btn { max-width: 100%; }
+}
+@media (max-width: 360px) {
+  .race-grid { grid-template-columns: 1fr; }
+  .race-card { padding: 10px 8px; }
+  .rc-icon { font-size: 1.2em; }
+  .rc-name { font-size: 0.9em; }
+  .rc-bonus { font-size: 0.7em; }
+  .rc-desc { font-size: 0.65em; }
+  .scenario-card .sc-name { font-size: 1em; }
+  .scenario-card .sc-desc { font-size: 0.82em; }
+  .review-stats { grid-template-columns: repeat(2, 1fr); }
+}
 
 /* ── Character Builder Steps ──────────────────────────────────── */
 .char-builder-steps { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; font-family: Georgia, serif; }
