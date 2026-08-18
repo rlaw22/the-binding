@@ -2848,7 +2848,8 @@ function handleMessage(msg) {
           var label = (typeof a === 'string') ? a : (a.label || a.text || '');
           var shortLabel = (typeof a === 'object' && a.shortLabel) ? a.shortLabel : generateClientShortLabel(label);
           var btnType = (typeof a === 'object' && a.type) ? (typeMap[a.type] || 'explore') : 'explore';
-          storyBtns.push({ id: 'action_' + i, type: btnType, label: label, shortLabel: shortLabel });
+          var stableId = (typeof a === 'object' && (a.id || a.contentId)) ? (a.id || a.contentId) : 'action_' + i;
+          storyBtns.push({ id: stableId, contentId: (typeof a === 'object' ? a.contentId : null), type: btnType, label: label, shortLabel: shortLabel });
         }
         if (storyBtns.length > 0) renderStoryButtons(storyBtns);
       } else {
@@ -3990,6 +3991,7 @@ function renderStoryButtons(buttons) {
     el.setAttribute('data-short-label', shortLabel);
     el.textContent = isMobile ? shortLabel : fullLabel;
     el.setAttribute('data-story-id', btn.id);
+    el.setAttribute('data-content-id', btn.contentId || btn.id || '');
     el.setAttribute('data-story-type', btn.type);
     if (btn.disabled) el.disabled = true;
     el.onclick = (function(buttonId, buttonType) {
@@ -4046,7 +4048,7 @@ function processStoryAction(buttonId, buttonType) {
   fetch('/api/sessions/' + sessionId + '/actions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ content: label, playerId: playerId })
+    body: JSON.stringify({ content: label, actionId: buttonId, contentId: (btn && btn.getAttribute('data-content-id')) || null, playerId: playerId })
   }).then(function(resp) {
     clearTimeout(sendTimeout);
     clearTimeout(feedbackTimer1);

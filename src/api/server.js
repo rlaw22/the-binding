@@ -905,7 +905,7 @@ async function createServer(options = {}) {
       // Generate suggested actions from the scene engine
       const openingActions = generateSceneActions(game.sceneState);
       recordMessage(session.id, MessageRouter.suggestedActions(
-        openingActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
+        openingActions.map(a => ({ id: a.id || null, contentId: a.contentId || null, label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
         'What would you like to do?'
       ));
     }
@@ -1238,7 +1238,7 @@ async function createServer(options = {}) {
       return reply.status(404).send({ error: 'Session not found' });
     }
 
-    const { type, content, playerId } = request.body || {};
+    const { type, content, actionId, contentId, playerId } = request.body || {};
     if (!content) {
       return reply.status(400).send({ error: 'content is required' });
     }
@@ -1266,7 +1266,7 @@ async function createServer(options = {}) {
       });
 
       // Process through DM service
-      const result = await processAction(game, content, player.character);
+      const result = await processAction(game, content, player.character, { actionId, contentId });
 
       // Dynamic Difficulty: wrap narrative with difficulty context if available
       if (data.difficultyProfile) {
@@ -1352,7 +1352,7 @@ async function createServer(options = {}) {
         : result.suggestedActions;
       if (filteredActions.length > 0) {
         recordMessage(sessionId, MessageRouter.suggestedActions(
-          filteredActions.map(a => ({ label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
+          filteredActions.map(a => ({ id: a.id || null, contentId: a.contentId || null, label: a.label, shortLabel: a.shortLabel || a.label, type: a.type || 'free' })),
           'What would you like to do?'
         ));
       }

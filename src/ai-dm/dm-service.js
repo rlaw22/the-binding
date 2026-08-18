@@ -16,7 +16,7 @@ const SceneEngine = require('../scene-engine');
 const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
-const { createInventory, listItems, getEquippedEffects, addItem } = require('../inventory/inventory');
+const { createInventory, listItems, getEquippedEffects, addItem, normalizeItemId } = require('../inventory/inventory');
 const StoryEngine = require('../story/story-engine');
 const ThreatEncounters = require('../story/threat-encounters');
 const GameMode = require('../game-mode');
@@ -614,7 +614,7 @@ function createGame(options) {
  * Process a player action and generate the DM's response.
  * This is the main game loop entry point.
  */
-async function processAction(game, playerAction, character) {
+async function processAction(game, playerAction, character, actionMeta = {}) {
   const { contextManager, llmProvider } = game;
   const adventure = resolveAdventure(game);
   const helpers = resolveHelpers(game);
@@ -657,8 +657,9 @@ async function processAction(game, playerAction, character) {
   if (game.sceneState && game.sceneState.initialFacts && game.sceneState.initialFacts.items) {
     for (const itemId of game.sceneState.initialFacts.items) {
       // Check if item is already in inventory (by ID or name match)
+      const canonicalItemId = normalizeItemId(itemId);
       const existing = game.inventory.slots.find(s =>
-        s.id === itemId || s.name.toLowerCase() === itemId.toLowerCase()
+        s.id === canonicalItemId || s.id === itemId || s.name.toLowerCase() === itemId.toLowerCase()
       );
       if (!existing) {
         try {
@@ -679,29 +680,34 @@ async function processAction(game, playerAction, character) {
     const storyMode = game.sceneState.storyMode;
     const manifest = game.sceneState;
 
-    // Detect button type from the player action label
+    // Prefer the stable action ID submitted by the browser. Label matching is
+    // retained only as a backward-compatible fallback for older clients/free text.
     const actionLower = playerAction.toLowerCase();
     let buttonType = 'explore';
-    let buttonId = '';
+    let buttonId = actionMeta.actionId || actionMeta.contentId || '';
+    if (buttonId && buttonId.startsWith('item_')) buttonType = 'item';
+    else if (buttonId && buttonId.startsWith('ability_')) buttonType = 'ability';
+    else if (buttonId && buttonId.startsWith('bad_')) buttonType = 'bad_choice';
+    else if (buttonId && (buttonId === game.sceneState.exitAction || buttonId.startsWith('exit'))) buttonType = 'exit';
 
-    // Match against threat encounter buttons
-    if (actionLower.includes('fight') || actionLower.includes('defend') || actionLower.includes('run') ||
-        actionLower.includes('flee') || actionLower.includes('escape')) {
+    // Match against labels only when no stable action identity was supplied.
+    // This preserves compatibility with older clients and free-text actions.
+    if (!buttonId && (actionLower.includes('fight') || actionLower.includes('defend') || actionLower.includes('run') ||
+        actionLower.includes('flee') || actionLower.includes('escape'))) {
       buttonType = 'threat';
       if (actionLower.includes('fight') || actionLower.includes('attack')) buttonId = 'threat_fight';
       else if (actionLower.includes('defend') || actionLower.includes('block')) buttonId = 'threat_defend';
       else buttonId = 'threat_run';
     }
     // Match against item buttons
-    else if (storyMode.collectibleItem && actionLower.includes(storyMode.collectibleItem.label.toLowerCase())) {
+    else if (!buttonId && storyMode.collectibleItem && actionLower.includes(storyMode.collectibleItem.label.toLowerCase())) {
       buttonType = 'item';
       buttonId = 'item_' + storyMode.collectibleItem.id;
     }
     // Match against ability buttons
-    else if (actionLower.includes('spell') || actionLower.includes('ability') || actionLower.includes('channel') ||
-             actionLower.includes('turn undead') || actionLower.includes('shadow step') || actionLower.includes('arcane')) {
+    else if (!buttonId && (actionLower.includes('spell') || actionLower.includes('ability') || actionLower.includes('channel') ||
+             actionLower.includes('turn undead') || actionLower.includes('shadow step') || actionLower.includes('arcane'))) {
       buttonType = 'ability';
-      // Extract ability ID from context
       const abilities = StoryEngine.getAvailableAbilities(game.storyPlayerState);
       for (const ab of abilities) {
         if (actionLower.includes(ab.name.toLowerCase()) || actionLower.includes(ab.id.replace(/_/g, ' '))) {
@@ -712,12 +718,12 @@ async function processAction(game, playerAction, character) {
       if (!buttonId) buttonId = 'ability_unknown';
     }
     // Match against bad choice
-    else if (storyMode.badChoice && actionLower.includes(storyMode.badChoice.label.toLowerCase())) {
+    else if (!buttonId && storyMode.badChoice && actionLower.includes(storyMode.badChoice.label.toLowerCase())) {
       buttonType = 'bad_choice';
       buttonId = 'bad_' + storyMode.badChoice.id;
     }
     // Default: explore — match against content items
-    else {
+    else if (!buttonId) {
       buttonType = 'explore';
       const content = manifest.contentItems || [];
       // First pass: exact label match (case-insensitive)
@@ -1485,6 +1491,8 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   // STORYLINE MODE: Only show undiscovered items. Once explored, buttons vanish.
   // AI suggestions are completely excluded — they caused repetition and scene-irrelevant noise.
   const contentActions = allContent.filter(i => i.available).map(item => ({
+    id: item.id,
+    contentId: item.id,
     label: item.label,
     shortLabel: generateShortLabel(item.label),
     type: 'exploration'
@@ -1592,6 +1600,7 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     for (const filler of toAdd) {
       sceneState._shownFillers.add(filler.label);
       contentActions.push({
+        id: 'filler_' + sceneState.sceneId + '_' + sceneState._shownFillers.size,
         label: filler.label,
         shortLabel: filler.shortLabel || generateShortLabel(filler.label),
         type: 'filler'
@@ -1602,6 +1611,7 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   // Add bad choice if it exists in the scene's storyMode (visible from the start)
   if (sceneState.storyMode && sceneState.storyMode.badChoice) {
     contentActions.push({
+      id: 'bad_' + sceneState.storyMode.badChoice.id,
       label: sceneState.storyMode.badChoice.label,
       shortLabel: generateShortLabel(sceneState.storyMode.badChoice.label),
       type: 'bad_choice'
@@ -1617,12 +1627,12 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   // Exit button: always visible. Position depends on pressure level.
   if (exitAction && exitAction.priority === 1) {
     // Strong/forced pressure — exit goes first
-    actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
+    actions.push({ id: exitAction.id, label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
     actions.push(...contentActions);
   } else if (exitAction) {
     // Background/gentle — content first, exit last
     actions.push(...contentActions);
-    actions.push({ label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
+    actions.push({ id: exitAction.id, label: exitAction.label, shortLabel: generateShortLabel(exitAction.label), type: 'exit' });
   } else {
     // No exit defined — just content
     actions.push(...contentActions);

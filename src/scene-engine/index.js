@@ -37,6 +37,13 @@ function enterScene(manifest) {
     sceneId: manifest.sceneId,
     sceneName: manifest.sceneName,
     description: manifest.description || '',  // scene setting for LLM boundary enforcement
+    // Preserve metadata used by the live Storyline DM path. Without this,
+    // enterScene() silently drops collectible and initial-fact configuration.
+    storyMode: manifest.storyMode || null,
+    initialFacts: manifest.initialFacts || null,
+    // StoryEngine consumes the manifest-shaped `content` array; keep it
+    // alongside the normalized tracker items used by SceneEngine.
+    content: manifest.content || [],
     contentItems,
     discoveredIds: new Set(),
     usedSuggestions: new Set(),   // track which suggestion labels have been used

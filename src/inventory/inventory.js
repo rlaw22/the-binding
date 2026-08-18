@@ -11,6 +11,18 @@
 
 // ── Item Definitions ────────────────────────────────────────────────────────
 
+// Storyline manifests historically used several IDs for the same canonical
+// inventory item. Keep the manifest vocabulary flexible, but make the stored
+// inventory identity deterministic.
+const STORYLINE_ITEM_ALIASES = Object.freeze({
+  silver_crucifix: 'crucifix',
+  brass_crucifix: 'crucifix'
+});
+
+function normalizeItemId(itemId) {
+  return STORYLINE_ITEM_ALIASES[itemId] || itemId;
+}
+
 const ITEMS = {
   crucifix: {
     id: 'crucifix',
@@ -646,7 +658,8 @@ const EQUIPMENT_SLOTS = Object.keys(SLOT_TYPE_MAP);
  */
 function createInventory(startingItems = []) {
   const slots = [];
-  for (const itemId of startingItems) {
+  for (const rawItemId of startingItems) {
+    const itemId = normalizeItemId(rawItemId);
     const template = ITEMS[itemId];
     if (template) {
       slots.push({
@@ -676,6 +689,7 @@ function createInventory(startingItems = []) {
  * @returns {object|null} the added item slot, or null if inventory full / item not found
  */
 function addItem(inventory, itemId) {
+  itemId = normalizeItemId(itemId);
   if (inventory.slots.length >= inventory.maxSize) return null;
   const template = ITEMS[itemId];
   if (!template) return null;
@@ -1747,6 +1761,8 @@ function tradeItem(fromInventory, toInventory, itemId) {
 
 module.exports = {
   ITEMS,
+  STORYLINE_ITEM_ALIASES,
+  normalizeItemId,
   SET_BONUSES,
   SLOT_TYPE_MAP,
   EQUIPMENT_SLOTS,
