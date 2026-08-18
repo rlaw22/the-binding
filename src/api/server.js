@@ -35,6 +35,7 @@ const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = 
 const CombatManager = require('../combat/combat-manager');
 const { DynamicDifficulty, preAdventureDifficulty, getDifficultyBucket, narrativeDifficultyWrap } = require('../difficulty/dynamic-difficulty');
 const Inventory = require('../inventory/inventory');
+const { listStorylineItems, addStorylineItem } = require('../story/storyline-inventory');
 const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
 const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
 const { createDigitalDMSession, getDigitalDMInfo, isDigitalDM } = require('../campaign/digital-dm');
@@ -813,6 +814,8 @@ async function createServer(options = {}) {
     const game = createGame({
       adventureId,
       adventureName: adventure.name,
+      gameMode: resolvedGameMode,
+      classId: characterClass || 'fighter',
       llmProvider: createProvider(llmConfig),
       ruleEngine: RuleEngine,
       diceService: DiceService
@@ -855,6 +858,9 @@ async function createServer(options = {}) {
 
     // Initialize scene engine with the first scene's manifest
     const sceneManifest = adventure.sceneManifests[adventure.startScene || 'scene_00'];
+    if (resolvedGameMode === 'storyline' && sceneManifest && sceneManifest.initialFacts && sceneManifest.initialFacts.items) {
+      for (const itemId of sceneManifest.initialFacts.items) addStorylineItem(game.storyPlayerState, itemId);
+    }
     const openingNarrationText = sceneManifest ? sceneManifest.description : '';
     if (sceneManifest) {
       game.sceneState = SceneEngine.enterScene(sceneManifest);
@@ -1095,6 +1101,14 @@ async function createServer(options = {}) {
   });
 
   // --- INVENTORY ENDPOINTS ---
+  // Storyline has a narrative inventory separate from Campaign equipment.
+  app.get('/api/sessions/:id/storyline-inventory', async (request, reply) => {
+    const data = sessions.get(request.params.id);
+    if (!data) return reply.status(404).send({ error: 'Session not found' });
+    if (data.gameMode !== 'storyline') return reply.status(404).send({ error: 'Storyline inventory is only available in Storyline mode' });
+    return { items: listStorylineItems(data.game.storyPlayerState || { inventory: [] }), count: (data.game.storyPlayerState && data.game.storyPlayerState.inventory || []).length };
+  });
+
   app.get('/api/sessions/:id/inventory', async (request, reply) => {
     const data = sessions.get(request.params.id);
     if (!data) return reply.status(404).send({ error: 'Session not found' });

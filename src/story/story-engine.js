@@ -16,6 +16,13 @@
  */
 
 // Use ClassAbilities — browser global or Node.js require
+var StorylineInventory;
+if (typeof window !== 'undefined' && window.StorylineInventory) {
+  StorylineInventory = window.StorylineInventory;
+} else if (typeof require !== 'undefined') {
+  StorylineInventory = require('./storyline-inventory');
+}
+
 var ClassAbilities;
 if (typeof window !== 'undefined' && window.ClassAbilities) {
   ClassAbilities = window.ClassAbilities;
@@ -41,7 +48,7 @@ function createPlayerState(classId) {
     hp: classData.startingHp,
     maxHp: classData.maxHp,
     coins: 10,              // starting coins
-    inventory: [],           // collected item IDs
+    inventory: [],           // Storyline collectible IDs (never Campaign item slots)
     flags: {},               // penalty/bonus flags (e.g. { rescued_at_0hp: true })
     abilitiesUsed: {},       // { ability_id: boolean } — reset per scene
     scenesCompleted: 0,
@@ -91,7 +98,8 @@ function generateStoryButtons(sceneManifest, playerState) {
 
   // 3. Collectible item buttons (0-1)
   if (storyMode.collectibleItem) {
-    const alreadyHas = playerState.inventory.includes(storyMode.collectibleItem.id);
+    const collectibleId = StorylineInventory.normalizeStorylineItemId(storyMode.collectibleItem.id);
+    const alreadyHas = playerState.inventory.includes(collectibleId);
     if (!alreadyHas) {
       buttons.push({
         id: 'item_' + storyMode.collectibleItem.id,
@@ -287,15 +295,13 @@ function processItem(buttonId, storyMode, playerState) {
   }
 
   // Add to inventory
-  if (!playerState.inventory.includes(itemId)) {
-    playerState.inventory.push(itemId);
-  }
+  const resolved = StorylineInventory.addStorylineItem(playerState, collectible);
 
   return {
     type: 'item',
-    narrative: collectible.description || 'You carefully stow the item away.',
-    itemGained: itemId,
-    itemName: collectible.name || itemId
+    narrative: collectible.description || (resolved && resolved.description) || 'You carefully stow the item away.',
+    itemGained: resolved ? resolved.id : itemId,
+    itemName: resolved ? resolved.name : (collectible.name || itemId)
   };
 }
 
@@ -569,7 +575,9 @@ function buildAtmosphereContext(playerState, sceneManifest, result) {
     checkTacticalBonus: checkTacticalBonus,
     processTravel: processTravel,
     buildButtonLayout: buildButtonLayout,
-    buildAtmosphereContext: buildAtmosphereContext
+    buildAtmosphereContext: buildAtmosphereContext,
+    normalizeStorylineItemId: StorylineInventory.normalizeStorylineItemId,
+    listStorylineItems: StorylineInventory.listStorylineItems
   };
 
   // Browser global

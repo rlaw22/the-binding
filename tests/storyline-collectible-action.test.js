@@ -30,8 +30,8 @@ test('StoryEngine awards the authored collectible using its manifest ID', () => 
     storyMode: { collectibleItem: { id: 'silver_crucifix', label: 'Examine the silver crucifix', description: 'You recover the silver crucifix.' } }
   };
   const result = StoryEngine.processButtonAction('item_silver_crucifix', 'item', manifest, player);
-  assert.strictEqual(result.itemGained, 'silver_crucifix');
-  assert.deepStrictEqual(player.inventory, ['silver_crucifix']);
+  assert.strictEqual(result.itemGained, 'crucifix');
+  assert.deepStrictEqual(player.inventory, ['crucifix']);
 });
 
 test('scene state preserves Storyline metadata and stable discovery IDs', () => {

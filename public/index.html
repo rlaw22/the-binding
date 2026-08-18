@@ -3384,7 +3384,8 @@ function toggleInventory() {
 
 function fetchInventory() {
   if (!sessionId) return;
-  fetch('/api/sessions/' + sessionId + '/inventory')
+  var inventoryPath = currentGameMode === 'storyline' ? '/storyline-inventory' : '/inventory';
+  fetch('/api/sessions/' + sessionId + inventoryPath)
     .then(function(r) { return r.ok ? r.json() : null; })
     .then(function(data) {
       if (!data) return;
@@ -3767,7 +3768,22 @@ function reconnect() {
 <!-- Story Mode Engine -->
 <script src="/src/story/threat-encounters.js"></script>
 <script src="/src/story/class-abilities.js"></script>
-<script src="/src/story/story-engine.js?v=2"></script>
+<script>
+// Minimal browser registry for Storyline-only collectible display.
+window.StorylineInventory = {
+  normalizeStorylineItemId: function(id) {
+    return ({ silver_crucifix: 'crucifix', brass_crucifix: 'crucifix' })[id] || id;
+  },
+  listStorylineItems: function(state) {
+    var self = this;
+    return (state && Array.isArray(state.inventory) ? state.inventory : []).map(function(id) {
+      id = self.normalizeStorylineItemId(id);
+      return { id: id, name: id === 'crucifix' ? 'Brass Crucifix' : id.replace(/_/g, ' '), description: 'A significant object from the story.', type: 'story item' };
+    });
+  }
+};
+</script>
+<script src="/src/story/story-engine.js?v=3"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════════
 // STORY MODE BRIDGE — Client-side integration with StoryEngine

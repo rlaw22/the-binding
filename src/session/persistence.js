@@ -46,8 +46,10 @@ function serializeEntry(entry) {
       sessionId: game.sessionId,
       adventureId: game.adventureId,
       adventureName: game.adventureName,
+      gameMode: game.gameMode,
       state: game.state,
       turnHistory: game.turnHistory,
+      storyPlayerState: game.storyPlayerState,
       playerProfile: game.playerProfile,
       contextManager: game.contextManager,
       sceneState
@@ -82,6 +84,12 @@ function deserializeEntry(saved, createProviderFn, llmConfig, ruleEngine, diceSe
   game.ruleEngine = ruleEngine;
   game.diceService = diceService;
   game.coinEngine = null;
+  // Older saves predate the separate Storyline inventory. Reconstruct the
+  // state lazily; current Storyline sessions persist the full player state.
+  if (game.gameMode === 'storyline' && !game.storyPlayerState) {
+    const StoryEngine = require('../story/story-engine');
+    game.storyPlayerState = StoryEngine.createPlayerState('fighter');
+  }
 
   return {
     session: saved.session,

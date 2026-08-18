@@ -15,6 +15,27 @@
  * Button types: explore, threat, item, ability, bad_choice
  */
 
+// Storyline inventory is deliberately separate from Campaign equipment.
+var StorylineInventory = (typeof window !== 'undefined' && window.StorylineInventory) || {
+  normalizeStorylineItemId: function(id) {
+    return ({ silver_crucifix: 'crucifix', brass_crucifix: 'crucifix' })[id] || id;
+  },
+  addStorylineItem: function(state, item) {
+    var id = this.normalizeStorylineItemId(typeof item === 'string' ? item : item && item.id);
+    if (!id) return null;
+    if (!Array.isArray(state.inventory)) state.inventory = [];
+    if (state.inventory.indexOf(id) === -1) state.inventory.push(id);
+    return { id: id, name: id === 'crucifix' ? 'Brass Crucifix' : id.replace(/_/g, ' ') };
+  },
+  listStorylineItems: function(state) {
+    var self = this;
+    return (state && Array.isArray(state.inventory) ? state.inventory : []).map(function(id) {
+      id = self.normalizeStorylineItemId(id);
+      return { id: id, name: id === 'crucifix' ? 'Brass Crucifix' : id.replace(/_/g, ' '), description: 'A significant object from the story.', type: 'story item' };
+    });
+  }
+};
+
 // Use ClassAbilities — browser global or Node.js require
 var ClassAbilities;
 if (typeof window !== 'undefined' && window.ClassAbilities) {
@@ -286,16 +307,14 @@ function processItem(buttonId, storyMode, playerState) {
     return { type: 'item', narrative: 'You pick up a useful trinket.', itemGained: itemId };
   }
 
-  // Add to inventory
-  if (!playerState.inventory.includes(itemId)) {
-    playerState.inventory.push(itemId);
-  }
+  // Add to the separate Storyline inventory, normalizing legacy IDs.
+  var resolved = StorylineInventory.addStorylineItem(playerState, collectible);
 
   return {
     type: 'item',
     narrative: collectible.description || 'You carefully stow the item away.',
-    itemGained: itemId,
-    itemName: collectible.name || itemId
+    itemGained: resolved ? resolved.id : itemId,
+    itemName: resolved ? resolved.name : (collectible.name || itemId)
   };
 }
 

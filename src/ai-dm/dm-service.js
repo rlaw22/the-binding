@@ -17,6 +17,7 @@ const { createValidator } = require('../scene-engine/continuity-validator');
 const { getAdventure, getAdventureHelpers } = require('../adventure');
 const { createCoinPool, scoreTurn, completeScene, calculateTier, formatChapterSummary, formatAdventureSummary, normalizeScores, buildCoinNotification, applyCategoryWeights, buildScoringPrompt } = require('../coin-engine');
 const { createInventory, listItems, getEquippedEffects, addItem, normalizeItemId } = require('../inventory/inventory');
+const { addStorylineItem, listStorylineItems, normalizeStorylineItemId } = require('../story/storyline-inventory');
 const StoryEngine = require('../story/story-engine');
 const ThreatEncounters = require('../story/threat-encounters');
 const GameMode = require('../game-mode');
@@ -586,6 +587,7 @@ function updatePlayerProfile(profile, action, scores) {
  */
 function createGame(options) {
   const gameMode = options.gameMode || 'campaign';
+  const initialStoryState = gameMode === 'storyline' ? StoryEngine.createPlayerState(options.classId || 'fighter') : null;
   return {
     sessionId: uuidv4(),
     adventureId: options.adventureId || null,
@@ -604,7 +606,7 @@ function createGame(options) {
     inventory: createInventory([]),  // P0 fix: start empty — items are added narratively during gameplay
     sceneState: null, // scene engine state — initialized when first scene starts
     validator: null, // continuity validator — initialized with first scene
-    storyPlayerState: null, // StoryEngine player state — initialized for storyline mode
+    storyPlayerState: initialStoryState, // Storyline-only inventory/state; never Campaign inventory
     storyButtonContext: null, // tracks which button the player clicked (type + id)
     fullCharacter: null, // full D&D 5e character sheet from CharacterService
   };
@@ -648,27 +650,16 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
   const isStoryline = game.gameMode === 'storyline';
   const isDm = game.gameMode === 'digital_dm';
 
-  // Initialize StoryEngine player state if needed (storyline mode only)
+  // Initialize StoryEngine state only for Storyline mode.
   if (isStoryline && !game.storyPlayerState) {
-    game.storyPlayerState = StoryEngine.createPlayerState('fighter'); // default class
+    game.storyPlayerState = StoryEngine.createPlayerState('fighter');
   }
 
-  // Sync initialFacts.items to inventory (both modes, when scene transitions)
-  if (game.sceneState && game.sceneState.initialFacts && game.sceneState.initialFacts.items) {
+  // Storyline initial facts belong to the narrative inventory. Campaign/Digital DM
+  // continue to use the equipment inventory and its catalog unchanged.
+  if (isStoryline && game.sceneState && game.sceneState.initialFacts && game.sceneState.initialFacts.items) {
     for (const itemId of game.sceneState.initialFacts.items) {
-      // Check if item is already in inventory (by ID or name match)
-      const canonicalItemId = normalizeItemId(itemId);
-      const existing = game.inventory.slots.find(s =>
-        s.id === canonicalItemId || s.id === itemId || s.name.toLowerCase() === itemId.toLowerCase()
-      );
-      if (!existing) {
-        try {
-          addItem(game.inventory, itemId);
-        } catch (e) {
-          // Item template not in registry — skip gracefully
-          console.log('[DM] Item "' + itemId + '" not in inventory registry, skipping server sync');
-        }
-      }
+      addStorylineItem(game.storyPlayerState, normalizeStorylineItemId(itemId));
     }
   }
 
@@ -676,6 +667,7 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
   let storyResult = null;
   let atmosphereContext = null;
   let discoveryNarration = null;
+  let buttonType = null;
   if (isStoryline && game.sceneState && game.sceneState.storyMode) {
     const storyMode = game.sceneState.storyMode;
     const manifest = game.sceneState;
@@ -683,7 +675,7 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
     // Prefer the stable action ID submitted by the browser. Label matching is
     // retained only as a backward-compatible fallback for older clients/free text.
     const actionLower = playerAction.toLowerCase();
-    let buttonType = 'explore';
+    buttonType = 'explore';
     let buttonId = actionMeta.actionId || actionMeta.contentId || '';
     if (buttonId && buttonId.startsWith('item_')) buttonType = 'item';
     else if (buttonId && buttonId.startsWith('ability_')) buttonType = 'ability';
@@ -779,14 +771,8 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
       buttonId, buttonType, manifest, game.storyPlayerState, threatDef
     );
 
-    // Sync StoryEngine item gains to server inventory
-    if (storyResult.itemGained) {
-      try {
-        addItem(game.inventory, storyResult.itemGained);
-      } catch (e) {
-        console.log('[DM] Could not add story item "' + storyResult.itemGained + '" to server inventory');
-      }
-    }
+    // StoryEngine owns Storyline item awards. Do not mirror them into the
+    // Campaign equipment inventory; the dedicated endpoint reads story state.
 
     // Build constrained atmosphere context for the LLM
     atmosphereContext = StoryEngine.buildAtmosphereContext(
