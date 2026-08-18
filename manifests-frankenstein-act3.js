@@ -414,11 +414,7 @@ module.exports = {
     "initialFacts": {
       "items": [],
       "metNPCs": [
-        "the creature",
-        "felix de lacey",
-        "agatha de lacey",
-        "de lacey (old man)",
-        "safie"
+        "the creature"
       ],
       "established": [
         "creature was beaten by Felix",
@@ -532,11 +528,7 @@ module.exports = {
         "Paradise Lost"
       ],
       "metNPCs": [
-        "the creature",
-        "felix de lacey",
-        "agatha de lacey",
-        "de lacey (old man)",
-        "safie"
+        "the creature"
       ],
       "established": [
         "creature was rejected by the De Lacey family",
@@ -549,11 +541,15 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "ingolstadt",
-        "university",
-        "laboratory",
-        "arctic"
-      ],
+          "ingolstadt",
+          "university",
+          "laboratory",
+          "arctic",
+          "felix de lacey",
+          "agatha de lacey",
+          "de lacey (old man)",
+          "safie"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {

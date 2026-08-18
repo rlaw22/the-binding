@@ -69,8 +69,7 @@ module.exports = {
         "journal"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "the creature"
+        "victor frankenstein"
       ],
       "established": [
         "creature has found Victor on the mountain",
@@ -407,8 +406,7 @@ module.exports = {
         "journal"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "the creature"
+        "victor frankenstein"
       ],
       "established": [
         "Clerval is dead",
@@ -420,11 +418,12 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "ingolstadt",
-        "de lacey cottage",
-        "arctic",
-        "orkney"
-      ],
+          "ingolstadt",
+          "de lacey cottage",
+          "arctic",
+          "orkney",
+          "the creature"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {

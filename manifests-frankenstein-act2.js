@@ -85,12 +85,7 @@ module.exports = {
         "journal"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "elizabeth",
-        "caroline frankenstein",
-        "alphonse frankenstein",
-        "professor waldman",
-        "professor krempe"
+        "victor frankenstein"
       ],
       "established": [
         "laboratory is ready",
@@ -101,15 +96,21 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "ingolstadt",
-        "university",
-        "lecture hall",
-        "cemetery",
-        "charnel house",
-        "de lacey cottage",
-        "geneva",
-        "arctic"
-      ],
+          "ingolstadt",
+          "university",
+          "lecture hall",
+          "cemetery",
+          "charnel house",
+          "de lacey cottage",
+          "geneva",
+          "arctic",
+          "frankenstein home",
+          "elizabeth",
+          "caroline frankenstein",
+          "alphonse frankenstein",
+          "professor waldman",
+          "professor krempe"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
@@ -320,7 +321,6 @@ module.exports = {
       ],
       "metNPCs": [
         "victor frankenstein",
-        "the creature",
         "henry clerval"
       ],
       "established": [
@@ -332,13 +332,14 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "laboratory",
-        "cemetery",
-        "charnel house",
-        "de lacey cottage",
-        "geneva",
-        "arctic"
-      ],
+          "laboratory",
+          "cemetery",
+          "charnel house",
+          "de lacey cottage",
+          "geneva",
+          "arctic",
+          "the creature"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
@@ -432,9 +433,7 @@ module.exports = {
         "journal"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "the creature",
-        "henry clerval"
+        "victor frankenstein"
       ],
       "established": [
         "three months have passed",
@@ -446,12 +445,14 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "cemetery",
-        "charnel house",
-        "de lacey cottage",
-        "geneva",
-        "arctic"
-      ],
+          "cemetery",
+          "charnel house",
+          "de lacey cottage",
+          "geneva",
+          "arctic",
+          "the creature",
+          "henry clerval"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
@@ -547,7 +548,6 @@ module.exports = {
       ],
       "metNPCs": [
         "victor frankenstein",
-        "the creature",
         "henry clerval"
       ],
       "established": [
@@ -560,12 +560,13 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "laboratory",
-        "cemetery",
-        "charnel house",
-        "de lacey cottage",
-        "arctic"
-      ],
+          "laboratory",
+          "cemetery",
+          "charnel house",
+          "de lacey cottage",
+          "arctic",
+          "the creature"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {

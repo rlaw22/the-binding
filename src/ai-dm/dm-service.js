@@ -1049,20 +1049,29 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
   // Call LLM for narrative response
   let dmResponse;
   if (isStoryline && storyResult) {
-    // Storyline mode: LLM adds atmosphere to deterministic result
-    // Use a simpler message set — just the system prompt with the action
-    const storyMessages = [
-      { role: 'system', content: fullSystemPrompt },
-      { role: 'user', content: playerAction }
-    ];
-    try {
-      const llmAtmosphere = await llmProvider(storyMessages);
-      // Combine: deterministic narrative + LLM atmosphere
-      dmResponse = storyResult.narrative + '\n\n' + llmAtmosphere;
-    } catch (err) {
-      // LLM failed — use deterministic narrative only (fallback)
-      console.warn('[StoryEngine] LLM atmosphere failed, using deterministic narrative only:', err.message);
-      dmResponse = storyResult.narrative;
+    // P0 fix: skip LLM entirely for explore actions with pre-authored discovery text.
+    // The LLM consistently overrides "you MUST use this exact text" directives with
+    // invented narration, destroying the authored discovery experience.
+    // Use the discovery text directly — no LLM expansion needed.
+    if (discoveryNarration && buttonType === 'explore') {
+      console.log('[StoryEngine] Discovery narration available for explore action — skipping LLM, using authored text directly');
+      dmResponse = discoveryNarration;
+    } else {
+      // Storyline mode: LLM adds atmosphere to deterministic result
+      // Use a simpler message set — just the system prompt with the action
+      const storyMessages = [
+        { role: 'system', content: fullSystemPrompt },
+        { role: 'user', content: playerAction }
+      ];
+      try {
+        const llmAtmosphere = await llmProvider(storyMessages);
+        // Combine: deterministic narrative + LLM atmosphere
+        dmResponse = storyResult.narrative + '\n\n' + llmAtmosphere;
+      } catch (err) {
+        // LLM failed — use deterministic narrative only (fallback)
+        console.warn('[StoryEngine] LLM atmosphere failed, using deterministic narrative only:', err.message);
+        dmResponse = storyResult.narrative;
+      }
     }
   } else if (isStoryline && !storyResult) {
     // Storyline mode free-text: spatially-anchored LLM with phantom item stripping

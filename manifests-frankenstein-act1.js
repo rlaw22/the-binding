@@ -327,12 +327,7 @@ module.exports = {
         "Waldman's galvanism notes"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "elizabeth",
-        "caroline frankenstein",
-        "alphonse frankenstein",
-        "professor waldman",
-        "professor krempe"
+        "victor frankenstein"
       ],
       "established": [
         "months have passed",
@@ -345,12 +340,15 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "geneva",
-        "frankenstein home",
-        "laboratory",
-        "arctic",
-        "orkney"
-      ],
+          "geneva",
+          "frankenstein home",
+          "laboratory",
+          "arctic",
+          "orkney",
+          "elizabeth",
+          "caroline frankenstein",
+          "alphonse frankenstein"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
@@ -446,12 +444,7 @@ module.exports = {
         "journal"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "elizabeth",
-        "caroline frankenstein",
-        "alphonse frankenstein",
-        "professor waldman",
-        "professor krempe"
+        "victor frankenstein"
       ],
       "established": [
         "the creature is fully assembled",
@@ -463,12 +456,16 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "geneva",
-        "frankenstein home",
-        "charnel house",
-        "arctic",
-        "orkney"
-      ],
+          "geneva",
+          "frankenstein home",
+          "charnel house",
+          "arctic",
+          "orkney",
+          "elizabeth",
+          "caroline frankenstein",
+          "alphonse frankenstein",
+          "professor krempe"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
@@ -580,12 +577,7 @@ module.exports = {
         "journal"
       ],
       "metNPCs": [
-        "victor frankenstein",
-        "elizabeth",
-        "caroline frankenstein",
-        "alphonse frankenstein",
-        "professor waldman",
-        "professor krempe"
+        "victor frankenstein"
       ],
       "established": [
         "the storm has arrived",
@@ -597,12 +589,16 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-        "geneva",
-        "frankenstein home",
-        "charnel house",
-        "arctic",
-        "orkney"
-      ],
+          "geneva",
+          "frankenstein home",
+          "charnel house",
+          "arctic",
+          "orkney",
+          "elizabeth",
+          "caroline frankenstein",
+          "alphonse frankenstein",
+          "professor krempe"
+],
       "valid": ["location", "room", "area", "place", "here"]
     },
     "storyMode": {
