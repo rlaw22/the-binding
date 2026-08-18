@@ -2,7 +2,6 @@ module.exports = {
   "scene_15": {
     "sceneId": "scene_15",
     "sceneName": "The Trap is Set",
-        "presentCharacters": ["holmes","watson"],
     "description": "The study at Baskerville Hall is locked, the curtains drawn, the fire built high against the October chill. Holmes stands over the desk, his disguise discarded, his sharp features lit by the lamplight as he traces a route across the map of the moor. Sir Henry sits in the armchair, his face pale but set. Watson stands by the window, checking his revolver for the third time.\n\n\"Here is the situation,\" Holmes says, his voice low and precise. \"Stapleton has been patient. He eliminated Sir Charles through cunning and terror. He will try to do the same with Sir Henry — but he needs the hound, and he needs darkness, and he needs his victim alone.\" He taps the map. \"Merripit House, here. The Grimpen Mire, here. Baskerville Hall, here. Between Merripit and the Hall lies a mile of open moor — no cover, no shelter, no escape. That is where he will strike.\"\n\nHe turns to Sir Henry. \"Tomorrow evening, you will dine with Stapleton at Merripit House. You will leave at a set time — eleven o'clock — and walk home across the moor. Alone. Unarmed.\" Sir Henry's jaw tightens, but he does not speak. \"Watson and I, and our colleague Inspector Lestrade from Scotland Yard — who arrives by the morning train — will be positioned along the path. When the hound appears, we will be ready.\"\n\nThe room is silent except for the crackle of the fire. Outside, the wind moans across the moor, and somewhere in the darkness, far away and faint, something howls.",
     "content": [
       {
@@ -18,7 +17,7 @@ module.exports = {
           "plan",
           "route"
         ],
-        "discovery": "Holmes has marked the map with meticulous care. Three positions are circled in red ink: one behind a granite outcrop fifty yards from the path, one in a shallow depression in the heather, and one behind a ruined wall near the Hall grounds. \"Watson, you will take the outcrop. Lestrade, the depression. I will be closest to the path, behind the wall.\" He draws a line from Merripit House to the Hall. \"Stapleton will release the hound somewhere along this line. The creature will follow Sir Henry's scent. When it passes our positions, we close in.\" He looks up. \"The hound must not reach Sir Henry. That is absolute.\""
+        "discovery": "Holmes has marked the map with meticulous care. Three positions are circled in red ink that smells faintly of iron gall: one behind a granite outcrop fifty yards from the path, one in a shallow depression in the heather, and one behind a ruined wall near the Hall grounds. \"Watson, you will take the outcrop. Lestrade, the depression. I will be closest to the path, behind the wall.\" He draws a line from Merripit House to the Hall. \"Stapleton will release the hound somewhere along this line. The creature will follow Sir Henry's scent. When it passes our positions, we close in.\" He looks up. \"The hound must not reach Sir Henry. That is absolute.\""
       },
       {
         "id": "discuss_weapons",
@@ -33,7 +32,7 @@ module.exports = {
           "ask",
           "holmes"
         ],
-        "discovery": "Holmes opens a leather case he has brought from London. The brass hinges creak as he lifts the lid. Inside, nestled in oilcloth that smells of gun oil and machine grease, are two revolvers and a hunting rifle. The metal gleams dully in the lamplight. \"The revolvers are for you and Lestrade. The rifle is mine — I am a fair shot, as you know, and at fifty yards I will not miss.\" He pauses. \"But bullets alone may not stop this creature. It is large, it is desperate, and it has been bred for savagery. We must also be prepared for the possibility that it is coated in phosphorus — in which case, a single well-placed shot should ignite the substance and cause the animal considerable distress.\" He checks the rifle's action with practised hands — the bolt slides smooth and cold. \"Aim for the head, Watson. Always the head.\""
+        "discovery": "Holmes opens a leather case he has brought from London. The case smells of beeswax and gun oil. Inside, nestled in oilcloth that crinkles softly, are two revolvers and a hunting rifle. \"The revolvers are for you and Lestrade. The rifle is mine — I am a fair shot, as you know, and at fifty yards I will not miss.\" He pauses. \"But bullets alone may not stop this creature. It is large, it is desperate, and it has been bred for savagery. We must also be prepared for the possibility that it is coated in phosphorus — in which case, a single well-placed shot should ignite the substance and cause the animal considerable distress.\" He checks the rifle's action with practised hands. \"Aim for the head, Watson. Always the head.\""
       },
       {
         "id": "talk_to_sir_henry",
@@ -47,7 +46,7 @@ module.exports = {
           "brave",
           "concern"
         ],
-        "discovery": "You find Sir Henry standing at the window, looking out at the moor. His reflection in the glass is ghostly, transparent. \"I know what you're going to say, Doctor,\" he says without turning. \"That this is dangerous. That I might die.\" You confirm both. He nods. \"My great-uncle died on this moor. Alone. Afraid. If I run now, I will spend the rest of my life looking over my shoulder.\" He turns to face you. His eyes are steady. \"I am a Baskerville. This is my land. I will not surrender it to a coward with a painted dog.\" He extends his hand. You shake it. His grip is firm."
+        "discovery": "You find Sir Henry standing at the window, looking out at the moor. His reflection in the glass is ghostly, transparent. The cold from the pane radiates into the room. \"I know what you're going to say, Doctor,\" he says without turning. \"That this is dangerous. That I might die.\" You confirm both. He nods. \"My great-uncle died on this moor. Alone. Afraid. If I run now, I will spend the rest of my life looking over my shoulder.\" He turns to face you. His eyes are steady. \"I am a Baskerville. This is my land. I will not surrender it to a coward with a painted dog.\" He extends his hand. You shake it. His grip is firm."
       },
       {
         "id": "review_plan",
@@ -61,11 +60,11 @@ module.exports = {
           "timing",
           "confirm"
         ],
-        "discovery": "Holmes reviews the plan with the precision of a military commander. \"Sir Henry dines at Merripit at eight. He leaves at eleven. The walk takes approximately thirty minutes at a normal pace. We take our positions at ten-thirty. No lanterns. No cigarettes. No sound. The moor must be silent — any noise will warn Stapleton.\" He fixes you with a hard stare. \"Watson, I must impress upon you: when the hound appears, do not fire until I do. If we scatter our shots, the creature may reach Sir Henry before we can stop it. Wait for my signal. Then fire for the head.\" He pauses. \"And Watson — if something goes wrong, if the plan fails — get Sir Henry to the Hall and bar the doors. Do not come back for me.\""
+        "discovery": "Holmes reviews the plan with the precision of a military commander, his finger tracing the route on the map. The scratch of his pencil on paper is the only sound in the room. \"Sir Henry dines at Merripit at eight. He leaves at eleven. The walk takes approximately thirty minutes at a normal pace. We take our positions at ten-thirty. No lanterns. No cigarettes. No sound. The moor must be silent — any noise will warn Stapleton.\" He fixes you with a hard stare. \"Watson, I must impress upon you: when the hound appears, do not fire until I do. If we scatter our shots, the creature may reach Sir Henry before we can stop it. Wait for my signal. Then fire for the head.\" He pauses. \"And Watson — if something goes wrong, if the plan fails — get Sir Henry to the Hall and bar the doors. Do not come back for me.\""
       }
     ],
     "exitAction": "prepare_for_ambush",
-    "exitLabel": "Go to bed early to get ready for tomorrow night",
+    "exitLabel": "Rest before the hunt",
     "hardExitNarration": "Holmes extinguishes the lamp and opens the curtains. The moor is a vast darkness beyond the glass, featureless and silent. \"Sleep well, Watson,\" he says. \"Tomorrow, we end this.\" You go to your room, but sleep does not come easily. Through the window, the moor waits — patient, ancient, hungry.",
     "initialFacts": {
       "items": [
@@ -91,7 +90,8 @@ module.exports = {
         "train",
         "station",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -99,13 +99,13 @@ module.exports = {
         "label": "Signal Whistle"
       },
       "badChoice": {
-            "id": "inspect_wrong_room",
-            "label": "Search Stapleton's house instead of the hut on the tor",
-            "consequence": "The house is empty — stripped bare. Stapleton has fled. But the hut on the tor holds the real secret: the hound, starved and maddened, waiting in the dark.",
-            "coinCost": 3,
-            "flagSet": {
-                  "wrong_search": true
-            }
+        "id": "dismiss_witness",
+        "label": "Dismiss the key witness",
+        "consequence": "The room is clean when you arrive — too clean. No letters, no luggage, no forwarding address. The trail goes from warm to stone-cold in the time it takes to hail a cab. The lesson is investigative: suspects do not wait for warrants.",
+        "coinCost": 3,
+        "flagSet": {
+          "lost_witness": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
@@ -118,7 +118,6 @@ module.exports = {
   "scene_16": {
     "sceneId": "scene_16",
     "sceneName": "The Hound Appears",
-        "presentCharacters": ["holmes","watson","sir_henry"],
     "description": "The moor at midnight is a place of absolute darkness. The moon has not yet risen. The stars are hidden behind a low ceiling of cloud. You lie flat behind the granite outcrop, your revolver in your hand, your heart hammering against the cold stone. The heather presses against your face, damp and fragrant. The silence is total — no wind, no birds, no insects. Just the sound of your own breathing, which you try to still.\n\nFrom somewhere ahead, the crunch of boots on gravel. Sir Henry, walking the path from Merripit House to Baskerville Hall. Alone. Unarmed. Bait. The footsteps are steady — the man has courage, you will grant him that — but they are too fast. He is afraid. He is trying not to run.\n\nThen you hear it.\n\nNot a howl. Not a growl. A sound that is between a bark and a roar — deep, resonant, vibrating in your chest like the lowest note of a cathedral organ. It comes from the direction of the Mire, from the darkness to the west, and it is moving. Coming closer.\n\nSir Henry's footsteps stop. Then start again — faster now, almost running.\n\nAnd then you see it. A shape emerges from the mist — enormous, black, low to the ground. It is the size of a small bear, with a massive head and jaws that could crush bone. Its eyes burn with a pale, phosphorescent light. Its entire body seems to glow — a spectral, greenish-white luminescence that makes it look like something from a nightmare. A hellhound. The hound of the Baskervilles. And it is running — fast, terribly fast — toward Sir Henry.",
     "content": [
       {
@@ -181,7 +180,7 @@ module.exports = {
       }
     ],
     "exitAction": "holmes_signals",
-    "exitLabel": "Wait for Holmes to fire first",
+    "exitLabel": "Wait for the shot",
     "hardExitNarration": "A shot cracks through the darkness — Holmes's rifle, from behind the ruined wall. The signal. You rise from cover and fire.",
     "initialFacts": {
       "items": [
@@ -208,7 +207,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -216,13 +216,13 @@ module.exports = {
         "label": "Stained Handkerchief"
       },
       "badChoice": {
-            "id": "panic_in_fog",
-            "label": "Panic and run when the hound appears",
-            "consequence": "Your feet pound the moor. The fog swallows everything. Behind you, the baying grows louder. You are running toward the Grimpen Mire, not away from it.",
-            "coinCost": 4,
-            "flagSet": {
-                  "panicked": true
-            }
+        "id": "reveal_clue",
+        "label": "Reveal your clue to the suspect",
+        "consequence": "You hear the match strike before you reach the door. By the time you enter, the grate is full of ash and the smell of burned paper. The lesson is evidentiary: information is perishable — treat every lead as if it has an expiry.",
+        "coinCost": 3,
+        "flagSet": {
+          "revealed_evidence": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
@@ -236,7 +236,6 @@ module.exports = {
   "scene_17": {
     "sceneId": "scene_17",
     "sceneName": "The Chase",
-        "presentCharacters": ["holmes","watson","stapleton"],
     "description": "Holmes fires. The shot echoes across the moor like a thunderclap. The hound yelps — a sound that is almost human — and stumbles, but does not fall. It recovers instantly, turning its burning head toward the source of the shot, then back toward Sir Henry. It chooses the prey. It runs.\n\nYou are on your feet now, running across the heather, the revolver bucking in your hand as you fire. The first shot goes wide. The second catches the hound in the flank — you see the impact, see the creature stagger — but it keeps running. Lestrade is up too, crashing through the gorse, firing wildly. The moor is alive with the crack of gunfire and the ghostly glow of the phosphorescent beast.\n\nSir Henry has found his legs. He is running — not toward the Hall, but along the path, his boots pounding the gravel. The hound is behind him, twenty yards, fifteen, ten. Its jaws are open. Its breath steams in the cold air. It is gaining.\n\n\"THE HEAD!\" Holmes's voice cuts through the chaos. \"AIM FOR THE HEAD!\"\n\nYou stop. Plant your feet. Raise the revolver with both hands. The hound is a glowing blur in your sights — left, right, left, bobbing as it runs. Sir Henry is just ahead of it. You cannot miss him. You cannot miss the hound. You breathe out slowly and squeeze the trigger.",
     "content": [
       {
@@ -297,7 +296,7 @@ module.exports = {
       }
     ],
     "exitAction": "holmes_closes_in",
-    "exitLabel": "Watch Holmes close in on the hound",
+    "exitLabel": "Watch Holmes close in",
     "hardExitNarration": "Holmes has outpaced you all. He is running straight at the hound, the rifle at his shoulder, his face a mask of cold concentration. The hound is five yards from Sir Henry. Holmes is ten yards from the hound. Time slows.",
     "initialFacts": {
       "items": [
@@ -324,7 +323,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -332,13 +332,13 @@ module.exports = {
         "label": "Service Revolver"
       },
       "badChoice": {
-            "id": "negotiate_with_stapleton",
-            "label": "Try to negotiate with Stapleton",
-            "consequence": "\"You think you can bargain with me?\" Stapleton laughs. The sound is ugly and broken. \"I have waited twenty years for this. There is no bargain.\"",
-            "coinCost": 3,
-            "flagSet": {
-                  "bad_negotiation": true
-            }
+        "id": "ignore_watson",
+        "label": "Ignore Watson's warning",
+        "consequence": "The floor gives a different sound underfoot — hollow, rehearsed — and then the geometry of the room changes around you. The trap was not clever; it was patient. The lesson is tactical: confidence without verification is just momentum.",
+        "coinCost": 3,
+        "flagSet": {
+          "ignored_partner": true
+        }
       },
       "isHealing": true,
       "explorePriority": [
@@ -352,7 +352,6 @@ module.exports = {
   "scene_18": {
     "sceneId": "scene_18",
     "sceneName": "The Kill",
-        "presentCharacters": ["holmes","watson"],
     "description": "Holmes fires.\n\nThe shot is deafening — a flat, authoritative crack that silences the moor. The bullet takes the hound squarely in the skull. The creature's head snaps back. Its legs buckle. It slides across the heather in a smear of phosphorescent light, leaving a glowing trail on the wet grass, and comes to rest five yards from Sir Henry's heels.\n\nFor a moment, nothing moves. Sir Henry stands with his back to the fallen beast, his chest heaving, his hands clenched at his sides. Holmes stands with the rifle still raised, a thin curl of smoke rising from the barrel. You stand with your revolver empty, your heart hammering so hard you can hear it in your ears. Lestrade arrives, gasping, his face the colour of old paper.\n\nThen Holmes walks forward and kneels beside the fallen creature. He strikes a match. In the flare of light, the truth is revealed.\n\nIt is a dog. A mastiff — the largest you have ever seen, easily the size of a small pony, with a barrel chest and jaws that could take a man's arm off at the shoulder. Its coat is smeared with a thick, greasy paste that glows with a pale, greenish-white light. Phosphorus. Holmes touches it with a gloved finger and holds it up. \"Not supernatural,\" he says quietly. \"Not a ghost. Not a demon. Just a dog. A very large, very savage, very carefully prepared dog.\"\n\nHe looks down at the dead hound, and his expression is not triumphant. It is sad. \"Stapleton bred it,\" he says. \"Fed it, trained it, painted it with phosphorus, and set it loose on the moor to kill. The legend was his weapon. Fear was his weapon. And it nearly worked.\"",
     "content": [
       {
@@ -368,7 +367,7 @@ module.exports = {
           "inspect",
           "body"
         ],
-        "discovery": "You kneel beside the fallen hound. It is enormous — even dead, its body radiates a terrible vitality. The phosphorus paste is thick and greasy, coating every inch of the animal's coat, and it stinks of chemical sweetness — like rotten phosphorus mixed with tallow. The paste is warm to the touch, still reacting with the air. Beneath the paste, the fur is short and brindled — a mastiff, purebred, bred for size and aggression. Its collar is leather, studded with brass, and stamped with a name: \"Grim.\" The brass is scratched and tarnished. There are scars on its muzzle and forelegs — old wounds, healed over, the skin raised and white. This animal has been in fights before. It was not merely a pet. It was a weapon, honed and maintained for a single purpose: to terrify and to kill."
+        "discovery": "You kneel beside the fallen hound. It is enormous — even dead, its body radiates a terrible vitality. The phosphorus paste is thick and greasy, coating every inch of the animal's coat. Beneath the paste, the fur is short and brindled — a mastiff, purebred, bred for size and aggression. Its collar is leather, studded with brass, and stamped with a name: \"Grim.\" There are scars on its muzzle and forelegs — old wounds, healed over. This animal has been in fights before. It was not merely a pet. It was a weapon, honed and maintained for a single purpose: to terrify and to kill."
       },
       {
         "id": "check_sir_henry",
@@ -396,7 +395,7 @@ module.exports = {
           "case",
           "stapleton"
         ],
-        "discovery": "Holmes wipes the phosphorus from his glove with a handkerchief. \"We have proven that the hound is real — and that it is mortal,\" he says. \"But we have not yet proven that Stapleton set it loose. For that, we need his lair. We need the chains, the kennel, the breeding records. We need evidence that will stand before a judge.\" He looks toward the Grimpen Mire, a dark mass on the western horizon. \"Stapleton will have fled by now. He will have heard the shots. He will know the hound is dead.\" His eyes narrow. \"But he cannot have gone far. Not in the dark. Not on this moor. And I know where he is going.\""
+        "discovery": "Holmes wipes the phosphorus from his glove with a handkerchief. A faint greenish glow clings to the fabric before fading. The chemical smell is sharp and acrid. \"We have proven that the hound is real — and that it is mortal,\" he says. \"But we have not yet proven that Stapleton set it loose. For that, we need his lair. We need the chains, the kennel, the breeding records. We need evidence that will stand before a judge.\" He looks toward the Grimpen Mire, a dark mass on the western horizon. \"Stapleton will have fled by now. He will have heard the shots. He will know the hound is dead.\" His eyes narrow. \"But he cannot have gone far. Not in the dark. Not on this moor. And I know where he is going.\""
       },
       {
         "id": "collect_evidence",
@@ -410,11 +409,11 @@ module.exports = {
           "coat",
           "take"
         ],
-        "discovery": "You scrape a sample of the phosphorus paste into a handkerchief and wrap it carefully. Holmes nods approvingly. \"Good, Watson. That is evidence. A chemist will confirm it is phosphorus mixed with some kind of greasy base — lard, perhaps, or fish oil — to make it adhere to the animal's coat.\" He takes a second sample himself. \"We will also want the collar, the chain marks on its legs — see here, where a heavy chain has worn the fur away — and any other evidence we can find at the kennel. Stapleton was thorough, but he was not thorough enough. He left a trail, and we will follow it.\""
+        "discovery": "You scrape a sample of the phosphorus paste into a handkerchief, the gritty paste rasping against the stone, and wrap it carefully. Holmes nods approvingly. \"Good, Watson. That is evidence. A chemist will confirm it is phosphorus mixed with some kind of greasy base — lard, perhaps, or fish oil — to make it adhere to the animal's coat.\" He takes a second sample himself. \"We will also want the collar, the chain marks on its legs — see here, where a heavy chain has worn the fur away — and any other evidence we can find at the kennel. Stapleton was thorough, but he was not thorough enough. He left a trail, and we will follow it.\""
       }
     ],
     "exitAction": "pursue_stapleton",
-    "exitLabel": "Follow Holmes toward the Grimpen Mire",
+    "exitLabel": "Follow Holmes into the Mire",
     "hardExitNarration": "Holmes straightens and looks west, toward the Mire. \"Stapleton is running,\" he says. \"He will try to reach his lair — to destroy the evidence, to cover his tracks. We must move quickly.\" He sets off across the moor at a pace that forces you and Lestrade to half-run to keep up. Behind you, the hound lies still, its phosphorescent glow fading as the paste dries in the cold air.",
     "initialFacts": {
       "items": [
@@ -441,7 +440,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -449,13 +449,13 @@ module.exports = {
         "label": "Fog Lamp"
       },
       "badChoice": {
-            "id": "disturb_evidence",
-            "label": "Disturb the crime scene before Holmes arrives",
-            "consequence": "You move a stone. You shift a branch. Holmes kneels, frowning. \"Someone has been here,\" he says. The evidence you destroyed might have been the key.",
-            "coinCost": 3,
-            "flagSet": {
-                  "tampered_scene": true
-            }
+        "id": "take_bribe",
+        "label": "Accept the offered bribe",
+        "consequence": "The coin feels warm in your palm — too warm. Lestrade's eyes narrow, and the room shifts. Trust, once sold, does not buy back easily. The lesson is professional: integrity is currency; spend it carefully.",
+        "coinCost": 3,
+        "flagSet": {
+          "accepted_bribe": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
@@ -469,7 +469,6 @@ module.exports = {
   "scene_19": {
     "sceneId": "scene_19",
     "sceneName": "The Revelation",
-        "presentCharacters": ["holmes","watson","sir_henry"],
     "description": "The lair is hidden in the deepest part of the Grimpen Mire — a patch of slightly higher ground, accessible only by the path Holmes has been marking for days. It takes twenty minutes of careful stepping from tussock to tussock, the darkness pressing in on all sides, before Holmes raises a hand and stops.\n\n\"There,\" he whispers.\n\nA low structure of stone and turf, half-buried in the vegetation. A kennel — but not an ordinary kennel. The entrance is barred with iron, and heavy chains are bolted to the stone walls inside. The floor is bare earth, trampled and scarred by enormous claws. The smell is indescribable — wet dog, phosphorus, blood, and something older, something that speaks of captivity and rage.\n\nInside the kennel, you find everything. A heavy chain, still attached to the wall bolt, its links worn smooth by years of use. A metal bowl, crusted with dried food. And in the corner, wrapped in sacking, the skeletal remains of another dog — smaller, older, long dead. The original hound, perhaps. The one Stapleton started with before he bred something larger.\n\nHolmes finds a leather notebook beneath the sacking. He opens it and reads by the light of his lantern. \"Breeding records,\" he says. \"Dates, weights, feeding schedules. Stapleton has been at this for three years. He purchased the mastiff from a dealer in London. He has been training it to follow a specific scent — Sir Henry's scent.\" He closes the notebook. \"This is enough. More than enough.\"\n\nThen, from somewhere deeper in the Mire, a sound. Not the hound. A human voice. Weak, desperate, barely audible. \"Help me. Please. Help me.\"",
     "content": [
       {
@@ -514,7 +513,7 @@ module.exports = {
           "journal",
           "notes"
         ],
-        "discovery": "The notebook is meticulous. Stapleton recorded everything: the mastiff's weight, diet, training regimen, and — most chillingly — the dates on which he exposed the animal to Sir Henry's scent. A glove, stolen from the Hall. A boot, borrowed and returned. The scent of Sir Henry's tobacco. Page after page of careful, methodical preparation for murder. The final entry is dated yesterday: \"Tomorrow night. The path from Merripit. The scent is strong. The beast is ready. By morning, the Baskerville line ends.\" Holmes reads it over your shoulder. \"Three years,\" he says. \"Three years of patient, methodical preparation. The man is a monster — but he is a disciplined monster.\""
+        "discovery": "The notebook is meticulous, its pages yellowed and smelling of dog. Stapleton recorded everything: the mastiff's weight, diet, training regimen, and — most chillingly — the dates on which he exposed the animal to Sir Henry's scent. A glove, stolen from the Hall. A boot, borrowed and returned. The scent of Sir Henry's tobacco. Page after page of careful, methodical preparation for murder. The final entry is dated yesterday: \"Tomorrow night. The path from Merripit. The scent is strong. The beast is ready. By morning, the Baskerville line ends.\" Holmes reads it over your shoulder. \"Three years,\" he says. \"Three years of patient, methodical preparation. The man is a monster — but he is a disciplined monster.\""
       },
       {
         "id": "examine_original_hound",
@@ -529,11 +528,11 @@ module.exports = {
           "first",
           "dog"
         ],
-        "discovery": "The remains are wrapped in sacking — a dog's skeleton, smaller than the mastiff, with a heavy skull and powerful jaws. A cross-bred animal, perhaps a bloodhound-mastiff mix. Holmes examines it briefly. \"This was his first attempt,\" he says. \"The prototype. He bred it, trained it, and when it was no longer useful — when he had produced something larger, something more terrifying — he killed it and kept the bones. As a reminder. As a trophy.\" He rewraps the remains carefully. \"This will be entered as evidence. Every piece of it.\""
+        "discovery": "The remains are wrapped in rough sacking that scratches your fingers — a dog's skeleton, smaller than the mastiff, with a heavy skull and powerful jaws. The bones smell of earth and decay. A cross-bred animal, perhaps a bloodhound-mastiff mix. Holmes examines it briefly. \"This was his first attempt,\" he says. \"The prototype. He bred it, trained it, and when it was no longer useful — when he had produced something larger, something more terrifying — he killed it and kept the bones. As a reminder. As a trophy.\" He rewraps the remains carefully. \"This will be entered as evidence. Every piece of it.\""
       }
     ],
     "exitAction": "carry_beryl_to_safety",
-    "exitLabel": "Take Beryl Stapleton out of the Mire",
+    "exitLabel": "Lead Beryl to safety",
     "hardExitNarration": "You carry Beryl out of the Grimpen Mire, Holmes leading the way with his lantern, Lestrade bringing up the rear with the evidence. The Mire is silent now — no howling, no glowing eyes, no spectre from the legend. Just a bog, dark and wet and indifferent. Behind you, the kennel sits empty. The hound is dead. The trap is sprung. But Stapleton is still out there, somewhere in the darkness.",
     "initialFacts": {
       "items": [
@@ -559,7 +558,8 @@ module.exports = {
         "train",
         "station",
         "baskerville hall interior"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -567,13 +567,13 @@ module.exports = {
         "label": "Death Tarot Card"
       },
       "badChoice": {
-            "id": "tell_sir_henry_too_soon",
-            "label": "Tell Sir Henry about Stapleton before the trap is set",
-            "consequence": "Sir Henry goes pale. \"My own cousin?\" He wants to confront Stapleton immediately. Holmes has to physically restrain him. The plan unravels.",
-            "coinCost": 3,
-            "flagSet": {
-                  "spoiled_trap": true
-            }
+        "id": "rush_in",
+        "label": "Rush in without a plan",
+        "consequence": "You burst through the door and the room answers with emptiness — a chair still warm, a window swinging wide, footsteps fading. The lesson is tactical: speed without position is just noise.",
+        "coinCost": 3,
+        "flagSet": {
+          "acted_recklessly": true
+        }
       },
       "isHealing": false,
       "explorePriority": [

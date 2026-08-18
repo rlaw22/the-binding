@@ -2,7 +2,6 @@ module.exports = {
   "scene_05": {
     "sceneId": "scene_05",
     "sceneName": "Arrival at the Hall",
-        "presentCharacters": ["holmes","watson","sir_henry","barrymore"],
     "description": "The drive from the station has wound through a landscape that grows darker with each mile — hedgerows giving way to open moor, the last traces of civilization swallowed by heather and granite. Now the carriage turns between two stone pillars, and Baskerville Hall rises before you like a fist clenched against the sky.\n\nIt is older than you expected. The main block is grey stone, blackened by centuries of rain and peat smoke, with a central tower that dates to the Tudors and wings added in later, less certain centuries. Ivy crawls up the façade like veins on an old man's hand. The windows are narrow — defensive, not decorative — and they catch the last of the daylight like flat, watchful eyes.\n\nThe front door opens before you knock. Barrymore stands in the threshold — tall, gaunt, immaculate in black, his face as expressionless as the stone behind him. Behind him, half-hidden in the shadows of the hall, his wife watches with red-rimmed eyes. Neither smiles.\n\nInside, the entrance hall is panelled in dark oak. Portraits line the walls — generations of Baskervilles staring down from heavy gilt frames. You notice one immediately: Hugo Baskerville, the subject of the legend. Long-nosed, dark-eyed, with a cruel mouth twisted into something between a sneer and a smile. The resemblance to someone you have recently met is striking — though you cannot yet place who.",
     "content": [
       {
@@ -32,7 +31,7 @@ module.exports = {
           "ask",
           "household"
         ],
-        "discovery": "Barrymore is courteous but distant. He answers your questions with the precision of a man who has rehearsed his responses. \"The Hall has been closed since Sir Charles's death, sir. My wife and I maintained it in readiness.\" When you ask about Sir Charles's final evening, his hand trembles — barely, but you notice. \"He went for his customary walk on the moor, sir. He did not return.\" His wife makes a small sound from the doorway. Barrymore does not turn around."
+        "discovery": "Barrymore is courteous but distant, standing stiffly in the cold hallway. He answers your questions with the precision of a man who has rehearsed his responses, his breath misting faintly in the chill air. \"The Hall has been closed since Sir Charles's death, sir. My wife and I maintained it in readiness.\" When you ask about Sir Charles's final evening, his hand trembles — barely, but you notice. \"He went for his customary walk on the moor, sir. He did not return.\" His wife makes a small sound from the doorway. Barrymore does not turn around."
       },
       {
         "id": "inspect_hall",
@@ -66,7 +65,7 @@ module.exports = {
       }
     ],
     "exitAction": "explore_hall",
-    "exitLabel": "Follow Barrymore to your chambers",
+    "exitLabel": "Retire to your chambers",
     "hardExitNarration": "Barrymore leads you up the main staircase, past more portraits, past windows that look out onto nothing but moor. \"Supper will be at eight, sir,\" he says, and leaves you in a room where the fire has been lit but cannot quite drive out the cold.",
     "initialFacts": {
       "items": [
@@ -94,7 +93,8 @@ module.exports = {
         "moor",
         "mire",
         "stone circle"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -102,13 +102,13 @@ module.exports = {
         "label": "Cipher Wheel"
       },
       "badChoice": {
-            "id": "search_alone_at_night",
-            "label": "Search the Grimpen Mire alone at night",
-            "consequence": "The ground shifts beneath your boots. Suck and pull. You sink to your knees before clawing back to solid ground. Something large moves in the fog — and it has seen you.",
-            "coinCost": 4,
-            "flagSet": {
-                  "mire_near_death": true
-            }
+        "id": "search_without_warrant",
+        "label": "Search without proper authority",
+        "consequence": "The folder opens and the paper inside is technically correct — and practically useless. Procedure was not followed; the chain of custody has a gap the width of a courtroom. The lesson is procedural: evidence without process is just paper.",
+        "coinCost": 3,
+        "flagSet": {
+          "illegal_search": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
@@ -121,7 +121,6 @@ module.exports = {
   "scene_06": {
     "sceneId": "scene_06",
     "sceneName": "The Barrymores",
-        "presentCharacters": ["watson","sir_henry","stapleton"],
     "description": "It is the third night at the Hall, and sleep will not come. The wind has been rising since dusk, driving rain against the windows in sheets that sound like fingers tapping on glass. The fire has burned low, and the room is full of shadows that shift and breathe with the drafts.\n\nYou have been lying awake for an hour when you hear it — a sound from somewhere in the house. Sobbing. Low, muffled, desperate. Mrs. Barrymore. The sound comes from the east wing, where the servants' quarters are, and it carries through the old walls with terrible clarity.\n\nYou rise and pull on your dressing gown. The corridor is dark, lit only by the faint glow of a single gas lamp at the far end. As you move toward the sound, you notice something else: a thin line of light beneath the door of the study at the end of the passage. Someone is in there. At two in the morning.\n\nThrough the keyhole, you see Barrymore standing at the window. He holds a candle — not a lamp, a candle — and he is moving it slowly back and forth in front of the dark glass. A signal. Out on the moor, invisible in the rain and darkness, something answers: a faint light, bobbing once, twice, then vanishing.\n\nBarrymore extinguishes the candle and stands motionless at the window for a long time. The sobbing from the east wing continues.",
     "content": [
       {
@@ -185,7 +184,7 @@ module.exports = {
       }
     ],
     "exitAction": "return_to_bed",
-    "exitLabel": "Go back to your room and think about what you have seen",
+    "exitLabel": "Reflect on what you've seen",
     "hardExitNarration": "You retreat to your room as Barrymore's footsteps approach the corridor. The sobbing has stopped. The house is silent again, except for the wind. You lie in the dark and listen to the rain, and you think about signals in the night and secrets in old houses.",
     "initialFacts": {
       "items": [
@@ -210,7 +209,8 @@ module.exports = {
         "moor open",
         "mire",
         "stone circle"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -218,13 +218,13 @@ module.exports = {
         "label": "Powder Sample"
       },
       "badChoice": {
-            "id": "insult_stapleton",
-            "label": "Confront Barrymore about the midnight signal",
-            "consequence": "Barrymore breaks down. His wife begs you to keep their secret — her brother Selden, the escaped convict, is hiding on the moor. They have been feeding him. You have gained the truth, but lost the element of surprise. If anyone is watching, they know you are asking questions.",
-            "coinCost": 4,
-            "flagSet": {
-                  "alerted_moors": true
-            }
+        "id": "confront_alone",
+        "label": "Confront the criminal alone",
+        "consequence": "The metal appears before you finish your sentence — fast, practised, the hand of someone who has done this before. The room contracts to the space between you and the blade. The lesson is situational: pressure applied without preparation invites escalation.",
+        "coinCost": 3,
+        "flagSet": {
+          "confronted_unprepared": true
+        }
       },
       "isHealing": true,
       "explorePriority": [
@@ -237,7 +237,6 @@ module.exports = {
   "scene_07": {
     "sceneId": "scene_07",
     "sceneName": "The Moor at Night",
-        "presentCharacters": ["watson","selden"],
     "description": "You cannot sleep. The house presses in around you — its weight, its age, its secrets — and the walls seem to breathe with the wind. At last you rise, dress, and step out through the garden door into the night.\n\nThe moor at night is a different world. By day it is desolate but beautiful — purple heather, grey granite, vast skies. By night it is something else entirely. The fog has come in, low and thick, turning the landscape into a featureless grey sea. The tors are islands of black rock, barely visible. The heather is a dark carpet that seems to move and shift at the edges of your vision.\n\nThe silence is immense. No birds. No insects. No wind. Just the sound of your own breathing and the soft crunch of your boots on the gravel path. You walk away from the Hall, following the path that leads south toward the moor, and the fog closes behind you like a door.\n\nThen you hear it.\n\nIt comes from somewhere to the west — from the direction of the Grimpen Mire. A sound that is not a howl, not a cry, not a bark, but something between all three. Deep. Mournful. Rising and falling with a rhythm that is almost musical, almost human. It echoes off the tors and rolls across the heather like thunder, and when it stops, the silence that follows is worse than the sound.\n\nYour blood has gone cold. Every instinct tells you to run. The sound was not natural. Not a fox. Not a dog. Something larger. Something darker. Something that has been waiting in the fog.",
     "content": [
       {
@@ -301,7 +300,7 @@ module.exports = {
       }
     ],
     "exitAction": "flee_inside",
-    "exitLabel": "Go back inside and bolt the door",
+    "exitLabel": "Bolt the door against the night",
     "hardExitNarration": "You stumble back through the garden door and slam it behind you. The bolt slides home with a sound like a gunshot in the silence. Through the window, the moor is nothing but fog and darkness. But somewhere out there, in the grey nothing, something is moving. You can hear it breathing.",
     "initialFacts": {
       "items": [
@@ -323,7 +322,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -331,13 +331,13 @@ module.exports = {
         "label": "Old Photograph"
       },
       "badChoice": {
-            "id": "chase_selden",
-            "label": "Chase the escaped convict across the moor",
-            "consequence": "You run into the fog. The ground becomes treacherous — sucking mud, hidden streams. You lose the convict and nearly lose yourself. The mire does not forgive mistakes.",
-            "coinCost": 4,
-            "flagSet": {
-                  "lost_on_moor": true
-            }
+        "id": "dismiss_witness",
+        "label": "Dismiss the key witness",
+        "consequence": "The room is clean when you arrive — too clean. No letters, no luggage, no forwarding address. The trail goes from warm to stone-cold in the time it takes to hail a cab. The lesson is investigative: suspects do not wait for warrants.",
+        "coinCost": 3,
+        "flagSet": {
+          "lost_witness": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
@@ -351,7 +351,6 @@ module.exports = {
   "scene_08": {
     "sceneId": "scene_08",
     "sceneName": "The Stapletons",
-        "presentCharacters": ["watson","sir_henry","barrymore"],
     "description": "The morning after the howling, the sun returns — pale and watery, but welcome. The moor is transformed: the fog has lifted, and the landscape stretches away in bands of purple heather, green moss, and grey granite, beautiful in its desolation. From the Hall, you can see for miles — the dark mass of the Grimpen Mire to the west, the cluster of tors to the south, and the thin ribbon of the road that leads to the village of Grimpen.\n\nA figure is approaching along the path — a man, tall and lean, walking with the easy stride of someone who knows the moor intimately. As he draws closer, you see he is perhaps forty, with a thin, clean-shaven face and sharp, intelligent eyes behind wire-rimmed spectacles. He carries a butterfly net and a collecting box slung over one shoulder. He waves cheerfully as he comes through the gate.\n\n\"Sir Henry Baskerville, I presume?\" He extends a hand. \"Jack Stapleton. I am your nearest neighbour — Merripit House, about two miles east. I am a naturalist by trade and inclination. The moor is my laboratory.\" His smile is warm, his handshake firm. His eyes, however, do something strange — they flick past you, over your shoulder, scanning the moor behind you as if checking for something.\n\nA woman appears on the path behind him — younger, dark-haired, striking. She moves quickly, almost running, and when she sees you her face goes white. \"Go back!\" she cries. \"Go back to London! Tonight! Before it is too late!\" Stapleton turns sharply. \"Beryl!\" His voice is quiet but carries an edge of steel. She catches herself, composes her face into a smile that does not reach her eyes. \"Forgive me,\" she says. \"I thought you were Sir Henry. The moor plays tricks on the mind.\"",
     "content": [
       {
@@ -381,7 +380,7 @@ module.exports = {
           "ask",
           "go back"
         ],
-        "discovery": "You find a moment when Stapleton is distracted by a butterfly and approach Beryl. Her hands are trembling. \"I should not have said what I said,\" she whispers, not meeting your eyes. \"My brother — \" She stops. Corrects herself. \"Mr. Stapleton would be angry if he knew I spoke to you that way.\" You ask why she is afraid. She glances toward Stapleton, who is pinning a specimen with careful, precise fingers. \"This moor is dangerous,\" she says. \"Not just the bogs. Not just the weather. There are things here that — \" Stapleton calls her name. She flinches. \"Please,\" she says quickly. \"If you have any sense, leave this place.\""
+        "discovery": "You find a moment when Stapleton is distracted by a butterfly and approach Beryl. Her hands are trembling, and you smell the faint salt of tears on her cheeks. \"I should not have said what I said,\" she whispers, not meeting your eyes. \"My brother — \" She stops. Corrects herself. \"Mr. Stapleton would be angry if he knew I spoke to you that way.\" You ask why she is afraid. She glances toward Stapleton, who is pinning a specimen with careful, precise fingers. \"This moor is dangerous,\" she says. \"Not just the bogs. Not just the weather. There are things here that — \" Stapleton calls her name. She flinches. \"Please,\" she says quickly. \"If you have any sense, leave this place.\""
       },
       {
         "id": "examine_stapleton",
@@ -409,11 +408,11 @@ module.exports = {
           "friend",
           "baskerville"
         ],
-        "discovery": "When you mention Sir Charles, Stapleton's manner becomes solemn. \"A great loss,\" he says quietly. \"I knew him well. We were... friends, of a sort. He was a kind man, a generous man, but he had one obsession that I could never cure him of.\" You ask what that was. Stapleton looks out across the moor. \"The legend,\" he says. \"The hound. He believed it. He was terrified of the moor after dark. I told him it was nonsense — local superstition, nothing more. But he would not listen.\" He pauses. \"The night he died, he was waiting at the gate of the Hall. Waiting for someone. I have often wondered who.\""
+        "discovery": "When you mention Sir Charles, Stapleton's manner becomes solemn. The wind drops suddenly, and the moor falls silent around you. \"A great loss,\" he says quietly. \"I knew him well. We were... friends, of a sort. He was a kind man, a generous man, but he had one obsession that I could never cure him of.\" You ask what that was. Stapleton looks out across the moor. \"The legend,\" he says. \"The hound. He believed it. He was terrified of the moor after dark. I told him it was nonsense — local superstition, nothing more. But he would not listen.\" He pauses. \"The night he died, he was waiting at the gate of the Hall. Waiting for someone. I have often wondered who.\""
       }
     ],
     "exitAction": "stapleton_leaves",
-    "exitLabel": "Watch the Stapletons walk back across the moor",
+    "exitLabel": "Watch them cross the moor",
     "hardExitNarration": "Stapleton collects his butterfly net and offers a final warm smile. \"You must come to Merripit House for dinner,\" he says. \"We are lonely out here.\" He takes Beryl's arm — firmly, you notice, not gently — and they walk away across the heather. Beryl does not look back. But at the gate, she turns, just for a moment, and her expression is unmistakable: pure, desperate fear.",
     "initialFacts": {
       "items": [
@@ -439,7 +438,8 @@ module.exports = {
         "station",
         "mire deep",
         "stone circle"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -447,13 +447,13 @@ module.exports = {
         "label": "Map of the Moor"
       },
       "badChoice": {
-            "id": "confront_barrymore_midnight",
-            "label": "Confront Barrymore about the midnight signal",
-            "consequence": "Barrymore breaks down. \"My wife's brother — he is starving on the moor!\" He begs you not to tell Sir Henry. You have stumbled into someone else's secret, not the hound's.",
-            "coinCost": 3,
-            "flagSet": {
-                  "wrong_secret": true
-            }
+        "id": "reveal_clue",
+        "label": "Reveal your clue to the suspect",
+        "consequence": "You hear the match strike before you reach the door. By the time you enter, the grate is full of ash and the smell of burned paper. The lesson is evidentiary: information is perishable — treat every lead as if it has an expiry.",
+        "coinCost": 3,
+        "flagSet": {
+          "revealed_evidence": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
@@ -466,7 +466,6 @@ module.exports = {
   "scene_09": {
     "sceneId": "scene_09",
     "sceneName": "The Escaped Convict",
-        "presentCharacters": ["watson","stapleton","beryl"],
     "description": "The news arrives with the morning post: Selden, the Notting Hill murderer, has escaped from Dartmoor Prison. The constabulary has warned all households within ten miles to lock their doors and windows. Barrymore reads the notice aloud at breakfast, his voice flat and professional, but his wife drops a plate. It shatters on the stone floor, and she stands over the pieces, staring down at them as if she has forgotten how to move.\n\nThat night, you see the candle again. Barrymore is at the window of the study, moving the light back and forth in its strange, deliberate pattern. This time, you are ready. You have dressed in dark clothes and waited in the corridor. When Barrymore leaves the study, you slip out through the garden door and into the night.\n\nThe moor is cold and clear. The moon is up, painting the landscape in silver and black. You can see the answering light — a single point of orange, flickering on the high ground to the southwest. You move toward it, keeping low, using the tors for cover. The ground is treacherous — boggy in places, rocky in others — and twice you nearly turn an ankle.\n\nThen you see him. A figure crouched behind a granite boulder, wrapped in a dark coat, his face gaunt and wild. Selden. The escaped convict. He is eating something — tearing at it with his teeth like an animal. He looks up and sees you, and his eyes are the eyes of a cornered beast.\n\nBehind you, a shout. Sir Henry has followed you. And Selden is running.",
     "content": [
       {
@@ -495,7 +494,7 @@ module.exports = {
           "look",
           "study"
         ],
-        "discovery": "You crouch behind a boulder and study the convict. He is thin — thinner than a man should be — and his clothes are rags. He has been living rough on the moor for days, perhaps weeks. But it is his expression that strikes you: not the blank menace of a murderer, but the wide-eyed, flinching terror of a hunted animal. He keeps looking over his shoulder, toward the Mire. Not at the prison. Not at the road. At the Mire. As if something out there frightens him more than the law, more than capture, more than the gallows."
+        "discovery": "You crouch behind a boulder, the granite cold and rough against your palm, and study the convict. He is thin — thinner than a man should be — and his clothes are rags, stained with mud and sweat. He has been living rough on the moor for days, perhaps weeks. But it is his expression that strikes you: not the blank menace of a murderer, but the wide-eyed, flinching terror of a hunted animal. He keeps looking over his shoulder, toward the Mire. Not at the prison. Not at the road. At the Mire. As if something out there frightens him more than the law, more than capture, more than the gallows."
       },
       {
         "id": "confront_barrymore_signal",
@@ -509,7 +508,7 @@ module.exports = {
           "accuse",
           "selden"
         ],
-        "discovery": "You burst into the study where Barrymore stands at the window. \"Selden,\" you say. \"The escaped convict. You have been signalling to him.\" Barrymore's composure finally breaks. He sinks into a chair and covers his face with his hands. \"He is my wife's brother,\" he says, his voice muffled. \"Her younger brother. She raised him after their parents died. He is a murderer, yes — I know what he has done. But he is her blood. She begged me. I could not refuse her.\" He looks up. \"He is leaving tomorrow. We have arranged passage on a ship. Please, sir — one more night. That is all we ask.\""
+        "discovery": "You burst into the study where Barrymore stands at the window. The lamp on the desk throws long shadows across his face. \"Selden,\" you say. \"The escaped convict. You have been signalling to him.\" Barrymore's composure finally breaks. He sinks into a chair and covers his face with his hands. \"He is my wife's brother,\" he says, his voice muffled. \"Her younger brother. She raised him after their parents died. He is a murderer, yes — I know what he has done. But he is her blood. She begged me. I could not refuse her.\" He looks up. \"He is leaving tomorrow. We have arranged passage on a ship. Please, sir — one more night. That is all we ask.\""
       },
       {
         "id": "find_selden_camp",
@@ -527,7 +526,7 @@ module.exports = {
       }
     ],
     "exitAction": "return_to_hall_night",
-    "exitLabel": "Go back to the Hall before dawn",
+    "exitLabel": "Return to the Hall",
     "hardExitNarration": "The moor is quiet now. Selden has vanished into the darkness, and the answering light has gone out. You walk back to the Hall through the cold predawn air, your mind racing. Barrymore's secret is out. But it does not explain the howling. It does not explain the paw prints. It does not explain the terror on the face of a man who has killed before and fears something worse than death.",
     "initialFacts": {
       "items": [
@@ -554,7 +553,8 @@ module.exports = {
         "station",
         "baskerville hall interior",
         "mire deep"
-      ]
+      ],
+      "valid": ["london", "exeter", "office", "hotel", "train"]
     },
     "storyMode": {
       "collectibleItem": {
@@ -562,13 +562,13 @@ module.exports = {
         "label": "Bell Pull Fragment"
       },
       "badChoice": {
-            "id": "flirt_with_beryl",
-            "label": "Flirt with Beryl Stapleton on the moor",
-            "consequence": "Her face drains of color. \"You must never come here alone again,\" she whispers, then runs. You do not understand her terror — not yet.",
-            "coinCost": 3,
-            "flagSet": {
-                  "misunderstood_beryl": true
-            }
+        "id": "ignore_watson",
+        "label": "Ignore Watson's warning",
+        "consequence": "The floor gives a different sound underfoot — hollow, rehearsed — and then the geometry of the room changes around you. The trap was not clever; it was patient. The lesson is tactical: confidence without verification is just momentum.",
+        "coinCost": 3,
+        "flagSet": {
+          "ignored_partner": true
+        }
       },
       "isHealing": false,
       "explorePriority": [
