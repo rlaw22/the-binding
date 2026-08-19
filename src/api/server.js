@@ -31,7 +31,7 @@ const DiceService = require('../dice/dice-service');
 const TokenStore = require('../auth/token-store');
 const AccessControl = require('../auth/access-control');
 const { createVoiceService, getCachedAudio, detectProvider } = require('../voice');
-const { saveSessions, loadSessions, startAutoSave, setupExitSave, markDirty } = require('../session/persistence');
+const { saveSessions, loadSessions, startAutoSave, stopAutoSave, setupExitSave, markDirty } = require('../session/persistence');
 const CombatManager = require('../combat/combat-manager');
 const { DynamicDifficulty, preAdventureDifficulty, getDifficultyBucket, narrativeDifficultyWrap } = require('../difficulty/dynamic-difficulty');
 const Inventory = require('../inventory/inventory');
@@ -1708,12 +1708,19 @@ async function createServer(options = {}) {
   }
 
   // --- PERSISTENCE: Load saved sessions and start auto-save ---
-  const loadedCount = loadSessions(sessions, rejoinCodes, createProvider, llmConfig, RuleEngine, DiceService);
-  if (loadedCount > 0) {
-    console.log('  \u{1f4be} Restored ' + loadedCount + ' saved session(s)');
+  if (options.persistence !== false) {
+    const loadedCount = loadSessions(sessions, rejoinCodes, createProvider, llmConfig, RuleEngine, DiceService);
+    if (loadedCount > 0) {
+      console.log('  \u{1f4be} Restored ' + loadedCount + ' saved session(s)');
+    }
+    startAutoSave(sessions);
+    setupExitSave(sessions);
   }
-  startAutoSave(sessions);
-  setupExitSave(sessions);
+  // Fastify's close hook is also used by injected test servers, so the
+  // process-global persistence timer cannot outlive an application instance.
+  app.addHook('onClose', async () => {
+    stopAutoSave();
+  });
 
   return app;
 }

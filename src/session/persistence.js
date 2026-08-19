@@ -185,7 +185,7 @@ function loadSessions(sessionsMap, rejoinCodesMap, createProviderFn, llmConfig, 
  * Start the auto-save timer.
  */
 function startAutoSave(sessionsMap) {
-  if (saveTimer) clearInterval(saveTimer);
+  stopAutoSave();
   saveTimer = setInterval(() => {
     if (dirty) {
       saveSessions(sessionsMap);
@@ -194,6 +194,18 @@ function startAutoSave(sessionsMap) {
   // Don't block process exit
   if (saveTimer.unref) saveTimer.unref();
   console.log(`[Persistence] Auto-save every ${SAVE_INTERVAL_MS / 1000}s`);
+}
+
+/**
+ * Stop the auto-save timer when an application instance is closed.
+ * This is important for embedded/injected Fastify instances and tests:
+ * process-global persistence must not keep an otherwise closed server alive.
+ */
+function stopAutoSave() {
+  if (saveTimer) {
+    clearInterval(saveTimer);
+    saveTimer = null;
+  }
 }
 
 /**
@@ -214,6 +226,7 @@ module.exports = {
   saveSessions,
   loadSessions,
   startAutoSave,
+  stopAutoSave,
   setupExitSave,
   markDirty
 };

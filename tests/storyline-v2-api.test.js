@@ -4,7 +4,7 @@ const assert = require('assert');
 const { createServer } = require('../src/api/server');
 
 async function main() {
-  const disabled = await createServer({ llmConfig: { mock: true } });
+  const disabled = await createServer({ llmConfig: { mock: true }, persistence: false });
   try {
     let response = await disabled.inject({ method: 'GET', url: '/api/storyline-v2/status' });
     assert.strictEqual(response.statusCode, 200);
@@ -15,7 +15,7 @@ async function main() {
     await disabled.close();
   }
 
-  const app = await createServer({ storylineV2Enabled: true, llmConfig: { mock: true } });
+  const app = await createServer({ storylineV2Enabled: true, llmConfig: { mock: true }, persistence: false });
   try {
     let response = await app.inject({ method: 'GET', url: '/api/storyline-v2/status' });
     assert.strictEqual(response.statusCode, 200);
