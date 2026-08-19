@@ -3794,6 +3794,8 @@ window.StorylineInventory = {
 };
 </script>
 <script src="/src/story/story-engine.js?v=3"></script>
+<script src="/src/storyline-v2-client.js"></script>
+<script src="/src/storyline-v2-browser-bridge.js"></script>
 <script>
 // ══════════════════════════════════════════════════════════════════════
 // STORY MODE BRIDGE — Client-side integration with StoryEngine
@@ -3841,8 +3843,16 @@ function beginStoryAdventure() {
   // Force-hide input row and send button for storyline mode
   var inputRow = document.getElementById('input-row');
   if (inputRow) inputRow.style.display = 'none';
-  startGame().then(function() {
-    // Initialize story mode after session is created
+  var selectedAdventure = (document.getElementById('adventure-select') || {}).value || 'dracula';
+  var selectedClass = storySelectedClass || (document.getElementById('player-class') || {}).value || 'fighter';
+  var v2Attempt = window.tryStartStorylineV2 ? window.tryStartStorylineV2(selectedAdventure, selectedClass) : Promise.resolve(false);
+  v2Attempt.then(function (startedV2) {
+    if (startedV2) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Adventure Started'; }
+      return;
+    }
+    return startGame().then(function() {
+    // Initialize legacy story mode after session is created
     storyModeActive = true;
     document.body.classList.add('storyline-active');
     // Force-hide again after UI is set up
@@ -3862,6 +3872,7 @@ function beginStoryAdventure() {
     }
   }).catch(function() {
     if (btn) { btn.disabled = false; btn.textContent = 'Begin Adventure'; }
+  });
   });
 }
 
