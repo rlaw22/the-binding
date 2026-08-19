@@ -93,13 +93,49 @@ function actionFromExit(scene) {
     shortLabel: scene.exitLabel || scene.exitAction,
     resolution: {
       resultType: 'exit',
-      narration: scene.hardExitNarration || scene.exitLabel || scene.exitAction
+      narration: scene.hardExitNarration || scene.exitLabel || scene.exitAction,
+      ...(scene.sceneId === 'scene_24' ? { endingId: 'dracula_destroyed' } : {})
     }
   };
 }
 
+function authoredBranchActions(scene) {
+  if (scene.sceneId === 'scene_18') {
+    return [{
+      actionId: 'scene_18__hold_the_line',
+      type: 'threat',
+      category: 'lore',
+      label: 'Hold the safe house and protect Mina',
+      shortLabel: 'Protect Mina',
+      keywords: ['hold', 'defend', 'protect', 'mina', 'safe house'],
+      resolution: {
+        resultType: 'branch',
+        narration: 'You hold the line until dawn. The assault costs you time, but Mina is not abandoned, and the group escapes together.',
+        setFlags: { protected_mina: true }
+      }
+    }];
+  }
+  if (scene.sceneId === 'scene_20') {
+    return [{
+      actionId: 'scene_20__charter_fast_route',
+      type: 'class',
+      category: 'class',
+      label: 'Charter the fastest route to Varna',
+      shortLabel: 'Charter fast route',
+      keywords: ['charter', 'fast', 'route', 'varna', 'ship'],
+      resolution: {
+        resultType: 'branch',
+        narration: 'You spend the available funds to secure the fastest passage east. The pursuit gains precious hours.',
+        setFlags: { fast_route: true }
+      }
+    }];
+  }
+  return [];
+}
+
 function sceneFromLegacy(scene, index) {
   const actions = (scene.content || []).map(content => actionFromContent(content, scene.sceneId));
+  actions.push(...authoredBranchActions(scene));
   if (index === 0) {
     actions.push(classAction(scene.sceneId, 'cleric', 'Offer a prayer of protection', 'You murmur a protective prayer over the inn, and the room seems to settle around you.', 'inn_blessed'));
     actions.push(classAction(scene.sceneId, 'mage', 'Recall the old lore of the Carpathians', 'The scattered details align: the warnings, the wolves, and the name Dracula form a pattern you cannot ignore.', 'carpathian_lore_recalled'));
@@ -136,6 +172,20 @@ function buildDraculaManifest() {
     to: scenes[index + 1].sceneId,
     trigger: { actionId: scene.actions.find(action => action.type === 'exit')?.actionId }
   })).filter(edge => edge.trigger.actionId);
+  // Optional authored branches converge on the existing backbone so they alter
+  // state and narrative emphasis without creating unreachable migrated scenes.
+  edges.push({
+    edgeId: 'scene_18_hold_line_to_scene_19',
+    from: 'scene_18',
+    to: 'scene_19',
+    trigger: { actionId: 'scene_18__hold_the_line' }
+  });
+  edges.push({
+    edgeId: 'scene_20_fast_route_to_scene_21',
+    from: 'scene_20',
+    to: 'scene_21',
+    trigger: { actionId: 'scene_20__charter_fast_route' }
+  });
 
   return {
     schemaVersion: '2.0',
@@ -149,7 +199,22 @@ function buildDraculaManifest() {
     threats: {},
     scenes,
     graph: { entry: scenes[0].sceneId, edges },
-    endings: {}
+    endings: {
+      dracula_destroyed: {
+        endingId: 'dracula_destroyed',
+        title: 'Dawn at Castle Dracula',
+        outcome: 'success',
+        sceneId: 'scene_24',
+        narration: 'The first sunlight reaches the coffin room. Dracula falls, Mina is freed, and the long night ends.'
+      },
+      mina_lost: {
+        endingId: 'mina_lost',
+        title: 'The Blood Bond Endures',
+        outcome: 'failure',
+        sceneId: 'scene_24',
+        narration: 'Dracula escapes into the darkness with Mina still bound to him. The hunt is not over, but this night is lost.'
+      }
+    }
   };
 }
 
