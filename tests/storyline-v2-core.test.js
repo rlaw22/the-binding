@@ -99,6 +99,25 @@ test('free text matches only one current legal action', () => {
   assert.strictEqual(matchFreeText('go somewhere', catalog, definitions).status, 'no_match');
 });
 
+test('ambiguous free text is rejected even when multiple legal actions share a keyword', () => {
+  const adventure = compileAdventure(raw);
+  const state = createState(adventure, { classId: 'rogue' });
+  const catalog = buildCatalog(adventure, state);
+  catalog.actions.push({ actionId: 'look_portrait', contentId: 'portrait_2', label: 'Look at the portrait', shortLabel: 'Look at portrait', sceneId: 'study', catalogVersion: catalog.catalogVersion, type: 'exploration', category: 'exploration' });
+  const definitions = adventure.scenes.study.actions.map(item => item.actionId === 'touch_portrait' ? { ...item, keywords: ['look'] } : item).concat([{ actionId: 'look_portrait', contentId: 'portrait_2', label: 'Look at the portrait', keywords: ['look'] }]);
+  const match = matchFreeText('look', catalog, definitions);
+  assert.strictEqual(match.status, 'ambiguous');
+  assert.strictEqual(match.action, null);
+});
+
+test('free text cannot match an action outside the current server catalog', () => {
+  const adventure = compileAdventure(raw);
+  const state = createState(adventure, { classId: 'scholar' });
+  const catalog = buildCatalog(adventure, state);
+  const match = matchFreeText('find the brass key', catalog, adventure.scenes.study.actions);
+  assert.strictEqual(match.status, 'no_match');
+});
+
 test('unmatched text cannot mutate state', () => {
   const adventure = compileAdventure(raw);
   const state = createState(adventure, { classId: 'scholar' });

@@ -90,10 +90,17 @@ function compileAdventure(raw) {
   });
 
   const graphEdges = asArray(raw.graph && raw.graph.edges);
+  const edgeIds = new Set();
   graphEdges.forEach((edge, i) => {
     if (!edge || !edge.edgeId) errors.push(issue(`graph.edges[${i}]`, 'Edge ID is required'));
+    else if (edgeIds.has(edge.edgeId)) errors.push(issue(`graph.edges[${i}]`, `Duplicate edge ID: ${edge.edgeId}`));
+    else edgeIds.add(edge.edgeId);
     if (!edge || !sceneMap[edge.from]) errors.push(issue(`graph.edges[${i}].from`, `Unknown source scene: ${edge && edge.from}`));
     if (!edge || !sceneMap[edge.to]) errors.push(issue(`graph.edges[${i}].to`, `Unknown destination scene: ${edge && edge.to}`));
+    if (edge && edge.trigger && edge.trigger.actionId && !actionIds.has(edge.trigger.actionId)) {
+      errors.push(issue(`graph.edges[${i}].trigger.actionId`, `Unknown trigger action: ${edge.trigger.actionId}`));
+    }
+    validateRequirements(edge && edge.trigger && edge.trigger.requires, classIds, itemIds, actionIds, errors, `graph.edges[${i}].trigger.requires`);
   });
 
   const entry = raw.graph && raw.graph.entry || (raw.prologue && raw.prologue.startingSceneId);
@@ -277,14 +284,25 @@ function rejected(code, narrative, state) {
 
 function matchFreeText(text, catalog, definitions) {
   const normalized = normalize(text);
-  if (!normalized) return { status: 'no_match', action: null };
-  const matches = catalog.actions.filter(action => {
-    const definition = definitions.find(item => item.actionId === action.actionId) || action;
-    const terms = [definition.actionId, definition.contentId, definition.label, ...(definition.keywords || [])].filter(Boolean).map(normalize);
-    return terms.some(term => normalized === term || normalized.includes(term));
-  });
-  if (matches.length === 1) return { status: 'matched', action: matches[0] };
-  return { status: matches.length ? 'ambiguous' : 'no_match', action: null };
+  if (!normalized || !catalog || !Array.isArray(catalog.actions)) return { status: 'no_match', action: null };
+  const definitionMap = new Map((definitions || []).map(item => [item.actionId, item]));
+  const candidates = catalog.actions.map(action => {
+    const definition = definitionMap.get(action.actionId) || action;
+    const terms = [definition.actionId, definition.contentId, definition.label, definition.shortLabel, ...(definition.keywords || [])]
+      .filter(Boolean).map(normalize).filter(term => term.length >= 2);
+    const exact = terms.filter(term => normalized === term);
+    const phrase = terms.filter(term => term.length >= 3 && normalized.includes(term));
+    const tokenOverlap = terms.filter(term => term.split(' ').length > 1 && term.split(' ').every(token => normalized.split(' ').includes(token)));
+    const score = exact.length ? 100 : phrase.length ? 60 : tokenOverlap.length ? 40 : 0;
+    return { action, score, exact: exact.length > 0 };
+  }).filter(candidate => candidate.score > 0).sort((a, b) => b.score - a.score || a.action.actionId.localeCompare(b.action.actionId));
+  if (!candidates.length) return { status: 'no_match', action: null };
+  const top = candidates[0];
+  const tied = candidates.filter(candidate => candidate.score === top.score);
+  if (tied.length !== 1 || (!top.exact && candidates.length > 1 && candidates[1].score >= top.score - 20)) {
+    return { status: 'ambiguous', action: null, candidates: tied.map(candidate => candidate.action) };
+  }
+  return { status: 'matched', action: top.action };
 }
 
 function normalize(text) { return String(text || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim().replace(/\s+/g, ' '); }
