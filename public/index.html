@@ -11,6 +11,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="manifest" href="/manifest.json">
+<link rel="stylesheet" href="/src/storyline-v2-ui.css">
 <title>The Binding — Play</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -1526,6 +1527,7 @@ body.game-active #auto-rejoin-banner{display:none;}
 <script src="/dice-box-threejs.umd.js"></script>
 <script src="/dice-roller.js"></script>
 <script src="/browser-tts.js"></script>
+<script src="/src/storyline-v2-client.js"></script>
 <script>
 // Initialize Browser TTS (Web Speech API fallback)
 if (typeof BrowserTTS !== 'undefined') BrowserTTS.init();
