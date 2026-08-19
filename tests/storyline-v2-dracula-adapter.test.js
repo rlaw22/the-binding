@@ -29,3 +29,13 @@ test('compiles Dracula through the universal compiler', () => {
   assert.ok(Object.keys(adventure.items).length > 0);
   assert.ok(adventure.graph.edges.length > 0);
 });
+
+test('namespaces migrated discoveries and provides four meaningful opening class actions', () => {
+  const adventure = compileDracula();
+  const opening = adventure.scenes.scene_00;
+  const classActions = opening.actions.filter(action => action.type === 'class');
+  assert.deepStrictEqual(classActions.map(action => action.availability.classes[0]).sort(), ['cleric', 'fighter', 'rogue', 'scholar']);
+  const discovered = opening.actions.filter(action => (action.resolution.discover || []).length);
+  assert.ok(discovered.length > 0);
+  assert.ok(discovered.every(action => action.resolution.discover[0].startsWith('scene_00__')));
+});

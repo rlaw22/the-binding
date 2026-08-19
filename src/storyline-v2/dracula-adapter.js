@@ -9,13 +9,7 @@
  */
 
 const legacyDracula = require('../adventure/dracula');
-const Act2 = require('../../manifests-act2');
-const Act3 = require('../../manifests-act3');
-const Act4 = require('../../manifests-act4');
-const Act5 = require('../../manifests-act5');
 const { compileAdventure } = require('./index');
-
-const ACTS = [Act2, Act3, Act4, Act5];
 
 function values(value) {
   return Array.isArray(value) ? value : Object.values(value || {});
@@ -47,7 +41,7 @@ function actionFromContent(content, sceneId) {
     resolution: {
       resultType: itemId ? 'acquisition' : (content.discovery ? 'discovery' : 'atmosphere'),
       narration: content.discovery || `You ${String(content.label || '').toLowerCase()}.`,
-      discover: content.discovery ? [content.id] : [],
+      discover: content.discovery ? [stableId] : [],
       addItems: itemId ? [itemId] : []
     }
   };
@@ -71,6 +65,24 @@ function actionFromBadChoice(scene) {
   };
 }
 
+function classAction(sceneId, classId, label, narration, flagId) {
+  return {
+    actionId: `${sceneId}__class__${classId}`,
+    contentId: `${sceneId}__class__${classId}`,
+    type: 'class',
+    category: 'class',
+    label,
+    shortLabel: label,
+    availability: { classes: [classId] },
+    keywords: [classId, label],
+    resolution: {
+      resultType: 'class_action',
+      narration,
+      setFlags: { [flagId]: true }
+    }
+  };
+}
+
 function actionFromExit(scene) {
   if (!scene.exitAction) return null;
   return {
@@ -88,6 +100,12 @@ function actionFromExit(scene) {
 
 function sceneFromLegacy(scene, index) {
   const actions = (scene.content || []).map(content => actionFromContent(content, scene.sceneId));
+  if (index === 0) {
+    actions.push(classAction(scene.sceneId, 'cleric', 'Offer a prayer of protection', 'You murmur a protective prayer over the inn, and the room seems to settle around you.', 'inn_blessed'));
+    actions.push(classAction(scene.sceneId, 'scholar', 'Recall the old lore of the Carpathians', 'The scattered details align: the warnings, the wolves, and the name Dracula form a pattern you cannot ignore.', 'carpathian_lore_recalled'));
+    actions.push(classAction(scene.sceneId, 'rogue', 'Quietly inspect the coach arrangements', 'You study the stable yard and exits without drawing attention. The coach is being prepared, but someone is watching from the dark.', 'coach_route_checked'));
+    actions.push(classAction(scene.sceneId, 'fighter', 'Prepare for the road ahead', 'You check your weapon, your footing, and the fading light. Whatever waits beyond Bistritz will not find you helpless.', 'road_prepared'));
+  }
   const badChoice = actionFromBadChoice(scene);
   const exit = actionFromExit(scene);
   if (badChoice) actions.push(badChoice);
@@ -122,10 +140,10 @@ function buildDraculaManifest() {
   return {
     schemaVersion: '2.0',
     adventureId: 'dracula',
-    title: legacyDracula.name || 'Dracula',
-    source: { title: 'Dracula', author: legacyDracula.author || 'Bram Stoker', migration: 'legacy-scenes-to-v2' },
+    title: legacyDracula.DraculaAdventure.name || 'Dracula',
+    source: { title: 'Dracula', author: legacyDracula.DraculaAdventure.author || 'Bram Stoker', migration: 'legacy-scenes-to-v2' },
     narrativePolicy: { sourceFidelity: 'high', playerAgency: 'guided', endingPolicy: 'authored', allowOptionalBranches: true },
-    prologue: { text: legacyDracula.prologue && legacyDracula.prologue.template || '', startingSceneId: scenes[0].sceneId },
+    prologue: { text: legacyDracula.DraculaAdventure.prologue && legacyDracula.DraculaAdventure.prologue.template || '', startingSceneId: scenes[0].sceneId },
     classes: ['fighter', 'cleric', 'mage', 'rogue'],
     items,
     threats: {},
