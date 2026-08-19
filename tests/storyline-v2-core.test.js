@@ -54,6 +54,10 @@ test('builds a server-owned catalog with stable IDs', () => {
   assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'iconKey')));
   assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'subtitle')));
   assert.strictEqual(catalog.actions.find(action => action.actionId === 'read_letter').sceneId, 'study');
+  assert.strictEqual(catalog.sceneName, 'Study');
+  assert.ok(Object.prototype.hasOwnProperty.call(catalog, 'setting'));
+  assert.ok(Object.prototype.hasOwnProperty.call(catalog, 'openingNarration'));
+  assert.deepStrictEqual(catalog.presentNpcs, []);
 });
 
 test('discovery resolves once and disappears from the next catalog', () => {

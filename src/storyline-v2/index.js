@@ -251,7 +251,15 @@ function buildCatalog(adventure, state) {
   const priority = { class: 0, lore: 1, exploration: 2, collectible: 2, environment: 3, threat: 4, risk: 4, exit: 5, atmosphere: 6 };
   available.sort((a, b) => (priority[a.category] ?? 5) - (priority[b.category] ?? 5) || a.actionId.localeCompare(b.actionId));
   const actions = available.slice(0, 6).map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, label: action.label, shortLabel: action.shortLabel, subtitle: action.subtitle, iconKey: action.iconKey, availability: 'available' }));
-  return { sceneId: state.sceneId, catalogVersion: state.catalogVersion, actions };
+  return {
+    sceneId: state.sceneId,
+    catalogVersion: state.catalogVersion,
+    sceneName: scene.name,
+    setting: scene.setting,
+    openingNarration: scene.openingNarration,
+    presentNpcs: clone(scene.presentNpcs),
+    actions
+  };
 }
 
 function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, turnId }) {

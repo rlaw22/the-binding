@@ -21,11 +21,23 @@
     var narrative = snapshot.state && snapshot.state.sceneId ? scene.sceneId : '';
     if (narrative && typeof root.addMessage === 'function' && (!root._storylineV2Scene || root._storylineV2Scene !== narrative)) {
       root._storylineV2Scene = narrative;
-      root.addMessage('system', 'Scene: ' + narrative);
+      if (scene.sceneName) root.addMessage('system', scene.sceneName);
+      if (scene.setting) root.addMessage('dm', scene.setting);
+      if (scene.openingNarration && scene.openingNarration !== scene.setting) root.addMessage('dm', scene.openingNarration);
+      if (Array.isArray(scene.presentNpcs) && scene.presentNpcs.length) root.addMessage('system', 'Present: ' + scene.presentNpcs.join(', '));
     }
     root.storylineV2Client.renderCatalog(document.getElementById('action-buttons'), function (action) {
       submit(action);
     });
+  }
+
+  function refreshAfterStale(error) {
+    if (!error || error.status !== 409 || !root.storylineV2Client) return Promise.resolve(false);
+    return root.storylineV2Client.refresh().then(function (snapshot) {
+      render(snapshot);
+      if (typeof root.addMessage === 'function') root.addMessage('system', 'The scene changed. Choose an action from the refreshed list.');
+      return true;
+    }).catch(function () { return false; });
   }
 
   function submit(action) {
@@ -38,7 +50,9 @@
         render(root.storylineV2Client.snapshot);
       })
       .catch(function (error) {
-        if (typeof root.addMessage === 'function') root.addMessage('error', error.message || 'Storyline v2 action failed.');
+        refreshAfterStale(error).then(function (refreshed) {
+          if (!refreshed && typeof root.addMessage === 'function') root.addMessage('error', error.message || 'Storyline v2 action failed.');
+        });
       });
   }
 

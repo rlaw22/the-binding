@@ -15,6 +15,8 @@ assert.ok(bridge.includes("/api/storyline-v2/status"));
 assert.ok(bridge.includes('status.enabled'));
 assert.ok(bridge.includes('StorylineV2Client'));
 assert.ok(bridge.includes('renderCatalog'));
+assert.ok(bridge.includes('openingNarration'));
+assert.ok(bridge.includes('refreshAfterStale'));
 assert.ok(bridge.includes('return false'));
 assert.ok(!bridge.includes('createAction'));
 console.log('  ✓ Storyline v2 browser bridge is feature-flagged with legacy fallback');
