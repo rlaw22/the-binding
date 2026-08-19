@@ -19,4 +19,5 @@
 - [Storyline v2 Dracula Adapter — 2026-08-19](analysis/storyline-v2-dracula-adapter-2026-08-19.md) — migration-only conversion of all 25 Dracula scenes into the universal v2 manifest contract
 - [Storyline v2 API Transport — 2026-08-19](analysis/storyline-v2-api-transport-2026-08-19.md) — disabled-by-default Fastify boundary for v2 sessions, catalogs, actions, and deterministic text submission
 - [Storyline v2 Client Adapter — 2026-08-19](analysis/storyline-v2-client-adapter-2026-08-19.md) — presentation-only browser adapter that renders and submits server-issued catalogs
+- [Storyline v2 Browser Bridge — 2026-08-19](analysis/storyline-v2-browser-bridge-2026-08-19.md) — reversible feature-flagged browser integration with legacy fallback and live verification
 - [The Binding Responsive Reading-First UX](analysis/binding-responsive-reading-first-ux.md) — Version Two open-book UX reference, responsive layout, reading-first space allocation, and action-mapping timing

@@ -42,3 +42,5 @@ Recorded the disabled-by-default Fastify v2 transport, canonical session/catalog
 ## [2026-08-19] synthesize | Storyline v2 Client Adapter
 Recorded the presentation-only browser adapter, server-catalog enforcement, catalog-version submission, and client contract verification.
 
+
+## [2026-08-19] synthesize | Storyline v2 Browser Bridge
