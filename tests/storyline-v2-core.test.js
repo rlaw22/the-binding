@@ -39,11 +39,20 @@ test('rejects invalid references before gameplay', () => {
   assert.throws(() => compileAdventure({ ...raw, items: {}, scenes: [{ ...raw.scenes[0], actions: [{ ...raw.scenes[0].actions[1], resolution: { addItems: ['missing'] } }] }] }), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('Unknown item')));
 });
 
+test('rejects unknown action requirements while allowing forward references', () => {
+  const forward = { ...raw, scenes: raw.scenes.map(scene => ({ ...scene, actions: scene.actions.map(action => action.actionId === 'touch_portrait' ? { ...action, requires: [{ kind: 'action', id: 'read_letter' }] } : action) })) };
+  assert.doesNotThrow(() => compileAdventure(forward));
+  const invalid = { ...raw, scenes: raw.scenes.map(scene => ({ ...scene, actions: scene.actions.map(action => action.actionId === 'touch_portrait' ? { ...action, requires: [{ kind: 'action', id: 'missing_action' }] } : action) })) };
+  assert.throws(() => compileAdventure(invalid), error => error.errors.some(item => item.message.includes('Unknown action: missing_action')));
+});
+
 test('builds a server-owned catalog with stable IDs', () => {
   const adventure = compileAdventure(raw);
   const state = createState(adventure, { classId: 'scholar' });
   const catalog = buildCatalog(adventure, state);
   assert.ok(catalog.actions.some(action => action.actionId === 'read_letter'));
+  assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'iconKey')));
+  assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'subtitle')));
   assert.strictEqual(catalog.actions.find(action => action.actionId === 'read_letter').sceneId, 'study');
 });
 
@@ -86,7 +95,7 @@ test('retries return the original result without applying effects twice', () => 
   const adventure = compileAdventure(raw);
   const state = createState(adventure, { classId: 'scholar' });
   const first = resolveTurn({ adventure, state, actionId: 'read_letter', catalogVersion: state.catalogVersion, turnId: 'same-turn' });
-  const retry = resolveTurn({ adventure, state: first.state, actionId: 'read_letter', catalogVersion: first.state.catalogVersion, turnId: 'same-turn' });
+  const retry = resolveTurn({ adventure, state: first.state, actionId: 'read_letter', catalogVersion: state.catalogVersion, turnId: 'same-turn' });
   assert.deepStrictEqual(retry, first.result);
 });
 

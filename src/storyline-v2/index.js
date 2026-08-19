@@ -89,6 +89,16 @@ function compileAdventure(raw) {
     });
   });
 
+  // Validate action references after all scenes have been indexed so forward
+  // references are supported without allowing unknown IDs.
+  scenes.forEach((rawScene, sceneIndex) => {
+    const scene = sceneMap[rawScene.sceneId];
+    scene.actions.forEach((action, actionIndex) => {
+      validateActionRequirements(action.availability && action.availability.requires, actionIds, errors, `scenes[${sceneIndex}].actions[${actionIndex}].availability.requires`);
+      validateActionRequirements(action.requires, actionIds, errors, `scenes[${sceneIndex}].actions[${actionIndex}].requires`);
+    });
+  });
+
   const graphEdges = asArray(raw.graph && raw.graph.edges);
   const edgeIds = new Set();
   graphEdges.forEach((edge, i) => {
@@ -171,12 +181,22 @@ function normalizeAction(action) {
     category: action.category || action.type || 'exploration',
     label: action.label || action.name || action.actionId || action.id,
     shortLabel: action.shortLabel || action.label || action.name || action.actionId || action.id,
+    subtitle: action.subtitle || action.description || '',
+    iconKey: action.iconKey || null,
     keywords: clone(action.keywords || []),
     availability: clone(action.availability || {}),
     requires: clone(action.requires || []),
     resolution,
     replay: action.replay || 'consumable'
   };
+}
+
+function validateActionRequirements(requirements, actionIds, errors, path) {
+  asArray(requirements).forEach((req, i) => {
+    if (req && req.kind === 'action' && !actionIds.has(req.id)) {
+      errors.push(issue(`${path}[${i}]`, `Unknown action: ${req.id}`));
+    }
+  });
 }
 
 function validateRequirements(requirements, classIds, itemIds, actionIds, errors, path) {
@@ -230,12 +250,15 @@ function buildCatalog(adventure, state) {
   const available = scene.actions.filter(action => actionAvailable(action, state));
   const priority = { class: 0, lore: 1, exploration: 2, collectible: 2, environment: 3, threat: 4, risk: 4, exit: 5, atmosphere: 6 };
   available.sort((a, b) => (priority[a.category] ?? 5) - (priority[b.category] ?? 5) || a.actionId.localeCompare(b.actionId));
-  const actions = available.slice(0, 6).map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, label: action.label, shortLabel: action.shortLabel, availability: 'available' }));
+  const actions = available.slice(0, 6).map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, label: action.label, shortLabel: action.shortLabel, subtitle: action.subtitle, iconKey: action.iconKey, availability: 'available' }));
   return { sceneId: state.sceneId, catalogVersion: state.catalogVersion, actions };
 }
 
 function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, turnId }) {
   const state = clone(inputState);
+  // Idempotency is checked before catalog freshness: a retried request carries
+  // the original catalog version, which is expected to be stale after the
+  // first successful resolution.
   if (turnId && state.processedTurns[turnId]) return clone(state.processedTurns[turnId]);
   if (catalogVersion !== state.catalogVersion) return rejected('STALE_CATALOG', 'That action is no longer available.', state);
   const scene = adventure.scenes[state.sceneId];
