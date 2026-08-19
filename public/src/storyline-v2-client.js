@@ -69,9 +69,31 @@
     (catalog.actions || []).forEach(function (action) {
       var button = document.createElement('button');
       button.type = 'button';
-      button.textContent = action.shortLabel || action.label;
+      button.className = 'storyline-v2-action';
       button.dataset.actionId = action.actionId;
+      button.dataset.actionType = action.type || '';
+      button.dataset.category = action.category || '';
       button.dataset.catalogVersion = catalog.catalogVersion;
+      button.setAttribute('aria-label', (action.label || action.shortLabel || action.actionId) + (action.subtitle ? ' — ' + action.subtitle : ''));
+
+      var icon = document.createElement('span');
+      icon.className = 'storyline-v2-action-icon';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.textContent = action.iconKey ? '✦' : '•';
+
+      var copy = document.createElement('span');
+      copy.className = 'storyline-v2-action-copy';
+      var title = document.createElement('strong');
+      title.textContent = action.shortLabel || action.label || action.actionId;
+      copy.appendChild(title);
+      if (action.subtitle) {
+        var subtitle = document.createElement('em');
+        subtitle.textContent = action.subtitle;
+        copy.appendChild(subtitle);
+      }
+
+      button.appendChild(icon);
+      button.appendChild(copy);
       button.addEventListener('click', function () { onAction(action); });
       container.appendChild(button);
     });

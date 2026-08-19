@@ -8,6 +8,9 @@ const client = fs.readFileSync(path.join(__dirname, '..', 'public/src/storyline-
 assert.ok(client.includes('StorylineV2Client'));
 assert.ok(client.includes("Action is not in the current server catalog"));
 assert.ok(client.includes('catalogVersion'));
+assert.ok(client.includes('storyline-v2-action'));
+assert.ok(client.includes('iconKey'));
+assert.ok(client.includes('aria-label'));
 assert.ok(!client.includes('Math.random'));
 assert.ok(!client.includes('createAction'));
 console.log('  ✓ Storyline v2 client adapter remains catalog-bound and presentation-only');
