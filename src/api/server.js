@@ -38,6 +38,7 @@ const Inventory = require('../inventory/inventory');
 const { listStorylineItems, addStorylineItem } = require('../story/storyline-inventory');
 const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
 const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
+const { createStorylineV2Service } = require('../storyline-v2/adventures');
 const { createDigitalDMSession, getDigitalDMInfo, isDigitalDM } = require('../campaign/digital-dm');
 const { listDigitalDMScenarios, getDigitalDMScenario, getScenarioWorldSeed } = require('../campaign/digital-dm-scenarios');
 const CharacterService = require('../character/character-service');
@@ -140,12 +141,45 @@ async function createServer(options = {}) {
     // LLM provider config — each session gets its own provider instance
     // so mock response counters don't bleed across sessions
     const llmConfig = options.llmConfig || { mock: true };
+  const storylineV2Enabled = options.storylineV2Enabled === true || process.env.STORYLINE_V2_ENABLED === 'true';
+  const storylineV2 = storylineV2Enabled ? createStorylineV2Service() : null;
 
   // Voice / TTS service — additive, gracefully disabled if no API key
   const voiceService = createVoiceService();
   const voiceEnabled = voiceService.isReady();
 
   // --- REST ENDPOINTS ---
+
+  // Isolated Storyline v2 transport. Disabled by default; the legacy route
+  // remains authoritative until the replacement passes integration review.
+  app.get('/api/storyline-v2/status', async () => ({ enabled: storylineV2Enabled, adventures: storylineV2Enabled ? ['dracula'] : [] }));
+
+  app.post('/api/storyline-v2/sessions', async (request, reply) => {
+    if (!storylineV2) return reply.status(404).send({ error: 'Storyline v2 is disabled' });
+    try {
+      const body = request.body || {};
+      return storylineV2.start({ adventureId: body.adventureId || 'dracula', sessionId: body.sessionId, classId: body.classId, options: body.options || {} });
+    } catch (error) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
+
+  app.get('/api/storyline-v2/sessions/:id', async (request, reply) => {
+    if (!storylineV2) return reply.status(404).send({ error: 'Storyline v2 is disabled' });
+    try { return storylineV2.snapshot(request.params.id); }
+    catch (error) { return reply.status(404).send({ error: error.message }); }
+  });
+
+  app.post('/api/storyline-v2/sessions/:id/actions', async (request, reply) => {
+    if (!storylineV2) return reply.status(404).send({ error: 'Storyline v2 is disabled' });
+    try {
+      const body = request.body || {};
+      if (body.text != null) return storylineV2.submitText({ sessionId: request.params.id, text: body.text, turnId: body.turnId });
+      return storylineV2.submit({ sessionId: request.params.id, actionId: body.actionId, catalogVersion: body.catalogVersion, turnId: body.turnId });
+    } catch (error) {
+      return reply.status(400).send({ error: error.message });
+    }
+  });
 
   app.get('/api/adventures', async () => {
     return listAdventures();

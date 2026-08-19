@@ -17,3 +17,5 @@
 - [Storyline v2 Universal Manifest Engine Specification](analysis/storyline-v2-specification.md) — complete design for the manifest compiler, deterministic resolver, scene graph, six-action catalog, classes, bounded free text, transport contract, migration, and acceptance tests
 - [Storyline v2 Deterministic Validation — 2026-08-19](analysis/storyline-v2-deterministic-validation-2026-08-19.md) — hardened manifest edge validation and catalog-bounded, ambiguity-rejecting free-text matching
 - [Storyline v2 Dracula Adapter — 2026-08-19](analysis/storyline-v2-dracula-adapter-2026-08-19.md) — migration-only conversion of all 25 Dracula scenes into the universal v2 manifest contract
+- [Storyline v2 API Transport — 2026-08-19](analysis/storyline-v2-api-transport-2026-08-19.md) — disabled-by-default Fastify boundary for v2 sessions, catalogs, actions, and deterministic text submission
+- [The Binding Responsive Reading-First UX](analysis/binding-responsive-reading-first-ux.md) — Version Two open-book UX reference, responsive layout, reading-first space allocation, and action-mapping timing

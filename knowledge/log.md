@@ -24,3 +24,18 @@ Recorded compiler hardening for graph edges and deterministic catalog-bounded fr
 ## [2026-08-19] synthesize | Storyline v2 Dracula Adapter
 Recorded the migration-only adapter, globally stable scene-namespaced action IDs, merged-act source correction, and successful 25-scene compiler validation.
 
+
+## [2026-08-19] synthesize | The Binding Responsive Reading-First UX
+
+Recorded the design decision to prioritize narrative text and response space, minimize active-turn scrolling, and make old-book decoration secondary across desktop, tablet, and phone layouts.
+
+## [2026-08-19] synthesize | Open-book UI implementation contract
+
+Recorded how the attached open-book visual reference should become reusable responsive components, controlled icon mappings, data-driven action metadata, design tokens, separate scene assets, and contract tests rather than one static background image.
+
+## [2026-08-19] synthesize | Storyline Version Two UX/UI timing
+
+Recorded that Version Two should build the responsive visual shell and generic interaction components before final icon/action mapping. Mapping waits until the universal action catalog and state contract are stable. Scheduled cleanup of the temporary UX/UI concept reference for 120 days later.
+## [2026-08-19] synthesize | Storyline v2 API Transport
+Recorded the disabled-by-default Fastify v2 transport, canonical session/catalog/action endpoints, deterministic text boundary, and route-level verification.
+
