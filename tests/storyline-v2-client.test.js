@@ -15,6 +15,8 @@ assert.ok(client.includes('renderBookHistory'));
 assert.ok(client.includes('renderBookmarkRail'));
 assert.ok(client.includes('renderBookmarkReview'));
 assert.ok(client.includes('Replay from here'));
+assert.ok(client.includes('Close bookmark review'));
+assert.ok(client.includes('aria-live'));
 assert.ok(client.includes('slice(0, 2)'));
 assert.ok(!client.includes('Math.random'));
 assert.ok(!client.includes('createAction'));

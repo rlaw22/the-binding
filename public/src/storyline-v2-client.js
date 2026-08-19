@@ -75,6 +75,7 @@
     container.textContent = '';
     container.classList.add('storyline-v2-journal');
     container.setAttribute('aria-label', options.ariaLabel || 'Storyline journal history');
+    container.setAttribute('aria-live', 'polite');
     entries.forEach(function (entry, index) {
       var card = document.createElement('article');
       card.className = 'storyline-v2-journal-entry';
@@ -140,6 +141,12 @@
     container.setAttribute('role', 'dialog');
     container.setAttribute('aria-modal', 'true');
     container.setAttribute('aria-label', 'Bookmark review');
+    var close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'storyline-v2-review-close';
+    close.textContent = 'Close';
+    close.setAttribute('aria-label', 'Close bookmark review');
+    close.addEventListener('click', function () { if (typeof callbacks.onClose === 'function') callbacks.onClose(bookmark); });
     var title = document.createElement('h2');
     title.textContent = bookmark.label || 'Saved page';
     var summary = document.createElement('p');
@@ -150,7 +157,7 @@
     var replay = document.createElement('button');
     replay.type = 'button'; replay.className = 'storyline-v2-replay-action'; replay.textContent = 'Replay from here';
     replay.addEventListener('click', function () { if (typeof callbacks.onReplay === 'function') callbacks.onReplay(bookmark); });
-    container.appendChild(title); container.appendChild(summary); container.appendChild(review); container.appendChild(replay);
+    container.appendChild(close); container.appendChild(title); container.appendChild(summary); container.appendChild(review); container.appendChild(replay);
   };
 
   StorylineV2Client.prototype.renderCatalog = function (container, onAction) {

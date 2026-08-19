@@ -24,6 +24,7 @@
     tools.setAttribute('aria-label', 'Storyline book navigation');
     var rail = document.createElement('div');
     rail.id = 'storyline-v2-bookmarks';
+    var previousFocus = null;
     var historyButton = document.createElement('button');
     historyButton.type = 'button';
     historyButton.className = 'storyline-v2-book-tool-button';
@@ -33,12 +34,14 @@
       var journal = document.getElementById('storyline-v2-journal-panel');
       if (!journal) return;
       var open = !journal.hidden;
+      if (!open) previousFocus = document.activeElement;
       journal.hidden = open;
       historyButton.setAttribute('aria-expanded', String(!open));
       if (!open) {
         journal.setAttribute('aria-live', 'polite');
+        if (typeof root.addMessage === 'function') root.addMessage('system', 'Reading history. Gameplay is paused.');
         journal.focus();
-      }
+      } else if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
     });
     tools.appendChild(historyButton);
     tools.appendChild(rail);
@@ -71,16 +74,24 @@
         if (messages) messages.scrollTop = messages.scrollHeight;
         var journalPanel = document.getElementById('storyline-v2-journal-panel');
         if (journalPanel) journalPanel.hidden = true;
+        var review = document.getElementById('storyline-v2-bookmark-review');
+        if (review) review.hidden = true;
+        if (typeof root.addMessage === 'function') root.addMessage('system', 'Returned to present.');
       },
       onReview: function (bookmark) {
         var review = document.getElementById('storyline-v2-bookmark-review');
         if (!review) return;
+        previousFocus = document.activeElement;
         review.hidden = false;
         root.storylineV2Client.renderBookmarkReview(review, bookmark, {
+          onClose: function () {
+            review.hidden = true;
+            if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+          },
           onHistory: function () {
             review.hidden = true;
             var journalPanel = document.getElementById('storyline-v2-journal-panel');
-            if (journalPanel) journalPanel.hidden = false;
+            if (journalPanel) { journalPanel.hidden = false; journalPanel.focus(); }
           },
           onReplay: function () {
             if (typeof root.addMessage === 'function') root.addMessage('system', 'Replay is an explicit server action and is not enabled in this presentation preview.');

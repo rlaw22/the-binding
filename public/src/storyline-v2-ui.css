@@ -223,6 +223,9 @@
 
 .storyline-v2-bookmark-review h2,
 .storyline-v2-bookmark-review p { margin: 0; }
+.storyline-v2-review-close { justify-self: end; min-height: 40px !important; padding: 6px 10px !important; }
+.storyline-v2-journal-panel[hidden],
+.storyline-v2-bookmark-review-host[hidden] { display: none; }
 .storyline-v2-bookmark-review button {
   min-height: 44px;
   padding: 8px 12px;
