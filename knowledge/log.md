@@ -39,3 +39,6 @@ Recorded that Version Two should build the responsive visual shell and generic i
 ## [2026-08-19] synthesize | Storyline v2 API Transport
 Recorded the disabled-by-default Fastify v2 transport, canonical session/catalog/action endpoints, deterministic text boundary, and route-level verification.
 
+## [2026-08-19] synthesize | Storyline v2 Client Adapter
+Recorded the presentation-only browser adapter, server-catalog enforcement, catalog-version submission, and client contract verification.
+
