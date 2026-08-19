@@ -116,6 +116,40 @@
   .storyline-v2-action-list { margin-top: 16px; }
 }
 
+.storyline-v2-book-tools {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 auto 10px;
+  max-width: 1500px;
+}
+.storyline-v2-book-tool-button {
+  min-height: 44px;
+  padding: 8px 14px;
+  color: var(--binding-gold-bright);
+  border: 1px solid var(--binding-gold);
+  border-radius: 5px;
+  background: #241a10;
+  font: inherit;
+  cursor: pointer;
+}
+.storyline-v2-book-tool-button:hover,
+.storyline-v2-book-tool-button:focus-visible { border-color: var(--binding-gold-bright); outline: 2px solid #fff0b2; outline-offset: 2px; }
+.storyline-v2-journal-panel,
+.storyline-v2-bookmark-review-host {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: min(520px, calc(100vw - 32px));
+  padding: 14px;
+  border: 1px solid var(--binding-gold);
+  border-radius: 6px;
+  background: var(--binding-parchment);
+  box-shadow: 0 14px 34px var(--binding-shadow);
+}
+.storyline-v2-bookmark-review-host { left: auto; right: 0; }
 .storyline-v2-bookmark-rail {
   position: absolute;
   z-index: 3;

@@ -15,9 +15,87 @@
     return 'storyline-v2-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
   }
 
+  function ensureBookPresentation() {
+    var app = document.getElementById('app');
+    if (!app || document.getElementById('storyline-v2-book-tools')) return;
+    var tools = document.createElement('section');
+    tools.id = 'storyline-v2-book-tools';
+    tools.className = 'storyline-v2-book-tools';
+    tools.setAttribute('aria-label', 'Storyline book navigation');
+    var rail = document.createElement('div');
+    rail.id = 'storyline-v2-bookmarks';
+    var historyButton = document.createElement('button');
+    historyButton.type = 'button';
+    historyButton.className = 'storyline-v2-book-tool-button';
+    historyButton.textContent = 'Journal';
+    historyButton.setAttribute('aria-expanded', 'false');
+    historyButton.addEventListener('click', function () {
+      var journal = document.getElementById('storyline-v2-journal-panel');
+      if (!journal) return;
+      var open = !journal.hidden;
+      journal.hidden = open;
+      historyButton.setAttribute('aria-expanded', String(!open));
+      if (!open) {
+        journal.setAttribute('aria-live', 'polite');
+        journal.focus();
+      }
+    });
+    tools.appendChild(historyButton);
+    tools.appendChild(rail);
+    var journal = document.createElement('section');
+    journal.id = 'storyline-v2-journal-panel';
+    journal.className = 'storyline-v2-journal-panel';
+    journal.hidden = true;
+    journal.tabIndex = -1;
+    journal.setAttribute('aria-label', 'Storyline journal history');
+    tools.appendChild(journal);
+    var review = document.createElement('section');
+    review.id = 'storyline-v2-bookmark-review';
+    review.className = 'storyline-v2-bookmark-review-host';
+    review.hidden = true;
+    review.tabIndex = -1;
+    tools.appendChild(review);
+    app.insertBefore(tools, app.firstChild);
+  }
+
+  function renderBookPresentation(snapshot) {
+    if (!root.storylineV2Client || !snapshot) return;
+    ensureBookPresentation();
+    var state = snapshot.state || {};
+    var journal = state.journal && Array.isArray(state.journal.entries) ? state.journal.entries : [];
+    var bookmarks = Array.isArray(state.replayBookmarks) ? state.replayBookmarks : [];
+    root.storylineV2Client.renderBookHistory(document.getElementById('storyline-v2-journal-panel'), journal);
+    root.storylineV2Client.renderBookmarkRail(document.getElementById('storyline-v2-bookmarks'), bookmarks, {
+      onPresent: function () {
+        var messages = document.getElementById('messages');
+        if (messages) messages.scrollTop = messages.scrollHeight;
+        var journalPanel = document.getElementById('storyline-v2-journal-panel');
+        if (journalPanel) journalPanel.hidden = true;
+      },
+      onReview: function (bookmark) {
+        var review = document.getElementById('storyline-v2-bookmark-review');
+        if (!review) return;
+        review.hidden = false;
+        root.storylineV2Client.renderBookmarkReview(review, bookmark, {
+          onHistory: function () {
+            review.hidden = true;
+            var journalPanel = document.getElementById('storyline-v2-journal-panel');
+            if (journalPanel) journalPanel.hidden = false;
+          },
+          onReplay: function () {
+            if (typeof root.addMessage === 'function') root.addMessage('system', 'Replay is an explicit server action and is not enabled in this presentation preview.');
+          }
+        });
+        review.setAttribute('aria-live', 'polite');
+        review.focus();
+      }
+    });
+  }
+
   function render(snapshot) {
     var scene = snapshot && snapshot.catalog;
     if (!scene) return;
+    renderBookPresentation(snapshot);
     var narrative = snapshot.state && snapshot.state.sceneId ? scene.sceneId : '';
     if (narrative && typeof root.addMessage === 'function' && (!root._storylineV2Scene || root._storylineV2Scene !== narrative)) {
       root._storylineV2Scene = narrative;
