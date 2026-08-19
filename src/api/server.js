@@ -174,8 +174,20 @@ async function createServer(options = {}) {
     if (!storylineV2) return reply.status(404).send({ error: 'Storyline v2 is disabled' });
     try {
       const body = request.body || {};
-      if (body.text != null) return storylineV2.submitText({ sessionId: request.params.id, text: body.text, turnId: body.turnId });
-      return storylineV2.submit({ sessionId: request.params.id, actionId: body.actionId, catalogVersion: body.catalogVersion, turnId: body.turnId });
+      if (body.text != null) {
+        const textResult = storylineV2.submitText({ sessionId: request.params.id, text: body.text, turnId: body.turnId });
+        if (textResult.result && textResult.result.rejected) {
+          const status = textResult.result.error === 'STALE_CATALOG' ? 409 : 422;
+          return reply.status(status).send(textResult);
+        }
+        return textResult;
+      }
+      const result = storylineV2.submit({ sessionId: request.params.id, actionId: body.actionId, catalogVersion: body.catalogVersion, turnId: body.turnId });
+      if (result.rejected) {
+        const status = result.error === 'STALE_CATALOG' ? 409 : 422;
+        return reply.status(status).send(result);
+      }
+      return result;
     } catch (error) {
       return reply.status(400).send({ error: error.message });
     }

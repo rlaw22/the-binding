@@ -63,12 +63,14 @@ class StorylineV2Service {
     if (!resolved.state) {
       return {
         ...resolved,
+        rejected: resolved.resultType === 'rejected',
         state: JSON.parse(JSON.stringify(session.state))
       };
     }
     session.state = resolved.state;
     return {
       ...resolved.result,
+      rejected: resolved.result.resultType === 'rejected',
       state: JSON.parse(JSON.stringify(session.state))
     };
   }

@@ -260,11 +260,11 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   // the original catalog version, which is expected to be stale after the
   // first successful resolution.
   if (turnId && state.processedTurns[turnId]) return clone(state.processedTurns[turnId]);
-  if (catalogVersion !== state.catalogVersion) return rejected('STALE_CATALOG', 'That action is no longer available.', state);
+  if (catalogVersion !== state.catalogVersion) return rejected(adventure, 'STALE_CATALOG', 'That action is no longer available.', state);
   const scene = adventure.scenes[state.sceneId];
   const action = scene.actions.find(candidate => candidate.actionId === actionId);
   const catalog = buildCatalog(adventure, state);
-  if (!action || !catalog.actions.some(candidate => candidate.actionId === actionId)) return rejected('ACTION_UNAVAILABLE', 'That action is no longer available.', state);
+  if (!action || !catalog.actions.some(candidate => candidate.actionId === actionId)) return rejected(adventure, 'ACTION_UNAVAILABLE', 'That action is no longer available.', state);
 
   const beforeSceneId = state.sceneId;
   const resolution = action.resolution || {};
@@ -301,8 +301,15 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   return { state, result };
 }
 
-function rejected(code, narrative, state) {
-  return { state: clone(state), result: { responseId: null, turnId: null, sceneId: state.sceneId, sourceSceneId: state.sceneId, actionId: null, contentId: null, resultType: 'rejected', error: code, narrative, stateChanges: null, transition: null, catalog: buildCatalog({ scenes: { [state.sceneId]: { sceneId: state.sceneId, actions: [] } } }, state) } };
+function rejected(adventure, code, narrative, state) {
+  return {
+    state: clone(state),
+    result: {
+      responseId: null, turnId: null, sceneId: state.sceneId, sourceSceneId: state.sceneId,
+      actionId: null, contentId: null, resultType: 'rejected', error: code, narrative,
+      stateChanges: null, transition: null, catalog: buildCatalog(adventure, state)
+    }
+  };
 }
 
 function matchFreeText(text, catalog, definitions) {

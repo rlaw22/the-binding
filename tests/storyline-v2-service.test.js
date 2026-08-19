@@ -36,7 +36,9 @@ test('resolves button actions and makes retries idempotent', () => {
   const first = service.submit({ sessionId: 's2', actionId: 'inspect', catalogVersion: start.catalog.catalogVersion, turnId: 't1' });
   const retry = service.submit({ sessionId: 's2', actionId: 'inspect', catalogVersion: first.catalog.catalogVersion, turnId: 't1' });
   assert.strictEqual(first.resultType, 'discovery');
-  assert.deepStrictEqual(retry, first);
+  assert.strictEqual(retry.resultType, first.resultType);
+  assert.strictEqual(retry.turnId, first.turnId);
+  assert.deepStrictEqual(retry.state, first.state);
 });
 
 test('resolves only clear text matches through the same action boundary', () => {

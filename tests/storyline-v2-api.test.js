@@ -39,6 +39,11 @@ async function main() {
     assert.strictEqual(result.turnId, 'api-turn-1');
     assert.ok(result.catalog);
 
+    response = await app.inject({ method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions', payload: { actionId: start.catalog.actions[0].actionId, catalogVersion: start.catalog.catalogVersion, turnId: 'api-stale-turn' } });
+    assert.strictEqual(response.statusCode, 409);
+    assert.strictEqual(JSON.parse(response.payload).error, 'STALE_CATALOG');
+    assert.ok(JSON.parse(response.payload).catalog.actions.length > 0);
+
     response = await app.inject({ method: 'GET', url: '/api/storyline-v2/sessions/api-v2-test' });
     assert.strictEqual(response.statusCode, 200);
     assert.strictEqual(JSON.parse(response.payload).state.turnNumber, 1);
