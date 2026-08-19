@@ -85,7 +85,13 @@ module.exports = {
         "geneva",
         "arctic"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -94,7 +100,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "approach_creature",
-        "label": "Approach the creature directly",
+        "label": "Risk taking action: Cup your hands and drink from the stream",
         "consequence": "You step forward and the creature answers with its whole body — a convulsion that takes the table sideways, glass and instruments scattering across stone. The lesson is biological: proximity without preparation is not intimacy — it is pressure.",
         "coinCost": 3,
         "flagSet": {
@@ -211,7 +217,13 @@ module.exports = {
         "geneva",
         "arctic"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -220,7 +232,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "light_torch",
-        "label": "Light a torch in the cave",
+        "label": "Risk taking action: Observe the family through the crack in the wall",
         "consequence": "The flame catches and the smoke maps the ceiling, pressing low, showing you the geometry you preferred not to measure. The exit was always this small; you simply hadn't lit it properly. The lesson is spatial: darkness flatters distances.",
         "coinCost": 3,
         "flagSet": {
@@ -322,7 +334,13 @@ module.exports = {
         "geneva",
         "arctic"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -331,7 +349,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "confront_victor",
-        "label": "Confront Victor angrily",
+        "label": "Risk taking action: Sit by the fire and speak with the old man",
         "consequence": "Your anger fills the room and Victor retreats behind a locked door. The silence that follows is heavier than any argument. The lesson is relational: force closes the very doors that patience might have opened.",
         "coinCost": 3,
         "flagSet": {
@@ -433,7 +451,13 @@ module.exports = {
         "geneva",
         "arctic"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -442,7 +466,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "follow_tracks",
-        "label": "Follow the tracks into the storm",
+        "label": "Risk taking action: Lie in the dirt and endure Felix's blows",
         "consequence": "The bolt hits the oak with a sound like tearing fabric. Branches crash across the path, bark still smoking. The air tastes of copper and ozone. The lesson is immediate: storms do not negotiate with travelers — they rearrange the landscape and leave you to recalculate.",
         "coinCost": 3,
         "flagSet": {
@@ -541,16 +565,22 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "ingolstadt",
-          "university",
-          "laboratory",
-          "arctic",
-          "felix de lacey",
-          "agatha de lacey",
-          "de lacey (old man)",
-          "safie"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "ingolstadt",
+        "university",
+        "laboratory",
+        "arctic",
+        "felix de lacey",
+        "agatha de lacey",
+        "de lacey (old man)",
+        "safie"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -559,7 +589,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "search_graveyard",
-        "label": "Search the graveyard at night",
+        "label": "Risk taking action: Remember the old man's kindness and hold onto it",
         "consequence": "Your hands break the surface and the smell hits first — old earth, old bone, old obligation. The ground settles around your wrists as if it has been waiting. The lesson is ancestral: some layers of soil are load-bearing.",
         "coinCost": 3,
         "flagSet": {

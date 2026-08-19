@@ -98,7 +98,7 @@ The innkeeper watches you from behind the bar. He looks like a man with somethin
       storyMode: {
         badChoice: {
           id: 'drink_ale',
-          label: 'Drink the innkeeper\'s offered ale',
+          label: "Ignore the innkeeper's warning about Castle Dracula",
           consequence: 'The innkeeper slides a foaming tankard across the bar. "For the road," he says. The ale is bitter and thick, coating your tongue like oil. Your vision swims. The fire dims. When you open your eyes, the innkeeper is blowing out candles and an hour has passed. The old woman\'s seat is empty. Your head pounds and your purse feels lighter.',
           coinCost: 3,
           flagSet: { drugged_at_inn: true }

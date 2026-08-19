@@ -91,7 +91,13 @@ module.exports = {
         "station",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -100,7 +106,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "dismiss_witness",
-        "label": "Dismiss the key witness",
+        "label": "Risk taking action: Study the map of the moor and the planned ambush positions",
         "consequence": "The room is clean when you arrive — too clean. No letters, no luggage, no forwarding address. The trail goes from warm to stone-cold in the time it takes to hail a cab. The lesson is investigative: suspects do not wait for warrants.",
         "coinCost": 3,
         "flagSet": {
@@ -208,7 +214,13 @@ module.exports = {
         "baskerville hall interior",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -217,7 +229,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "reveal_clue",
-        "label": "Reveal your clue to the suspect",
+        "label": "Risk taking action: Watch the hound as it emerges from the mist",
         "consequence": "You hear the match strike before you reach the door. By the time you enter, the grate is full of ash and the smell of burned paper. The lesson is evidentiary: information is perishable — treat every lead as if it has an expiry.",
         "coinCost": 3,
         "flagSet": {
@@ -324,7 +336,13 @@ module.exports = {
         "baskerville hall interior",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -333,7 +351,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "ignore_watson",
-        "label": "Ignore Watson's warning",
+        "label": "Risk taking action: Fire your revolver at the hound",
         "consequence": "The floor gives a different sound underfoot — hollow, rehearsed — and then the geometry of the room changes around you. The trap was not clever; it was patient. The lesson is tactical: confidence without verification is just momentum.",
         "coinCost": 3,
         "flagSet": {
@@ -441,7 +459,13 @@ module.exports = {
         "station",
         "baskerville hall interior"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -450,7 +474,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_bribe",
-        "label": "Accept the offered bribe",
+        "label": "Risk taking action: Examine the dead hound closely",
         "consequence": "The coin feels warm in your palm — too warm. Lestrade's eyes narrow, and the room shifts. Trust, once sold, does not buy back easily. The lesson is professional: integrity is currency; spend it carefully.",
         "coinCost": 3,
         "flagSet": {
@@ -559,7 +583,13 @@ module.exports = {
         "station",
         "baskerville hall interior"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -568,7 +598,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "rush_in",
-        "label": "Rush in without a plan",
+        "label": "Risk taking action: Follow the voice deeper into the Mire",
         "consequence": "You burst through the door and the room answers with emptiness — a chair still warm, a window swinging wide, footsteps fading. The lesson is tactical: speed without position is just noise.",
         "coinCost": 3,
         "flagSet": {

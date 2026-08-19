@@ -94,7 +94,13 @@ module.exports = {
         "mire",
         "stone circle"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -103,7 +109,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "search_without_warrant",
-        "label": "Search without proper authority",
+        "label": "Risk taking action: Study the portraits of the Baskerville family",
         "consequence": "The folder opens and the paper inside is technically correct — and practically useless. Procedure was not followed; the chain of custody has a gap the width of a courtroom. The lesson is procedural: evidence without process is just paper.",
         "coinCost": 3,
         "flagSet": {
@@ -210,7 +216,13 @@ module.exports = {
         "mire",
         "stone circle"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -219,7 +231,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "confront_alone",
-        "label": "Confront the criminal alone",
+        "label": "Risk taking action: Watch Barrymore signal from the window",
         "consequence": "The metal appears before you finish your sentence — fast, practised, the hand of someone who has done this before. The room contracts to the space between you and the blade. The lesson is situational: pressure applied without preparation invites escalation.",
         "coinCost": 3,
         "flagSet": {
@@ -323,7 +335,13 @@ module.exports = {
         "baskerville hall interior",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -332,7 +350,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "dismiss_witness",
-        "label": "Dismiss the key witness",
+        "label": "Risk taking action: Stand still and listen to the howl",
         "consequence": "The room is clean when you arrive — too clean. No letters, no luggage, no forwarding address. The trail goes from warm to stone-cold in the time it takes to hail a cab. The lesson is investigative: suspects do not wait for warrants.",
         "coinCost": 3,
         "flagSet": {
@@ -439,7 +457,13 @@ module.exports = {
         "mire deep",
         "stone circle"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -448,7 +472,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "reveal_clue",
-        "label": "Reveal your clue to the suspect",
+        "label": "Risk taking action: Speak with Stapleton about the moor",
         "consequence": "You hear the match strike before you reach the door. By the time you enter, the grate is full of ash and the smell of burned paper. The lesson is evidentiary: information is perishable — treat every lead as if it has an expiry.",
         "coinCost": 3,
         "flagSet": {
@@ -554,7 +578,13 @@ module.exports = {
         "baskerville hall interior",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -563,7 +593,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "ignore_watson",
-        "label": "Ignore Watson's warning",
+        "label": "Risk taking action: Chase Selden across the moor",
         "consequence": "The floor gives a different sound underfoot — hollow, rehearsed — and then the geometry of the room changes around you. The trap was not clever; it was patient. The lesson is tactical: confidence without verification is just momentum.",
         "coinCost": 3,
         "flagSet": {

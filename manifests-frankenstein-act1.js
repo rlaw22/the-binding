@@ -103,7 +103,13 @@ module.exports = {
         "arctic",
         "orkney"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -217,7 +223,13 @@ module.exports = {
         "arctic",
         "orkney"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -226,7 +238,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_notes",
-        "label": "Take Victor's private notes",
+        "label": "Steal Waldman's private lecture notes",
         "consequence": "The pages are light in your hands — until they are not. The ink smears, the fibers part, and the knowledge collapses into dry dust. The lesson is practical: research kept private often survives in a form that theft cannot preserve.",
         "coinCost": 3,
         "flagSet": {
@@ -340,16 +352,22 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "geneva",
-          "frankenstein home",
-          "laboratory",
-          "arctic",
-          "orkney",
-          "elizabeth",
-          "caroline frankenstein",
-          "alphonse frankenstein"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "geneva",
+        "frankenstein home",
+        "laboratory",
+        "arctic",
+        "orkney",
+        "elizabeth",
+        "caroline frankenstein",
+        "alphonse frankenstein"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -358,7 +376,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "approach_creature",
-        "label": "Approach the creature directly",
+        "label": "Approach the creature directly — at the scene of scene_02",
         "consequence": "You step in too fast and the space around it collapses into motion. Glass and wood go sideways, and the room reasserts itself louder than you intended. The lesson is plain: proximity without preparation is pressure, not care.",
         "coinCost": 3,
         "flagSet": {
@@ -456,17 +474,23 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "geneva",
-          "frankenstein home",
-          "charnel house",
-          "arctic",
-          "orkney",
-          "elizabeth",
-          "caroline frankenstein",
-          "alphonse frankenstein",
-          "professor krempe"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "geneva",
+        "frankenstein home",
+        "charnel house",
+        "arctic",
+        "orkney",
+        "elizabeth",
+        "caroline frankenstein",
+        "alphonse frankenstein",
+        "professor krempe"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -475,7 +499,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "light_torch",
-        "label": "Light a torch in the cave",
+        "label": "Light a torch in the cave — at the scene of scene_03",
         "consequence": "The flame catches and the space answers: smoke hugs the ceiling, the walls close in, and the exit looks smaller than it did in the dark. The lesson is useful — light clarifies, but it also confines.",
         "coinCost": 3,
         "flagSet": {
@@ -589,17 +613,23 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "geneva",
-          "frankenstein home",
-          "charnel house",
-          "arctic",
-          "orkney",
-          "elizabeth",
-          "caroline frankenstein",
-          "alphonse frankenstein",
-          "professor krempe"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "geneva",
+        "frankenstein home",
+        "charnel house",
+        "arctic",
+        "orkney",
+        "elizabeth",
+        "caroline frankenstein",
+        "alphonse frankenstein",
+        "professor krempe"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -608,7 +638,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "confront_victor",
-        "label": "Confront Victor angrily",
+        "label": "Confront Victor angrily — at the scene of scene_04",
         "consequence": "Your anger fills the room and Victor retreats behind a locked door. The silence that follows is heavier than any argument. The lesson is relational: force closes the very doors that patience might have opened.",
         "coinCost": 3,
         "flagSet": {

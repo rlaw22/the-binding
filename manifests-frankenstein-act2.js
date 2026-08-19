@@ -96,22 +96,28 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "ingolstadt",
-          "university",
-          "lecture hall",
-          "cemetery",
-          "charnel house",
-          "de lacey cottage",
-          "geneva",
-          "arctic",
-          "frankenstein home",
-          "elizabeth",
-          "caroline frankenstein",
-          "alphonse frankenstein",
-          "professor waldman",
-          "professor krempe"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "ingolstadt",
+        "university",
+        "lecture hall",
+        "cemetery",
+        "charnel house",
+        "de lacey cottage",
+        "geneva",
+        "arctic",
+        "frankenstein home",
+        "elizabeth",
+        "caroline frankenstein",
+        "alphonse frankenstein",
+        "professor waldman",
+        "professor krempe"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -120,7 +126,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "follow_tracks",
-        "label": "Follow the tracks into the storm",
+        "label": "Risk taking action: Study the creature now that it is alive",
         "consequence": "The bolt hits the oak with a sound like tearing fabric. Branches crash across the path, bark still smoking. The air tastes of copper and ozone. The lesson is immediate: storms do not negotiate with travelers — they rearrange the landscape and leave you to recalculate.",
         "coinCost": 3,
         "flagSet": {
@@ -226,7 +232,13 @@ module.exports = {
         "geneva",
         "arctic"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -235,7 +247,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "search_graveyard",
-        "label": "Search the graveyard at night",
+        "label": "Risk taking action: Step forward and try to calm the creature",
         "consequence": "Your hands break the surface and the smell hits first — old earth, old bone, old obligation. The ground settles around your wrists as if it has been waiting. The lesson is ancestral: some layers of soil are load-bearing.",
         "coinCost": 3,
         "flagSet": {
@@ -332,15 +344,21 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "laboratory",
-          "cemetery",
-          "charnel house",
-          "de lacey cottage",
-          "geneva",
-          "arctic",
-          "the creature"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "laboratory",
+        "cemetery",
+        "charnel house",
+        "de lacey cottage",
+        "geneva",
+        "arctic",
+        "the creature"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -349,7 +367,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "accept_help",
-        "label": "Accept help from the suspicious villager",
+        "label": "Risk taking action: Try to tell Clerval what you have done",
         "consequence": "The corridor narrows, the footsteps ahead quicken, and then the space opens wrong — too wide, too silent, with exits that belong to other people. The lesson is social: trust offered too cheaply is often a transaction you haven't priced yet.",
         "coinCost": 3,
         "flagSet": {
@@ -445,15 +463,21 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "cemetery",
-          "charnel house",
-          "de lacey cottage",
-          "geneva",
-          "arctic",
-          "the creature",
-          "henry clerval"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "cemetery",
+        "charnel house",
+        "de lacey cottage",
+        "geneva",
+        "arctic",
+        "the creature",
+        "henry clerval"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -462,7 +486,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "enter_lab",
-        "label": "Enter the forbidden laboratory",
+        "label": "Risk taking action: Take the key and walk to the laboratory",
         "consequence": "The latch speaks once — a clean mechanical syllable — and the room becomes a decision you cannot unmake. The air cools. The walls listen. The lesson is architectural: a door that lets you in is not always a door that lets you out.",
         "coinCost": 3,
         "flagSet": {
@@ -560,14 +584,20 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "laboratory",
-          "cemetery",
-          "charnel house",
-          "de lacey cottage",
-          "arctic",
-          "the creature"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "laboratory",
+        "cemetery",
+        "charnel house",
+        "de lacey cottage",
+        "arctic",
+        "the creature"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -576,7 +606,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_notes",
-        "label": "Take Victor's private notes",
+        "label": "Risk taking action: Read the letter again, searching for details",
         "consequence": "The paper gives between your fingers — fibers parting, ink scattering like startled insects. In seconds you hold nothing but fine powder and the shape of lost knowledge. The lesson is material: information preserved in fragile media is already negotiating with time.",
         "coinCost": 3,
         "flagSet": {

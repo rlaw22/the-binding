@@ -88,7 +88,13 @@ module.exports = {
         "train",
         "station"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -97,7 +103,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "reveal_clue",
-        "label": "Reveal your clue to the suspect",
+        "label": "Accuse Dr. Mortimer without proof",
         "consequence": "You show more than you mean to. The room warms, the smile stiffens, and by the time you reach the desk the thing you needed is already gone. The lesson is procedural: disclosure is leverage; spend it late.",
         "coinCost": 3,
         "flagSet": {
@@ -206,7 +212,13 @@ module.exports = {
         "train",
         "station"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -215,7 +227,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "ignore_watson",
-        "label": "Ignore Watson's warning",
+        "label": "Dismiss Mortimer's manuscript warning",
         "consequence": "You take the route anyway and the floor answers with wrong sound — boards too new, walls too close. The trap is not clever; it is patient. The lesson is operational: a partner's caution is data, not commentary.",
         "coinCost": 3,
         "flagSet": {
@@ -324,7 +336,13 @@ module.exports = {
         "train",
         "station"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -333,7 +351,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_bribe",
-        "label": "Accept the offered bribe",
+        "label": "Accept Sir Henry's bribe",
         "consequence": "The coin feels warm in your palm — too warm. Lestrade's eyes narrow, and the room shifts. Trust, once sold, does not buy back easily. The lesson is professional: integrity is currency; spend it carefully.",
         "coinCost": 3,
         "flagSet": {
@@ -445,7 +463,13 @@ module.exports = {
         "train",
         "station"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -454,7 +478,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "rush_in",
-        "label": "Rush in without a plan",
+        "label": "Rush in without a plan — at the scene of scene_03",
         "consequence": "You burst through the door and the room answers with emptiness — a chair still warm, a window swinging wide, footsteps fading. The lesson is tactical: speed without position is just noise.",
         "coinCost": 3,
         "flagSet": {
@@ -567,7 +591,13 @@ module.exports = {
         "mire",
         "stone circle"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -576,7 +606,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "trust_alibi",
-        "label": "Trust the alibi without checking",
+        "label": "Ignore Holmes's departure instructions",
         "consequence": "The story holds — until it doesn't. Later, a single detail turns wrong, and the whole structure collapses into contradiction. The lesson is investigative: trust is earned by verification, not by plausibility.",
         "coinCost": 3,
         "flagSet": {

@@ -15,7 +15,9 @@ module.exports = {
           "ask",
           "wound",
           "tell"
-        ], "outcome": "positive", "discovery": "Mina's hand trembles at her collar. Slowly, deliberately, she unfastens the top button and pulls the fabric aside. Two puncture wounds, red and inflamed, sit over the jugular — the same placement, the same terrible precision as Lucy's. 'He comes at night,' she whispers. 'I cannot see him clearly. But I feel his breath. I feel his teeth. And the worst part —' She closes her eyes. 'The worst part is that part of me does not want him to stop.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Mina's hand trembles at her collar. Slowly, deliberately, she unfastens the top button and pulls the fabric aside. Two puncture wounds, red and inflamed, sit over the jugular — the same placement, the same terrible precision as Lucy's. 'He comes at night,' she whispers. 'I cannot see him clearly. But I feel his breath. I feel his teeth. And the worst part —' She closes her eyes. 'The worst part is that part of me does not want him to stop.'"
       },
       {
         "id": "ask_about_dracula_visits",
@@ -28,7 +30,9 @@ module.exports = {
           "remember",
           "dream",
           "sleep"
-        ], "outcome": "positive", "discovery": "Mina sits back down, her composure cracking. 'I cannot always tell if I am awake or dreaming. He appears as mist first — seeping through the window frame, through the keyhole, through cracks I cannot see. Then he solidifies. He is beautiful. Terrible. He speaks to me in a language I should not understand but do. He says I will be his queen. That we will rule the night together for centuries.' She wipes her eyes. 'Last night he made me drink. From his chest. I fought, but my body would not obey me.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Mina sits back down, her composure cracking. 'I cannot always tell if I am awake or dreaming. He appears as mist first — seeping through the window frame, through the keyhole, through cracks I cannot see. Then he solidifies. He is beautiful. Terrible. He speaks to me in a language I should not understand but do. He says I will be his queen. That we will rule the night together for centuries.' She wipes her eyes. 'Last night he made me drink. From his chest. I fought, but my body would not obey me.'"
       },
       {
         "id": "examine_window_and_sill",
@@ -41,7 +45,9 @@ module.exports = {
           "check",
           "inspect",
           "open"
-        ], "outcome": "positive", "discovery": "The window latch is bent outward — forced from outside with inhuman care. The sill is scratched with long grooves, as if claws gripped it. The crucifix you find face-down on the sill is warm to the touch — almost hot — and its surface is tarnished black, as if corroded by an unseen acid. Van Helsing examines it and crosses himself. 'He has been here many times. And he grows bolder. The crucifix repels him, but each night it weakens.'"
+        ],
+        "outcome": "positive",
+        "discovery": "The window latch is bent outward — forced from outside with inhuman care. The sill is scratched with long grooves, as if claws gripped it. The crucifix you find face-down on the sill is warm to the touch — almost hot — and its surface is tarnished black, as if corroded by an unseen acid. Van Helsing examines it and crosses himself. 'He has been here many times. And he grows bolder. The crucifix repels him, but each night it weakens.'"
       },
       {
         "id": "talk_to_van_helsing_plan",
@@ -54,23 +60,24 @@ module.exports = {
           "talk",
           "strategy",
           "what"
-        ], "outcome": "positive", "discovery": "Van Helsing draws you to the landing, out of Mina's earshot. His face is grim. 'She is further along than Lucy ever was. The forced feeding — the blood exchange — it creates a bond. A psychic bond. She can feel him. And he can feel her.' He grips your arm. 'We must move her tonight. Somewhere sacred. A church, perhaps. And we must begin the rituals — garlic, holy water, the Eucharist. We slow the transformation while we find and destroy him. Carfax Abbey. The earth boxes. That is where we strike.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing draws you to the landing, out of Mina's earshot. His face is grim. 'She is further along than Lucy ever was. The forced feeding — the blood exchange — it creates a bond. A psychic bond. She can feel him. And he can feel her.' He grips your arm. 'We must move her tonight. Somewhere sacred. A church, perhaps. And we must begin the rituals — garlic, holy water, the Eucharist. We slow the transformation while we find and destroy him. Carfax Abbey. The earth boxes. That is where we strike.'"
+      },
+      {
         "id": "search_renfield_room",
         "label": "Search Renfield's room for hidden objects",
         "keywords": [
-                "search",
-                "renfield",
-                "room",
-                "hidden",
-                "objects"
+          "search",
+          "renfield",
+          "room",
+          "hidden",
+          "objects"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_mina_lodgings",
     "exitLabel": "Move Mina to safety",
     "hardExitNarration": "Mina takes Jonathan's journal from your hands and clutches it to her chest. 'If I become what Lucy became,' she says, 'you must promise me you will do what must be done. Promise me.' Van Helsing puts his hand on her shoulder. 'We will save you, dear lady. But we must go. Now. Before the sun finishes setting.'",
@@ -107,7 +114,13 @@ module.exports = {
         "transylvania",
         "the forbidden wing"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -116,7 +129,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "drink_offered",
-        "label": "Drink the offered wine",
+        "label": "Risk taking action: Ask Mina about the marks on her throat",
         "consequence": "The world softens at the edges, then at the centre. Your legs negotiate with gravity and lose. The lesson is pharmacological: what you swallow in the dark rarely agrees with what it promised in the light.",
         "coinCost": 3,
         "flagSet": {
@@ -147,7 +160,9 @@ module.exports = {
           "marks",
           "throat",
           "check"
-        ], "outcome": "positive", "discovery": "You kneel beside the cot. Mina's skin is cold — not the cold of death but the cold of deep water. The bite marks have sealed into two small scars, silver-white, that pulse faintly when you look at them. As you watch, Mina's lips move. 'The boxes,' she whispers. 'He sleeps in the boxes. The soil from home. He cannot rest without it.' Her eyes snap open — amber, inhuman. 'He is afraid. He knows you are coming.' Then she blinks and her eyes are brown again, and she does not remember what she said."
+        ],
+        "outcome": "positive",
+        "discovery": "You kneel beside the cot. Mina's skin is cold — not the cold of death but the cold of deep water. The bite marks have sealed into two small scars, silver-white, that pulse faintly when you look at them. As you watch, Mina's lips move. 'The boxes,' she whispers. 'He sleeps in the boxes. The soil from home. He cannot rest without it.' Her eyes snap open — amber, inhuman. 'He is afraid. He knows you are coming.' Then she blinks and her eyes are brown again, and she does not remember what she said."
       },
       {
         "id": "ask_van_helsing_ritual",
@@ -160,7 +175,9 @@ module.exports = {
           "transformation",
           "cure",
           "help"
-        ], "outcome": "positive", "discovery": "Van Helsing lays out his materials on a cloth: communion wafers, a vial of holy water from the Vatican, garlic bulbs, and a small silver knife. 'The wafer burns the unclean flesh. The holy water purifies the blood. Garlic drives the darkness from the body. But these are treatments, not cures. The only cure is to destroy the source — the vampire who made her.' He looks at you with haunted eyes. 'We have days. Perhaps less. When the transformation is complete, she will be like the sisters in Harker's account. Beautiful. Hungry. And gone forever.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing lays out his materials on a cloth: communion wafers, a vial of holy water from the Vatican, garlic bulbs, and a small silver knife. 'The wafer burns the unclean flesh. The holy water purifies the blood. Garlic drives the darkness from the body. But these are treatments, not cures. The only cure is to destroy the source — the vampire who made her.' He looks at you with haunted eyes. 'We have days. Perhaps less. When the transformation is complete, she will be like the sisters in Harker's account. Beautiful. Hungry. And gone forever.'"
       },
       {
         "id": "ask_seward_medical",
@@ -173,7 +190,9 @@ module.exports = {
           "transfusion",
           "doctor",
           "help"
-        ], "outcome": "positive", "discovery": "Seward opens his bag with shaking hands. 'I can try a blood transfusion. Replacing her blood with healthy blood may slow the — the corruption.' He looks at Van Helsing, who nods slowly. 'From me,' Seward says. 'Take mine.' The procedure is grim and intimate — Seward's blood flowing through a rubber tube into Mina's arm. For a moment, color returns to her cheeks. Then it fades again. 'It helps,' Van Helsing says. 'But it is not enough. We need to strike at the heart.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Seward opens his bag with shaking hands. 'I can try a blood transfusion. Replacing her blood with healthy blood may slow the — the corruption.' He looks at Van Helsing, who nods slowly. 'From me,' Seward says. 'Take mine.' The procedure is grim and intimate — Seward's blood flowing through a rubber tube into Mina's arm. For a moment, color returns to her cheeks. Then it fades again. 'It helps,' Van Helsing says. 'But it is not enough. We need to strike at the heart.'"
       },
       {
         "id": "plan_carfax_assault",
@@ -186,37 +205,38 @@ module.exports = {
           "attack",
           "earth boxes",
           "strategy"
-        ], "outcome": "positive", "discovery": "Van Helsing spreads Harker's map on the table. 'Carfax Abbey. The earth boxes are in the cellar — Harker saw them loaded for shipment. There are fifty of them, filled with Transylvanian soil. Each one must be found, opened, and filled with holy wafers. Without his native earth, the Count cannot rest during the day. Without rest, he is vulnerable.' He draws a rough floor plan. 'But he has servants. Szgany — Romanian gypsies loyal to him. They guard the abbey at night. And the Count himself may be there.' He meets your eyes. 'We go at dawn. When he is weakest.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing spreads Harker's map on the table. 'Carfax Abbey. The earth boxes are in the cellar — Harker saw them loaded for shipment. There are fifty of them, filled with Transylvanian soil. Each one must be found, opened, and filled with holy wafers. Without his native earth, the Count cannot rest during the day. Without rest, he is vulnerable.' He draws a rough floor plan. 'But he has servants. Szgany — Romanian gypsies loyal to him. They guard the abbey at night. And the Count himself may be there.' He meets your eyes. 'We go at dawn. When he is weakest.'"
+      },
+      {
         "id": "examine_carfax_exterior",
         "label": "Study the outer walls of Carfax Abbey",
         "keywords": [
-                "examine",
-                "carfax",
-                "exterior",
-                "walls",
-                "abbey",
-                "outside"
+          "examine",
+          "carfax",
+          "exterior",
+          "walls",
+          "abbey",
+          "outside"
         ],
         "outcome": "empty",
         "discovery": null
-},
-{
+      },
+      {
         "id": "check_abbey_chapel",
         "label": "Peer into the sealed chapel",
         "keywords": [
-                "check",
-                "chapel",
-                "sealed",
-                "peer",
-                "abbey"
+          "check",
+          "chapel",
+          "sealed",
+          "peer",
+          "abbey"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_safe_house",
     "exitLabel": "Rest before the assault on Carfax",
     "hardExitNarration": "Van Helsing takes the first watch. Seward sleeps fitfully in a chair. Mina lies still, the communion wafer on her forehead glowing faintly in the dark. Outside, the rain has stopped. The clouds part and moonlight spills through a crack in the shutters, falling across Mina's face. For a moment — just a moment — she smiles in her sleep, and the smile is not hers.",
@@ -256,7 +276,13 @@ module.exports = {
         "the forbidden wing",
         "minas lodgings"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -265,7 +291,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "open_coffin",
-        "label": "Open the coffin",
+        "label": "Risk taking action: Examine Mina's condition and the bite marks closely",
         "consequence": "The grip is cold and precise — fingers like carved stone closing over the pulse point. Your wrist remembers the shape before your mind does. The lesson is cautionary: coffins are furniture for the occupant, not invitations for the visitor.",
         "coinCost": 3,
         "flagSet": {
@@ -296,7 +322,9 @@ module.exports = {
           "servants",
           "ward",
           "push"
-        ], "outcome": "positive", "discovery": "You thrust the crucifix forward and the Szgany recoil — but not as a vampire would. They are human. The crucifix's power over them is fear, not holy force. They mutter in a language you do not understand. One, bolder than the rest, steps forward and spits at the ground. 'Nozferatu,' he hisses. 'Master sleep. You go. Now.' Van Helsing speaks to him in rapid Romanian. The man's eyes widen. He says one word — 'Vanatorul' — the hunter — and the Szgany part like water, melting into the shadows of the nave. They do not leave. They wait."
+        ],
+        "outcome": "positive",
+        "discovery": "You thrust the crucifix forward and the Szgany recoil — but not as a vampire would. They are human. The crucifix's power over them is fear, not holy force. They mutter in a language you do not understand. One, bolder than the rest, steps forward and spits at the ground. 'Nozferatu,' he hisses. 'Master sleep. You go. Now.' Van Helsing speaks to him in rapid Romanian. The man's eyes widen. He says one word — 'Vanatorul' — the hunter — and the Szgany part like water, melting into the shadows of the nave. They do not leave. They wait."
       },
       {
         "id": "descend_to_cellar",
@@ -309,7 +337,9 @@ module.exports = {
           "chapel",
           "descend",
           "below"
-        ], "outcome": "positive", "discovery": "Behind the ruined altar, a stone staircase spirals downward into perfect darkness. The air rising from below is warm and damp and smells of turned earth — the same smell from the forbidden wing of Castle Dracula. Your candle gutters in a draft that comes from nowhere and everywhere. The stairs are worn smooth by centuries of feet and something else — something dragged. Heavy, rectangular. The earth boxes. You count twenty-three steps before the staircase opens into a low, vaulted chamber. And there they are."
+        ],
+        "outcome": "positive",
+        "discovery": "Behind the ruined altar, a stone staircase spirals downward into perfect darkness. The air rising from below is warm and damp and smells of turned earth — the same smell from the forbidden wing of Castle Dracula. Your candle gutters in a draft that comes from nowhere and everywhere. The stairs are worn smooth by centuries of feet and something else — something dragged. Heavy, rectangular. The earth boxes. You count twenty-three steps before the staircase opens into a low, vaulted chamber. And there they are."
       },
       {
         "id": "destroy_earth_boxes",
@@ -322,7 +352,9 @@ module.exports = {
           "wafer",
           "holy",
           "soil"
-        ], "outcome": "positive", "discovery": "The boxes are crude — wooden crates, each six feet long, packed with dark, rich Transylvanian soil. There are fifty of them, stacked two deep along the walls. You pry open the nearest and the stench hits you — not rot, but something vital, alive, wrong. The soil moves. Not much — a tremor, a settling — as if something beneath the surface shifts in its sleep. You drop a communion wafer into the box and the soil screams. A high, thin sound, like a tuning fork struck against bone. The soil blackens and goes still. Van Helsing begins working the other end of the chamber. 'Quickly,' he hisses. 'He will feel each one.'"
+        ],
+        "outcome": "positive",
+        "discovery": "The boxes are crude — wooden crates, each six feet long, packed with dark, rich Transylvanian soil. There are fifty of them, stacked two deep along the walls. You pry open the nearest and the stench hits you — not rot, but something vital, alive, wrong. The soil moves. Not much — a tremor, a settling — as if something beneath the surface shifts in its sleep. You drop a communion wafer into the box and the soil screams. A high, thin sound, like a tuning fork struck against bone. The soil blackens and goes still. Van Helsing begins working the other end of the chamber. 'Quickly,' he hisses. 'He will feel each one.'"
       },
       {
         "id": "search_for_dracula",
@@ -335,23 +367,24 @@ module.exports = {
           "chamber",
           "signs",
           "look"
-        ], "outcome": "positive", "discovery": "In the far corner, set apart from the others, is a single coffin — not a crate but a genuine coffin, ornate, draped in rotting velvet. The lid is sealed with iron clasps. You approach and press your ear to the wood. Nothing. The coffin is empty. But inside, the earth is warm. Body-warm. And pressed into the soil, the impression of a body — broad shoulders, long limbs. He was here. Recently. And he will return. Scratched into the inner lid, in a hand you recognize from the castle, two words: 'SHE IS MINE.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "In the far corner, set apart from the others, is a single coffin — not a crate but a genuine coffin, ornate, draped in rotting velvet. The lid is sealed with iron clasps. You approach and press your ear to the wood. Nothing. The coffin is empty. But inside, the earth is warm. Body-warm. And pressed into the soil, the impression of a body — broad shoulders, long limbs. He was here. Recently. And he will return. Scratched into the inner lid, in a hand you recognize from the castle, two words: 'SHE IS MINE.'"
+      },
+      {
         "id": "search_earth_boxes",
         "label": "Search the cellar for more earth boxes",
         "keywords": [
-                "search",
-                "earth",
-                "boxes",
-                "cellar",
-                "more"
+          "search",
+          "earth",
+          "boxes",
+          "cellar",
+          "more"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_carfax",
     "exitLabel": "Destroy the earth boxes and flee",
     "hardExitNarration": "You have destroyed thirty-seven of the fifty boxes when Van Helsing grabs your arm. 'Enough. Dawn is ending. He will rise soon, and he will come here first.' The soil screams as you drop the last wafer. The sound echoes through the abbey. Above you, the Szgany are running — fleeing through the nave and out the broken doors. They know what is coming. You run too.",
@@ -394,7 +427,13 @@ module.exports = {
         "minas lodgings",
         "bermondsey safe house"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -403,7 +442,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "ignore_warnings",
-        "label": "Ignore the villagers' warnings",
+        "label": "Risk taking action: Hold up the crucifix and advance toward the Szgany",
         "consequence": "The shapes move without sound — grey bodies slotting between trees, eyes catching light that isn't there. The road narrows to the width of teeth. The lesson is geographical: territory belongs to those who already occupy it.",
         "coinCost": 3,
         "flagSet": {
@@ -435,7 +474,9 @@ module.exports = {
           "wolf",
           "defend",
           "protect"
-        ], "outcome": "positive", "discovery": "You hurl the last of the holy water at the doorway and the wolf screams — a sound no animal should make — as the water burns through its flesh like acid. It retreats, dragging a melted leg. But there are more. Van Helsing pushes a wardrobe against the door. 'He is toying with us! This is not an attack — it is a message. He wants us to know he can reach us anywhere.' Through the shattered window, you see the wolves circling the building, their red eyes gleaming in the lightning."
+        ],
+        "outcome": "positive",
+        "discovery": "You hurl the last of the holy water at the doorway and the wolf screams — a sound no animal should make — as the water burns through its flesh like acid. It retreats, dragging a melted leg. But there are more. Van Helsing pushes a wardrobe against the door. 'He is toying with us! This is not an attack — it is a message. He wants us to know he can reach us anywhere.' Through the shattered window, you see the wolves circling the building, their red eyes gleaming in the lightning."
       },
       {
         "id": "read_dracula_note",
@@ -448,7 +489,9 @@ module.exports = {
           "clue",
           "whitby",
           "message"
-        ], "outcome": "positive", "discovery": "You read the note again. Whitby. The port town on the Yorkshire coast — where the Demeter ran aground carrying Dracula's earth boxes from Varna. Van Helsing's face drains of color. 'He has taken her to the source. Where his ship landed. Where his English campaign began.' He grips the note. 'There is a monastery ruin near Whitby. Holy ground. If he has taken her there, it is a mockery — turning sacred earth into his domain. We must go. Tonight.'"
+        ],
+        "outcome": "positive",
+        "discovery": "You read the note again. Whitby. The port town on the Yorkshire coast — where the Demeter ran aground carrying Dracula's earth boxes from Varna. Van Helsing's face drains of color. 'He has taken her to the source. Where his ship landed. Where his English campaign began.' He grips the note. 'There is a monastery ruin near Whitby. Holy ground. If he has taken her there, it is a mockery — turning sacred earth into his domain. We must go. Tonight.'"
       },
       {
         "id": "search_for_mina_trail",
@@ -461,7 +504,9 @@ module.exports = {
           "trail",
           "drag",
           "taken"
-        ], "outcome": "positive", "discovery": "The cot sheets are twisted and torn. Mina fought. Scratch marks on the floorboards lead to the window — she was dragged. But near the window, the marks stop. No blood. No broken glass. She was carried — lifted through the shattered window as if she weighed nothing. On the windowsill, you find a single lock of her dark hair, still warm. And pressed into the wood, the imprint of hands — large, strong, inhuman — with fingers too long and nails too sharp. He did not break in. He called, and she walked to the window. And then he took her."
+        ],
+        "outcome": "positive",
+        "discovery": "The cot sheets are twisted and torn. Mina fought. Scratch marks on the floorboards lead to the window — she was dragged. But near the window, the marks stop. No blood. No broken glass. She was carried — lifted through the shattered window as if she weighed nothing. On the windowsill, you find a single lock of her dark hair, still warm. And pressed into the wood, the imprint of hands — large, strong, inhuman — with fingers too long and nails too sharp. He did not break in. He called, and she walked to the window. And then he took her."
       },
       {
         "id": "console_seward",
@@ -474,37 +519,38 @@ module.exports = {
           "console",
           "restrain",
           "grab"
-        ], "outcome": "positive", "discovery": "Seward is at the door, stake in hand, eyes wild. 'She's out there! We have to —' You grab his arm. He struggles, then collapses against you, sobbing. 'I couldn't save Lucy. I couldn't save her.' Van Helsing puts his hand on Seward's shoulder. 'You will save Mina. But not like this. Not by dying in a storm while the Count laughs.' He pulls Seward back from the door. 'We go to Whitby. Together. And we end this.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "Seward is at the door, stake in hand, eyes wild. 'She's out there! We have to —' You grab his arm. He struggles, then collapses against you, sobbing. 'I couldn't save Lucy. I couldn't save her.' Van Helsing puts his hand on Seward's shoulder. 'You will save Mina. But not like this. Not by dying in a storm while the Count laughs.' He pulls Seward back from the door. 'We go to Whitby. Together. And we end this.'"
+      },
+      {
         "id": "examine_mina_room",
         "label": "Examine Mina's room for signs of intrusion",
         "keywords": [
-                "examine",
-                "mina",
-                "room",
-                "signs",
-                "intrusion",
-                "window"
+          "examine",
+          "mina",
+          "room",
+          "signs",
+          "intrusion",
+          "window"
         ],
         "outcome": "empty",
         "discovery": null
-},
-{
+      },
+      {
         "id": "check_mina_journal",
         "label": "Check Mina's journal for recent entries",
         "keywords": [
-                "check",
-                "mina",
-                "journal",
-                "entries",
-                "recent"
+          "check",
+          "mina",
+          "journal",
+          "entries",
+          "recent"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "flee_safe_house",
     "exitLabel": "Escape through the back door",
     "hardExitNarration": "The wolves breach the front door as you climb through the back window. Rain hammers the streets. Lightning illuminates the alley in strobing white, and for one frozen second, you see him — standing on the roof of the building opposite, his cloak billowing in a wind that touches nothing else. Dracula. Watching. Smiling. Then the lightning dies and he is gone, and you are running through London's midnight streets with the howling at your back.",
@@ -544,7 +590,13 @@ module.exports = {
         "minas lodgings",
         "carfax abbey"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -553,7 +605,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_shortcut",
-        "label": "Take the dark shortcut",
+        "label": "Risk taking action: Barricade the door and use holy water against the wolves",
         "consequence": "Your boot meets something soft, then everything moves. The floor ripples, the air fills with chittering, and the smell of damp fur and iron closes in. The lesson is spatial: shortcuts through unknown ground trade minutes for chaos.",
         "coinCost": 3,
         "flagSet": {
@@ -584,7 +636,9 @@ module.exports = {
           "mina",
           "comfort",
           "hold"
-        ], "outcome": "positive", "discovery": "Her fingers are ice-cold but her grip is strong. 'I can feel him,' she says. Her voice is her own — clear, educated, determined — but beneath it, a harmonic, as if another voice speaks in unison from far away. 'He is in Whitby. Below the cliffs. There are caves — smugglers' caves — and he has brought the remaining earth boxes there. He sleeps during the day, but at night...' She shudders. 'At night, he calls to me. And part of me answers.' A tear slides down her cheek. 'Use me. Use the bond. I can find him. I can lead you to him.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Her fingers are ice-cold but her grip is strong. 'I can feel him,' she says. Her voice is her own — clear, educated, determined — but beneath it, a harmonic, as if another voice speaks in unison from far away. 'He is in Whitby. Below the cliffs. There are caves — smugglers' caves — and he has brought the remaining earth boxes there. He sleeps during the day, but at night...' She shudders. 'At night, he calls to me. And part of me answers.' A tear slides down her cheek. 'Use me. Use the bond. I can find him. I can lead you to him.'"
       },
       {
         "id": "ask_van_helsing_bond",
@@ -597,7 +651,9 @@ module.exports = {
           "detail",
           "psychic",
           "link"
-        ], "outcome": "positive", "discovery": "Van Helsing sits heavily. 'The blood bond is an ancient evil. When a vampire feeds his blood to a mortal — not once, but repeatedly — it creates a sympathetic link. She can sense his emotions. She can see through his eyes, if he allows it. And she can locate him, as a compass needle finds north.' He removes his spectacles and rubs his eyes. 'The bond also accelerates the transformation. Each time she uses it, she comes closer to becoming. It is a tool — perhaps our only tool — but the cost...' He cannot finish the sentence."
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing sits heavily. 'The blood bond is an ancient evil. When a vampire feeds his blood to a mortal — not once, but repeatedly — it creates a sympathetic link. She can sense his emotions. She can see through his eyes, if he allows it. And she can locate him, as a compass needle finds north.' He removes his spectacles and rubs his eyes. 'The bond also accelerates the transformation. Each time she uses it, she comes closer to becoming. It is a tool — perhaps our only tool — but the cost...' He cannot finish the sentence."
       },
       {
         "id": "ask_mina_what_she_feels",
@@ -610,7 +666,9 @@ module.exports = {
           "now",
           "location",
           "see"
-        ], "outcome": "positive", "discovery": "Mina closes her eyes. Her breathing slows. When she speaks, her voice is layered — her own, and something else beneath it, something ancient and hungry. 'He is below. In the caves beneath the abbey ruins. The smell of the sea is strong. He is angry. The earth boxes — the ones you destroyed — he felt each one die. He calls it murder.' Her eyes snap open, amber blazing. 'He is afraid. For the first time in four hundred years, he is afraid.' Then the amber fades and she is Mina again, shaking, terrified of what she has become."
+        ],
+        "outcome": "positive",
+        "discovery": "Mina closes her eyes. Her breathing slows. When she speaks, her voice is layered — her own, and something else beneath it, something ancient and hungry. 'He is below. In the caves beneath the abbey ruins. The smell of the sea is strong. He is angry. The earth boxes — the ones you destroyed — he felt each one die. He calls it murder.' Her eyes snap open, amber blazing. 'He is afraid. For the first time in four hundred years, he is afraid.' Then the amber fades and she is Mina again, shaking, terrified of what she has become."
       },
       {
         "id": "examine_mina_stigmata",
@@ -623,23 +681,24 @@ module.exports = {
           "burn",
           "stigmata",
           "sacred"
-        ], "outcome": "positive", "discovery": "Where the communion wafers touched Mina's skin, the burns have formed a pattern — not random scarring but deliberate marks, like letters in an alphabet you do not recognize. Van Helsing examines them with growing horror. 'These are not burn marks,' he whispers. 'They are the Count's mark. His brand. He is claiming her — not just through the bond but through the sacred elements themselves. Every time we use holy water or a wafer to fight the infection, we also reinforce his claim.' He steps back. 'We need a different approach. We need to break the bond at its source. By destroying him.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "Where the communion wafers touched Mina's skin, the burns have formed a pattern — not random scarring but deliberate marks, like letters in an alphabet you do not recognize. Van Helsing examines them with growing horror. 'These are not burn marks,' he whispers. 'They are the Count's mark. His brand. He is claiming her — not just through the bond but through the sacred elements themselves. Every time we use holy water or a wafer to fight the infection, we also reinforce his claim.' He steps back. 'We need a different approach. We need to break the bond at its source. By destroying him.'"
+      },
+      {
         "id": "search_renfield_cell",
         "label": "Search Renfield's cell for Dracula's traces",
         "keywords": [
-                "search",
-                "renfield",
-                "cell",
-                "dracula",
-                "traces"
+          "search",
+          "renfield",
+          "cell",
+          "dracula",
+          "traces"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_church",
     "exitLabel": "Begin the final hunt",
     "hardExitNarration": "Mina stands at the church door, wrapped in a borrowed shawl, her face pale but set with iron determination. 'I will lead you to him,' she says. 'And when you find him — when you raise the stake — do not hesitate. Do not look at my face. Because what he shows you will not be me.' She takes your hand one last time. Outside, the sun is setting over the North Sea, painting the sky in blood and gold. The hunt begins at dark.",
@@ -682,7 +741,13 @@ module.exports = {
         "carfax abbey",
         "bermondsey safe house"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -691,7 +756,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "read_aloud",
-        "label": "Read the strange text aloud",
+        "label": "Risk taking action: Take Mina's hand and sit beside her",
         "consequence": "The syllables leave your mouth and the room answers — not with sound, but with subtraction. Light dims, edges blur, and something occupies the corner that wasn't there before. The lesson is linguistic: unknown words are keys to unknown doors.",
         "coinCost": 3,
         "flagSet": {

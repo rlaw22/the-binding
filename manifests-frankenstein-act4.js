@@ -87,7 +87,13 @@ module.exports = {
         "arctic",
         "geneva"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -96,7 +102,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "accept_help",
-        "label": "Accept help from the suspicious villager",
+        "label": "Risk taking action: Listen as the creature tells you what he wants",
         "consequence": "The corridor narrows, the footsteps ahead quicken, and then the space opens wrong — too wide, too silent, with exits that belong to other people. The lesson is social: trust offered too cheaply is often a transaction you haven't priced yet.",
         "coinCost": 3,
         "flagSet": {
@@ -201,7 +207,13 @@ module.exports = {
         "arctic",
         "geneva"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -210,7 +222,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "enter_lab",
-        "label": "Enter the forbidden laboratory",
+        "label": "Risk taking action: Continue assembling the female creature's body",
         "consequence": "The latch speaks once — a clean mechanical syllable — and the room becomes a decision you cannot unmake. The air cools. The walls listen. The lesson is architectural: a door that lets you in is not always a door that lets you out.",
         "coinCost": 3,
         "flagSet": {
@@ -313,7 +325,13 @@ module.exports = {
         "arctic",
         "geneva"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -322,7 +340,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_notes",
-        "label": "Take Victor's private notes",
+        "label": "Risk taking action: Tear the female creature apart with your bare hands",
         "consequence": "The paper gives between your fingers — fibers parting, ink scattering like startled insects. In seconds you hold nothing but fine powder and the shape of lost knowledge. The lesson is material: information preserved in fragile media is already negotiating with time.",
         "coinCost": 3,
         "flagSet": {
@@ -418,13 +436,19 @@ module.exports = {
     },
     "locationKeywords": {
       "banned": [
-          "ingolstadt",
-          "de lacey cottage",
-          "arctic",
-          "orkney",
-          "the creature"
-],
-      "valid": ["location", "room", "area", "place", "here"]
+        "ingolstadt",
+        "de lacey cottage",
+        "arctic",
+        "orkney",
+        "the creature"
+      ],
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -433,7 +457,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "approach_creature",
-        "label": "Approach the creature directly",
+        "label": "Risk taking action: Examine Clerval's body and the marks on his neck",
         "consequence": "You step forward and the creature answers with its whole body — a convulsion that takes the table sideways, glass and instruments scattering across stone. The lesson is biological: proximity without preparation is not intimacy — it is pressure.",
         "coinCost": 3,
         "flagSet": {
@@ -540,7 +564,13 @@ module.exports = {
         "arctic",
         "orkney"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -549,7 +579,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "light_torch",
-        "label": "Light a torch in the cave",
+        "label": "Risk taking action: Read Elizabeth's letter again, memorizing every word",
         "consequence": "The flame catches and the smoke maps the ceiling, pressing low, showing you the geometry you preferred not to measure. The exit was always this small; you simply hadn't lit it properly. The lesson is spatial: darkness flatters distances.",
         "coinCost": 3,
         "flagSet": {

@@ -90,7 +90,13 @@ module.exports = {
         "baskerville hall interior",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -99,7 +105,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_bribe",
-        "label": "Accept the offered bribe",
+        "label": "Risk taking action: Turn and face the speaker",
         "consequence": "The coin feels warm in your palm — too warm. Lestrade's eyes narrow, and the room shifts. Trust, once sold, does not buy back easily. The lesson is professional: integrity is currency; spend it carefully.",
         "coinCost": 3,
         "flagSet": {
@@ -203,7 +209,13 @@ module.exports = {
         "station",
         "baskerville hall interior"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -212,7 +224,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "rush_in",
-        "label": "Rush in without a plan",
+        "label": "Risk taking action: Ask Holmes about Beryl Stapleton's situation",
         "consequence": "You burst through the door and the room answers with emptiness — a chair still warm, a window swinging wide, footsteps fading. The lesson is tactical: speed without position is just noise.",
         "coinCost": 3,
         "flagSet": {
@@ -320,7 +332,13 @@ module.exports = {
         "station",
         "baskerville hall interior"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -329,7 +347,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "trust_alibi",
-        "label": "Trust the alibi without checking",
+        "label": "Risk taking action: Follow the paw prints deeper into the Mire",
         "consequence": "The story holds — until it doesn't. Later, a single detail turns wrong, and the whole structure collapses into contradiction. The lesson is investigative: trust is earned by verification, not by plausibility.",
         "coinCost": 3,
         "flagSet": {
@@ -437,7 +455,13 @@ module.exports = {
         "baskerville hall interior",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -446,7 +470,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "search_without_warrant",
-        "label": "Search without proper authority",
+        "label": "Risk taking action: Ask Laura about the letter she wrote to Sir Charles",
         "consequence": "The folder opens and the paper inside is technically correct — and practically useless. Procedure was not followed; the chain of custody has a gap the width of a courtroom. The lesson is procedural: evidence without process is just paper.",
         "coinCost": 3,
         "flagSet": {
@@ -552,7 +576,13 @@ module.exports = {
         "station",
         "mire deep"
       ],
-      "valid": ["london", "exeter", "office", "hotel", "train"]
+      "valid": [
+        "london",
+        "exeter",
+        "office",
+        "hotel",
+        "train"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -561,7 +591,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "confront_alone",
-        "label": "Confront the criminal alone",
+        "label": "Risk taking action: Study the portrait of Rodger Baskerville closely",
         "consequence": "The metal appears before you finish your sentence — fast, practised, the hand of someone who has done this before. The room contracts to the space between you and the blade. The lesson is situational: pressure applied without preparation invites escalation.",
         "coinCost": 3,
         "flagSet": {

@@ -14,7 +14,9 @@ module.exports = {
           "give",
           "share",
           "read"
-        ], "outcome": "positive", "discovery": "You place Harker's journal on Van Helsing's desk. He opens it with trembling hands, his spectacles sliding down his nose. He reads in silence — page after page — and his face changes. The scholarly composure cracks. His breath quickens. When he reaches the passages about the coffins filled with earth, he sets the book down and removes his spectacles. 'Mein Gott,' he whispers. 'This is everything I feared and more.' He looks at you with new eyes — not as a stranger but as a fellow witness. 'You have seen these things yourself? The coffins? The sisters?' When you nod, he grips your hand. 'Then we are brothers in this fight, you and I. And we will need every word this journal contains.'"
+        ],
+        "outcome": "positive",
+        "discovery": "You place Harker's journal on Van Helsing's desk. He opens it with trembling hands, his spectacles sliding down his nose. He reads in silence — page after page — and his face changes. The scholarly composure cracks. His breath quickens. When he reaches the passages about the coffins filled with earth, he sets the book down and removes his spectacles. 'Mein Gott,' he whispers. 'This is everything I feared and more.' He looks at you with new eyes — not as a stranger but as a fellow witness. 'You have seen these things yourself? The coffins? The sisters?' When you nod, he grips your hand. 'Then we are brothers in this fight, you and I. And we will need every word this journal contains.'"
       },
       {
         "id": "ask_about_lucy",
@@ -27,7 +29,9 @@ module.exports = {
           "sick",
           "ask",
           "dying"
-        ], "outcome": "positive", "discovery": "Van Helsing's face darkens. 'Lucy is the sweetest soul — bright, kind, beautiful. She has been growing pale, weak. Bite marks on her throat that Dr. Seward dismisses as insect bites. I know better.' He opens a drawer and produces garlic. 'I have been placing these around her room at night. They help — for now. But the creature is persistent.' He looks at you with desperate eyes. 'She is my friend's fiancée. I cannot lose her.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing's face darkens. 'Lucy is the sweetest soul — bright, kind, beautiful. She has been growing pale, weak. Bite marks on her throat that Dr. Seward dismisses as insect bites. I know better.' He opens a drawer and produces garlic. 'I have been placing these around her room at night. They help — for now. But the creature is persistent.' He looks at you with desperate eyes. 'She is my friend's fiancée. I cannot lose her.'"
       },
       {
         "id": "ask_what_to_do",
@@ -40,7 +44,9 @@ module.exports = {
           "action",
           "help",
           "stop"
-        ], "outcome": "positive", "discovery": "Van Helsing rises and paces the room, his hands clasped behind his back. 'First, we protect the living. Lucy Westenra is dying — the Count has been feeding on her. We must guard her at night with crucifixes, garlic, and holy water. Second, we investigate Carfax Abbey — the Count's English lair. His earth boxes will be there. Without them, he cannot rest. Third, we gather allies. Dr. Seward is a good man but blind to the truth. We must open his eyes.' He stops pacing and faces you. 'And fourth — we prepare to destroy the Count himself. Stake through the heart. Decapitation. Garlic in the mouth. There is no other way.' His voice is steady, but his eyes burn with a fury that is personal. 'He has taken too many already. This ends now.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing rises and paces the room, his hands clasped behind his back. 'First, we protect the living. Lucy Westenra is dying — the Count has been feeding on her. We must guard her at night with crucifixes, garlic, and holy water. Second, we investigate Carfax Abbey — the Count's English lair. His earth boxes will be there. Without them, he cannot rest. Third, we gather allies. Dr. Seward is a good man but blind to the truth. We must open his eyes.' He stops pacing and faces you. 'And fourth — we prepare to destroy the Count himself. Stake through the heart. Decapitation. Garlic in the mouth. There is no other way.' His voice is steady, but his eyes burn with a fury that is personal. 'He has taken too many already. This ends now.'"
       },
       {
         "id": "describe_escape",
@@ -53,36 +59,37 @@ module.exports = {
           "tell",
           "story",
           "dracula"
-        ], "outcome": "positive", "discovery": "You tell Van Helsing everything — the coach ride, the wolves, the Count's impossible hospitality. The forbidden wing with its coffins of earth. The three sisters and their terrible beauty. The climb down the castle wall in the dark, the wolves at your heels, the crucifix burning in your hand. Van Helsing listens without interruption, his eyes never leaving your face. When you finish, he is silent for a long time. Then he opens a drawer and produces a map of London. 'You climbed the wall,' he says quietly. 'In the dark. With wolves below.' He shakes his head. 'You are either the bravest person I have ever met, or the most foolish. Either way, I am glad you are here.' He taps the map. 'Carfax Abbey. That is where we begin.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "You tell Van Helsing everything — the coach ride, the wolves, the Count's impossible hospitality. The forbidden wing with its coffins of earth. The three sisters and their terrible beauty. The climb down the castle wall in the dark, the wolves at your heels, the crucifix burning in your hand. Van Helsing listens without interruption, his eyes never leaving your face. When you finish, he is silent for a long time. Then he opens a drawer and produces a map of London. 'You climbed the wall,' he says quietly. 'In the dark. With wolves below.' He shakes his head. 'You are either the bravest person I have ever met, or the most foolish. Either way, I am glad you are here.' He taps the map. 'Carfax Abbey. That is where we begin.'"
+      },
+      {
         "id": "search_ship_cabin",
         "label": "Search the captain's cabin for clues",
         "keywords": [
-                "search",
-                "cabin",
-                "captain",
-                "clues",
-                "ship"
+          "search",
+          "cabin",
+          "captain",
+          "clues",
+          "ship"
         ],
         "outcome": "empty",
         "discovery": null
-},
-{
+      },
+      {
         "id": "examine_cargo_manifest",
         "label": "Examine the cargo manifest on the desk",
         "keywords": [
-                "examine",
-                "cargo",
-                "manifest",
-                "desk",
-                "paper"
+          "examine",
+          "cargo",
+          "manifest",
+          "desk",
+          "paper"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_van_helsing",
     "exitLabel": "Go to Lucy's bedside",
     "hardExitNarration": "Van Helsing grips your hand at the door. 'Be careful, my friend. The Count is here, and he knows we are coming.' He presses a small bottle into your hand. 'Holy water. From the Vatican. Use it wisely.'",
@@ -111,7 +118,13 @@ module.exports = {
         "castle dracula",
         "transylvania"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -120,7 +133,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "take_shortcut",
-        "label": "Take the dark shortcut",
+        "label": "Risk taking action: Show Van Helsing Harker's journal",
         "consequence": "Your boot meets something soft, then everything moves. The floor ripples, the air fills with chittering, and the smell of damp fur and iron closes in. The lesson is spatial: shortcuts through unknown ground trade minutes for chaos.",
         "coinCost": 3,
         "flagSet": {
@@ -151,7 +164,9 @@ module.exports = {
           "mark",
           "examine",
           "neck"
-        ], "outcome": "positive", "discovery": "You lean close. Two puncture marks, slightly inflamed, placed precisely over the jugular. Not insect bites. The marks of teeth — driven with a force no human possesses. Lucy's eyes flutter open. 'He comes at night,' she whispers. 'So handsome. So kind. He says he loves me.' Her eyes close again."
+        ],
+        "outcome": "positive",
+        "discovery": "You lean close. Two puncture marks, slightly inflamed, placed precisely over the jugular. Not insect bites. The marks of teeth — driven with a force no human possesses. Lucy's eyes flutter open. 'He comes at night,' she whispers. 'So handsome. So kind. He says he loves me.' Her eyes close again."
       },
       {
         "id": "check_window",
@@ -163,7 +178,9 @@ module.exports = {
           "sill",
           "open",
           "check"
-        ], "outcome": "positive", "discovery": "The window latch has been forced — carefully, from outside. The garlic is wilted and brown, as if exposed to extreme heat. In the soft earth beneath the window, you find footprints — too long, too narrow. The heel marks are deep but the toe marks barely dent the soil, as if the creature was walking on its heels."
+        ],
+        "outcome": "positive",
+        "discovery": "The window latch has been forced — carefully, from outside. The garlic is wilted and brown, as if exposed to extreme heat. In the soft earth beneath the window, you find footprints — too long, too narrow. The heel marks are deep but the toe marks barely dent the soil, as if the creature was walking on its heels."
       },
       {
         "id": "talk_to_seward",
@@ -175,7 +192,9 @@ module.exports = {
           "night",
           "who",
           "comes"
-        ], "outcome": "positive", "discovery": "You approach Dr. Seward carefully. 'Doctor, have you noticed anything unusual about Lucy's visitors? Anyone coming at night?' Seward's face tightens. 'I've posted a nurse. She reports nothing. But Lucy's condition worsens every morning.' He lowers his voice. 'Between us — I've found marks on the window frame. Scratches. From outside.' He looks haunted. 'What kind of animal scratches a second-story window?'"
+        ],
+        "outcome": "positive",
+        "discovery": "You approach Dr. Seward carefully. 'Doctor, have you noticed anything unusual about Lucy's visitors? Anyone coming at night?' Seward's face tightens. 'I've posted a nurse. She reports nothing. But Lucy's condition worsens every morning.' He lowers his voice. 'Between us — I've found marks on the window frame. Scratches. From outside.' He looks haunted. 'What kind of animal scratches a second-story window?'"
       },
       {
         "id": "consult_van_helsing",
@@ -187,23 +206,24 @@ module.exports = {
           "pull",
           "aside",
           "tell"
-        ], "outcome": "positive", "discovery": "You pull Van Helsing aside into the corridor. 'Professor, those marks on her throat — they're not insect bites.' Van Helsing's eyes bore into yours. 'No,' he says quietly. 'They are not.' He glances back at Lucy's door. 'I have seen this before. In my country. In the old stories.' He grips your arm. 'We must watch tonight. You and I. And we must bring...' He hesitates, then whispers: 'Garlic. Crucifixes. Holy water.' His face is grim. 'If I am right, we will need them all.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "You pull Van Helsing aside into the corridor. 'Professor, those marks on her throat — they're not insect bites.' Van Helsing's eyes bore into yours. 'No,' he says quietly. 'They are not.' He glances back at Lucy's door. 'I have seen this before. In my country. In the old stories.' He grips your arm. 'We must watch tonight. You and I. And we must bring...' He hesitates, then whispers: 'Garlic. Crucifixes. Holy water.' His face is grim. 'If I am right, we will need them all.'"
+      },
+      {
         "id": "search_abbey_cellar",
         "label": "Search the cellar walls for hidden compartments",
         "keywords": [
-                "search",
-                "cellar",
-                "walls",
-                "hidden",
-                "compartments"
+          "search",
+          "cellar",
+          "walls",
+          "hidden",
+          "compartments"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_lucy",
     "exitLabel": "Prepare for the night watch",
     "hardExitNarration": "Van Helsing catches your arm at the door. 'Tonight,' he whispers. 'We watch. We guard. And we see what comes for her.' His eyes are grim.",
@@ -234,7 +254,13 @@ module.exports = {
         "castle dracula",
         "transylvania"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -243,7 +269,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "read_aloud",
-        "label": "Read the strange text aloud",
+        "label": "Risk taking action: Examine Lucy's throat wounds closely",
         "consequence": "The syllables leave your mouth and the room answers — not with sound, but with subtraction. Light dims, edges blur, and something occupies the corner that wasn't there before. The lesson is linguistic: unknown words are keys to unknown doors.",
         "coinCost": 3,
         "flagSet": {
@@ -273,7 +299,9 @@ module.exports = {
           "renfield",
           "tell",
           "count"
-        ], "outcome": "positive", "discovery": "Renfield leans forward. 'The Master is ancient. Older than the churches. He speaks to me — in dreams, in the spaces between breaths. He says the time is coming. The boxes are here. The earth is here. England will be his.' He catches a fly and eats it. 'He is grateful to those who serve him. But he is not grateful to those who oppose him. Ask Harker. Oh wait — you already have.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Renfield leans forward. 'The Master is ancient. Older than the churches. He speaks to me — in dreams, in the spaces between breaths. He says the time is coming. The boxes are here. The earth is here. England will be his.' He catches a fly and eats it. 'He is grateful to those who serve him. But he is not grateful to those who oppose him. Ask Harker. Oh wait — you already have.'"
       },
       {
         "id": "ask_about_lucy_renfield",
@@ -285,7 +313,9 @@ module.exports = {
           "know",
           "girl",
           "woman"
-        ], "outcome": "positive", "discovery": "Renfield's eyes widen. Then he laughs — a wet, broken sound. \"Miss Westenra? Oh yes, I know about her. The Master's new pet.\" He licks his lips. \"She is not dead, you know. Not truly. She will rise, as he rises. The beautiful ones always do.\" He leans closer. \"Did you think you could save her with your little crosses and your prayers? The Master is patient. The Master always wins.\""
+        ],
+        "outcome": "positive",
+        "discovery": "Renfield's eyes widen. Then he laughs — a wet, broken sound. \"Miss Westenra? Oh yes, I know about her. The Master's new pet.\" He licks his lips. \"She is not dead, you know. Not truly. She will rise, as he rises. The beautiful ones always do.\" He leans closer. \"Did you think you could save her with your little crosses and your prayers? The Master is patient. The Master always wins.\""
       },
       {
         "id": "ask_about_weakness",
@@ -297,7 +327,9 @@ module.exports = {
           "how",
           "defeat",
           "destroy"
-        ], "outcome": "positive", "discovery": "For a moment, the madness drains from his face. 'Stopped? You cannot stop what has survived for five hundred years. But you can hurt him. Take his earth — the boxes, the soil he brought from home. Without it, he cannot rest. And a vampire without rest is like a fire without fuel.' He grabs your wrist. 'But do it soon. He knows you are here.'"
+        ],
+        "outcome": "positive",
+        "discovery": "For a moment, the madness drains from his face. 'Stopped? You cannot stop what has survived for five hundred years. But you can hurt him. Take his earth — the boxes, the soil he brought from home. Without it, he cannot rest. And a vampire without rest is like a fire without fuel.' He grabs your wrist. 'But do it soon. He knows you are here.'"
       },
       {
         "id": "offer_compassion",
@@ -308,36 +340,37 @@ module.exports = {
           "understand",
           "sympathy",
           "help"
-        ], "outcome": "positive", "discovery": "You sit on the floor across from Renfield and speak to him as a human being. His eyes fill with tears. 'No one has spoken to me like that in years.' He reaches into his pocket. 'The schedule. The boxes arrive at Carfax by ship — the Vesta, from Varna. Three days from now. Be there when the ship docks.'"
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "You sit on the floor across from Renfield and speak to him as a human being. His eyes fill with tears. 'No one has spoken to me like that in years.' He reaches into his pocket. 'The schedule. The boxes arrive at Carfax by ship — the Vesta, from Varna. Three days from now. Be there when the ship docks.'"
+      },
+      {
         "id": "check_lucy_window",
         "label": "Examine Lucy's window latch",
         "keywords": [
-                "check",
-                "lucy",
-                "window",
-                "latch",
-                "examine"
+          "check",
+          "lucy",
+          "window",
+          "latch",
+          "examine"
         ],
         "outcome": "empty",
         "discovery": null
-},
-{
+      },
+      {
         "id": "search_garden",
         "label": "Search the garden beneath Lucy's window",
         "keywords": [
-                "search",
-                "garden",
-                "beneath",
-                "window",
-                "flowers"
+          "search",
+          "garden",
+          "beneath",
+          "window",
+          "flowers"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_asylum",
     "exitLabel": "Begin the night watch",
     "hardExitNarration": "As you leave, Renfield calls after you: 'Tell the Doctor to guard her tonight! He comes with the dark!' His voice follows you down the corridor.",
@@ -370,7 +403,13 @@ module.exports = {
         "castle dracula",
         "transylvania"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -379,7 +418,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "touch_artifact",
-        "label": "Touch the ancient artifact",
+        "label": "Risk taking action: Ask Renfield about his Master",
         "consequence": "The contact is brief but the cold doesn't stop at skin — it climbs through bone, settles in the joint, and stays. Your hand feels borrowed. The lesson is tactile: some objects measure the hand that touches them.",
         "coinCost": 3,
         "flagSet": {
@@ -409,7 +448,9 @@ module.exports = {
           "window",
           "guard",
           "protect"
-        ], "outcome": "positive", "discovery": "The crucifix grows warm. The bats shriek and scatter. Then a voice from everywhere: 'Give her to me. She is mine. She has tasted of my blood and I of hers.' The voice is the Count's."
+        ],
+        "outcome": "positive",
+        "discovery": "The crucifix grows warm. The bats shriek and scatter. Then a voice from everywhere: 'Give her to me. She is mine. She has tasted of my blood and I of hers.' The voice is the Count's."
       },
       {
         "id": "use_holy_water",
@@ -421,7 +462,9 @@ module.exports = {
           "frame",
           "bless",
           "water"
-        ], "outcome": "positive", "discovery": "You splash the holy water across the window frame. It sizzles on contact, steaming as if poured on hot iron. Outside, something shrieks — a bat, or not a bat — and the window cracks from top to bottom. The Count's voice comes from the darkness beyond: \"You delay the inevitable, child. The night is long, and I am eternal.\" The smell of burning fills the room."
+        ],
+        "outcome": "positive",
+        "discovery": "You splash the holy water across the window frame. It sizzles on contact, steaming as if poured on hot iron. Outside, something shrieks — a bat, or not a bat — and the window cracks from top to bottom. The Count's voice comes from the darkness beyond: \"You delay the inevitable, child. The night is long, and I am eternal.\" The smell of burning fills the room."
       },
       {
         "id": "check_lucy",
@@ -433,7 +476,9 @@ module.exports = {
           "side",
           "wake",
           "condition"
-        ], "outcome": "positive", "discovery": "Lucy's eyes are open but she does not see you. She whispers: 'My love... my dark love... come to me...' Her hand reaches toward the window. On her throat, the bite marks are open, bleeding. She is calling to him."
+        ],
+        "outcome": "positive",
+        "discovery": "Lucy's eyes are open but she does not see you. She whispers: 'My love... my dark love... come to me...' Her hand reaches toward the window. On her throat, the bite marks are open, bleeding. She is calling to him."
       },
       {
         "id": "fortify_room",
@@ -446,23 +491,24 @@ module.exports = {
           "door",
           "chimney",
           "seal"
-        ], "outcome": "positive", "discovery": "You stuff garlic into every crack and opening — the window frame, the door gap, the chimney. The smell is overwhelming, sharp and ancient. Through the walls, you hear scratching. Then silence. Then a low hiss, like air escaping a tomb. The garlic is holding. For now. You press your back against the wall and wait for dawn."
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "You stuff garlic into every crack and opening — the window frame, the door gap, the chimney. The smell is overwhelming, sharp and ancient. Through the walls, you hear scratching. Then silence. Then a low hiss, like air escaping a tomb. The garlic is holding. For now. You press your back against the wall and wait for dawn."
+      },
+      {
         "id": "examine_sanatorium_desk",
         "label": "Search Van Helsing's desk for notes",
         "keywords": [
-                "search",
-                "desk",
-                "van helsing",
-                "notes",
-                "papers"
+          "search",
+          "desk",
+          "van helsing",
+          "notes",
+          "papers"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "end_night_watch",
     "exitLabel": "Hold out until dawn",
     "hardExitNarration": "Dawn seeps through the curtains and the bats scatter. Van Helsing slumps in his chair. 'He will come again,' he says. 'And he will not stop until she is his — or she is dead.'",
@@ -495,7 +541,13 @@ module.exports = {
         "castle dracula",
         "transylvania"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -504,7 +556,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "trust_stranger",
-        "label": "Trust the cloaked stranger",
+        "label": "Risk taking action: Hold the crucifix toward the window",
         "consequence": "The hand that took your coins was light — practised, rehearsed, gone before the weight registered. The street feels wider without your purse. The lesson is urban: strangers who smile too quickly are often measuring your pockets.",
         "coinCost": 3,
         "flagSet": {
@@ -534,7 +586,9 @@ module.exports = {
           "shoulder",
           "hand",
           "grief"
-        ], "outcome": "positive", "discovery": "Seward rounds on you, eyes wild with grief. 'Don't tell me she's at peace.' Then his fury collapses and he is just a young man who has lost the woman he loved. Van Helsing kneels beside him. 'I am sorry, my boy. But what will rise is a monster wearing her face.'"
+        ],
+        "outcome": "positive",
+        "discovery": "Seward rounds on you, eyes wild with grief. 'Don't tell me she's at peace.' Then his fury collapses and he is just a young man who has lost the woman he loved. Van Helsing kneels beside him. 'I am sorry, my boy. But what will rise is a monster wearing her face.'"
       },
       {
         "id": "agree_with_van_helsing",
@@ -546,7 +600,9 @@ module.exports = {
           "castle",
           "agree",
           "true"
-        ], "outcome": "positive", "discovery": "You turn to Seward. 'He's right, John. I've seen what sleeps in those coffins. I've seen the sisters. What rises from that grave will not be Lucy.' Seward's face crumbles. He knows. He has known since the bite marks appeared. But hearing it spoken aloud — confirmed by someone who has witnessed the horror firsthand — breaks something in him. He nods slowly, his jaw tight. 'Then we do what must be done.'"
+        ],
+        "outcome": "positive",
+        "discovery": "You turn to Seward. 'He's right, John. I've seen what sleeps in those coffins. I've seen the sisters. What rises from that grave will not be Lucy.' Seward's face crumbles. He knows. He has known since the bite marks appeared. But hearing it spoken aloud — confirmed by someone who has witnessed the horror firsthand — breaks something in him. He nods slowly, his jaw tight. 'Then we do what must be done.'"
       },
       {
         "id": "examine_lucy_body",
@@ -557,7 +613,9 @@ module.exports = {
           "wound",
           "healed",
           "throat"
-        ], "outcome": "positive", "discovery": "The bite marks are gone — not faded, but sealed as if they never existed. Her skin has a flush that death should not permit. Her lips are red. And her hands have moved — clenched — as if something inside her is already restless."
+        ],
+        "outcome": "positive",
+        "discovery": "The bite marks are gone — not faded, but sealed as if they never existed. Her skin has a flush that death should not permit. Her lips are red. And her hands have moved — clenched — as if something inside her is already restless."
       },
       {
         "id": "prepare_funeral",
@@ -569,36 +627,37 @@ module.exports = {
           "burial",
           "tomb",
           "crypt"
-        ], "outcome": "positive", "discovery": "Van Helsing lays out the tools on a cloth: a wooden stake, a mallet, garlic bulbs, a consecrated wafer, and a surgeon's saw. The implements of an execution disguised as a funeral. 'We have three days,' he says. 'The body must be watched. Day and night. Garlic around the coffin. Crucifixes at every entrance. And when she rises...' He cannot finish. Seward finishes for him, his voice hollow: 'We destroy her.' The word hangs in the air like smoke."
-      }
-    ,
-{
+        ],
+        "outcome": "positive",
+        "discovery": "Van Helsing lays out the tools on a cloth: a wooden stake, a mallet, garlic bulbs, a consecrated wafer, and a surgeon's saw. The implements of an execution disguised as a funeral. 'We have three days,' he says. 'The body must be watched. Day and night. Garlic around the coffin. Crucifixes at every entrance. And when she rises...' He cannot finish. Seward finishes for him, his voice hollow: 'We destroy her.' The word hangs in the air like smoke."
+      },
+      {
         "id": "search_whitby_harbor",
         "label": "Search the harbor for signs of the Demeter's cargo",
         "keywords": [
-                "search",
-                "harbor",
-                "demeter",
-                "cargo",
-                "ship"
+          "search",
+          "harbor",
+          "demeter",
+          "cargo",
+          "ship"
         ],
         "outcome": "empty",
         "discovery": null
-},
-{
+      },
+      {
         "id": "check_graveyard_entrance",
         "label": "Examine the graveyard gate and fence",
         "keywords": [
-                "check",
-                "graveyard",
-                "gate",
-                "fence",
-                "examine"
+          "check",
+          "graveyard",
+          "gate",
+          "fence",
+          "examine"
         ],
         "outcome": "empty",
         "discovery": null
-}
-      ],
+      }
+    ],
     "exitAction": "leave_mourning",
     "exitLabel": "Steel yourself for what comes next",
     "hardExitNarration": "Van Helsing finds you in the corridor. 'Three days,' he says. 'Garlic, crucifixes, a stake of wood, and the courage to use them. Find a consecrated wafer. And a carpenter.'",
@@ -630,7 +689,13 @@ module.exports = {
         "castle dracula",
         "transylvania"
       ],
-      "valid": ["transylvania", "bistritz", "mountain", "road", "forest"]
+      "valid": [
+        "transylvania",
+        "bistritz",
+        "mountain",
+        "road",
+        "forest"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -639,7 +704,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "explore_alone",
-        "label": "Explore the wing alone",
+        "label": "Risk taking action: Put a hand on Seward's shoulder",
         "consequence": "The sound is final — wood on stone, iron on iron. The air pressure shifts and the corridor goes quiet. The lesson is architectural: a door that invites you in serves its owner first.",
         "coinCost": 3,
         "flagSet": {

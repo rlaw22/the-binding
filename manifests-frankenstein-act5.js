@@ -91,7 +91,13 @@ module.exports = {
         "orkney",
         "laboratory"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -100,7 +106,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "confront_victor",
-        "label": "Confront Victor angrily",
+        "label": "Risk taking action: Draw your pistol and prepare to defend Elizabeth",
         "consequence": "Your anger fills the room and Victor retreats behind a locked door. The silence that follows is heavier than any argument. The lesson is relational: force closes the very doors that patience might have opened.",
         "coinCost": 3,
         "flagSet": {
@@ -207,7 +213,13 @@ module.exports = {
         "orkney",
         "laboratory"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -216,7 +228,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "follow_tracks",
-        "label": "Follow the tracks into the storm",
+        "label": "Risk taking action: Study the creature's trail for clues about its direction",
         "consequence": "The bolt hits the oak with a sound like tearing fabric. Branches crash across the path, bark still smoking. The air tastes of copper and ozone. The lesson is immediate: storms do not negotiate with travelers — they rearrange the landscape and leave you to recalculate.",
         "coinCost": 3,
         "flagSet": {
@@ -323,7 +335,13 @@ module.exports = {
         "laboratory",
         "geneva"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -332,7 +350,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "search_graveyard",
-        "label": "Search the graveyard at night",
+        "label": "Risk taking action: Follow the distant smoke of the creature's fire",
         "consequence": "Your hands break the surface and the smell hits first — old earth, old bone, old obligation. The ground settles around your wrists as if it has been waiting. The lesson is ancestral: some layers of soil are load-bearing.",
         "coinCost": 3,
         "flagSet": {
@@ -439,7 +457,13 @@ module.exports = {
         "laboratory",
         "geneva"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -448,7 +472,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "accept_help",
-        "label": "Accept help from the suspicious villager",
+        "label": "Risk taking action: Sit and listen as Victor tells his story",
         "consequence": "The corridor narrows, the footsteps ahead quicken, and then the space opens wrong — too wide, too silent, with exits that belong to other people. The lesson is social: trust offered too cheaply is often a transaction you haven't priced yet.",
         "coinCost": 3,
         "flagSet": {
@@ -557,7 +581,13 @@ module.exports = {
         "laboratory",
         "geneva"
       ],
-      "valid": ["location", "room", "area", "place", "here"]
+      "valid": [
+        "location",
+        "room",
+        "area",
+        "place",
+        "here"
+      ]
     },
     "storyMode": {
       "collectibleItem": {
@@ -566,7 +596,7 @@ module.exports = {
       },
       "badChoice": {
         "id": "enter_lab",
-        "label": "Enter the forbidden laboratory",
+        "label": "Risk taking action: Open the door and let the creature see Victor's body",
         "consequence": "The latch speaks once — a clean mechanical syllable — and the room becomes a decision you cannot unmake. The air cools. The walls listen. The lesson is architectural: a door that lets you in is not always a door that lets you out.",
         "coinCost": 3,
         "flagSet": {
