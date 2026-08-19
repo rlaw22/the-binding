@@ -54,6 +54,9 @@ const { createServer } = require('../src/api/server');
       assert.equal(body.ok, true, `${actionId} should be accepted`);
       assert.ok(body.narrative, `${actionId} should return narration`);
       assert.notEqual(body.narrative, 'Something went wrong — try again.');
+      assert.equal(body.actionId, actionId, `${actionId} response should preserve action identity`);
+      assert.equal(body.contentId, actionId, `${actionId} response should preserve content identity`);
+      assert.ok(Number.isInteger(body.historyAfter), `${actionId} response should return a history cursor`);
       if (actionId === 'examine_crucifix') {
         assert.match(body.narrative, /Brass Crucifix/);
         const afterInventory = await server.inject({

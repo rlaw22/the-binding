@@ -56,6 +56,11 @@ function createMessage(type, content, options = {}) {
       diceRoll: options.diceRoll || null,        // { dieType, result, modifier, total }
       coinAmount: options.coinAmount || null,     // { amount, category, reason }
       actions: options.actions || null,           // the suggested actions
+      actionId: options.actionId || null,         // stable Storyline action identity
+      contentId: options.contentId || null,       // stable Storyline content identity
+      turnId: options.turnId || null,             // idempotent turn identity
+      sceneId: options.sceneId || null,           // scene identity at result time
+      resultType: options.resultType || null,     // deterministic result type
       combatData: options.combatData || null,     // { attacker, defender, damage, etc. }
       tierData: options.tierData || null,         // { tier, adventure, score }
       voiceTaskId: options.voiceTaskId || null,   // TTS task ID for voice_audio messages
@@ -202,7 +207,8 @@ function suggestedActions(actions, prompt, options = {}) {
   return createMessage(MessageTypes.SUGGESTED_ACTIONS, prompt, {
     ...options,
     actions: actions.map((a, i) => ({
-      id: i + 1,
+      id: a.id || (i + 1),
+      contentId: a.contentId || null,
       label: a.label,
       shortLabel: a.shortLabel || a.label,
       description: a.description || null,

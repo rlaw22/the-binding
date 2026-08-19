@@ -1271,6 +1271,11 @@ async function createServer(options = {}) {
     if (!player) return reply.status(404).send({ error: 'No host player found' });
 
     try {
+      // Capture the history cursor for this request. The action client can render
+      // the direct response and advance polling past this complete turn, keeping
+      // one response source of truth instead of racing the message stream.
+      const historyStart = data.history.length;
+
       // Record the player's action
       recordMessage(sessionId, {
         type: 'player_action',
@@ -1392,7 +1397,15 @@ async function createServer(options = {}) {
         turnNumber: game.turnHistory.length,
         narrative: result.narrative,
         suggestedActions: result.suggestedActions || [],
-        sceneImage: game._lastSceneImage || null
+        sceneImage: game._lastSceneImage || null,
+        // The client uses this cursor to skip messages already represented by
+        // this direct action response when polling resumes.
+        historyAfter: data.history.length,
+        historyStart,
+        actionId: typeof actionId === 'string' ? actionId : null,
+        contentId: typeof contentId === 'string' ? contentId : null,
+        sceneId: game.sceneState?.sceneId || null,
+        resultType: game.storyButtonContext?.result?.type || null
       };
     } catch (err) {
       console.error('[ACTION ERROR]', err.code || '', err.message, err.stack);

@@ -1542,7 +1542,10 @@ var playerRole = null; // 'host' or 'spectator'
 var lastMsgIndex = 0;
 var sending = false;
 var pollTimer = null;
+var pollInFlight = false;
 var pollErrors = 0;
+var seenMessageIndexes = {};
+var minimumMessageIndex = 0; // direct action responses supersede older polled messages
 
 // ── Session Rejoin: Save sessionId to localStorage on creation ────────
 var REJOIN_STORAGE_KEY = 'binding_session';
@@ -2756,7 +2759,8 @@ function startKeepAlive() {
 startKeepAlive();
 
 function pollOnce() {
-  if (!sessionId) return;
+  if (!sessionId || pollInFlight) return;
+  pollInFlight = true;
   fetch('/api/sessions/' + sessionId + '/messages?after=' + lastMsgIndex)
     .then(function(r) {
       if (!r.ok) {
@@ -2775,8 +2779,11 @@ function pollOnce() {
       if (!data || !data.messages) return;
       for (var i = 0; i < data.messages.length; i++) {
         var msg = data.messages[i];
+        if (msg.index < minimumMessageIndex) continue;
+        if (seenMessageIndexes[msg.index]) continue;
+        seenMessageIndexes[msg.index] = true;
         handleMessage(msg.data);
-        lastMsgIndex = msg.index + 1;
+        lastMsgIndex = Math.max(lastMsgIndex, msg.index + 1);
       }
     })
     .catch(function(err) {
@@ -2786,6 +2793,9 @@ function pollOnce() {
         document.getElementById('reconnect-banner').style.display = 'block';
         addMessage('error', 'Connection lost. Use the Reconnect button above or refresh the page.');
       }
+    })
+    .finally(function() {
+      pollInFlight = false;
     });
 }
 
@@ -4085,8 +4095,36 @@ function processStoryAction(buttonId, buttonType) {
         if (freeInput) freeInput.disabled = false;
       });
     }
-    // Server response arrives via polling → rich narrative + new suggested_actions
-    // The suggested_actions handler already renders storyline buttons when storyModeActive is true
+    // Render the exact response for this submitted action immediately. Polling is
+    // only synchronization; it must not become a second source of truth.
+    return resp.json().then(function(data) {
+      if (data && data.ok && thisRequest === actionRequestId) {
+        if (typeof data.historyAfter === 'number') {
+          minimumMessageIndex = Math.max(minimumMessageIndex, data.historyAfter);
+          lastMsgIndex = Math.max(lastMsgIndex, data.historyAfter);
+        }
+        if (data.narrative) addMessage('dm', data.narrative);
+        if (data.suggestedActions && data.suggestedActions.length) {
+          var directActions = data.suggestedActions.map(function(a) {
+            return {
+              id: a.id || a.contentId,
+              contentId: a.contentId || null,
+              label: a.label,
+              shortLabel: a.shortLabel,
+              type: a.type
+            };
+          });
+          renderStoryButtons(directActions);
+        }
+        if (data.sceneImage) handleSceneImage(data.sceneImage);
+        if (typeof data.historyAfter === 'number') {
+          for (var cursor = 0; cursor < data.historyAfter; cursor++) seenMessageIndexes[cursor] = true;
+        }
+        sending = false;
+        if (sendBtn) sendBtn.disabled = false;
+        if (freeInput) freeInput.disabled = false;
+      }
+    });
   }).catch(function(err) {
     clearTimeout(sendTimeout);
     clearTimeout(feedbackTimer1);
