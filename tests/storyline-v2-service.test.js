@@ -57,6 +57,18 @@ test('factory compiles and registers Dracula without legacy session logic', () =
   assert.ok(snapshot.catalog.actions.some(action => action.type === 'class'));
 });
 
+test('exports and imports a complete session bundle', () => {
+  const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
+  service.start({ adventureId: adventure.adventureId, sessionId: 'bundle-a', classId: 'scholar' });
+  service.start({ adventureId: adventure.adventureId, sessionId: 'bundle-b', classId: 'scholar' });
+  const bundle = service.exportAll();
+  assert.strictEqual(bundle.schemaVersion, 'storyline-v2-sessions:1');
+  assert.strictEqual(bundle.sessions.length, 2);
+  service.clear();
+  assert.deepStrictEqual(service.importAll(bundle).sort(), ['bundle-a', 'bundle-b']);
+  assert.strictEqual(service.snapshot('bundle-a').state.sceneId, 'one');
+});
+
 test('exports and imports canonical session state', () => {
   const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
   service.start({ adventureId: adventure.adventureId, sessionId: 's4', classId: 'scholar' });

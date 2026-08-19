@@ -99,6 +99,7 @@ class StorylineV2Service {
   }
 
   importState({ sessionId, adventureId, state }) {
+    if (!sessionId) throw new Error('Session ID is required');
     const adventure = this.getAdventure(adventureId);
     if (!state || state.mode !== 'storyline' || state.adventureId !== adventureId) {
       throw new Error('Invalid Storyline state');
@@ -106,6 +107,33 @@ class StorylineV2Service {
     if (!adventure.scenes[state.sceneId]) throw new Error(`Unknown state scene: ${state.sceneId}`);
     this.sessions.set(sessionId, { adventureId, state: JSON.parse(JSON.stringify(state)) });
     return this.snapshot(sessionId);
+  }
+
+  exportAll() {
+    return {
+      schemaVersion: 'storyline-v2-sessions:1',
+      sessions: Array.from(this.sessions, ([sessionId, session]) => ({
+        sessionId,
+        adventureId: session.adventureId,
+        state: JSON.parse(JSON.stringify(session.state))
+      }))
+    };
+  }
+
+  importAll(bundle) {
+    if (!bundle || bundle.schemaVersion !== 'storyline-v2-sessions:1' || !Array.isArray(bundle.sessions)) {
+      throw new Error('Invalid Storyline session bundle');
+    }
+    const imported = [];
+    bundle.sessions.forEach(entry => {
+      this.importState({ sessionId: entry.sessionId, adventureId: entry.adventureId, state: entry.state });
+      imported.push(entry.sessionId);
+    });
+    return imported;
+  }
+
+  clear() {
+    this.sessions.clear();
   }
 }
 
