@@ -142,6 +142,43 @@ const { createServer } = require('../src/api/server');
     assert.equal(malformedResponse.statusCode, 200, 'malformed metadata should fall back safely');
     assert.equal(malformedResponse.json().ok, true, 'malformed metadata action should be accepted');
 
+    // Regression: a consumed discovery must not replay through a legacy
+    // label-only submission after the stable action has already been used.
+    const replayCreated = await server.inject({
+      method: 'POST',
+      url: '/api/sessions',
+      payload: {
+        adventureId: 'dracula', gameMode: 'storyline', playerName: 'Law',
+        characterClass: 'cleric', characterRace: 'human'
+      }
+    });
+    const replaySession = replayCreated.json();
+    const first = await server.inject({
+      method: 'POST',
+      url: `/api/sessions/${replaySession.sessionId}/actions`,
+      payload: {
+        content: 'Examine the brass crucifix', actionId: 'examine_crucifix',
+        contentId: 'examine_crucifix', playerId: replaySession.playerId
+      }
+    });
+    assert.equal(first.statusCode, 200);
+    const beforeReplay = (await server.inject({
+      method: 'GET', url: `/api/sessions/${replaySession.sessionId}/storyline-inventory`
+    })).json().items.length;
+    const replay = await server.inject({
+      method: 'POST',
+      url: `/api/sessions/${replaySession.sessionId}/actions`,
+      payload: {
+        content: 'Examine the brass crucifix', playerId: replaySession.playerId
+      }
+    });
+    assert.equal(replay.statusCode, 200);
+    const afterReplay = (await server.inject({
+      method: 'GET', url: `/api/sessions/${replaySession.sessionId}/storyline-inventory`
+    })).json().items.length;
+    assert.equal(afterReplay, beforeReplay, 'legacy replay must not add another item');
+    assert.doesNotMatch(replay.json().narrative, /Brass Crucifix.*possession/i, 'legacy replay must not repeat acquisition');
+
     console.log('✓ Storyline action API regression passed');
   } finally {
     await server.close();

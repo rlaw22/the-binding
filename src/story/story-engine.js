@@ -191,7 +191,7 @@ function processExplore(buttonId, sceneManifest, playerState) {
   const content = sceneManifest.content || [];
   const item = content.find(c => c.id === buttonId);
   if (!item) {
-    return { type: 'explore', narrative: 'You investigate, but find nothing of note.', discovered: true };
+    return { type: 'error', narrative: 'That action is no longer available.', discovered: false, contentId: null, itemGained: null };
   }
 
   // Check for class-specific exploration bonuses
@@ -321,7 +321,7 @@ function processItem(buttonId, storyMode, playerState) {
   const collectible = storyMode.collectibleItem;
 
   if (!collectible || collectible.id !== itemId) {
-    return { type: 'item', narrative: 'You pick up a useful trinket.', itemGained: itemId };
+    return { type: 'error', narrative: 'That item is no longer available.', itemGained: null };
   }
 
   // Add to inventory. Storyline acquisition confirmation is generated here,

@@ -10,3 +10,6 @@ Recorded the live root cause, backend hardening, regression coverage, deployment
 ## [2026-08-19] synthesize | Storyline acquisition confirmation contract
 
 Updated the Narrative Bible and Storyline engine contract so authored discoveries and collectible buttons both append deterministic acquisition confirmation when the item is added to Storyline inventory. Added regression coverage for both paths.
+## [2026-08-19] synthesize | Universal Storyline narrative integrity contract
+
+Scoped the action/result, filler isolation, discovery, inventory, and transition rules to Storyline mode only; made them universal across Dracula, Frankenstein, Holmes, and required them for all future Storyline manifests in the Narrative Bible and fix plan.

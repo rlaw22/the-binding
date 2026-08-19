@@ -109,6 +109,41 @@ Never rely on discovery prose alone to mutate inventory. Conversely, never award
 
 Filler actions are generated centrally by the DM service, not authored per adventure manifest. They are atmospheric-only and must never invoke the LLM or create new NPC interactions, locations, discoveries, flags, or inventory items. A filler response must not advance scene completion or be treated as an exploration content item.
 
+### Storyline Action/Result Integrity
+
+These rules apply universally to **Storyline mode** across Dracula, Frankenstein, Holmes, and every future Storyline adventure. They are enforced by the shared Storyline engine and must not be implemented as adventure-specific exceptions. Campaign and Digital DM modes have separate contracts and are not governed by this section.
+
+#### One action, one result
+
+Every submitted Storyline action must resolve to exactly one result belonging to the same action and current scene. The result must preserve stable `turnId`, `actionId`, `contentId`, and `sceneId` metadata wherever the transport exposes response metadata.
+
+- A result must never be displayed under a later action label.
+- Polling, retries, refreshes, and duplicate client delivery must be idempotent; the same turn must not append a second narrative or reward.
+- An action from a previous scene, an already-consumed action, or an action not present in the current legal action set must be rejected or safely treated as non-authoritative free text. It must not mutate Storyline state.
+- Scene transitions invalidate all previous action buttons and action metadata.
+- State mutation must occur before the corresponding result is published: discovery, inventory, flags, and scene transition metadata must describe the result actually being shown.
+
+#### Result isolation
+
+The result for the current action is the only result that may be emitted for that turn.
+
+- Filler and no-match actions must not invoke authored discoveries, NPC interactions, location changes, item awards, flags, or scene transitions.
+- A filler action must not trigger keyword discovery or advance completion, even if its label contains words used by a manifest item.
+- An authored discovery may be emitted only when its content ID matches the content ID resolved for the current action.
+- A discovered content item must not be replayed automatically by filler, fallback, polling, or an unrelated action.
+- Unknown content IDs, invalid collectible IDs, and malformed discovery tags must not count toward completion or claim an acquisition.
+- An item is acquired only when the deterministic Storyline inventory mutation succeeds; `itemGained` must never claim an item that was not added.
+
+#### Acquisition and transition boundaries
+
+- Every newly acquired item uses the acquisition contracts in **Inventory and Acquisition Integrity** and receives deterministic visible confirmation.
+- A collectible or `itemGained` action is processed once only; duplicate clicks cannot duplicate inventory or rewards.
+- An exit result must be typed and narrated as an exit, not returned as an unknown-action error.
+- A forced exit exposes only the valid exit action and cannot leave stale exploration or bad-choice actions active.
+- Transition metadata must identify both the source and destination scenes correctly.
+
+The shared engine must have regression coverage for these rules across all three current adventures. A new Storyline manifest is not complete until the universal action/result, filler isolation, discovery, inventory, and transition tests pass.
+
 ### ⚠️ Field Name Gotchas
 
 | ❌ Wrong (in old docs/template) | ✅ Correct (what code actually reads) |
@@ -454,6 +489,13 @@ Before committing a new scene manifest:
 - [ ] Exit label is clear and atmospheric
 - [ ] `hardExitNarration` is written
 - [ ] Content item discovery text ≥ 30 characters each
+- [ ] No authored action silently invokes another discovery, NPC interaction, item award, or scene transition
+- [ ] Every Storyline action has a unique stable ID and resolves to one result only
+- [ ] Filler and fallback actions cannot discover content, award items, mutate flags, or transition scenes
+- [ ] Previously discovered content cannot replay through filler, polling, or unrelated actions
+- [ ] Newly acquired items mutate Storyline inventory exactly once and receive engine-generated confirmation
+- [ ] Exit and forced-exit behavior invalidates stale actions and returns correct transition metadata
+- [ ] Run the universal Storyline regression suite for Dracula, Frankenstein, and Holmes
 
 ## Checklist for New Adventures
 
@@ -465,6 +507,7 @@ When creating a new adventure:
 - [ ] Follow this bible for every scene
 - [ ] Run `node tests/audit-manifest.js --adventure={adventure}` — 0 failures
 - [ ] Verify anti-funnel behavior (buttons stay visible after clicking)
+- [ ] Run the universal Storyline action/result, filler-isolation, discovery, inventory, and transition tests
 - [ ] Verify bad choice uniqueness across all acts
 - [ ] Verify `initialFacts.metNPCs` names match `keyNPCs` definitions
 

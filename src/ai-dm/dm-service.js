@@ -675,18 +675,36 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
     // Prefer the stable action ID submitted by the browser. Label matching is
     // retained only as a backward-compatible fallback for older clients/free text.
     const actionLower = playerAction.toLowerCase();
+    // Validate against the exact action set displayed for the current turn.
+    // Regenerating here would remove the clicked filler and create a stale-ID
+    // mismatch before the player has a chance to submit it.
+    const legalActions = game.sceneState._currentActions || generateSceneActions(game.sceneState);
+    const suppliedActionId = typeof actionMeta.actionId === 'string' ? actionMeta.actionId
+      : (typeof actionMeta.contentId === 'string' ? actionMeta.contentId : '');
+    const legalAction = suppliedActionId
+      ? legalActions.find(action => action.id === suppliedActionId || action.contentId === suppliedActionId)
+      : null;
     buttonType = 'explore';
     // Treat browser-supplied action metadata as untrusted input. Older clients
     // and malformed payloads may send an object here; only scalar string IDs
     // are valid stable identities. Invalid metadata must fall back to label
     // matching rather than crashing on String.prototype.startsWith().
-    const rawButtonId = actionMeta.actionId || actionMeta.contentId || '';
+    const rawButtonId = legalAction ? (legalAction.contentId || legalAction.id) : '';
     let buttonId = typeof rawButtonId === 'string' ? rawButtonId : '';
-    if (buttonId && buttonId.startsWith('item_')) buttonType = 'item';
-    else if (buttonId && buttonId.startsWith('ability_')) buttonType = 'ability';
-    else if (buttonId && buttonId.startsWith('bad_')) buttonType = 'bad_choice';
-    else if (buttonId && buttonId.startsWith('filler_')) buttonType = 'filler';
-    else if (buttonId && (buttonId === game.sceneState.exitAction || buttonId.startsWith('exit'))) buttonType = 'exit';
+    if (legalAction) {
+      if (legalAction.type === 'item') buttonType = 'item';
+      else if (legalAction.type === 'ability') buttonType = 'ability';
+      else if (legalAction.type === 'bad_choice') buttonType = 'bad_choice';
+      else if (legalAction.type === 'filler') buttonType = 'filler';
+      else if (legalAction.type === 'exit') buttonType = 'exit';
+      else if (legalAction.type === 'threat') buttonType = 'threat';
+      else buttonType = 'explore';
+    } else if (suppliedActionId) {
+      // Stable metadata that is not legal in the current scene is stale. Do
+      // not let its prefix select an arbitrary item, filler, or bad choice.
+      buttonId = 'explore_generic';
+      buttonType = 'explore';
+    }
 
     // Match against labels only when no stable action identity was supplied.
     // This preserves compatibility with older clients and free-text actions.
@@ -724,8 +742,12 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
     else if (!buttonId) {
       buttonType = 'explore';
       const content = manifest.contentItems || [];
+      // Only undiscovered content can be resolved through legacy label
+      // matching. This prevents old clients without stable IDs from replaying
+      // an already-consumed discovery.
+      const availableContent = content.filter(item => !item.discovered);
       // First pass: exact label match (case-insensitive)
-      for (const item of content) {
+      for (const item of availableContent) {
         if (item.label && actionLower === item.label.toLowerCase()) {
           buttonId = item.id;
           break;
@@ -735,7 +757,7 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
       if (!buttonId) {
         let bestMatch = null;
         let bestLength = 0;
-        for (const item of content) {
+        for (const item of availableContent) {
           if (!item.label) continue;
           const labelLower = item.label.toLowerCase();
           // Check if a significant portion of the label appears in the action
@@ -772,10 +794,14 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
       threatDef = ThreatEncounters.getThreatForScene(sceneIndex, game.adventureId);
     }
 
-    // Run StoryEngine deterministic processing
-    storyResult = StoryEngine.processButtonAction(
-      buttonId, buttonType, manifest, game.storyPlayerState, threatDef
-    );
+    // Run StoryEngine deterministic processing. Exit is a transport/scene
+    // action, not a StoryEngine button type, so never emit an unknown-action
+    // error for a valid exit click.
+    storyResult = buttonType === 'exit'
+      ? { type: 'exit', narrative: '', discovered: false, contentId: null, itemGained: null, coinChange: 0, hpChange: 0 }
+      : StoryEngine.processButtonAction(
+        buttonId, buttonType, manifest, game.storyPlayerState, threatDef
+      );
 
     // StoryEngine owns Storyline item awards. Do not mirror them into the
     // Campaign equipment inventory; the dedicated endpoint reads story state.
@@ -1155,9 +1181,17 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
     }
   }
 
-  // Process scene engine — discover content from DM response
+  // Process scene engine. Deterministic Storyline button results are already
+  // resolved above; prevent their narrative or label from discovering any
+  // additional content. Campaign/Digital DM retain the free-text fallback.
   if (game.sceneState) {
-    game.sceneState = SceneEngine.processTurn(game.sceneState, dmResponse, playerAction);
+    const storylineButton = isStoryline && game.storyButtonContext;
+    game.sceneState = SceneEngine.processTurn(
+      game.sceneState,
+      dmResponse,
+      playerAction,
+      storylineButton ? { authoritative: true, skipKeywordDiscovery: true } : {}
+    );
   }
 
   // Strip [EXPLORED: ...] tags from the player-facing narrative
@@ -1201,13 +1235,15 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
     }
 
     // Case 2: Hard exit triggered by the scene engine (too many turns at high completion)
-    if (SceneEngine.isHardExitTriggered(game.sceneState)) {
+    if (SceneEngine.isHardExitTriggered(game.sceneState) && storyResult?.type !== 'filler') {
       shouldTransition = true;
       const hardExitNarration = SceneEngine.getHardExitNarration(game.sceneState);
       transitionNarration = parsed.narrative + '\n\n' + hardExitNarration;
     }
 
     if (shouldTransition) {
+      // Capture the source before transitionScene mutates game.sceneState.
+      const fromSceneId = game.sceneState ? game.sceneState.sceneId : null;
       // Complete the current scene in the coin engine before transitioning
       if (game.coinPool && game.sceneScores.length > 0) {
         const currentSceneIndex = game.coinPool.scenePools.findIndex(sp => !sp.earned);
@@ -1240,7 +1276,7 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
       }
       parsed.sceneTransition = {
         sceneId: game.sceneState ? game.sceneState.sceneId : getNextSceneId(game),
-        fromScene: adventure.scenes.findIndex(s => s.id === (game.sceneState ? game.sceneState.sceneId : ''))
+        fromScene: adventure.scenes.findIndex(s => s.id === fromSceneId)
       };
     }
   }
@@ -1488,6 +1524,20 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
   const exitAction = SceneEngine.getExitAction(sceneState);
   const allContent = SceneEngine.getAllContentWithStatus(sceneState);
 
+  // FORCED pressure is a universal Storyline boundary: only the legal exit
+  // remains clickable. This prevents stale exploration/filler/bad-choice
+  // actions from mutating state after the scene has already concluded.
+  if (sceneState && sceneState.hardExitTriggered) {
+    const forcedActions = exitAction ? [{
+      id: exitAction.id,
+      label: exitAction.label,
+      shortLabel: generateShortLabel(exitAction.label),
+      type: 'exit'
+    }] : [];
+    sceneState._currentActions = forcedActions;
+    return forcedActions;
+  }
+
   // STORYLINE MODE: Only show undiscovered items. Once explored, buttons vanish.
   // AI suggestions are completely excluded — they caused repetition and scene-irrelevant noise.
   const contentActions = allContent.filter(i => i.available).map(item => ({
@@ -1638,6 +1688,7 @@ function generateSceneActions(sceneState, aiSuggestedActions = []) {
     actions.push(...contentActions);
   }
 
+  sceneState._currentActions = actions;
   return actions;
 }
 

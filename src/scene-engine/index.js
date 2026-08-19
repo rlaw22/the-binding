@@ -70,24 +70,28 @@ function enterScene(manifest) {
  * @param {string} playerAction — the player's action text
  * @returns {object} updated scene state
  */
-function processTurn(sceneState, dmResponse, playerAction) {
+function processTurn(sceneState, dmResponse, playerAction, options = {}) {
   if (!sceneState) return sceneState;
 
   sceneState.turnCount++;
 
-  // Parse [EXPLORED: id1, id2, ...] tags from DM response
-  const explored = parseExploredTags(dmResponse);
+  // Deterministic Storyline button results are authoritative. Their response
+  // must not be allowed to discover a second item through an LLM tag or broad
+  // keyword match. Free-text actions retain the legacy fallback behavior.
+  const isAuthoritative = options.authoritative === true;
+  const explored = isAuthoritative ? [] : parseExploredTags(dmResponse);
+  const keywordMatches = (options.skipKeywordDiscovery || isAuthoritative)
+    ? []
+    : matchKeywords(playerAction, sceneState.contentItems);
 
-  // Also do keyword matching on player action as a fallback
-  const keywordMatches = matchKeywords(playerAction, sceneState.contentItems);
-
-  // Merge discovered items
+  // Merge only valid manifest IDs. Unknown tags must never inflate completion.
   const allNew = [...explored, ...keywordMatches];
   for (const id of allNew) {
+    const item = sceneState.contentItems.find(i => i.id === id);
+    if (!item) continue;
     if (!sceneState.discoveredIds.has(id)) {
       sceneState.discoveredIds.add(id);
-      const item = sceneState.contentItems.find(i => i.id === id);
-      if (item) item.discovered = true;
+      item.discovered = true;
     }
   }
 
@@ -340,7 +344,9 @@ function getAllContentWithStatus(sceneState) {
     id: i.id,
     label: i.label,
     discovered: i.discovered,
-    available: !i.discovered && (!i.requires || sceneState.discoveredIds.has(i.requires)),
+    available: !i.discovered &&
+      (!i.requires || sceneState.discoveredIds.has(i.requires)) &&
+      !(sceneState.usedSuggestions && sceneState.usedSuggestions.has(i.label)),
     hasDiscovery: !!i.discovery
   }));
 }
@@ -350,12 +356,13 @@ function getAllContentWithStatus(sceneState) {
  * Used when the server receives a button click with contentId.
  */
 function markDiscovered(sceneState, contentId) {
-  if (!sceneState || !contentId) return;
-  if (sceneState.discoveredIds.has(contentId)) return;
+  if (!sceneState || !contentId) return false;
+  const item = sceneState.contentItems.find(i => i.id === contentId);
+  if (!item || sceneState.discoveredIds.has(contentId)) return false;
 
   sceneState.discoveredIds.add(contentId);
-  const item = sceneState.contentItems.find(i => i.id === contentId);
-  if (item) item.discovered = true;
+  item.discovered = true;
+  return true;
 }
 
 /**
