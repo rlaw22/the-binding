@@ -68,6 +68,91 @@
     return data;
   };
 
+  StorylineV2Client.prototype.renderBookHistory = function (container, history, options) {
+    if (!container) return;
+    options = options || {};
+    var entries = Array.isArray(history) ? history : [];
+    container.textContent = '';
+    container.classList.add('storyline-v2-journal');
+    container.setAttribute('aria-label', options.ariaLabel || 'Storyline journal history');
+    entries.forEach(function (entry, index) {
+      var card = document.createElement('article');
+      card.className = 'storyline-v2-journal-entry';
+      card.dataset.historyIndex = String(index);
+      var heading = document.createElement('h3');
+      heading.className = 'storyline-v2-journal-entry-title';
+      heading.textContent = entry.title || entry.eventLabel || ('Turn ' + (entry.turnNumber || index + 1));
+      var meta = document.createElement('p');
+      meta.className = 'storyline-v2-journal-entry-meta';
+      meta.textContent = [entry.sceneName || entry.sceneId, entry.turnNumber ? 'Turn ' + entry.turnNumber : ''].filter(Boolean).join(' · ');
+      var body = document.createElement('p');
+      body.className = 'storyline-v2-journal-entry-body';
+      body.textContent = entry.summary || entry.narrative || '';
+      card.appendChild(heading);
+      if (meta.textContent) card.appendChild(meta);
+      if (body.textContent) card.appendChild(body);
+      if (entry.diceResult !== undefined && entry.diceResult !== null) {
+        var dice = document.createElement('span');
+        dice.className = 'storyline-v2-journal-dice';
+        dice.textContent = 'Dice result: ' + entry.diceResult;
+        dice.setAttribute('aria-label', 'Dice result ' + entry.diceResult);
+        card.appendChild(dice);
+      }
+      container.appendChild(card);
+    });
+  };
+
+  StorylineV2Client.prototype.renderBookmarkRail = function (container, bookmarks, callbacks) {
+    if (!container) return;
+    callbacks = callbacks || {};
+    var active = Array.isArray(bookmarks) ? bookmarks.slice(0, 2) : [];
+    container.textContent = '';
+    container.classList.add('storyline-v2-bookmark-rail');
+    container.setAttribute('aria-label', 'Storyline bookmarks');
+
+    var present = document.createElement('button');
+    present.type = 'button';
+    present.className = 'storyline-v2-bookmark storyline-v2-bookmark--present';
+    present.textContent = 'Present';
+    present.setAttribute('aria-label', 'Return to present');
+    present.addEventListener('click', function () { if (typeof callbacks.onPresent === 'function') callbacks.onPresent(); });
+    container.appendChild(present);
+
+    active.forEach(function (bookmark, index) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'storyline-v2-bookmark storyline-v2-bookmark--saved';
+      button.dataset.bookmarkId = bookmark.bookmarkId || bookmark.id || String(index);
+      button.textContent = bookmark.label || ('Bookmark ' + (index + 1));
+      button.setAttribute('aria-label', 'Review ' + button.textContent);
+      button.addEventListener('click', function () {
+        if (typeof callbacks.onReview === 'function') callbacks.onReview(bookmark);
+      });
+      container.appendChild(button);
+    });
+  };
+
+  StorylineV2Client.prototype.renderBookmarkReview = function (container, bookmark, callbacks) {
+    if (!container || !bookmark) return;
+    callbacks = callbacks || {};
+    container.textContent = '';
+    container.className = 'storyline-v2-bookmark-review';
+    container.setAttribute('role', 'dialog');
+    container.setAttribute('aria-modal', 'true');
+    container.setAttribute('aria-label', 'Bookmark review');
+    var title = document.createElement('h2');
+    title.textContent = bookmark.label || 'Saved page';
+    var summary = document.createElement('p');
+    summary.textContent = bookmark.summary || [bookmark.sceneName || bookmark.sceneId, bookmark.turnNumber ? 'Turn ' + bookmark.turnNumber : ''].filter(Boolean).join(' · ');
+    var review = document.createElement('button');
+    review.type = 'button'; review.textContent = 'Review history';
+    review.addEventListener('click', function () { if (typeof callbacks.onHistory === 'function') callbacks.onHistory(bookmark); });
+    var replay = document.createElement('button');
+    replay.type = 'button'; replay.className = 'storyline-v2-replay-action'; replay.textContent = 'Replay from here';
+    replay.addEventListener('click', function () { if (typeof callbacks.onReplay === 'function') callbacks.onReplay(bookmark); });
+    container.appendChild(title); container.appendChild(summary); container.appendChild(review); container.appendChild(replay);
+  };
+
   StorylineV2Client.prototype.renderCatalog = function (container, onAction) {
     if (!container || !this.snapshot || !this.snapshot.catalog) return;
     container.textContent = '';
