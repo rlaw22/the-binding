@@ -16,9 +16,15 @@
     init = init || {};
     init.headers = Object.assign({ 'Content-Type': 'application/json' }, init.headers || {});
     var response = await fetch(this.base + url, init);
-    var data = await response.json();
+    var data = null;
+    var contentType = response.headers && typeof response.headers.get === 'function' ? response.headers.get('content-type') : '';
+    try {
+      data = contentType && contentType.indexOf('application/json') === -1 ? await response.text() : await response.json();
+    } catch (parseError) {
+      data = null;
+    }
     if (!response.ok) {
-      var error = new Error(data.error || 'Storyline v2 request failed');
+      var error = new Error((data && data.error) || 'Storyline v2 request failed');
       error.status = response.status;
       error.data = data;
       throw error;

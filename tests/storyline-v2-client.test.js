@@ -18,6 +18,8 @@ assert.ok(client.includes('Replay from here'));
 assert.ok(client.includes('Close bookmark review'));
 assert.ok(client.includes('aria-live'));
 assert.ok(client.includes('slice(0, 2)'));
+assert.ok(client.includes('content-type'));
+assert.ok(client.includes('data && data.error'));
 assert.ok(!client.includes('Math.random'));
 assert.ok(!client.includes('createAction'));
 console.log('  ✓ Storyline v2 client adapter remains catalog-bound and presentation-only');

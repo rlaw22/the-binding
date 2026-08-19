@@ -10,6 +10,8 @@
 
   root.storylineV2Active = false;
   root.storylineV2Client = null;
+  var previousFocus = null;
+  var submissionInFlight = false;
 
   function sessionId() {
     return 'storyline-v2-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
@@ -24,7 +26,6 @@
     tools.setAttribute('aria-label', 'Storyline book navigation');
     var rail = document.createElement('div');
     rail.id = 'storyline-v2-bookmarks';
-    var previousFocus = null;
     var historyButton = document.createElement('button');
     historyButton.type = 'button';
     historyButton.className = 'storyline-v2-book-tool-button';
@@ -130,7 +131,8 @@
   }
 
   function submit(action) {
-    if (!root.storylineV2Client) return;
+    if (!root.storylineV2Client || submissionInFlight || !action || !action.actionId) return;
+    submissionInFlight = true;
     root.storylineV2Client.submitAction({ actionId: action.actionId, turnId: 'turn-' + Date.now().toString(36) })
       .then(function (result) {
         if (result && result.narrative && typeof root.addMessage === 'function') {
@@ -139,9 +141,12 @@
         render(root.storylineV2Client.snapshot);
       })
       .catch(function (error) {
-        refreshAfterStale(error).then(function (refreshed) {
+        return refreshAfterStale(error).then(function (refreshed) {
           if (!refreshed && typeof root.addMessage === 'function') root.addMessage('error', error.message || 'Storyline v2 action failed.');
         });
+      })
+      .finally(function () {
+        submissionInFlight = false;
       });
   }
 
