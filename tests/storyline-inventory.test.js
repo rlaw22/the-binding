@@ -38,6 +38,7 @@ test('StoryEngine awards authored item into Storyline inventory', () => {
   assert.strictEqual(result.itemGained, 'crucifix');
   assert.deepStrictEqual(player.inventory, ['crucifix']);
   assert.strictEqual(StorylineInventory.listStorylineItems(player)[0].name, 'Brass Crucifix');
+  assert.ok(result.narrative.includes('You take the Brass Crucifix and keep it close. It is now in your possession.'));
 });
 
 test('manifest validator catches malformed collectible contracts', () => {

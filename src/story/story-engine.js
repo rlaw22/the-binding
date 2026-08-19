@@ -324,14 +324,22 @@ function processItem(buttonId, storyMode, playerState) {
     return { type: 'item', narrative: 'You pick up a useful trinket.', itemGained: itemId };
   }
 
-  // Add to inventory
+  // Add to inventory. Storyline acquisition confirmation is generated here,
+  // at the same deterministic boundary as the state mutation, so every
+  // collectible-button award is visible to the player and future manifests
+  // cannot accidentally omit it.
   const resolved = StorylineInventory.addStorylineItem(playerState, collectible);
+  const itemName = resolved ? resolved.name : (collectible.name || itemId);
+  const baseNarrative = collectible.description || (resolved && resolved.description) || 'You carefully stow the item away.';
+  const acquisitionNarrative = resolved
+    ? `${baseNarrative}\n\nYou take the ${itemName} and keep it close. It is now in your possession.`
+    : baseNarrative;
 
   return {
     type: 'item',
-    narrative: collectible.description || (resolved && resolved.description) || 'You carefully stow the item away.',
+    narrative: acquisitionNarrative,
     itemGained: resolved ? resolved.id : itemId,
-    itemName: resolved ? resolved.name : (collectible.name || itemId)
+    itemName
   };
 }
 
