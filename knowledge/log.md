@@ -21,3 +21,6 @@ Recorded the decision and target architecture for reconstructing Storyline indep
 ## [2026-08-19] synthesize | Storyline v2 Deterministic Validation
 Recorded compiler hardening for graph edges and deterministic catalog-bounded free-text matching with ambiguity rejection and regression coverage.
 
+## [2026-08-19] synthesize | Storyline v2 Dracula Adapter
+Recorded the migration-only adapter, globally stable scene-namespaced action IDs, merged-act source correction, and successful 25-scene compiler validation.
+
