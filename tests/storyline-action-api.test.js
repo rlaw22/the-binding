@@ -64,6 +64,57 @@ const { createServer } = require('../src/api/server');
       }
     }
 
+    // Regression: an atmospheric filler action must not let the LLM invent
+    // an NPC interaction or award an item.
+    const fillerCreated = await server.inject({
+      method: 'POST',
+      url: '/api/sessions',
+      payload: {
+        adventureId: 'dracula',
+        gameMode: 'storyline',
+        playerName: 'Law',
+        characterClass: 'cleric',
+        characterRace: 'human'
+      }
+    });
+    const fillerSession = fillerCreated.json();
+    const fillerResponse = await server.inject({
+      method: 'POST',
+      url: `/api/sessions/${fillerSession.sessionId}/actions`,
+      payload: {
+        content: 'Review what you know about your destination',
+        actionId: 'filler_scene_00_1',
+        contentId: null,
+        playerId: fillerSession.playerId
+      }
+    });
+    assert.equal(fillerResponse.statusCode, 200);
+    assert.doesNotMatch(fillerResponse.json().narrative, /old woman|garlic/i);
+    const fillerInventory = await server.inject({
+      method: 'GET',
+      url: `/api/sessions/${fillerSession.sessionId}/storyline-inventory`
+    });
+    assert.deepEqual(fillerInventory.json().items, []);
+
+    // Regression: the authored old-woman discovery awards garlic and says so.
+    const garlicResponse = await server.inject({
+      method: 'POST',
+      url: `/api/sessions/${fillerSession.sessionId}/actions`,
+      payload: {
+        content: 'Approach the old woman in the corner',
+        actionId: 'find_old_woman',
+        contentId: 'find_old_woman',
+        playerId: fillerSession.playerId
+      }
+    });
+    assert.equal(garlicResponse.statusCode, 200);
+    assert.match(garlicResponse.json().narrative, /Garlic Bulb|garlic.*possession/i);
+    const garlicInventory = await server.inject({
+      method: 'GET',
+      url: `/api/sessions/${fillerSession.sessionId}/storyline-inventory`
+    });
+    assert.ok(garlicInventory.json().items.some(item => item.id === 'garlic'));
+
     // Regression: stale/malformed clients must not crash the action handler
     // when action metadata is an object instead of a stable string ID.
     const malformedCreated = await server.inject({

@@ -685,6 +685,7 @@ async function processAction(game, playerAction, character, actionMeta = {}) {
     if (buttonId && buttonId.startsWith('item_')) buttonType = 'item';
     else if (buttonId && buttonId.startsWith('ability_')) buttonType = 'ability';
     else if (buttonId && buttonId.startsWith('bad_')) buttonType = 'bad_choice';
+    else if (buttonId && buttonId.startsWith('filler_')) buttonType = 'filler';
     else if (buttonId && (buttonId === game.sceneState.exitAction || buttonId.startsWith('exit'))) buttonType = 'exit';
 
     // Match against labels only when no stable action identity was supplied.
@@ -1050,7 +1051,12 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
     // The LLM consistently overrides "you MUST use this exact text" directives with
     // invented narration, destroying the authored discovery experience.
     // Use the discovery text directly — no LLM expansion needed.
-    if (discoveryNarration && buttonType === 'explore') {
+    if (buttonType === 'filler') {
+      // Filler actions are deterministic atmosphere only. Never send them to
+      // the LLM, which could invent NPC interactions, item discoveries, or
+      // location changes for a non-story action.
+      dmResponse = storyResult.narrative;
+    } else if (discoveryNarration && buttonType === 'explore') {
       console.log('[StoryEngine] Discovery narration available for explore action — skipping LLM, using authored text directly');
       // Preserve deterministic acquisition confirmation when an authored
       // discovery also awards an item. Otherwise the direct-discovery fast

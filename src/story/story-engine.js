@@ -154,6 +154,8 @@ function processButtonAction(buttonId, buttonType, sceneManifest, playerState, t
   switch (buttonType) {
     case 'explore':
       return processExplore(buttonId, sceneManifest, playerState);
+    case 'filler':
+      return processFiller(buttonId, sceneManifest, playerState);
     case 'threat':
       return processThreat(buttonId, threatDef, playerState);
     case 'item':
@@ -171,6 +173,20 @@ function processButtonAction(buttonId, buttonType, sceneManifest, playerState, t
  * Process an exploration button click.
  * Returns the discovery text (pre-authored truth) + any item or flag rewards.
  */
+function processFiller(buttonId, sceneManifest, playerState) {
+  // Filler actions are deliberately non-progressing and cannot introduce
+  // NPCs, items, locations, or discoveries.
+  return {
+    type: 'filler',
+    narrative: 'You take a quiet moment to collect yourself, keeping your attention on the room around you.',
+    discovered: false,
+    contentId: null,
+    itemGained: null,
+    coinChange: 0,
+    hpChange: 0
+  };
+}
+
 function processExplore(buttonId, sceneManifest, playerState) {
   const content = sceneManifest.content || [];
   const item = content.find(c => c.id === buttonId);
