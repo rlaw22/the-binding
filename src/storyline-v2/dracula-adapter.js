@@ -102,7 +102,7 @@ function sceneFromLegacy(scene, index) {
   const actions = (scene.content || []).map(content => actionFromContent(content, scene.sceneId));
   if (index === 0) {
     actions.push(classAction(scene.sceneId, 'cleric', 'Offer a prayer of protection', 'You murmur a protective prayer over the inn, and the room seems to settle around you.', 'inn_blessed'));
-    actions.push(classAction(scene.sceneId, 'scholar', 'Recall the old lore of the Carpathians', 'The scattered details align: the warnings, the wolves, and the name Dracula form a pattern you cannot ignore.', 'carpathian_lore_recalled'));
+    actions.push(classAction(scene.sceneId, 'mage', 'Recall the old lore of the Carpathians', 'The scattered details align: the warnings, the wolves, and the name Dracula form a pattern you cannot ignore.', 'carpathian_lore_recalled'));
     actions.push(classAction(scene.sceneId, 'rogue', 'Quietly inspect the coach arrangements', 'You study the stable yard and exits without drawing attention. The coach is being prepared, but someone is watching from the dark.', 'coach_route_checked'));
     actions.push(classAction(scene.sceneId, 'fighter', 'Prepare for the road ahead', 'You check your weapon, your footing, and the fading light. Whatever waits beyond Bistritz will not find you helpless.', 'road_prepared'));
   }

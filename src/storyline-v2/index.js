@@ -303,6 +303,7 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   const result = {
     responseId: `response:${turnId || state.turnNumber}`, turnId: turnId || null, sceneId: state.sceneId, sourceSceneId: beforeSceneId,
     actionId, contentId: action.contentId, resultType: resolution.resultType || action.type, narrative: resolution.narration || action.label,
+    endingId: resolution.endingId || null,
     stateChanges, transition, catalog: buildCatalog(adventure, state)
   };
   if (turnId) state.processedTurns[turnId] = clone(result);

@@ -44,8 +44,8 @@
     if (!root.storylineV2Client) return;
     root.storylineV2Client.submitAction({ actionId: action.actionId, turnId: 'turn-' + Date.now().toString(36) })
       .then(function (result) {
-        if (result && result.result && result.result.narration && typeof root.addMessage === 'function') {
-          root.addMessage('dm', result.result.narration);
+        if (result && result.narrative && typeof root.addMessage === 'function') {
+          root.addMessage('dm', result.narrative);
         }
         render(root.storylineV2Client.snapshot);
       })
@@ -71,6 +71,12 @@
       root._storylineV2Scene = null;
       root.storyModeActive = true;
       document.body.classList.add('storyline-active');
+      ['start-screen', 'storyline-setup-screen', 'class-select-overlay'].forEach(function (id) {
+        var screen = document.getElementById(id);
+        if (screen) { screen.classList.add('hidden'); screen.style.display = 'none'; }
+      });
+      var messages = document.getElementById('messages');
+      if (messages) messages.classList.remove('hidden');
       var inputRow = document.getElementById('input-row');
       if (inputRow) inputRow.style.display = 'none';
       var actionButtons = document.getElementById('action-buttons');

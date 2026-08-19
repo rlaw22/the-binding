@@ -30,11 +30,24 @@ test('compiles Dracula through the universal compiler', () => {
   assert.ok(adventure.graph.edges.length > 0);
 });
 
+test('preserves a connected provisional scene graph and makes every terminal exit explicit', () => {
+  const adventure = compileDracula();
+  const scenes = Object.values(adventure.scenes);
+  assert.strictEqual(adventure.graph.entry, 'scene_00');
+  assert.strictEqual(adventure.graph.edges.length, scenes.length - 1);
+  assert.strictEqual(scenes.filter(scene => adventure.graph.edges.some(edge => edge.from === scene.sceneId)).length, scenes.length - 1);
+  assert.strictEqual(scenes.filter(scene => !adventure.graph.edges.some(edge => edge.from === scene.sceneId)).map(scene => scene.sceneId).join(','), 'scene_24');
+  const terminal = adventure.scenes.scene_24;
+  const terminalExit = terminal.actions.find(action => action.type === 'exit');
+  assert.ok(terminalExit);
+  assert.strictEqual(terminalExit.resolution.resultType, 'exit');
+});
+
 test('namespaces migrated discoveries and provides four meaningful opening class actions', () => {
   const adventure = compileDracula();
   const opening = adventure.scenes.scene_00;
   const classActions = opening.actions.filter(action => action.type === 'class');
-  assert.deepStrictEqual(classActions.map(action => action.availability.classes[0]).sort(), ['cleric', 'fighter', 'rogue', 'scholar']);
+  assert.deepStrictEqual(classActions.map(action => action.availability.classes[0]).sort(), ['cleric', 'fighter', 'mage', 'rogue']);
   const discovered = opening.actions.filter(action => (action.resolution.discover || []).length);
   assert.ok(discovered.length > 0);
   assert.ok(discovered.every(action => action.resolution.discover[0].startsWith('scene_00__')));
