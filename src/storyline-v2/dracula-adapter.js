@@ -115,6 +115,21 @@ function authoredBranchActions(scene) {
       }
     }];
   }
+  if (scene.sceneId === 'scene_14') {
+    return [{
+      actionId: 'scene_14__honor_lucys_release',
+      type: 'class',
+      category: 'lore',
+      label: 'Trust Van Helsing and prepare the mercy ritual',
+      shortLabel: 'Prepare mercy ritual',
+      keywords: ['trust', 'van helsing', 'mercy', 'ritual', 'lucy'],
+      resolution: {
+        resultType: 'branch',
+        narration: 'You accept the terrible truth and help Van Helsing prepare the ritual that may free Lucy’s soul.',
+        setFlags: { lucy_ritual_prepared: true }
+      }
+    }];
+  }
   if (scene.sceneId === 'scene_20') {
     return [{
       actionId: 'scene_20__charter_fast_route',
@@ -174,6 +189,12 @@ function buildDraculaManifest() {
   })).filter(edge => edge.trigger.actionId);
   // Optional authored branches converge on the existing backbone so they alter
   // state and narrative emphasis without creating unreachable migrated scenes.
+  edges.push({
+    edgeId: 'scene_14_honor_release_to_scene_15',
+    from: 'scene_14',
+    to: 'scene_15',
+    trigger: { actionId: 'scene_14__honor_lucys_release' }
+  });
   edges.push({
     edgeId: 'scene_18_hold_line_to_scene_19',
     from: 'scene_18',

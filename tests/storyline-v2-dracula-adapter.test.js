@@ -35,7 +35,7 @@ test('preserves the connected backbone and makes every terminal exit explicit', 
   const adventure = compileDracula();
   const scenes = Object.values(adventure.scenes);
   assert.strictEqual(adventure.graph.entry, 'scene_00');
-  assert.strictEqual(adventure.graph.edges.length, scenes.length - 1 + 2);
+  assert.strictEqual(adventure.graph.edges.length, scenes.length - 1 + 3);
   assert.strictEqual(scenes.filter(scene => adventure.graph.edges.some(edge => edge.from === scene.sceneId)).length, scenes.length - 1);
   assert.strictEqual(scenes.filter(scene => !adventure.graph.edges.some(edge => edge.from === scene.sceneId)).map(scene => scene.sceneId).join(','), 'scene_24');
   const terminal = adventure.scenes.scene_24;
@@ -47,8 +47,9 @@ test('preserves the connected backbone and makes every terminal exit explicit', 
 
 test('adds authored converging branches at the counter-attack and pursuit', () => {
   const adventure = compileDracula();
-  const branchIds = adventure.graph.edges.filter(edge => edge.edgeId.includes('hold_line') || edge.edgeId.includes('fast_route')).map(edge => edge.trigger.actionId).sort();
-  assert.deepStrictEqual(branchIds, ['scene_18__hold_the_line', 'scene_20__charter_fast_route']);
+  const branchIds = adventure.graph.edges.filter(edge => edge.edgeId.includes('honor_release') || edge.edgeId.includes('hold_line') || edge.edgeId.includes('fast_route')).map(edge => edge.trigger.actionId).sort();
+  assert.deepStrictEqual(branchIds, ['scene_14__honor_lucys_release', 'scene_18__hold_the_line', 'scene_20__charter_fast_route']);
+  assert.strictEqual(adventure.scenes.scene_14.actions.find(action => action.actionId === 'scene_14__honor_lucys_release').resolution.setFlags.lucy_ritual_prepared, true);
   assert.strictEqual(adventure.scenes.scene_18.actions.find(action => action.actionId === 'scene_18__hold_the_line').resolution.setFlags.protected_mina, true);
   assert.strictEqual(adventure.scenes.scene_20.actions.find(action => action.actionId === 'scene_20__charter_fast_route').resolution.setFlags.fast_route, true);
   assert.deepStrictEqual(Object.keys(adventure.endings).sort(), ['dracula_destroyed', 'mina_lost']);
@@ -68,6 +69,38 @@ test('resolves authored branch actions into converged scenes and flags', () => {
   const pursuitResult = resolveTurn({ adventure, state: pursuit, actionId: 'scene_20__charter_fast_route', catalogVersion: pursuitCatalog.catalogVersion, turnId: 'branch-20' });
   assert.strictEqual(pursuitResult.state.sceneId, 'scene_21');
   assert.strictEqual(pursuitResult.state.flags.fast_route, true);
+
+  const terminal = createState(adventure, { sceneId: 'scene_24', classId: 'fighter', flags: { protected_mina: true, fast_route: true } });
+  const terminalCatalog = buildCatalog(adventure, terminal);
+  assert.ok(terminalCatalog.actions.some(action => action.type === 'exit'));
+  const success = resolveTurn({ adventure, state: terminal, actionId: 'scene_24__witness_sunrise', catalogVersion: terminalCatalog.catalogVersion, turnId: 'ending-success' });
+  assert.strictEqual(success.result.endingId, 'dracula_destroyed');
+
+  const failureState = createState(adventure, { sceneId: 'scene_24', classId: 'fighter' });
+  const failureCatalog = buildCatalog(adventure, failureState);
+  const failure = resolveTurn({ adventure, state: failureState, actionId: 'scene_24__witness_sunrise', catalogVersion: failureCatalog.catalogVersion, turnId: 'ending-failure' });
+  assert.strictEqual(failure.result.endingId, 'mina_lost');
+  assert.ok(failure.result.narrative.toLowerCase().includes('bound to him'));
+});
+
+test('completes an enabled-mode success journey through authored branches', () => {
+  const adventure = compileDracula();
+  let state = createState(adventure, { classId: 'cleric' });
+  let ending = null;
+  for (let step = 0; step < 40 && !ending; step += 1) {
+    const catalog = buildCatalog(adventure, state);
+    const actionId = state.sceneId === 'scene_18'
+      ? 'scene_18__hold_the_line'
+      : state.sceneId === 'scene_20'
+        ? 'scene_20__charter_fast_route'
+        : catalog.actions.find(action => action.type === 'exit')?.actionId;
+    assert.ok(actionId, `No progression action at ${state.sceneId}`);
+    const turn = resolveTurn({ adventure, state, actionId, catalogVersion: catalog.catalogVersion, turnId: `journey-${step}` });
+    state = turn.state;
+    ending = turn.result.endingId;
+  }
+  assert.strictEqual(state.sceneId, 'scene_24');
+  assert.strictEqual(ending, 'dracula_destroyed');
 });
 
 test('namespaces migrated discoveries and provides four meaningful opening class actions', () => {

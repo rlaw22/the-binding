@@ -250,7 +250,15 @@ function buildCatalog(adventure, state) {
   const available = scene.actions.filter(action => actionAvailable(action, state));
   const priority = { class: 0, lore: 1, exploration: 2, collectible: 2, environment: 3, threat: 4, risk: 4, exit: 5, atmosphere: 6 };
   available.sort((a, b) => (priority[a.category] ?? 5) - (priority[b.category] ?? 5) || a.actionId.localeCompare(b.actionId));
-  const actions = available.slice(0, 6).map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, label: action.label, shortLabel: action.shortLabel, subtitle: action.subtitle, iconKey: action.iconKey, availability: 'available' }));
+  let selected = available.slice(0, 6);
+  // A terminal/scene exit is a progression contract, not optional flavor. If
+  // sorting would push it past the six-action presentation limit, reserve the
+  // final slot for the first available exit.
+  const exit = available.find(action => action.type === 'exit');
+  if (exit && !selected.some(action => action.actionId === exit.actionId)) {
+    selected = [...selected.slice(0, 5), exit];
+  }
+  const actions = selected.map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, label: action.label, shortLabel: action.shortLabel, subtitle: action.subtitle, iconKey: action.iconKey, availability: 'available' }));
   return {
     sceneId: state.sceneId,
     catalogVersion: state.catalogVersion,
@@ -292,6 +300,17 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   if (resolution.coins) { state.coins += resolution.coins; stateChanges.coins = resolution.coins; }
   Object.assign(state.flags, resolution.setFlags || {}); Object.assign(stateChanges.flags, resolution.setFlags || {});
 
+  // Dracula's terminal choice has two authored outcomes. The success ending
+  // requires the protective and rapid-pursuit decisions; otherwise the same
+  // final action resolves to the deterministic failure ending.
+  let endingId = resolution.endingId || null;
+  let narrative = resolution.narration || action.label;
+  if (beforeSceneId === 'scene_24' && action.type === 'exit') {
+    const succeeded = state.flags.protected_mina === true && state.flags.fast_route === true;
+    endingId = succeeded ? 'dracula_destroyed' : 'mina_lost';
+    if (!succeeded) narrative = adventure.endings[endingId]?.narration || narrative;
+  }
+
   let transition = null;
   const edge = (adventure.graph.edges || []).find(candidate => candidate.from === beforeSceneId && candidate.trigger && candidate.trigger.actionId === actionId && requirementsPass(candidate.trigger.requires || [], state));
   if (edge) {
@@ -302,8 +321,8 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   state.turnNumber += 1; state.catalogVersion = `${state.sceneId}:${state.turnNumber}`;
   const result = {
     responseId: `response:${turnId || state.turnNumber}`, turnId: turnId || null, sceneId: state.sceneId, sourceSceneId: beforeSceneId,
-    actionId, contentId: action.contentId, resultType: resolution.resultType || action.type, narrative: resolution.narration || action.label,
-    endingId: resolution.endingId || null,
+    actionId, contentId: action.contentId, resultType: resolution.resultType || action.type, narrative,
+    endingId,
     stateChanges, transition, catalog: buildCatalog(adventure, state)
   };
   if (turnId) state.processedTurns[turnId] = clone(result);
