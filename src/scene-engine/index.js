@@ -30,7 +30,8 @@ function enterScene(manifest) {
     keywords: item.keywords || [],       // explicit keywords for action matching
     discovered: false,
     requires: item.requires || null,     // dependency: content ID that must be discovered first
-    coinReward: item.coinReward || 0
+    coinReward: item.coinReward || 0,
+    itemGained: item.itemGained || null
   }));
 
   return {

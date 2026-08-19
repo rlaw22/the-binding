@@ -1052,7 +1052,10 @@ USE THIS SHEET for all mechanical references. When the player makes a skill chec
     // Use the discovery text directly — no LLM expansion needed.
     if (discoveryNarration && buttonType === 'explore') {
       console.log('[StoryEngine] Discovery narration available for explore action — skipping LLM, using authored text directly');
-      dmResponse = discoveryNarration;
+      // Preserve deterministic acquisition confirmation when an authored
+      // discovery also awards an item. Otherwise the direct-discovery fast
+      // path would hide the inventory-changing part of the result.
+      dmResponse = storyResult.itemGained ? storyResult.narrative : discoveryNarration;
     } else {
       // Storyline mode: LLM adds atmosphere to deterministic result
       // Use a simpler message set — just the system prompt with the action

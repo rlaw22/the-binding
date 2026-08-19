@@ -30,6 +30,14 @@ const { createServer } = require('../src/api/server');
       assert.equal(created.statusCode, 200, `create session for ${actionId}`);
       const session = created.json();
 
+      if (actionId === 'examine_crucifix') {
+        const beforeInventory = await server.inject({
+          method: 'GET',
+          url: `/api/sessions/${session.sessionId}/storyline-inventory`
+        });
+        assert.deepEqual(beforeInventory.json().items, [], 'crucifix should not be granted before examination');
+      }
+
       const response = await server.inject({
         method: 'POST',
         url: `/api/sessions/${session.sessionId}/actions`,
@@ -46,6 +54,14 @@ const { createServer } = require('../src/api/server');
       assert.equal(body.ok, true, `${actionId} should be accepted`);
       assert.ok(body.narrative, `${actionId} should return narration`);
       assert.notEqual(body.narrative, 'Something went wrong — try again.');
+      if (actionId === 'examine_crucifix') {
+        assert.match(body.narrative, /Brass Crucifix/);
+        const afterInventory = await server.inject({
+          method: 'GET',
+          url: `/api/sessions/${session.sessionId}/storyline-inventory`
+        });
+        assert.ok(afterInventory.json().items.some(item => item.id === 'crucifix'), 'examination should award crucifix');
+      }
     }
 
     // Regression: stale/malformed clients must not crash the action handler

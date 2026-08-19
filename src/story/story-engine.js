@@ -183,12 +183,26 @@ function processExplore(buttonId, sceneManifest, playerState) {
   const classOverride = classBonus[playerState.classId] && classBonus[playerState.classId][buttonId];
 
   const narrative = classOverride || item.discovery || 'You investigate further.';
+  let itemGained = null;
+  let finalNarrative = narrative;
+
+  // Exploration discoveries can award authored Storyline collectibles. Keep
+  // the award and its confirmation in the same deterministic result so the
+  // inventory cannot change without the player seeing how it was acquired.
+  if (item.itemGained) {
+    const resolved = StorylineInventory.addStorylineItem(playerState, item.itemGained);
+    if (resolved) {
+      itemGained = resolved.id;
+      finalNarrative += `\n\nYou take the ${resolved.name} and keep it close. It is now in your possession.`;
+    }
+  }
 
   return {
     type: 'explore',
-    narrative,
+    narrative: finalNarrative,
     discovered: true,
     contentId: buttonId,
+    itemGained,
     coinChange: 0,
     hpChange: 0
   };
