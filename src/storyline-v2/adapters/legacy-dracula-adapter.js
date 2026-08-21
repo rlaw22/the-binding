@@ -65,6 +65,36 @@ function actionFromBadChoice(scene) {
   };
 }
 
+function openingCheckAction(sceneId) {
+  return {
+    actionId: `${sceneId}__study_guestbook`,
+    contentId: `${sceneId}__guestbook`,
+    type: 'exploration',
+    category: 'lore',
+    label: 'Study the inn guestbook',
+    shortLabel: 'Study guestbook',
+    keywords: ['study', 'guestbook', 'entries', 'inspect'],
+    resolution: {
+      check: {
+        ability: 'investigate',
+        difficulty: 15,
+        seed: 'dracula:scene_00:guestbook',
+        onSuccess: {
+          resultType: 'check_success',
+          narration: 'The names and dates resolve into a pattern: the coach route has been watched before.',
+          discover: [`${sceneId}__guestbook`],
+          setFlags: { guestbook_pattern_found: true }
+        },
+        onFailure: {
+          resultType: 'check_failure',
+          narration: 'The cramped handwriting refuses to yield its meaning, and the inn grows quieter around you.',
+          hp: -1
+        }
+      }
+    }
+  };
+}
+
 function classAction(sceneId, classId, label, narration, flagId) {
   return {
     actionId: `${sceneId}__class__${classId}`,
@@ -160,6 +190,7 @@ function sceneFromLegacy(scene, index) {
   const actions = (scene.content || []).map(content => actionFromContent(content, scene.sceneId));
   actions.push(...authoredBranchActions(scene));
   if (index === 0) {
+    actions.push(openingCheckAction(scene.sceneId));
     actions.push(classAction(scene.sceneId, 'cleric', 'Offer a prayer of protection', 'You murmur a protective prayer over the inn, and the room seems to settle around you.', 'inn_blessed'));
     actions.push(classAction(scene.sceneId, 'mage', 'Recall the old lore of the Carpathians', 'The scattered details align: the warnings, the wolves, and the name Dracula form a pattern you cannot ignore.', 'carpathian_lore_recalled'));
     actions.push(classAction(scene.sceneId, 'rogue', 'Quietly inspect the coach arrangements', 'You study the stable yard and exits without drawing attention. The coach is being prepared, but someone is watching from the dark.', 'coach_route_checked'));
