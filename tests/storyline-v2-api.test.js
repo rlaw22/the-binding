@@ -49,6 +49,7 @@ async function main() {
     assert.strictEqual(checkResult.check.roll, 12);
     assert.strictEqual(checkResult.check.success, false);
 
+
     response = await app.inject({
       method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions',
       payload: { actionId: start.catalog.actions[0].actionId, catalogVersion: start.catalog.catalogVersion, turnId: 'api-turn-1' }
