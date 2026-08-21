@@ -48,6 +48,14 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
     stateChanges.coins = state.coins - beforeCoins;
   }
   Object.assign(state.flags, authored.setFlags || {}); Object.assign(stateChanges.flags, authored.setFlags || {});
+  if (action.type === 'recovery') {
+    if (state.character.hp <= 0) {
+      return rejected(adventure, 'RECOVERY_INSUFFICIENT', 'This recovery does not restore enough strength to continue.', state);
+    }
+    state.lifecycle = 'active';
+  } else if (state.character.hp <= 0) {
+    state.lifecycle = 'awaiting_recovery';
+  }
 
   // Endings are authored on the action resolution and evaluated through the
   // same generic requirement system as availability and graph transitions.

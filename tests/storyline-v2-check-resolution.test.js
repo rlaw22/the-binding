@@ -87,6 +87,27 @@ test('clamps authored HP and coin effects to valid session bounds', () => {
   assert.strictEqual(result.result.stateChanges.coins, -3);
 });
 
+test('enters authored recovery when HP reaches zero and resumes only through recovery actions', () => {
+  const recoveryAdventure = compileAdventure({
+    schemaVersion: '2.0', adventureId: 'recovery-book', title: 'Recovery Book', classes: ['traveller'],
+    prologue: { startingSceneId: 'camp' }, graph: { entry: 'camp', edges: [] }, items: {},
+    scenes: [{ sceneId: 'camp', actions: [
+      { actionId: 'danger', type: 'threat', label: 'Face the danger', resolution: { hp: -20, resultType: 'setback', narration: 'The danger overwhelms you.' } },
+      { actionId: 'recover', type: 'recovery', category: 'recovery', label: 'Accept help', resolution: { hp: 5, resultType: 'recovery', narration: 'A companion helps you stand.' } }
+    ] }]
+  });
+  let state = createState(recoveryAdventure, { classId: 'traveller', hp: 5, maxHp: 10 });
+  const danger = resolveTurn({ adventure: recoveryAdventure, state, actionId: 'danger', catalogVersion: state.catalogVersion, turnId: 'danger-turn' });
+  assert.strictEqual(danger.state.character.hp, 0);
+  assert.strictEqual(danger.state.lifecycle, 'awaiting_recovery');
+  assert.ok(danger.result.catalog.actions.some(action => action.actionId === 'recover'));
+  state = danger.state;
+  const recovery = resolveTurn({ adventure: recoveryAdventure, state, actionId: 'recover', catalogVersion: state.catalogVersion, turnId: 'recovery-turn' });
+  assert.strictEqual(recovery.state.character.hp, 5);
+  assert.strictEqual(recovery.state.lifecycle, 'active');
+  assert.strictEqual(recovery.result.resultType, 'recovery');
+});
+
 test('rejects malformed authored check branches before gameplay', () => {
   const malformed = {
     ...raw,

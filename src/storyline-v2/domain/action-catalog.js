@@ -7,7 +7,7 @@ function buildCatalog(adventure, state) {
   const scene = adventure.scenes[state.sceneId];
   if (!scene) throw new Error(`Unknown scene: ${state.sceneId}`);
   const available = scene.actions.filter(action => actionAvailable(action, state));
-  const priority = { class: 0, lore: 1, exploration: 2, collectible: 2, environment: 3, threat: 4, risk: 4, exit: 5, atmosphere: 6 };
+  const priority = { recovery: 0, class: 1, lore: 2, exploration: 3, collectible: 3, environment: 4, threat: 5, risk: 5, exit: 6, atmosphere: 7 };
   available.sort((a, b) => (priority[a.category] ?? 5) - (priority[b.category] ?? 5) || a.actionId.localeCompare(b.actionId));
   let selected = available.slice(0, 6);
   // A terminal/scene exit is a progression contract, not optional flavor. If

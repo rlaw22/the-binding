@@ -30,7 +30,7 @@ function transitionSession(state, to) {
 }
 
 function isPlayable(state) {
-  return Boolean(state && state.lifecycle === 'active');
+  return Boolean(state && (state.lifecycle === 'active' || state.lifecycle === 'awaiting_recovery'));
 }
 
 module.exports = { SESSION_STATES, TRANSITIONS, canTransition, transitionSession, isPlayable };

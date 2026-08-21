@@ -3,7 +3,7 @@
 const { clone, asArray, issue } = require('./collections');
 
 const ACTION_TYPES = new Set([
-  'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere'
+  'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere', 'recovery'
 ]);
 const CHECK_ABILITIES = new Set([
   'observe', 'endure', 'persuade', 'investigate', 'protect', 'fight', 'move', 'resist', 'prepare'

@@ -15,6 +15,8 @@ function requirementsPass(requirements, state) {
 
 function actionAvailable(action, state) {
   if (state.consumedActionIds.includes(action.actionId) && action.replay !== 'repeatable') return false;
+  if (state.lifecycle === 'awaiting_recovery' && action.type !== 'recovery') return false;
+  if (state.lifecycle !== 'awaiting_recovery' && action.type === 'recovery') return false;
   const availability = action.availability || {};
   if (availability.classes && availability.classes.length && !availability.classes.includes(state.character.classId)) return false;
   const required = [...(availability.requires || []), ...(action.requires || [])];
