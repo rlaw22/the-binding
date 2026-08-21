@@ -39,6 +39,13 @@ async function main() {
     assert.strictEqual(result.turnId, 'api-turn-1');
     assert.ok(result.catalog);
 
+    const retryResponse = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions',
+      payload: { actionId: start.catalog.actions[0].actionId, catalogVersion: result.catalog.catalogVersion, turnId: 'api-turn-1' }
+    });
+    assert.strictEqual(retryResponse.statusCode, 200);
+    assert.deepStrictEqual(JSON.parse(retryResponse.payload), result);
+
     response = await app.inject({ method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions', payload: { actionId: start.catalog.actions[0].actionId, catalogVersion: start.catalog.catalogVersion, turnId: 'api-stale-turn' } });
     assert.strictEqual(response.statusCode, 409);
     assert.strictEqual(JSON.parse(response.payload).error, 'STALE_CATALOG');
