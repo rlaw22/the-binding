@@ -42,7 +42,11 @@ test('preserves the connected backbone and makes every terminal exit explicit', 
   const terminalExit = terminal.actions.find(action => action.type === 'exit');
   assert.ok(terminalExit);
   assert.strictEqual(terminalExit.resolution.resultType, 'exit');
-  assert.strictEqual(terminalExit.resolution.endingId, 'dracula_destroyed');
+  assert.deepStrictEqual(terminalExit.resolution.endingRules.map(rule => rule.endingId), ['dracula_destroyed', 'mina_lost']);
+  assert.deepStrictEqual(terminalExit.resolution.endingRules[0].requires, [
+    { kind: 'flag', id: 'protected_mina', equals: true },
+    { kind: 'flag', id: 'fast_route', equals: true }
+  ]);
 });
 
 test('adds authored converging branches at the counter-attack and pursuit', () => {

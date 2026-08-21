@@ -139,3 +139,33 @@ test('unmatched text cannot mutate state', () => {
   assert.strictEqual(match.status, 'no_match');
   assert.strictEqual(JSON.stringify(state), before);
 });
+
+test('authored ending rules are generic and do not depend on an adventure identifier', () => {
+  const endingManifest = {
+    ...raw,
+    adventureId: 'generic-ending-book',
+    endings: {
+      fulfilled: { endingId: 'fulfilled', narration: 'The promise is fulfilled.' },
+      unresolved: { endingId: 'unresolved', narration: 'The promise remains unresolved.' }
+    },
+    scenes: [{
+      sceneId: 'finale',
+      actions: [{
+        actionId: 'conclude', type: 'exit', category: 'exit', label: 'Conclude the tale',
+        resolution: {
+          resultType: 'ending', narration: 'The tale reaches its final page.',
+          endingRules: [
+            { endingId: 'fulfilled', requires: [{ kind: 'flag', id: 'promise_kept', equals: true }] },
+            { endingId: 'unresolved', requires: [] }
+          ]
+        }
+      }]
+    }],
+    graph: { entry: 'finale', edges: [] }
+  };
+  const adventure = compileAdventure(endingManifest);
+  const state = createState(adventure, { flags: { promise_kept: true } });
+  const result = resolveTurn({ adventure, state, actionId: 'conclude', catalogVersion: state.catalogVersion, turnId: 'ending-turn' });
+  assert.strictEqual(result.result.endingId, 'fulfilled');
+  assert.strictEqual(result.result.narrative, 'The promise is fulfilled.');
+});

@@ -76,3 +76,12 @@ test('exports and imports canonical session state', () => {
   const restored = new StorylineV2Service({ [adventure.adventureId]: adventure });
   assert.strictEqual(restored.importState({ sessionId: 's4-restored', adventureId: adventure.adventureId, state: exported.state }).state.sceneId, 'one');
 });
+
+test('persists lifecycle transitions through the repository', () => {
+  const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
+  service.start({ adventureId: adventure.adventureId, sessionId: 'lifecycle-service', classId: 'scholar' });
+  assert.strictEqual(service.pause('lifecycle-service').state.lifecycle, 'paused');
+  assert.strictEqual(service.snapshot('lifecycle-service').state.lifecycle, 'paused');
+  assert.strictEqual(service.resume('lifecycle-service').state.lifecycle, 'active');
+  assert.throws(() => service.transition({ sessionId: 'lifecycle-service', to: 'archived' }), /Invalid session lifecycle transition/);
+});

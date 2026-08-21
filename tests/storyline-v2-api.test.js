@@ -48,6 +48,21 @@ async function main() {
     assert.strictEqual(response.statusCode, 200);
     assert.strictEqual(JSON.parse(response.payload).state.turnNumber, 1);
 
+    response = await app.inject({ method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/transition', payload: { to: 'paused' } });
+    assert.strictEqual(response.statusCode, 200);
+    assert.strictEqual(JSON.parse(response.payload).state.lifecycle, 'paused');
+
+    response = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions',
+      payload: { actionId: start.catalog.actions[0].actionId, catalogVersion: JSON.parse((await app.inject({ method: 'GET', url: '/api/storyline-v2/sessions/api-v2-test' })).payload).catalog.catalogVersion, turnId: 'paused-turn' }
+    });
+    assert.strictEqual(response.statusCode, 422);
+    assert.strictEqual(JSON.parse(response.payload).error, 'SESSION_NOT_PLAYABLE');
+
+    response = await app.inject({ method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/transition', payload: { to: 'active' } });
+    assert.strictEqual(response.statusCode, 200);
+    assert.strictEqual(JSON.parse(response.payload).state.lifecycle, 'active');
+
     response = await app.inject({ method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions', payload: { text: 'an impossible action', turnId: 'api-turn-2' } });
     assert.strictEqual(response.statusCode, 200);
     assert.strictEqual(JSON.parse(response.payload).status, 'no_match');
