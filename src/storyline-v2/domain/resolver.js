@@ -4,8 +4,9 @@ const { clone, asArray } = require('./collections');
 const { buildCatalog } = require('./action-catalog');
 const { requirementsPass } = require('./requirements');
 const { isPlayable } = require('./session-lifecycle');
+const { markMutation } = require('./session-state');
 
-function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, turnId }) {
+function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, turnId, now }) {
   const state = clone(inputState);
   // Idempotency is checked before catalog freshness: a retried request carries
   // the original catalog version, which is expected to be stale after the
@@ -57,6 +58,9 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
     transition = { edgeId: edge.edgeId, sourceSceneId: beforeSceneId, destinationSceneId: edge.to };
   }
   state.turnNumber += 1; state.catalogVersion = `${state.sceneId}:${state.turnNumber}`;
+  const mutated = markMutation(state, now);
+  Object.keys(state).forEach(key => delete state[key]);
+  Object.assign(state, mutated);
   const result = {
     responseId: `response:${turnId || state.turnNumber}`, turnId: turnId || null, sceneId: state.sceneId, sourceSceneId: beforeSceneId,
     actionId, contentId: action.contentId, resultType: resolution.resultType || action.type, narrative,

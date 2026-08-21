@@ -13,7 +13,9 @@ const {
   buildCatalog,
   resolveTurn,
   matchFreeText,
-  transitionSession
+  transitionSession,
+  createSessionState,
+  snapshotState
 } = require('../domain');
 const { InMemorySessionRepository } = require('./repositories/session-repository');
 
@@ -21,6 +23,7 @@ class StorylineV2Service {
   constructor(adventures = {}, options = {}) {
     this.adventures = new Map(Object.entries(adventures));
     this.sessionRepository = options.sessionRepository || new InMemorySessionRepository();
+    this.clock = options.clock || (() => new Date().toISOString());
   }
 
   get sessions() {
@@ -46,7 +49,7 @@ class StorylineV2Service {
     if (this.sessionRepository.has(sessionId)) return this.snapshot(sessionId);
     const adventure = this.getAdventure(adventureId);
     const state = createState(adventure, { ...options, sessionId, classId });
-    this.sessionRepository.save(sessionId, { adventureId, state });
+    this.sessionRepository.save(sessionId, { adventureId, state: createSessionState(adventure, state) });
     return this.snapshot(sessionId);
   }
 
@@ -55,7 +58,7 @@ class StorylineV2Service {
     if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
     return {
       adventureId: session.adventureId,
-      state: JSON.parse(JSON.stringify(session.state)),
+      state: snapshotState(session.state),
       catalog: buildCatalog(this.getAdventure(session.adventureId), session.state)
     };
   }
@@ -75,7 +78,7 @@ class StorylineV2Service {
         state: JSON.parse(JSON.stringify(session.state))
       };
     }
-    session.state = resolved.state;
+    session.state = createSessionState(adventure, resolved.state);
     this.sessionRepository.save(sessionId, session);
     return {
       ...resolved.result,
@@ -88,7 +91,11 @@ class StorylineV2Service {
     const session = this.sessionRepository.get(sessionId);
     if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
     const state = transitionSession(session.state, to);
-    this.sessionRepository.save(sessionId, { ...session, state });
+    this.sessionRepository.save(sessionId, { ...session, state: createSessionState(this.getAdventure(session.adventureId), {
+      ...state,
+      revision: state.revision + 1,
+      timestamps: { ...state.timestamps, updatedAt: this.clock() }
+    }) });
     return this.snapshot(sessionId);
   }
 
@@ -134,11 +141,8 @@ class StorylineV2Service {
   importState({ sessionId, adventureId, state }) {
     if (!sessionId) throw new Error('Session ID is required');
     const adventure = this.getAdventure(adventureId);
-    if (!state || state.mode !== 'storyline' || state.adventureId !== adventureId) {
-      throw new Error('Invalid Storyline state');
-    }
-    if (!adventure.scenes[state.sceneId]) throw new Error(`Unknown state scene: ${state.sceneId}`);
-    this.sessionRepository.save(sessionId, { adventureId, state: JSON.parse(JSON.stringify(state)) });
+    const canonical = createSessionState(adventure, { ...state, sessionId });
+    this.sessionRepository.save(sessionId, { adventureId, state: canonical });
     return this.snapshot(sessionId);
   }
 

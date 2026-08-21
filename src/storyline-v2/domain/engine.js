@@ -5,6 +5,7 @@
 module.exports = {
   ...require('./manifest-compiler'),
   ...require('./state-model'),
+  ...require('./session-state'),
   ...require('./action-catalog'),
   ...require('./resolver'),
   ...require('./text-intent')
