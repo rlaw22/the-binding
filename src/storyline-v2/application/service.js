@@ -18,7 +18,10 @@ const {
   snapshotState,
   buildTransferPreview,
   createBookCharacterSnapshot,
-  createCharacter
+  createCharacter,
+  addBookmark,
+  removeBookmark,
+  appendJournal
 } = require('../domain');
 const { InMemorySessionRepository } = require('./repositories/session-repository');
 const { InMemoryCharacterRepository } = require('./repositories/character-repository');
@@ -131,6 +134,48 @@ class StorylineV2Service {
       revision: state.revision + 1,
       timestamps: { ...state.timestamps, updatedAt: this.clock() }
     }) });
+    return this.snapshot(sessionId);
+  }
+
+  addBookmark({ sessionId, bookmarkId, label }) {
+    const session = this.sessionRepository.get(sessionId);
+    if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const adventure = this.getAdventure(session.adventureId);
+    const state = createSessionState(adventure, {
+      ...session.state,
+      bookmarks: addBookmark(session.state, { bookmarkId, label }, this.clock()),
+      revision: session.state.revision + 1,
+      timestamps: { ...session.state.timestamps, updatedAt: this.clock() }
+    });
+    this.sessionRepository.save(sessionId, { ...session, state });
+    return this.snapshot(sessionId);
+  }
+
+  removeBookmark({ sessionId, bookmarkId }) {
+    const session = this.sessionRepository.get(sessionId);
+    if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const adventure = this.getAdventure(session.adventureId);
+    const state = createSessionState(adventure, {
+      ...session.state,
+      bookmarks: removeBookmark(session.state, bookmarkId),
+      revision: session.state.revision + 1,
+      timestamps: { ...session.state.timestamps, updatedAt: this.clock() }
+    });
+    this.sessionRepository.save(sessionId, { ...session, state });
+    return this.snapshot(sessionId);
+  }
+
+  appendJournal({ sessionId, entry }) {
+    const session = this.sessionRepository.get(sessionId);
+    if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const adventure = this.getAdventure(session.adventureId);
+    const state = createSessionState(adventure, {
+      ...session.state,
+      journal: appendJournal(session.state, entry || {}),
+      revision: session.state.revision + 1,
+      timestamps: { ...session.state.timestamps, updatedAt: this.clock() }
+    });
+    this.sessionRepository.save(sessionId, { ...session, state });
     return this.snapshot(sessionId);
   }
 
