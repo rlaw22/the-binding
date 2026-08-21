@@ -58,6 +58,7 @@ test('applies only the authored failure branch deterministically', () => {
   assert.strictEqual(result.result.resultType, 'check_failure');
   assert.strictEqual(result.result.check.success, false);
   assert.strictEqual(result.state.character.hp, 18);
+  assert.strictEqual(result.result.stateChanges.hp, -2);
   assert.deepStrictEqual(result.state.inventory, []);
   assert.strictEqual(result.state.flags.gate_open, false);
 });
@@ -66,6 +67,24 @@ test('rejects unknown abilities and invalid difficulty', () => {
   const state = createState(compileAdventure(raw), { classId: 'traveller' });
   assert.throws(() => resolveCheck({ check: { ability: 'luck', difficulty: 10 }, state }), /Unknown check ability/);
   assert.throws(() => resolveCheck({ check: { ability: 'observe', difficulty: -1 }, state }), /difficulty/);
+});
+
+test('clamps authored HP and coin effects to valid session bounds', () => {
+  const adventure = compileAdventure({ ...raw, scenes: [{ ...raw.scenes[0], actions: [{
+    ...raw.scenes[0].actions[0], resolution: {
+      check: {
+        ability: 'observe', difficulty: 0, seed: 'check-seed',
+        onSuccess: { resultType: 'check_success', hp: 50, coins: -50 },
+        onFailure: { resultType: 'check_failure' }
+      }
+    }
+  }] }] });
+  const state = createState(adventure, { classId: 'traveller', hp: 19, maxHp: 20, coins: 3 });
+  const result = resolveTurn({ adventure, state, actionId: 'open_gate', catalogVersion: state.catalogVersion, turnId: 'bounds-turn' });
+  assert.strictEqual(result.state.character.hp, 20);
+  assert.strictEqual(result.state.coins, 0);
+  assert.strictEqual(result.result.stateChanges.hp, 1);
+  assert.strictEqual(result.result.stateChanges.coins, -3);
 });
 
 test('rejects malformed authored check branches before gameplay', () => {

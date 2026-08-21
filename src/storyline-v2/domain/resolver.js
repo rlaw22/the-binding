@@ -36,8 +36,17 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
     const index = state.inventory.indexOf(id);
     if (index !== -1) { state.inventory.splice(index, 1); stateChanges.itemsRemoved.push(id); }
   });
-  if (authored.hp) { state.character.hp += authored.hp; stateChanges.hp = authored.hp; }
-  if (authored.coins) { state.coins += authored.coins; stateChanges.coins = authored.coins; }
+  if (authored.hp) {
+    const beforeHp = state.character.hp;
+    const maxHp = Number.isFinite(state.character.maxHp) ? state.character.maxHp : beforeHp;
+    state.character.hp = Math.max(0, Math.min(maxHp, beforeHp + authored.hp));
+    stateChanges.hp = state.character.hp - beforeHp;
+  }
+  if (authored.coins) {
+    const beforeCoins = state.coins;
+    state.coins = Math.max(0, beforeCoins + authored.coins);
+    stateChanges.coins = state.coins - beforeCoins;
+  }
   Object.assign(state.flags, authored.setFlags || {}); Object.assign(stateChanges.flags, authored.setFlags || {});
 
   // Endings are authored on the action resolution and evaluated through the
