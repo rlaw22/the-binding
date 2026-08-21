@@ -19,6 +19,11 @@ jobs:
         script: |
           cd /var/www/the-binding
           git pull origin main
-          npm install --production
-          pm2 restart the-binding
+          npm install --omit=dev
+          if pm2 describe the-binding >/dev/null 2>&1; then
+            pm2 restart the-binding
+          else
+            pm2 start server.js --name the-binding
+          fi
+          pm2 save
           echo "✅ Deployed successfully at $(date)"
