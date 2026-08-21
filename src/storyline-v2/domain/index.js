@@ -8,5 +8,6 @@ module.exports = {
   ...require('./character-state'),
   ...require('./difficulty'),
   ...require('./transfer'),
-  ...require('./session-lifecycle')
+  ...require('./session-lifecycle'),
+  ...require('./check-resolution')
 };

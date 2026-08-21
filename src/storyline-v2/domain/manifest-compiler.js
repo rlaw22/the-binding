@@ -5,6 +5,12 @@ const { clone, asArray, issue } = require('./collections');
 const ACTION_TYPES = new Set([
   'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere'
 ]);
+const CHECK_ABILITIES = new Set([
+  'observe', 'endure', 'persuade', 'investigate', 'protect', 'fight', 'move', 'resist', 'prepare'
+]);
+const CHECK_EFFECT_KEYS = new Set([
+  'resultType', 'narration', 'hp', 'coins', 'setFlags', 'discover', 'addItems', 'removeItems', 'endingId', 'endingRules'
+]);
 
 function compileAdventure(raw) {
   const errors = [];
@@ -64,6 +70,7 @@ function compileAdventure(raw) {
       }
       validateRequirements(action.availability && action.availability.requires, classIds, itemIds, actionIds, errors, `${actionPath}.availability.requires`);
       validateRequirements(action.requires, classIds, itemIds, actionIds, errors, `${actionPath}.requires`);
+      validateCheck(action.resolution && action.resolution.check, itemIds, errors, `${actionPath}.resolution.check`);
     });
   });
 
@@ -176,6 +183,28 @@ function validateActionRequirements(requirements, actionIds, errors, path) {
     if (req && req.kind === 'action' && !actionIds.has(req.id)) {
       errors.push(issue(`${path}[${i}]`, `Unknown action: ${req.id}`));
     }
+  });
+}
+
+function validateCheck(check, itemIds, errors, path) {
+  if (!check) return;
+  if (!CHECK_ABILITIES.has(check.ability)) errors.push(issue(`${path}.ability`, `Unsupported check ability: ${check.ability}`));
+  if (!Number.isInteger(check.difficulty) || check.difficulty < 0) errors.push(issue(`${path}.difficulty`, 'Check difficulty must be a non-negative integer'));
+  if (check.dieSides != null && (!Number.isInteger(check.dieSides) || check.dieSides < 2 || check.dieSides > 1000)) {
+    errors.push(issue(`${path}.dieSides`, 'Check die sides must be an integer between 2 and 1000'));
+  }
+  ['onSuccess', 'onFailure'].forEach(branch => {
+    const effect = check[branch];
+    if (!effect || typeof effect !== 'object') {
+      errors.push(issue(`${path}.${branch}`, 'Authored check branch is required'));
+      return;
+    }
+    Object.keys(effect).forEach(key => {
+      if (!CHECK_EFFECT_KEYS.has(key)) errors.push(issue(`${path}.${branch}.${key}`, `Unsupported authored check effect: ${key}`));
+    });
+    [...(effect.addItems || []), ...(effect.removeItems || [])].forEach(itemId => {
+      if (!itemIds.has(itemId)) errors.push(issue(`${path}.${branch}`, `Unknown item: ${itemId}`));
+    });
   });
 }
 

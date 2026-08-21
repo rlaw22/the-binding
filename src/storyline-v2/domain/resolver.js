@@ -5,6 +5,7 @@ const { buildCatalog } = require('./action-catalog');
 const { requirementsPass } = require('./requirements');
 const { isPlayable } = require('./session-lifecycle');
 const { markMutation } = require('./session-state');
+const { resolveCheck } = require('./check-resolution');
 
 function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, turnId, now }) {
   const state = clone(inputState);
@@ -21,28 +22,30 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
 
   const beforeSceneId = state.sceneId;
   const resolution = action.resolution || {};
+  const check = resolveCheck({ check: resolution.check, state, actionId, turnId });
+  const authored = check ? check.outcome : resolution;
   const stateChanges = { hp: 0, coins: 0, flags: {}, discoveredContentIds: [], itemsAdded: [], itemsRemoved: [] };
   if (action.replay !== 'repeatable') state.consumedActionIds.push(action.actionId);
-  asArray(resolution.discover).forEach(id => {
+  asArray(authored.discover).forEach(id => {
     if (!state.discoveredContentIds.includes(id)) { state.discoveredContentIds.push(id); stateChanges.discoveredContentIds.push(id); }
   });
-  asArray(resolution.addItems).forEach(id => {
+  asArray(authored.addItems).forEach(id => {
     if (!state.inventory.includes(id)) { state.inventory.push(id); stateChanges.itemsAdded.push(id); }
   });
-  asArray(resolution.removeItems).forEach(id => {
+  asArray(authored.removeItems).forEach(id => {
     const index = state.inventory.indexOf(id);
     if (index !== -1) { state.inventory.splice(index, 1); stateChanges.itemsRemoved.push(id); }
   });
-  if (resolution.hp) { state.character.hp += resolution.hp; stateChanges.hp = resolution.hp; }
-  if (resolution.coins) { state.coins += resolution.coins; stateChanges.coins = resolution.coins; }
-  Object.assign(state.flags, resolution.setFlags || {}); Object.assign(stateChanges.flags, resolution.setFlags || {});
+  if (authored.hp) { state.character.hp += authored.hp; stateChanges.hp = authored.hp; }
+  if (authored.coins) { state.coins += authored.coins; stateChanges.coins = authored.coins; }
+  Object.assign(state.flags, authored.setFlags || {}); Object.assign(stateChanges.flags, authored.setFlags || {});
 
   // Endings are authored on the action resolution and evaluated through the
   // same generic requirement system as availability and graph transitions.
   // The domain must not contain adventure-specific scene IDs or flag names.
-  let endingId = resolution.endingId || null;
-  let narrative = resolution.narration || action.label;
-  const endingRule = asArray(resolution.endingRules)
+  let endingId = authored.endingId || null;
+  let narrative = authored.narration || action.label;
+  const endingRule = asArray(authored.endingRules)
     .find(rule => rule && rule.endingId && requirementsPass(rule.requires || [], state));
   if (endingRule) {
     endingId = endingRule.endingId;
@@ -63,8 +66,9 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   Object.assign(state, mutated);
   const result = {
     responseId: `response:${turnId || state.turnNumber}`, turnId: turnId || null, sceneId: state.sceneId, sourceSceneId: beforeSceneId,
-    actionId, contentId: action.contentId, resultType: resolution.resultType || action.type, narrative,
+    actionId, contentId: action.contentId, resultType: authored.resultType || action.type, narrative,
     endingId,
+    check,
     stateChanges, transition, catalog: buildCatalog(adventure, state)
   };
   if (turnId) state.processedTurns[turnId] = clone(result);
