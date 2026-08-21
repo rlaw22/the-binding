@@ -12,10 +12,15 @@ function test(name, fn) {
 
 const adventure = compileAdventure({
   schemaVersion: '2.0', adventureId: 'service-test', title: 'Service Test',
-  classes: ['scholar'], items: {}, prologue: { startingSceneId: 'one' },
+  classes: ['scholar'], items: { token: { name: 'Token' } }, prologue: { startingSceneId: 'one' },
   scenes: [
     { sceneId: 'one', actions: [
       { actionId: 'inspect', label: 'Inspect the room', keywords: ['inspect'], resolution: { resultType: 'discovery', narration: 'You inspect the room.', discover: ['room'] } },
+      { actionId: 'test_lock', label: 'Test the lock', resolution: { check: {
+        ability: 'observe', difficulty: 15, seed: 'check-seed',
+        onSuccess: { resultType: 'check_success', narration: 'The lock opens.', addItems: ['token'] },
+        onFailure: { resultType: 'check_failure', narration: 'The lock stays shut.', hp: -1 }
+      } } },
       { actionId: 'leave', type: 'exit', label: 'Leave the room', resolution: { resultType: 'exit', narration: 'You leave.' } }
     ] }
   ], graph: { entry: 'one', edges: [] }
@@ -39,6 +44,18 @@ test('resolves button actions and makes retries idempotent', () => {
   assert.strictEqual(retry.resultType, first.resultType);
   assert.strictEqual(retry.turnId, first.turnId);
   assert.deepStrictEqual(retry.state, first.state);
+});
+
+test('resolves deterministic checks through the service and replays the settled result', () => {
+  const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
+  const start = service.start({ adventureId: adventure.adventureId, sessionId: 'check-service', classId: 'scholar' });
+  const first = service.submit({ sessionId: 'check-service', actionId: 'test_lock', catalogVersion: start.catalog.catalogVersion, turnId: 'check-turn' });
+  assert.strictEqual(first.resultType, 'check_success');
+  assert.strictEqual(first.check.roll, 20);
+  assert.strictEqual(first.check.total, 20);
+  assert.deepStrictEqual(first.state.inventory, ['token']);
+  const retry = service.submit({ sessionId: 'check-service', actionId: 'test_lock', catalogVersion: first.catalog.catalogVersion, turnId: 'check-turn' });
+  assert.deepStrictEqual(retry, first);
 });
 
 test('resolves only clear text matches through the same action boundary', () => {
