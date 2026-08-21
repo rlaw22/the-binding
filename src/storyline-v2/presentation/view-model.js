@@ -12,11 +12,13 @@ function createStorylineV2ViewModel(snapshot) {
   const state = snapshot.state;
   const catalog = snapshot.catalog;
   const actions = Array.isArray(catalog.actions) ? catalog.actions : [];
-  const journal = state.journal && Array.isArray(state.journal.entries)
-    ? state.journal.entries
-    : [];
-  const bookmarks = Array.isArray(state.replayBookmarks)
-    ? state.replayBookmarks.slice(0, 2)
+  const journal = Array.isArray(state.journal)
+    ? state.journal.map(entry => ({ ...entry }))
+    : state.journal && Array.isArray(state.journal.entries)
+      ? state.journal.entries.map(entry => ({ ...entry }))
+      : [];
+  const bookmarks = Array.isArray(state.bookmarks)
+    ? state.bookmarks.slice(0, 2).map(bookmark => ({ ...bookmark }))
     : [];
 
   return {

@@ -63,6 +63,28 @@ function createStorylineV2Handlers({ service, enabled = true }) {
       }
     },
 
+    bookmark: async (request, reply) => {
+      if (!enabled) return disabled(reply);
+      try {
+        const body = request.body || {};
+        if (body.operation === 'remove') {
+          return service.removeBookmark({ sessionId: request.params.id, bookmarkId: body.bookmarkId });
+        }
+        return service.addBookmark({ sessionId: request.params.id, bookmarkId: body.bookmarkId, label: body.label });
+      } catch (exception) {
+        return error(reply, 400, exception);
+      }
+    },
+
+    journal: async (request, reply) => {
+      if (!enabled) return disabled(reply);
+      try {
+        return service.appendJournal({ sessionId: request.params.id, entry: request.body || {} });
+      } catch (exception) {
+        return error(reply, 400, exception);
+      }
+    },
+
     submit: async (request, reply) => {
       if (!enabled) return disabled(reply);
       try {

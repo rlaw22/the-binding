@@ -72,6 +72,62 @@ async function test(name, fn) {
     assert.strictEqual(invalidReply.statusCode, 400);
   });
 
+  await test('bookmark route maps add and remove operations to the application service', async () => {
+    const calls = [];
+    const handlers = createStorylineV2Handlers({
+      enabled: true,
+      service: {
+        adventures: new Map(),
+        addBookmark(input) { calls.push(['add', input]); return { bookmark: input.bookmarkId }; },
+        removeBookmark(input) { calls.push(['remove', input]); return { removed: input.bookmarkId }; }
+      }
+    });
+    const addResult = await handlers.bookmark(request({ bookmarkId: 'b1', label: 'The clue' }, { id: 's1' }), responseRecorder());
+    const removeResult = await handlers.bookmark(request({ operation: 'remove', bookmarkId: 'b1' }, { id: 's1' }), responseRecorder());
+    assert.deepStrictEqual(addResult, { bookmark: 'b1' });
+    assert.deepStrictEqual(removeResult, { removed: 'b1' });
+    assert.deepStrictEqual(calls, [
+      ['add', { sessionId: 's1', bookmarkId: 'b1', label: 'The clue' }],
+      ['remove', { sessionId: 's1', bookmarkId: 'b1' }]
+    ]);
+  });
+
+  await test('journal route maps append requests and application errors to client errors', async () => {
+    let call;
+    const handlers = createStorylineV2Handlers({
+      enabled: true,
+      service: {
+        adventures: new Map(),
+        appendJournal(input) { call = input; return { journal: [input.entry] }; }
+      }
+    });
+    const result = await handlers.journal(request({ entryId: 'j1', text: 'A clue.', kind: 'narrative' }, { id: 's2' }), responseRecorder());
+    assert.deepStrictEqual(result, { journal: [{ entryId: 'j1', text: 'A clue.', kind: 'narrative' }] });
+    assert.deepStrictEqual(call, {
+      sessionId: 's2',
+      entry: { entryId: 'j1', text: 'A clue.', kind: 'narrative' }
+    });
+
+    const failing = createStorylineV2Handlers({
+      enabled: true,
+      service: { adventures: new Map(), appendJournal() { throw new Error('Invalid journal entry'); } }
+    });
+    const reply = responseRecorder();
+    await failing.journal(request({}, { id: 's2' }), reply);
+    assert.strictEqual(reply.statusCode, 400);
+    assert.deepStrictEqual(reply.payload, { error: 'Invalid journal entry' });
+  });
+
+  await test('bookmark and journal routes honor the V2 disabled boundary', async () => {
+    const handlers = createStorylineV2Handlers({ enabled: false, service: { adventures: new Map() } });
+    const bookmarkReply = responseRecorder();
+    const journalReply = responseRecorder();
+    await handlers.bookmark(request({}, { id: 's1' }), bookmarkReply);
+    await handlers.journal(request({}, { id: 's1' }), journalReply);
+    assert.strictEqual(bookmarkReply.statusCode, 404);
+    assert.strictEqual(journalReply.statusCode, 404);
+  });
+
   await test('submit maps stale catalogs to conflict and other rejections to unprocessable entity', async () => {
     const handlers = createStorylineV2Handlers({
       enabled: true,

@@ -17,7 +17,7 @@ test('maps authoritative snapshot data without exposing mutable source arrays', 
       mode: 'storyline', sceneId: 'study', actId: 'act-1', turnNumber: 3,
       character: { hp: 12, maxHp: 20 }, inventory: ['key'],
       journal: { entries: [{ narrative: 'A clue.' }] },
-      replayBookmarks: [{ bookmarkId: 'b1', label: 'The clue' }, { bookmarkId: 'b2', label: 'The door' }, { bookmarkId: 'b3', label: 'Too many' }]
+      bookmarks: [{ bookmarkId: 'b1', label: 'The clue' }, { bookmarkId: 'b2', label: 'The door' }, { bookmarkId: 'b3', label: 'Too many' }]
     },
     catalog: {
       sceneId: 'study', sceneName: 'The Study', setting: 'Dust hangs in the light.',
@@ -30,10 +30,15 @@ test('maps authoritative snapshot data without exposing mutable source arrays', 
   assert.strictEqual(model.status.hp, 12);
   assert.strictEqual(model.actions[0].ariaLabel, 'Look around — Search carefully');
   assert.strictEqual(model.bookmarks.length, 2);
+  assert.strictEqual(model.journal[0].narrative, 'A clue.');
   model.scene.presentNpcs.push('Van Helsing');
   model.actions[0].label = 'Mutated';
+  model.bookmarks[0].label = 'Mutated bookmark';
+  model.journal[0].narrative = 'Mutated journal';
   assert.deepStrictEqual(snapshot.catalog.presentNpcs, ['Mina']);
   assert.strictEqual(snapshot.catalog.actions[0].label, 'Look around');
+  assert.strictEqual(snapshot.state.bookmarks[0].label, 'The clue');
+  assert.strictEqual(snapshot.state.journal.entries[0].narrative, 'A clue.');
 });
 
 test('provides safe defaults for optional presentation state', () => {
