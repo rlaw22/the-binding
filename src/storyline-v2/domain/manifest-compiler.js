@@ -107,6 +107,8 @@ function compileAdventure(raw) {
     title: raw.title,
     source: clone(raw.source || {}),
     narrativePolicy: clone(raw.narrativePolicy || {}),
+    transferPolicy: clone(raw.transferPolicy || {}),
+    difficultyPolicy: clone(raw.difficultyPolicy || {}),
     prologue: clone(raw.prologue || {}),
     classes: clone(classes),
     items: clone(itemDefs),

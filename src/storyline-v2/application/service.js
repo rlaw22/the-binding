@@ -15,14 +15,19 @@ const {
   matchFreeText,
   transitionSession,
   createSessionState,
-  snapshotState
+  snapshotState,
+  buildTransferPreview,
+  createBookCharacterSnapshot,
+  createCharacter
 } = require('../domain');
 const { InMemorySessionRepository } = require('./repositories/session-repository');
+const { InMemoryCharacterRepository } = require('./repositories/character-repository');
 
 class StorylineV2Service {
   constructor(adventures = {}, options = {}) {
     this.adventures = new Map(Object.entries(adventures));
     this.sessionRepository = options.sessionRepository || new InMemorySessionRepository();
+    this.characterRepository = options.characterRepository || new InMemoryCharacterRepository();
     this.clock = options.clock || (() => new Date().toISOString());
   }
 
@@ -44,12 +49,42 @@ class StorylineV2Service {
     return adventure;
   }
 
-  start({ adventureId, sessionId, classId, options = {} }) {
+  saveCharacter(characterInput) {
+    const character = createCharacter(characterInput);
+    if (!character.characterId) throw new Error('Character ID is required');
+    return this.characterRepository.save(character.characterId, character);
+  }
+
+  getCharacter(characterId) {
+    const character = this.characterRepository.get(characterId);
+    if (!character) throw new Error(`Unknown Storyline character: ${characterId}`);
+    return character;
+  }
+
+  previewTransfer({ adventureId, characterId, character, options = {} }) {
+    const adventure = this.getAdventure(adventureId);
+    const folio = characterId ? this.getCharacter(characterId) : createCharacter(character);
+    return buildTransferPreview(adventure, folio, options);
+  }
+
+  start({ adventureId, sessionId, classId, characterId, options = {} }) {
     if (!sessionId) throw new Error('Session ID is required');
     if (this.sessionRepository.has(sessionId)) return this.snapshot(sessionId);
     const adventure = this.getAdventure(adventureId);
-    const state = createState(adventure, { ...options, sessionId, classId });
-    this.sessionRepository.save(sessionId, { adventureId, state: createSessionState(adventure, state) });
+    const folio = characterId ? this.getCharacter(characterId) : createCharacter({ ...options.character, characterId });
+    const transfer = buildTransferPreview(adventure, folio, options);
+    const bookCharacter = createBookCharacterSnapshot(adventure, folio, options);
+    const state = createState(adventure, {
+      ...options,
+      sessionId,
+      classId: classId || bookCharacter.classId,
+      character: bookCharacter,
+      inventory: transfer.transferredItems,
+      bookSessionId: sessionId
+    });
+    state.characterId = folio.characterId || null;
+    state.character = { ...state.character, persistentCharacterId: folio.characterId || null };
+    this.sessionRepository.save(sessionId, { adventureId, characterId: folio.characterId || null, state: createSessionState(adventure, state) });
     return this.snapshot(sessionId);
   }
 
