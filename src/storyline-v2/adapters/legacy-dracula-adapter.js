@@ -1,0 +1,285 @@
+'use strict';
+
+/**
+ * Legacy Dracula source -> Storyline v2 manifest adapter.
+ *
+ * This is intentionally a data migration boundary. The v2 compiler and
+ * resolver do not know about legacy fields; this module is the only place
+ * that translates them while Dracula is being reprocessed.
+ */
+
+const legacyDracula = require('../../adventure/dracula');
+const { compileAdventure } = require('../domain');
+
+function values(value) {
+  return Array.isArray(value) ? value : Object.values(value || {});
+}
+
+function sourceScenes() {
+  // DraculaAdventure.sceneManifests is already merged with acts 2-5 by the
+  // adventure loader; do not append the per-act modules a second time.
+  const allScenes = values(legacyDracula.DraculaAdventure.sceneManifests);
+  return allScenes.sort((a, b) =>
+    String(a.sceneId).localeCompare(String(b.sceneId), undefined, { numeric: true }));
+}
+
+function itemIdFor(value) {
+  return String(value).trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+}
+
+function actionFromContent(content, sceneId) {
+  const itemId = content.itemGained ? itemIdFor(content.itemGained) : null;
+  const stableId = `${sceneId}__${content.id}`;
+  return {
+    actionId: stableId,
+    contentId: stableId,
+    type: itemId ? 'collectible' : 'exploration',
+    category: itemId ? 'collectible' : 'exploration',
+    label: content.label,
+    shortLabel: content.label,
+    keywords: content.keywords || [],
+    resolution: {
+      resultType: itemId ? 'acquisition' : (content.discovery ? 'discovery' : 'atmosphere'),
+      narration: content.discovery || `You ${String(content.label || '').toLowerCase()}.`,
+      discover: content.discovery ? [stableId] : [],
+      addItems: itemId ? [itemId] : []
+    }
+  };
+}
+
+function actionFromBadChoice(scene) {
+  const badChoice = scene.storyMode && scene.storyMode.badChoice;
+  if (!badChoice) return null;
+  return {
+    actionId: `${scene.sceneId}__${badChoice.id}`,
+    type: 'bad_choice',
+    category: 'risk',
+    label: badChoice.label,
+    shortLabel: badChoice.label,
+    resolution: {
+      resultType: 'bad_choice',
+      narration: badChoice.consequence || badChoice.label,
+      coins: -(badChoice.coinCost || 0),
+      setFlags: badChoice.flagSet || {}
+    }
+  };
+}
+
+function openingCheckAction(sceneId) {
+  return {
+    actionId: `${sceneId}__study_guestbook`,
+    contentId: `${sceneId}__guestbook`,
+    type: 'exploration',
+    category: 'lore',
+    label: 'Study the inn guestbook',
+    shortLabel: 'Study guestbook',
+    keywords: ['study', 'guestbook', 'entries', 'inspect'],
+    resolution: {
+      check: {
+        ability: 'investigate',
+        difficulty: 15,
+        seed: 'dracula:scene_00:guestbook',
+        onSuccess: {
+          resultType: 'check_success',
+          narration: 'The names and dates resolve into a pattern: the coach route has been watched before.',
+          discover: [`${sceneId}__guestbook`],
+          setFlags: { guestbook_pattern_found: true }
+        },
+        onFailure: {
+          resultType: 'check_failure',
+          narration: 'The cramped handwriting refuses to yield its meaning, and the inn grows quieter around you.',
+          hp: -1
+        }
+      }
+    }
+  };
+}
+
+function classAction(sceneId, classId, label, narration, flagId) {
+  return {
+    actionId: `${sceneId}__class__${classId}`,
+    contentId: `${sceneId}__class__${classId}`,
+    type: 'class',
+    category: 'class',
+    label,
+    shortLabel: label,
+    availability: { classes: [classId] },
+    keywords: [classId, label],
+    resolution: {
+      resultType: 'class_action',
+      narration,
+      setFlags: { [flagId]: true }
+    }
+  };
+}
+
+function actionFromExit(scene) {
+  if (!scene.exitAction) return null;
+  return {
+    actionId: `${scene.sceneId}__${scene.exitAction}`,
+    type: 'exit',
+    category: 'exit',
+    label: scene.exitLabel || scene.exitAction,
+    shortLabel: scene.exitLabel || scene.exitAction,
+    resolution: {
+      resultType: 'exit',
+      narration: scene.hardExitNarration || scene.exitLabel || scene.exitAction,
+      ...(scene.sceneId === 'scene_24' ? {
+        endingRules: [
+          { endingId: 'dracula_destroyed', requires: [
+            { kind: 'flag', id: 'protected_mina', equals: true },
+            { kind: 'flag', id: 'fast_route', equals: true }
+          ] },
+          { endingId: 'mina_lost', requires: [] }
+        ]
+      } : {})
+    }
+  };
+}
+
+function authoredBranchActions(scene) {
+  if (scene.sceneId === 'scene_18') {
+    return [{
+      actionId: 'scene_18__hold_the_line',
+      type: 'threat',
+      category: 'lore',
+      label: 'Hold the safe house and protect Mina',
+      shortLabel: 'Protect Mina',
+      keywords: ['hold', 'defend', 'protect', 'mina', 'safe house'],
+      resolution: {
+        resultType: 'branch',
+        narration: 'You hold the line until dawn. The assault costs you time, but Mina is not abandoned, and the group escapes together.',
+        setFlags: { protected_mina: true }
+      }
+    }];
+  }
+  if (scene.sceneId === 'scene_14') {
+    return [{
+      actionId: 'scene_14__honor_lucys_release',
+      type: 'class',
+      category: 'lore',
+      label: 'Trust Van Helsing and prepare the mercy ritual',
+      shortLabel: 'Prepare mercy ritual',
+      keywords: ['trust', 'van helsing', 'mercy', 'ritual', 'lucy'],
+      resolution: {
+        resultType: 'branch',
+        narration: 'You accept the terrible truth and help Van Helsing prepare the ritual that may free Lucy’s soul.',
+        setFlags: { lucy_ritual_prepared: true }
+      }
+    }];
+  }
+  if (scene.sceneId === 'scene_20') {
+    return [{
+      actionId: 'scene_20__charter_fast_route',
+      type: 'class',
+      category: 'class',
+      label: 'Charter the fastest route to Varna',
+      shortLabel: 'Charter fast route',
+      keywords: ['charter', 'fast', 'route', 'varna', 'ship'],
+      resolution: {
+        resultType: 'branch',
+        narration: 'You spend the available funds to secure the fastest passage east. The pursuit gains precious hours.',
+        setFlags: { fast_route: true }
+      }
+    }];
+  }
+  return [];
+}
+
+function sceneFromLegacy(scene, index) {
+  const actions = (scene.content || []).map(content => actionFromContent(content, scene.sceneId));
+  actions.push(...authoredBranchActions(scene));
+  if (index === 0) {
+    actions.push(openingCheckAction(scene.sceneId));
+    actions.push(classAction(scene.sceneId, 'cleric', 'Offer a prayer of protection', 'You murmur a protective prayer over the inn, and the room seems to settle around you.', 'inn_blessed'));
+    actions.push(classAction(scene.sceneId, 'mage', 'Recall the old lore of the Carpathians', 'The scattered details align: the warnings, the wolves, and the name Dracula form a pattern you cannot ignore.', 'carpathian_lore_recalled'));
+    actions.push(classAction(scene.sceneId, 'rogue', 'Quietly inspect the coach arrangements', 'You study the stable yard and exits without drawing attention. The coach is being prepared, but someone is watching from the dark.', 'coach_route_checked'));
+    actions.push(classAction(scene.sceneId, 'fighter', 'Prepare for the road ahead', 'You check your weapon, your footing, and the fading light. Whatever waits beyond Bistritz will not find you helpless.', 'road_prepared'));
+  }
+  const badChoice = actionFromBadChoice(scene);
+  const exit = actionFromExit(scene);
+  if (badChoice) actions.push(badChoice);
+  if (exit) actions.push(exit);
+  return {
+    sceneId: scene.sceneId,
+    actId: `act_${Math.floor(index / 5) + 1}`,
+    name: scene.sceneName || scene.sceneId,
+    location: { id: scene.sceneId, name: scene.sceneName || scene.sceneId },
+    setting: scene.description || '',
+    presentNpcs: (scene.initialFacts && scene.initialFacts.metNPCs) || [],
+    openingNarration: scene.description || '',
+    actions,
+    completion: { source: 'legacy-adapter' }
+  };
+}
+
+function buildDraculaManifest() {
+  const legacyScenes = sourceScenes();
+  const scenes = legacyScenes.map(sceneFromLegacy);
+  const items = {};
+  scenes.forEach(scene => scene.actions.forEach(action => {
+    (action.resolution.addItems || []).forEach(id => { items[id] = { itemId: id, name: id.replace(/_/g, ' ') }; });
+  }));
+  const edges = scenes.slice(0, -1).map((scene, index) => ({
+    edgeId: `${scene.sceneId}_to_${scenes[index + 1].sceneId}`,
+    from: scene.sceneId,
+    to: scenes[index + 1].sceneId,
+    trigger: { actionId: scene.actions.find(action => action.type === 'exit')?.actionId }
+  })).filter(edge => edge.trigger.actionId);
+  // Optional authored branches converge on the existing backbone so they alter
+  // state and narrative emphasis without creating unreachable migrated scenes.
+  edges.push({
+    edgeId: 'scene_14_honor_release_to_scene_15',
+    from: 'scene_14',
+    to: 'scene_15',
+    trigger: { actionId: 'scene_14__honor_lucys_release' }
+  });
+  edges.push({
+    edgeId: 'scene_18_hold_line_to_scene_19',
+    from: 'scene_18',
+    to: 'scene_19',
+    trigger: { actionId: 'scene_18__hold_the_line' }
+  });
+  edges.push({
+    edgeId: 'scene_20_fast_route_to_scene_21',
+    from: 'scene_20',
+    to: 'scene_21',
+    trigger: { actionId: 'scene_20__charter_fast_route' }
+  });
+
+  return {
+    schemaVersion: '2.0',
+    adventureId: 'dracula',
+    title: legacyDracula.DraculaAdventure.name || 'Dracula',
+    source: { title: 'Dracula', author: legacyDracula.DraculaAdventure.author || 'Bram Stoker', migration: 'legacy-scenes-to-v2' },
+    narrativePolicy: { sourceFidelity: 'high', playerAgency: 'guided', endingPolicy: 'authored', allowOptionalBranches: true },
+    prologue: { text: legacyDracula.DraculaAdventure.prologue && legacyDracula.DraculaAdventure.prologue.template || '', startingSceneId: scenes[0].sceneId },
+    classes: ['fighter', 'cleric', 'mage', 'rogue'],
+    items,
+    threats: {},
+    scenes,
+    graph: { entry: scenes[0].sceneId, edges },
+    endings: {
+      dracula_destroyed: {
+        endingId: 'dracula_destroyed',
+        title: 'Dawn at Castle Dracula',
+        outcome: 'success',
+        sceneId: 'scene_24',
+        narration: 'The first sunlight reaches the coffin room. Dracula falls, Mina is freed, and the long night ends.'
+      },
+      mina_lost: {
+        endingId: 'mina_lost',
+        title: 'The Blood Bond Endures',
+        outcome: 'failure',
+        sceneId: 'scene_24',
+        narration: 'Dracula escapes into the darkness with Mina still bound to him. The hunt is not over, but this night is lost.'
+      }
+    }
+  };
+}
+
+function compileDracula() {
+  return compileAdventure(buildDraculaManifest());
+}
+
+module.exports = { buildDraculaManifest, compileDracula, sourceScenes };

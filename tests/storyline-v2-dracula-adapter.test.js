@@ -42,7 +42,11 @@ test('preserves the connected backbone and makes every terminal exit explicit', 
   const terminalExit = terminal.actions.find(action => action.type === 'exit');
   assert.ok(terminalExit);
   assert.strictEqual(terminalExit.resolution.resultType, 'exit');
-  assert.strictEqual(terminalExit.resolution.endingId, 'dracula_destroyed');
+  assert.deepStrictEqual(terminalExit.resolution.endingRules.map(rule => rule.endingId), ['dracula_destroyed', 'mina_lost']);
+  assert.deepStrictEqual(terminalExit.resolution.endingRules[0].requires, [
+    { kind: 'flag', id: 'protected_mina', equals: true },
+    { kind: 'flag', id: 'fast_route', equals: true }
+  ]);
 });
 
 test('adds authored converging branches at the counter-attack and pursuit', () => {
@@ -101,6 +105,21 @@ test('completes an enabled-mode success journey through authored branches', () =
   }
   assert.strictEqual(state.sceneId, 'scene_24');
   assert.strictEqual(ending, 'dracula_destroyed');
+});
+
+test('authors an opening investigation check through the universal resolver', () => {
+  const adventure = compileDracula();
+  const opening = adventure.scenes.scene_00;
+  const checkAction = opening.actions.find(action => action.actionId === 'scene_00__study_guestbook');
+  assert.ok(checkAction);
+  assert.strictEqual(checkAction.resolution.check.ability, 'investigate');
+  assert.ok(checkAction.resolution.check.onSuccess);
+  assert.ok(checkAction.resolution.check.onFailure);
+  const state = createState(adventure, { sceneId: 'scene_00', classId: 'cleric', abilities: [] });
+  const result = resolveTurn({ adventure, state, actionId: checkAction.actionId, catalogVersion: state.catalogVersion, turnId: 'guestbook-check' });
+  assert.strictEqual(result.result.check.success, false);
+  assert.strictEqual(result.result.resultType, 'check_failure');
+  assert.strictEqual(result.state.character.hp, 19);
 });
 
 test('namespaces migrated discoveries and provides four meaningful opening class actions', () => {

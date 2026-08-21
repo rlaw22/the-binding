@@ -12,3 +12,20 @@ data/
 playwright-report/
 test-results/
 config/.env.example
+
+# Local workspace and repository hygiene artifacts
+.cache/
+.cg/
+.neo-runtime/
+.npm/
+.ssh/
+tmp/
+tmp-home/
+runs/
+scheduler/
+archive/
+the-binding-repo/
+storyline-upload/
+storyline-upload-final/
+generated-images/
+*.tar.gz
