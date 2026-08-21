@@ -74,6 +74,27 @@ async function main() {
     assert.strictEqual(response.statusCode, 200);
     assert.strictEqual(JSON.parse(response.payload).state.turnNumber, 1);
 
+    response = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/bookmarks',
+      payload: { bookmarkId: 'api-bookmark', label: 'The first clue' }
+    });
+    assert.strictEqual(response.statusCode, 200);
+    assert.strictEqual(JSON.parse(response.payload).state.bookmarks[0].bookmarkId, 'api-bookmark');
+
+    response = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/journal',
+      payload: { entryId: 'api-journal', text: 'A clue enters the journal.', kind: 'narrative' }
+    });
+    assert.strictEqual(response.statusCode, 200);
+    assert.strictEqual(JSON.parse(response.payload).state.journal[0].entryId, 'api-journal');
+
+    response = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/bookmarks',
+      payload: { operation: 'remove', bookmarkId: 'api-bookmark' }
+    });
+    assert.strictEqual(response.statusCode, 200);
+    assert.deepStrictEqual(JSON.parse(response.payload).state.bookmarks, []);
+
     response = await app.inject({ method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/transition', payload: { to: 'paused' } });
     assert.strictEqual(response.statusCode, 200);
     assert.strictEqual(JSON.parse(response.payload).state.lifecycle, 'paused');
