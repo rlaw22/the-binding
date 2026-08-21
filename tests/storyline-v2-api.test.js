@@ -30,6 +30,25 @@ async function main() {
     assert.strictEqual(start.state.sceneId, 'scene_00');
     assert.ok(start.catalog.actions.length > 0);
 
+    const checkResponse = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions',
+      payload: { adventureId: 'dracula', sessionId: 'api-check-test', classId: 'cleric' }
+    });
+    assert.strictEqual(checkResponse.statusCode, 200);
+    const checkStart = JSON.parse(checkResponse.payload);
+    const checkAction = checkStart.catalog.actions.find(action => action.actionId === 'scene_00__study_guestbook');
+    assert.ok(checkAction);
+    response = await app.inject({
+      method: 'POST', url: '/api/storyline-v2/sessions/api-check-test/actions',
+      payload: { actionId: checkAction.actionId, catalogVersion: checkStart.catalog.catalogVersion, turnId: 'api-check-turn' }
+    });
+    assert.strictEqual(response.statusCode, 200);
+    const checkResult = JSON.parse(response.payload);
+    assert.strictEqual(checkResult.resultType, 'check_failure');
+    assert.strictEqual(checkResult.check.ability, 'investigate');
+    assert.strictEqual(checkResult.check.roll, 12);
+    assert.strictEqual(checkResult.check.success, false);
+
     response = await app.inject({
       method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/actions',
       payload: { actionId: start.catalog.actions[0].actionId, catalogVersion: start.catalog.catalogVersion, turnId: 'api-turn-1' }

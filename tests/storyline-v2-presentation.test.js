@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const { createStorylineV2ViewModel } = require('../src/storyline-v2/presentation');
+const { createStorylineV2ViewModel, createStorylineV2ResultViewModel } = require('../src/storyline-v2/presentation');
 
 function test(name, fn) {
   try { fn(); console.log(`  ✓ ${name}`); }
@@ -48,6 +48,22 @@ test('provides safe defaults for optional presentation state', () => {
   assert.strictEqual(model.presentBookmark.ariaLabel, 'Return to present');
 });
 
-test('rejects incomplete snapshots before rendering', () => {
+test('maps settled check results into accessible rendering data without recalculating them', () => {
+  const result = createStorylineV2ResultViewModel({
+    responseId: 'response:1', turnId: 'turn-1', actionId: 'inspect', resultType: 'check_failure',
+    narrative: 'The lock resists.',
+    check: { ability: 'investigate', roll: 12, modifier: 1, capability: 2, total: 15, difficulty: 18, success: false },
+    stateChanges: { hp: -2, flags: { hurt: true } }
+  });
+  assert.deepStrictEqual(result.check, {
+    ability: 'investigate', roll: 12, modifier: 1, capability: 2, total: 15,
+    difficulty: 18, success: false, outcome: 'failure'
+  });
+  assert.strictEqual(result.narrative, 'The lock resists.');
+  assert.strictEqual(result.stateChanges.hp, -2);
+});
+
+test('rejects incomplete snapshots and results before rendering', () => {
   assert.throws(() => createStorylineV2ViewModel({ state: {} }), /snapshot is required/);
+  assert.throws(() => createStorylineV2ResultViewModel(null), /result is required/);
 });
