@@ -1,6 +1,7 @@
 'use strict';
 
 const { clone, asArray, issue } = require('./collections');
+const { estimateManifestMetrics, auditManifestQuality } = require('./manifest-metrics');
 
 const ACTION_TYPES = new Set([
   'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere', 'recovery'
@@ -108,11 +109,16 @@ function compileAdventure(raw) {
     throw error;
   }
 
+  const metrics = estimateManifestMetrics(raw, Object.values(sceneMap));
+  const qualityWarnings = auditManifestQuality(raw, metrics);
+
   return Object.freeze({
     schemaVersion: '2.0',
     adventureId: raw.adventureId,
     title: raw.title,
     source: clone(raw.source || {}),
+    estimatedDuration: clone(metrics.estimatedDuration),
+    contentScale: clone(metrics.contentScale),
     narrativePolicy: clone(raw.narrativePolicy || {}),
     transferPolicy: clone(raw.transferPolicy || {}),
     difficultyPolicy: clone(raw.difficultyPolicy || {}),
@@ -123,7 +129,8 @@ function compileAdventure(raw) {
     scenes: Object.freeze(sceneMap),
     graph: Object.freeze({ entry, edges: clone(graphEdges) }),
     endings: clone(raw.endings || {}),
-    warnings: Object.freeze(warnings)
+    qualityWarnings: Object.freeze(qualityWarnings),
+    warnings: Object.freeze([...warnings, ...qualityWarnings])
   });
 }
 

@@ -35,6 +35,75 @@ test('compiles a valid data-only manifest', () => {
   assert.ok(adventure.scenes.study);
 });
 
+test('derives variable duration and content-scale metadata without imposing a scene count', () => {
+  const adventure = compileAdventure(raw);
+  assert.strictEqual(adventure.contentScale.runtimeSceneCount, 2);
+  assert.strictEqual(adventure.contentScale.actionCount, 5);
+  assert.strictEqual(adventure.contentScale.meaningfulDecisionCount, 3);
+  assert.strictEqual(adventure.contentScale.optionalDiscoveryCount, 1);
+  assert.ok(adventure.contentScale.wordCount > 0);
+  assert.ok(adventure.estimatedDuration.typicalRouteMinutes > 0);
+  assert.ok(Array.isArray(adventure.estimatedDuration.replayRangeMinutes));
+  assert.strictEqual(adventure.estimatedDuration.routeCount, 1);
+  assert.strictEqual(adventure.estimatedDuration.shortestRouteMinutes, adventure.estimatedDuration.longestRouteMinutes);
+});
+
+test('uses graph routes to distinguish short and long paths', () => {
+  const branched = {
+    ...raw,
+    scenes: [
+      ...raw.scenes,
+      { sceneId: 'gallery', name: 'Gallery', setting: 'A long gallery filled with portraits, dust, locked doors, faded maps, cold drafts, and distant footsteps.', actions: [{ actionId: 'leave_gallery', type: 'exit', label: 'Leave the gallery', resolution: { resultType: 'exit', narration: 'You leave.' } }] }
+    ],
+    graph: {
+      entry: 'study',
+      edges: [
+        { edgeId: 'short', from: 'study', to: 'hall', trigger: { actionId: 'leave_study' } },
+        { edgeId: 'long', from: 'study', to: 'gallery', trigger: { actionId: 'touch_portrait' } },
+        { edgeId: 'gallery-to-hall', from: 'gallery', to: 'hall', trigger: { actionId: 'leave_gallery' } }
+      ]
+    }
+  };
+  const adventure = compileAdventure(branched);
+  assert.strictEqual(adventure.estimatedDuration.routeCount, 2);
+  assert.ok(adventure.estimatedDuration.shortestRouteMinutes > 0);
+  assert.ok(adventure.estimatedDuration.longestRouteMinutes > adventure.estimatedDuration.shortestRouteMinutes);
+});
+
+test('emits quality warnings without rejecting variable-length manifests', () => {
+  const adventure = compileAdventure({
+    ...raw,
+    qualityGates: { durationMinutes: { minCriticalPathMinutes: 999 } }
+  });
+  assert.ok(adventure.qualityWarnings.some(warning => warning.code === 'CRITICAL_PATH_TOO_SHORT'));
+  assert.ok(adventure.warnings.some(warning => warning.code === 'CRITICAL_PATH_TOO_SHORT'));
+});
+
+test('preserves authored duration estimates when supplied by a published manifest', () => {
+  const adventure = compileAdventure({
+    ...raw,
+    estimatedDuration: {
+      criticalPathMinutes: 180,
+      typicalRouteMinutes: 240,
+      fullExplorationMinutes: 420,
+      replayRangeMinutes: [150, 480],
+      basis: 'moderated playtest'
+    }
+  });
+  assert.deepStrictEqual(adventure.estimatedDuration, {
+    criticalPathMinutes: 180,
+      shortestRouteMinutes: adventure.estimatedDuration.shortestRouteMinutes,
+      typicalRouteMinutes: 240,
+      longestRouteMinutes: adventure.estimatedDuration.longestRouteMinutes,
+      fullExplorationMinutes: 420,
+      replayRangeMinutes: [150, 480],
+      readingMinutes: adventure.estimatedDuration.readingMinutes,
+      interactionMinutes: adventure.estimatedDuration.interactionMinutes,
+      routeCount: adventure.estimatedDuration.routeCount,
+      basis: 'moderated playtest'
+  });
+});
+
 test('rejects invalid references before gameplay', () => {
   assert.throws(() => compileAdventure({ ...raw, items: {}, scenes: [{ ...raw.scenes[0], actions: [{ ...raw.scenes[0].actions[1], resolution: { addItems: ['missing'] } }] }] }), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('Unknown item')));
 });
