@@ -67,7 +67,7 @@
     ensureBookPresentation();
     var state = snapshot.state || {};
     var journal = state.journal && Array.isArray(state.journal.entries) ? state.journal.entries : [];
-    var bookmarks = Array.isArray(state.replayBookmarks) ? state.replayBookmarks : [];
+    var bookmarks = Array.isArray(state.bookmarks) ? state.bookmarks : [];
     root.storylineV2Client.renderBookHistory(document.getElementById('storyline-v2-journal-panel'), journal);
     root.storylineV2Client.renderBookmarkRail(document.getElementById('storyline-v2-bookmarks'), bookmarks, {
       onPresent: function () {

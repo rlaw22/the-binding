@@ -34,6 +34,7 @@ function createStorylineV2Handlers({ service, enabled = true }) {
         return service.start({
           adventureId: body.adventureId || 'dracula',
           sessionId: body.sessionId,
+          characterId: body.characterId,
           classId: body.classId,
           options: body.options || {}
         });

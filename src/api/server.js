@@ -161,6 +161,8 @@ async function createServer(options = {}) {
   app.post('/api/storyline-v2/sessions', storylineV2Handlers.start);
   app.get('/api/storyline-v2/sessions/:id', storylineV2Handlers.snapshot);
   app.post('/api/storyline-v2/sessions/:id/transition', storylineV2Handlers.transition);
+  app.post('/api/storyline-v2/sessions/:id/bookmarks', storylineV2Handlers.bookmark);
+  app.post('/api/storyline-v2/sessions/:id/journal', storylineV2Handlers.journal);
   app.post('/api/storyline-v2/sessions/:id/actions', storylineV2Handlers.submit);
 
   app.get('/api/adventures', async () => {
