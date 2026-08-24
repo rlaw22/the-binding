@@ -21,7 +21,10 @@ const {
   createCharacter,
   addBookmark,
   removeBookmark,
-  appendJournal
+  appendJournal,
+  calculateDifficultyProfile,
+  disclosureForProfile,
+  applyAuthoredLever
 } = require('../domain');
 const { InMemorySessionRepository } = require('./repositories/session-repository');
 const { InMemoryCharacterRepository } = require('./repositories/character-repository');
@@ -79,11 +82,13 @@ class StorylineV2Service {
     const folio = characterId ? this.getCharacter(characterId) : createCharacter({ ...options.character, characterId });
     const transfer = buildTransferPreview(adventure, folio, options);
     const bookCharacter = createBookCharacterSnapshot(adventure, folio, options);
+    const difficultyProfile = calculateDifficultyProfile(adventure, folio, { ...options, calculatedAt: this.clock(), challengePreference: options.challengePreference || folio.challengePreference });
     const state = createState(adventure, {
       ...options,
       sessionId,
       classId: classId || bookCharacter.classId,
       character: bookCharacter,
+      difficultyProfile,
       inventory: transfer.transferredItems,
       bookSessionId: sessionId
     });
@@ -105,7 +110,8 @@ class StorylineV2Service {
     return {
       adventureId: session.adventureId,
       state: snapshotState(session.state),
-      catalog: buildCatalog(this.getAdventure(session.adventureId), session.state)
+      catalog: buildCatalog(this.getAdventure(session.adventureId), session.state),
+      adaptiveDifficulty: disclosureForProfile(session.state.bookSession.difficultyProfile)
     };
   }
 

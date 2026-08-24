@@ -22,6 +22,7 @@ function compileAdventure(raw) {
   if (raw.schemaVersion !== '2.0') errors.push(issue('schemaVersion', 'Expected schemaVersion 2.0'));
   if (!raw.adventureId) errors.push(issue('adventureId', 'Adventure ID is required'));
   if (!raw.title) errors.push(issue('title', 'Adventure title is required'));
+  validateAdaptiveDifficulty(raw.adaptiveDifficulty, errors, warnings);
 
   const classes = asArray(raw.classes);
   const classIds = new Set();
@@ -122,6 +123,7 @@ function compileAdventure(raw) {
     narrativePolicy: clone(raw.narrativePolicy || {}),
     transferPolicy: clone(raw.transferPolicy || {}),
     difficultyPolicy: clone(raw.difficultyPolicy || {}),
+    adaptiveDifficulty: clone(raw.adaptiveDifficulty || null),
     prologue: clone(raw.prologue || {}),
     classes: clone(classes),
     items: clone(itemDefs),
@@ -177,12 +179,44 @@ function normalizeAction(action) {
     shortLabel: action.shortLabel || action.label || action.name || action.actionId || action.id,
     subtitle: action.subtitle || action.description || '',
     iconKey: action.iconKey || null,
+    adaptiveLeverId: action.adaptiveLeverId || null,
     keywords: clone(action.keywords || []),
     availability: clone(action.availability || {}),
     requires: clone(action.requires || []),
     resolution,
     replay: action.replay || 'consumable'
   };
+}
+
+function validateAdaptiveDifficulty(policy, errors, warnings) {
+  if (policy == null) return;
+  const path = 'adaptiveDifficulty';
+  if (typeof policy !== 'object' || Array.isArray(policy)) return errors.push(issue(path, 'Adaptive difficulty must be an object'));
+  if (policy.schemaVersion !== '1.0') errors.push(issue(`${path}.schemaVersion`, 'Expected adaptive difficulty schemaVersion 1.0'));
+  if (typeof policy.enabled !== 'boolean') errors.push(issue(`${path}.enabled`, 'Adaptive difficulty enabled must be boolean'));
+  const bounds = policy.offsetBounds;
+  if (!bounds || !Number.isInteger(bounds.min) || !Number.isInteger(bounds.max) || bounds.min < -2 || bounds.max > 2 || bounds.min > bounds.max) {
+    errors.push(issue(`${path}.offsetBounds`, 'Offset bounds must be integers within [-2,2] with min <= max'));
+  }
+  const target = policy.targetCapability;
+  if (!target || !Number.isFinite(target.score) || !Number.isFinite(target.bandWidth) || target.bandWidth <= 0) errors.push(issue(`${path}.targetCapability`, 'Target capability score and positive band width are required'));
+  const weights = policy.weights;
+  if (!weights || !Number.isFinite(weights.capability) || !Number.isFinite(weights.preference) || weights.capability < 0 || weights.preference < 0) errors.push(issue(`${path}.weights`, 'Non-negative capability and preference weights are required'));
+  const leverIds = new Set();
+  (policy.levers || []).forEach((lever, index) => {
+    const leverPath = `${path}.levers[${index}]`;
+    if (!lever || !lever.leverId || leverIds.has(lever.leverId)) errors.push(issue(leverPath, 'Unique leverId is required'));
+    else leverIds.add(lever.leverId);
+    if (!lever || !lever.kind || !lever.byOffset || typeof lever.byOffset !== 'object' || Array.isArray(lever.byOffset)) {
+      if (!lever || !lever.kind) errors.push(issue(leverPath, 'Lever kind is required'));
+      if (!lever || !lever.byOffset || typeof lever.byOffset !== 'object' || Array.isArray(lever.byOffset)) errors.push(issue(`${leverPath}.byOffset`, 'Offset mappings are required'));
+    }
+    if (lever && lever.allowedDelta && (lever.allowedDelta.min > lever.allowedDelta.max)) errors.push(issue(`${leverPath}.allowedDelta`, 'Allowed delta range is invalid'));
+    if (lever && lever.byOffset && typeof lever.byOffset === 'object') Object.keys(lever.byOffset).forEach(offset => {
+      if (!['-2', '-1', '0', '1', '2'].includes(offset)) errors.push(issue(`${leverPath}.byOffset.${offset}`, 'Unknown adaptive offset'));
+    });
+  });
+  if (policy.enabled && (!policy.disclosure || policy.disclosure.adaptiveChallenge !== true)) warnings.push(issue(`${path}.disclosure`, 'Enabled adaptive difficulty should disclose adaptive challenge'));
 }
 
 function validateActionRequirements(requirements, actionIds, errors, path) {

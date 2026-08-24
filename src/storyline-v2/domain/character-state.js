@@ -14,6 +14,8 @@ function createCharacter(input = {}) {
   });
   return {
     characterId: input.characterId || null,
+    characterVersion: input.characterVersion || null,
+    challengePreference: input.challengePreference || 'standard',
     name: input.name || 'Unnamed traveller',
     classId: input.classId || null,
     level: Number.isFinite(input.level) ? input.level : 1,
