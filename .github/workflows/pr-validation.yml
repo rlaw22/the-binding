@@ -1,0 +1,49 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Tests and deployment contract
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check formatting and whitespace
+        run: git diff --check
+
+      - name: Run test suite
+        run: npm run test:v2
+
+      - name: Verify deployment workflow contract
+        shell: bash
+        run: |
+          set -euo pipefail
+          workflow=".github/workflows/deploy.yml"
+
+          test -f "$workflow"
+          grep -q 'branches: \[ main \]' "$workflow"
+          grep -q 'health_url=' "$workflow"
+          grep -q 'v2_url=' "$workflow"
+          grep -q '\"status\":\"ok\"' "$workflow"
+          grep -q '\"enabled\":false' "$workflow"
+
+          echo "Deployment workflow contract is present."
+          echo "This PR workflow performs no deployment."
