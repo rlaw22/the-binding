@@ -30,7 +30,7 @@ jobs:
         run: git diff --check
 
       - name: Run test suite
-        run: npm test
+        run: npm run test:v2
 
       - name: Verify deployment workflow contract
         shell: bash
