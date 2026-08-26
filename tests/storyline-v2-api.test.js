@@ -15,6 +15,23 @@ async function main() {
     await disabled.close();
   }
 
+  const personal = await createServer({ storylineV2PersonalTestToken: 'personal-test-secret', llmConfig: { mock: true }, persistence: false });
+  try {
+    let response = await personal.inject({ method: 'GET', url: '/api/storyline-v2-personal/status' });
+    assert.strictEqual(response.statusCode, 401);
+    assert.ok(response.headers['www-authenticate']);
+    response = await personal.inject({ method: 'GET', url: '/api/storyline-v2-personal/status', headers: { authorization: 'Bearer wrong' } });
+    assert.strictEqual(response.statusCode, 401);
+    response = await personal.inject({ method: 'GET', url: '/api/storyline-v2-personal/status', headers: { authorization: 'Bearer personal-test-secret' } });
+    assert.deepStrictEqual(JSON.parse(response.payload), { enabled: true, adventures: ['dracula'] });
+    response = await personal.inject({ method: 'POST', url: '/api/storyline-v2-personal/sessions', headers: { authorization: 'Bearer personal-test-secret' }, payload: { adventureId: 'frankenstein', sessionId: 'personal-unsupported' } });
+    assert.strictEqual(response.statusCode, 400);
+    response = await personal.inject({ method: 'POST', url: '/api/storyline-v2-personal/sessions', headers: { authorization: 'Bearer personal-test-secret' }, payload: { adventureId: 'dracula', sessionId: 'personal-dracula', classId: 'cleric' } });
+    assert.strictEqual(response.statusCode, 200);
+  } finally {
+    await personal.close();
+  }
+
   const app = await createServer({ storylineV2Enabled: true, llmConfig: { mock: true }, persistence: false });
   try {
     let response = await app.inject({ method: 'GET', url: '/api/storyline-v2/status' });
