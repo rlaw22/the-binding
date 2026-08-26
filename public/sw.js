@@ -16,7 +16,7 @@
  * - Cache versioning and cleanup of old caches on activate
  */
 
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = `the-binding-${CACHE_VERSION}`;
 const STATIC_CACHE = `the-binding-static-${CACHE_VERSION}`;
 const DOCS_CACHE = `the-binding-docs-${CACHE_VERSION}`;
@@ -459,7 +459,14 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 8) Navigation requests: network-first, offline.html fallback
+  // 8) Navigation requests: keep the independent Northstar entry point direct.
+  // It must never be rewritten to the legacy root shell by an installed PWA.
+  if (event.request.mode === 'navigate' && url.pathname === '/storyline-v2.html') {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }));
+    return;
+  }
+
+  // 9) Other navigation requests: network-first, offline.html fallback
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)

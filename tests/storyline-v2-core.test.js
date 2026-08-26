@@ -122,6 +122,8 @@ test('builds a server-owned catalog with stable IDs', () => {
   assert.ok(catalog.actions.some(action => action.actionId === 'read_letter'));
   assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'iconKey')));
   assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'subtitle')));
+  assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'role')));
+  assert.ok(catalog.actions.every(action => Object.prototype.hasOwnProperty.call(action, 'consequenceSummary')));
   assert.strictEqual(catalog.actions.find(action => action.actionId === 'read_letter').sceneId, 'study');
   assert.strictEqual(catalog.sceneName, 'Study');
   assert.ok(Object.prototype.hasOwnProperty.call(catalog, 'setting'));
