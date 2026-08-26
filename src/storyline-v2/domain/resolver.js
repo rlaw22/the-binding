@@ -77,6 +77,19 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
     if (ending && ending.narration) narrative = ending.narration;
   }
 
+  // Every authored resolution is part of the player's reading record. Keep
+  // the selected action and its consequence together so the client can render
+  // the response after receiving the next authoritative snapshot.
+  state.journal.push({
+    entryId: `turn:${turnId || state.turnNumber + 1}`,
+    turnNumber: state.turnNumber + 1,
+    revision: state.revision,
+    sceneId: beforeSceneId,
+    actionId: action.actionId,
+    text: narrative,
+    kind: 'action'
+  });
+
   let transition = null;
   const edge = (adventure.graph.edges || []).find(candidate => candidate.from === beforeSceneId && candidate.trigger && candidate.trigger.actionId === actionId && requirementsPass(candidate.trigger.requires || [], state));
   if (edge) {

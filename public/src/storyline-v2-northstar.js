@@ -31,6 +31,13 @@
     $('scene-title').textContent = catalog.sceneName || catalog.title || state.sceneId || 'The book opens';
     $('narrative').textContent = '';
     $('narrative').appendChild(textBlock(catalog.openingNarration || catalog.setting || catalog.description || 'The page is waiting.'));
+    var response = $('response');
+    response.hidden = !(data.result && data.result.narrative);
+    response.textContent = '';
+    if (data.result && data.result.narrative) {
+      var responseLabel = document.createElement('strong'); responseLabel.textContent = 'Your action'; response.appendChild(responseLabel);
+      response.appendChild(textBlock(data.result.narrative));
+    }
     var actions = $('actions'); actions.textContent = '';
     (catalog.actions || []).forEach(function (action) {
       var button = document.createElement('button'); button.type = 'button'; button.className = 'northstar-action'; button.dataset.actionId = action.actionId; button.disabled = !!action.disabled;
@@ -43,7 +50,7 @@
     $('text-intent').value = '';
     var journal = $('journal'); journal.textContent = '';
     var journalEntries = Array.isArray(state.journal) ? state.journal : (state.journal && Array.isArray(state.journal.entries) ? state.journal.entries : []);
-    journalEntries.forEach(function (entry) { var article = document.createElement('article'); article.textContent = (entry.title || entry.sceneName || 'Turn') + (entry.summary || entry.narrative ? ': ' + (entry.summary || entry.narrative) : ''); journal.appendChild(article); });
+    journalEntries.forEach(function (entry) { var article = document.createElement('article'); var entryText = entry.text || entry.summary || entry.narrative || ''; article.textContent = (entry.title || entry.sceneName || entry.actionId || 'Turn') + (entryText ? ': ' + entryText : ''); journal.appendChild(article); });
   }
   async function submit(actionId) {
     if (busy || !snapshot) return; busy = true; setError('');
@@ -52,7 +59,7 @@
     try {
       var catalog = snapshot.catalog || {};
       var result = await request('/sessions/' + encodeURIComponent(session) + '/actions', { method: 'POST', body: JSON.stringify({ actionId: actionId, catalogVersion: catalog.catalogVersion, turnId: 'northstar-' + Date.now().toString(36) }) });
-      render({ adventureId: snapshot.adventureId, state: result.state, catalog: result.catalog });
+      render({ adventureId: snapshot.adventureId, state: result.state, catalog: result.catalog, result: result });
     } catch (error) { setError(error.message); document.querySelectorAll('.northstar-action').forEach(function (button) { button.disabled = false; }); } finally { $('text-intent-submit').disabled = false; busy = false; }
   }
   async function submitText(text) {
@@ -67,9 +74,9 @@
         return;
       }
       if (result.result && result.result.state && result.result.catalog) {
-        render({ adventureId: snapshot.adventureId, state: result.result.state, catalog: result.result.catalog });
+        render({ adventureId: snapshot.adventureId, state: result.result.state, catalog: result.result.catalog, result: result.result });
       } else if (result.state && result.catalog) {
-        render({ adventureId: snapshot.adventureId, state: result.state, catalog: result.catalog });
+        render({ adventureId: snapshot.adventureId, state: result.state, catalog: result.catalog, result: result });
       } else {
         $('text-intent-feedback').textContent = result.message || 'The page could not resolve that request.';
         document.querySelectorAll('.northstar-action').forEach(function (button) { button.disabled = false; });

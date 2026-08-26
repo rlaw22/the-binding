@@ -15,7 +15,11 @@ function action(actionId, type, category, label, shortLabel, keywords, narration
   return {
     actionId, contentId: actionId, type, category, label, shortLabel, keywords,
     role: extra.role || roleFor(type, category),
-    replay: extra.replay || 'consumable',
+    // Optional authored choices remain available after resolution so a player
+    // can investigate, prepare, and reconsider without the catalog collapsing
+    // to a single forced continuation. Progression and final commitments are
+    // still consumable by default.
+    replay: extra.replay || ((type === 'exit' || extra.role === 'commitment') ? 'consumable' : 'repeatable'),
     consequenceSummary: extra.consequenceSummary || narration,
     laterBeat: extra.laterBeat || null,
     resolution: { resultType: extra.resultType || 'discovery', narration,

@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 
 const client = fs.readFileSync(path.join(__dirname, '..', 'public/src/storyline-v2-client.js'), 'utf8');
+const northstar = fs.readFileSync(path.join(__dirname, '..', 'public/src/storyline-v2-northstar.js'), 'utf8');
+const northstarHtml = fs.readFileSync(path.join(__dirname, '..', 'public/storyline-v2.html'), 'utf8');
 assert.ok(client.includes('StorylineV2Client'));
 assert.ok(client.includes("Action is not in the current server catalog"));
 assert.ok(client.includes('catalogVersion'));
@@ -22,4 +24,9 @@ assert.ok(client.includes('content-type'));
 assert.ok(client.includes('data && data.error'));
 assert.ok(!client.includes('Math.random'));
 assert.ok(!client.includes('createAction'));
+assert.ok(northstar.includes('result: result'), 'Northstar passes resolved results to rendering');
+assert.ok(northstar.includes("response.textContent = ''"), 'Northstar renders the selected response');
+assert.ok(northstar.includes('entry.text || entry.summary || entry.narrative'), 'Northstar renders journal text');
+assert.ok(northstarHtml.includes('id="response"'), 'Northstar includes a response region');
 console.log('  ✓ Storyline v2 client adapter remains catalog-bound and presentation-only');
+console.log('  ✓ Northstar renders resolved responses and journal history');
