@@ -17,7 +17,7 @@ function buildCatalog(adventure, state) {
   if (exit && !selected.some(action => action.actionId === exit.actionId)) {
     selected = [...selected.slice(0, 5), exit];
   }
-  const actions = selected.map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, label: action.label, shortLabel: action.shortLabel, subtitle: action.subtitle, iconKey: action.iconKey, availability: 'available' }));
+  const actions = selected.map(action => ({ actionId: action.actionId, contentId: action.contentId, sceneId: state.sceneId, catalogVersion: state.catalogVersion, type: action.type, category: action.category, role: action.role, consequenceSummary: action.consequenceSummary, laterBeat: action.laterBeat, label: action.label, shortLabel: action.shortLabel, subtitle: action.subtitle, iconKey: action.iconKey, availability: 'available' }));
   return {
     sceneId: state.sceneId,
     catalogVersion: state.catalogVersion,

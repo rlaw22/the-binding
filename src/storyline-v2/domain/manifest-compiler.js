@@ -2,6 +2,7 @@
 
 const { clone, asArray, issue } = require('./collections');
 const { estimateManifestMetrics, auditManifestQuality } = require('./manifest-metrics');
+const { auditAgencyQuality, assertAgencyQuality } = require('./agency-policy');
 
 const ACTION_TYPES = new Set([
   'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere', 'recovery'
@@ -23,6 +24,9 @@ function compileAdventure(raw) {
   if (!raw.adventureId) errors.push(issue('adventureId', 'Adventure ID is required'));
   if (!raw.title) errors.push(issue('title', 'Adventure title is required'));
   validateAdaptiveDifficulty(raw.adaptiveDifficulty, errors, warnings);
+  const agencyAudit = auditAgencyQuality(raw, { strict: raw.publicationMode === 'new-book' || raw.agencyPolicy && raw.agencyPolicy.strict === true });
+  if (agencyAudit.errors.length) errors.push(...agencyAudit.errors);
+  warnings.push(...agencyAudit.warnings);
 
   const classes = asArray(raw.classes);
   const classIds = new Set();
@@ -124,6 +128,8 @@ function compileAdventure(raw) {
     transferPolicy: clone(raw.transferPolicy || {}),
     difficultyPolicy: clone(raw.difficultyPolicy || {}),
     adaptiveDifficulty: clone(raw.adaptiveDifficulty || null),
+    publicationMode: raw.publicationMode || 'compatibility',
+    agencyPolicy: clone(raw.agencyPolicy || {}),
     prologue: clone(raw.prologue || {}),
     classes: clone(classes),
     items: clone(itemDefs),
@@ -164,7 +170,8 @@ function normalizeScene(raw) {
     presentNpcs: clone(raw.presentNpcs || []),
     openingNarration: raw.openingNarration || raw.description || '',
     actions,
-    completion: clone(raw.completion || {})
+    completion: clone(raw.completion || {}),
+    agency: clone(raw.agency || raw.agencyPolicy || {})
   };
 }
 
@@ -180,6 +187,9 @@ function normalizeAction(action) {
     subtitle: action.subtitle || action.description || '',
     iconKey: action.iconKey || null,
     adaptiveLeverId: action.adaptiveLeverId || null,
+    role: action.role || action.actionRole || null,
+    consequenceSummary: action.consequenceSummary || '',
+    laterBeat: action.laterBeat || null,
     keywords: clone(action.keywords || []),
     availability: clone(action.availability || {}),
     requires: clone(action.requires || []),

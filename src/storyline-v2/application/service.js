@@ -241,7 +241,15 @@ class StorylineV2Service {
     const catalog = buildCatalog(adventure, session.state);
     const definitions = adventure.scenes[session.state.sceneId].actions;
     const match = matchFreeText(text, catalog, definitions);
-    if (match.status !== 'matched') return { ...match, catalog };
+    if (match.status !== 'matched') {
+      return {
+        ...match,
+        catalog,
+        message: match.status === 'ambiguous'
+          ? 'Several actions fit that description. Choose one of the authored responses.'
+          : 'That action is not available here. Choose one of the authored responses.'
+      };
+    }
     return {
       ...match,
       result: this.submit({

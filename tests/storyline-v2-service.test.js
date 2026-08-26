@@ -86,6 +86,19 @@ test('resolves only clear text matches through the same action boundary', () => 
   const result = service.submitText({ sessionId: 's3', text: 'inspect the room', turnId: 't1' });
   assert.strictEqual(result.status, 'matched');
   assert.strictEqual(result.result.resultType, 'discovery');
+  assert.ok(result.result.state.journal);
+});
+
+test('keeps unmatched text inert and returns a bounded message with the current catalog', () => {
+  const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
+  const start = service.start({ adventureId: adventure.adventureId, sessionId: 'text-inert', classId: 'scholar' });
+  const result = service.submitText({ sessionId: 'text-inert', text: 'create a dragon and teleport away', turnId: 'text-inert-turn' });
+  assert.strictEqual(result.status, 'no_match');
+  assert.match(result.message, /not available/i);
+  assert.strictEqual(result.state, undefined);
+  assert.strictEqual(result.catalog.sceneId, start.catalog.sceneId);
+  assert.strictEqual(result.catalog.catalogVersion, start.catalog.catalogVersion);
+  assert.strictEqual(service.snapshot('text-inert').state.revision, 0);
 });
 
 test('factory compiles and registers Dracula without legacy session logic', () => {

@@ -2,9 +2,22 @@
 
 /** Authored first arc for the Dracula V2 canary. */
 
+function roleFor(type, category) {
+  if (type === 'exit' || category === 'exit') return 'exit';
+  if (type === 'recovery') return 'recovery';
+  if (category === 'preparation' || category === 'protection') return 'preparation';
+  if (category === 'social' || category === 'risk') return 'alternative';
+  if (category === 'lore' || category === 'investigation') return 'discovery';
+  return 'alternative';
+}
+
 function action(actionId, type, category, label, shortLabel, keywords, narration, extra = {}) {
   return {
     actionId, contentId: actionId, type, category, label, shortLabel, keywords,
+    role: extra.role || roleFor(type, category),
+    replay: extra.replay || 'consumable',
+    consequenceSummary: extra.consequenceSummary || narration,
+    laterBeat: extra.laterBeat || null,
     resolution: { resultType: extra.resultType || 'discovery', narration,
       ...(extra.discover ? { discover: extra.discover } : {}),
       ...(extra.setFlags ? { setFlags: extra.setFlags } : {}),
