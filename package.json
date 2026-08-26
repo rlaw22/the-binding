@@ -27,6 +27,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@3d-dice/dice-box-threejs": "^0.0.12",
     "@fastify/cors": "^11.3.0",
