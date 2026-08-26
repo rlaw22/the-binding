@@ -32,11 +32,17 @@
     $('narrative').textContent = '';
     $('narrative').appendChild(textBlock(catalog.openingNarration || catalog.setting || catalog.description || 'The page is waiting.'));
     var response = $('response');
-    response.hidden = !(data.result && data.result.narrative);
+    var responseEntries = Array.isArray(state.journal) ? state.journal.filter(function (entry) { return entry && (entry.text || entry.summary || entry.narrative); }).slice(-2) : [];
+    response.hidden = responseEntries.length === 0;
     response.textContent = '';
-    if (data.result && data.result.narrative) {
-      var responseLabel = document.createElement('strong'); responseLabel.textContent = 'Your action'; response.appendChild(responseLabel);
-      response.appendChild(textBlock(data.result.narrative));
+    if (responseEntries.length) {
+      var responseLabel = document.createElement('strong'); responseLabel.textContent = 'Recent actions'; response.appendChild(responseLabel);
+      responseEntries.forEach(function (entry) {
+        var article = document.createElement('article');
+        article.className = 'northstar-response-entry';
+        article.textContent = entry.text || entry.summary || entry.narrative;
+        response.appendChild(article);
+      });
     }
     var actions = $('actions'); actions.textContent = '';
     (catalog.actions || []).forEach(function (action) {
