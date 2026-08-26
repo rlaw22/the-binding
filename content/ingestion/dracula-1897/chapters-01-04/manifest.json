@@ -1,0 +1,416 @@
+{
+  "schemaVersion": "2.0",
+  "adventureId": "dracula-chapters-01-04-slice",
+  "title": "Dracula: The Threshold East",
+  "source": {
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "sourceId": "dracula-1897-gutenberg-345",
+    "generation": "whole-book-first-chapters-01-04"
+  },
+  "narrativePolicy": {
+    "sourceFidelity": "high",
+    "playerAgency": "guided",
+    "endingPolicy": "authored",
+    "allowOptionalBranches": true
+  },
+  "prologue": {
+    "text": "A solicitor travels east on business, carrying a letter from a count he has never met.",
+    "startingSceneId": "dracula_slice_01_inn"
+  },
+  "classes": [
+    "fighter",
+    "cleric",
+    "mage",
+    "rogue"
+  ],
+  "items": {
+    "protective_crucifix": {
+      "itemId": "protective_crucifix",
+      "name": "Protective crucifix"
+    }
+  },
+  "scenes": [
+    {
+      "sceneId": "dracula_slice_01_inn",
+      "actId": "act_1",
+      "name": "The Golden Krone Inn",
+      "location": {
+        "id": "golden_krone_inn",
+        "name": "Golden Krone Inn"
+      },
+      "setting": "Bistritz, on the eve of St. George’s Day. The innkeeper and his wife receive Jonathan with uneasy courtesy while a coach waits to carry him east.",
+      "presentNpcs": [
+        "Golden Krone innkeeper",
+        "old woman at inn"
+      ],
+      "openingNarration": "The inn is warm, but the welcome is not. A letter from Count Dracula promises a carriage at the Borgo Pass; the old woman who brought it looks as though she would rather bar the door than see you leave.",
+      "actions": [
+        {
+          "actionId": "slice_01_accept_crucifix",
+          "contentId": "slice_01_accept_crucifix",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Accept the protective crucifix",
+          "shortLabel": "Accept the protective crucifix",
+          "keywords": [
+            "accept",
+            "the",
+            "protective",
+            "crucifix"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "The old woman places the crucifix around your neck and whispers a blessing. You cannot explain her fear, but you carry the protection with you.",
+            "discover": [
+              "slice_01_accept_crucifix"
+            ],
+            "setFlags": {
+              "protected_by_crucifix": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_01_question_warning",
+          "contentId": "slice_01_question_warning",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Question the innkeeper about Dracula",
+          "shortLabel": "Question the innkeeper about Dracula",
+          "keywords": [
+            "question",
+            "the",
+            "innkeeper",
+            "about",
+            "dracula"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "The innkeeper refuses the Count’s name and crosses himself. His silence tells you more than an answer would: the road east is feared here.",
+            "setFlags": {
+              "heard_local_warning": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_01_leave_unprepared",
+          "contentId": "slice_01_leave_unprepared",
+          "type": "bad_choice",
+          "category": "bad_choice",
+          "label": "Leave without accepting the warning",
+          "shortLabel": "Leave without accepting the warning",
+          "keywords": [
+            "leave",
+            "without",
+            "accepting",
+            "the",
+            "warning"
+          ],
+          "resolution": {
+            "resultType": "bad_choice",
+            "narration": "You thank them and leave before the coach can wait any longer. The innkeeper watches you go with the expression of a man witnessing a mistake.",
+            "setFlags": {
+              "ignored_local_warning": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_01_depart",
+          "contentId": "slice_01_depart",
+          "type": "exit",
+          "category": "exit",
+          "label": "Board the coach into the darkness",
+          "shortLabel": "Board the coach into the darkness",
+          "keywords": [
+            "board",
+            "the",
+            "coach",
+            "into",
+            "the",
+            "darkness"
+          ],
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The coach pulls away from Bistritz. The last lights of the Golden Krone vanish behind you as the road climbs toward the Borgo Pass."
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_slice_02_pass",
+      "actId": "act_1",
+      "name": "The Borgo Pass",
+      "location": {
+        "id": "borgo_pass",
+        "name": "Borgo Pass"
+      },
+      "setting": "The coach leaves the known road behind. Passengers cross themselves as darkness gathers among the mountains.",
+      "presentNpcs": [
+        "coach passengers",
+        "strange driver"
+      ],
+      "openingNarration": "At midnight, another carriage waits where no ordinary connection should be. Its driver’s face is hidden, the horses are unnaturally strong, and the passengers’ warnings have become prayers.",
+      "actions": [
+        {
+          "actionId": "slice_02_watch_driver",
+          "contentId": "slice_02_watch_driver",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Watch the strange driver",
+          "shortLabel": "Watch the strange driver",
+          "keywords": [
+            "watch",
+            "the",
+            "strange",
+            "driver"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "You keep your eyes on the driver. He moves with impossible certainty through the mountain darkness, never needing the road to tell him where to turn.",
+            "setFlags": {
+              "watched_strange_driver": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_02_hold_crucifix",
+          "contentId": "slice_02_hold_crucifix",
+          "type": "class",
+          "category": "class",
+          "label": "Hold the crucifix and endure the journey",
+          "shortLabel": "Hold the crucifix and endure the journey",
+          "keywords": [
+            "hold",
+            "the",
+            "crucifix",
+            "and",
+            "endure",
+            "the",
+            "journey"
+          ],
+          "resolution": {
+            "resultType": "class",
+            "narration": "Your fingers close around the crucifix. The gesture does not make the mountains safer, but it gives your fear a shape and keeps you from surrendering to it.",
+            "setFlags": {
+              "used_protection": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_02_arrive_castle",
+          "contentId": "slice_02_arrive_castle",
+          "type": "exit",
+          "category": "exit",
+          "label": "Continue to the castle",
+          "shortLabel": "Continue to the castle",
+          "keywords": [
+            "continue",
+            "to",
+            "the",
+            "castle"
+          ],
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The carriage stops before a vast, dark gate. Count Dracula is waiting alone to receive you."
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_slice_03_castle",
+      "actId": "act_1",
+      "name": "The Castle Door",
+      "location": {
+        "id": "castle_dracula",
+        "name": "Castle Dracula"
+      },
+      "setting": "A ruined castle above the pass. Dracula receives Jonathan with impeccable courtesy, though no servant appears and every door seems to belong to the host.",
+      "presentNpcs": [
+        "Count Dracula"
+      ],
+      "openingNarration": "The Count welcomes you as a guest, but the castle offers no ordinary signs of life. The warmth of his manners and the desolation around him refuse to fit together.",
+      "actions": [
+        {
+          "actionId": "slice_03_question_host",
+          "contentId": "slice_03_question_host",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Question Dracula about the castle",
+          "shortLabel": "Question Dracula about the castle",
+          "keywords": [
+            "question",
+            "dracula",
+            "about",
+            "the",
+            "castle"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "Dracula answers with old history and practiced courtesy. He offers knowledge freely enough to make your questions feel safe, while revealing nothing that would make the castle less strange.",
+            "setFlags": {
+              "questioned_dracula": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_03_map_exits",
+          "contentId": "slice_03_map_exits",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Study the castle doors and passages",
+          "shortLabel": "Study the castle doors and passages",
+          "keywords": [
+            "study",
+            "the",
+            "castle",
+            "doors",
+            "and",
+            "passages"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "You count doors, windows, and stairways while pretending to admire the architecture. Several routes are locked; the castle has received you, but it has not agreed to let you leave.",
+            "setFlags": {
+              "mapped_castle": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_03_accept_room",
+          "contentId": "slice_03_accept_room",
+          "type": "exit",
+          "category": "exit",
+          "label": "Accept the guest room",
+          "shortLabel": "Accept the guest room",
+          "keywords": [
+            "accept",
+            "the",
+            "guest",
+            "room"
+          ],
+          "resolution": {
+            "resultType": "exit",
+            "narration": "You retire to the room prepared for you. The courtesy is complete; the lock on the outside of the door is not mentioned."
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_slice_04_imprisoned",
+      "actId": "act_1",
+      "name": "The Castle’s Unquiet Rooms",
+      "location": {
+        "id": "castle_dracula",
+        "name": "Castle Dracula"
+      },
+      "setting": "Days pass in a castle where the doors are locked and the letters home are dictated. Jonathan’s professional records become the only honest witness left to him.",
+      "presentNpcs": [
+        "Count Dracula",
+        "three vampire women"
+      ],
+      "openingNarration": "You are no longer a guest in any meaningful sense. Dracula controls the letters you send, the rooms you may enter, and the explanations you are expected to give. Somewhere beyond the locked doors, the castle contains dangers he does not want you to name.",
+      "actions": [
+        {
+          "actionId": "slice_04_write_truth",
+          "contentId": "slice_04_write_truth",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Write the truth in your journal",
+          "shortLabel": "Write the truth in your journal",
+          "keywords": [
+            "write",
+            "the",
+            "truth",
+            "in",
+            "your",
+            "journal"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "You record the locked doors, the impossible movements, and the women who came to your room. If the journal survives, it may become the evidence that your letters cannot be.",
+            "setFlags": {
+              "journal_evidence": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_04_search_locked_rooms",
+          "contentId": "slice_04_search_locked_rooms",
+          "type": "exploration",
+          "category": "exploration",
+          "label": "Search the locked rooms for an exit",
+          "shortLabel": "Search the locked rooms for an exit",
+          "keywords": [
+            "search",
+            "the",
+            "locked",
+            "rooms",
+            "for",
+            "an",
+            "exit"
+          ],
+          "resolution": {
+            "resultType": "exploration",
+            "narration": "You test the boundaries of the castle and find that your confinement is deliberate. The search gives you no escape, but it replaces vague dread with hard knowledge.",
+            "setFlags": {
+              "confirmed_confinement": true
+            }
+          }
+        },
+        {
+          "actionId": "slice_04_resist_vampire_women",
+          "contentId": "slice_04_resist_vampire_women",
+          "type": "threat",
+          "category": "threat",
+          "label": "Resist the women at the window",
+          "shortLabel": "Resist the women at the window",
+          "keywords": [
+            "resist",
+            "the",
+            "women",
+            "at",
+            "the",
+            "window"
+          ],
+          "resolution": {
+            "resultType": "threat",
+            "narration": "The women approach with an appetite that is not human. Before they can reach you, Dracula’s command tears through the room and turns their hunger back upon itself.",
+            "setFlags": {
+              "witnessed_vampire_threat": true
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "graph": {
+    "entry": "dracula_slice_01_inn",
+    "edges": [
+      {
+        "edgeId": "dracula_slice_01_inn_to_dracula_slice_02_pass",
+        "from": "dracula_slice_01_inn",
+        "to": "dracula_slice_02_pass",
+        "trigger": {
+          "actionId": "slice_01_depart"
+        }
+      },
+      {
+        "edgeId": "dracula_slice_02_pass_to_dracula_slice_03_castle",
+        "from": "dracula_slice_02_pass",
+        "to": "dracula_slice_03_castle",
+        "trigger": {
+          "actionId": "slice_02_arrive_castle"
+        }
+      },
+      {
+        "edgeId": "dracula_slice_03_castle_to_dracula_slice_04_imprisoned",
+        "from": "dracula_slice_03_castle",
+        "to": "dracula_slice_04_imprisoned",
+        "trigger": {
+          "actionId": "slice_03_accept_room"
+        }
+      }
+    ]
+  },
+  "endings": {}
+}

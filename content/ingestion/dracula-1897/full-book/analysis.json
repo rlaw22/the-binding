@@ -1,0 +1,494 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "scope": {
+    "chapters": [
+      1,
+      27
+    ]
+  },
+  "chapterCount": 27,
+  "chapters": [
+    {
+      "chapter": 1,
+      "roman": "I",
+      "title": "JONATHAN HARKER’S JOURNAL",
+      "wordCount": 5779,
+      "startLine": 5,
+      "sourceAnchor": "chapter-01",
+      "sourceExcerptStart": "CHAPTER I",
+      "sourceExcerptEnd": "or move. The time seemed interminable as we swept on our way, now in almost complete darkness, for the rolling clouds obscured the moon. We kept on ascending, with occasional periods of quick descent, but in the main always ascending. Suddenly, I became conscious of the fact that the driver was in the act of pulling up the horses in the courtyard of a vast ruined castle, from whose tall black windows came no ray of light, and whose broken battlements showed a jagged line against the moonlit sky.",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 2,
+      "roman": "II",
+      "title": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "wordCount": 5541,
+      "startLine": 511,
+      "sourceAnchor": "chapter-02",
+      "sourceExcerptStart": "CHAPTER II",
+      "sourceExcerptEnd": "The castle is a veritable prison, and I am a prisoner!",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL--_continued_ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 3,
+      "roman": "III",
+      "title": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "wordCount": 5760,
+      "startLine": 1013,
+      "sourceAnchor": "chapter-03",
+      "sourceExcerptStart": "CHAPTER III",
+      "sourceExcerptEnd": "Then the horror overcame me, and I sank down unconscious.",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL--_continued_ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 4,
+      "roman": "IV",
+      "title": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "wordCount": 5892,
+      "startLine": 1512,
+      "sourceAnchor": "chapter-04",
+      "sourceExcerptStart": "CHAPTER IV",
+      "sourceExcerptEnd": "At least God’s mercy is better than that of these monsters, and the precipice is steep and high. At its foot a man may sleep--as a man. Good-bye, all! Mina!",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL--_continued_ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 5,
+      "roman": "V",
+      "title": "_Letter from Miss Mina Murray to Miss Lucy Westenra._",
+      "wordCount": 3656,
+      "startLine": 2082,
+      "sourceAnchor": "chapter-05",
+      "sourceExcerptStart": "CHAPTER V",
+      "sourceExcerptEnd": "“ART.”",
+      "viewpoint": "_Letter from Miss Mina Murray to Miss Lucy Westenra._",
+      "playableBeatCandidates": [
+        "Establish what _Letter from Miss Mina Murray to Miss Lucy Westenra._ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 6,
+      "roman": "VI",
+      "title": "MINA MURRAY’S JOURNAL",
+      "wordCount": 5805,
+      "startLine": 2425,
+      "sourceAnchor": "chapter-06",
+      "sourceExcerptStart": "CHAPTER VI",
+      "sourceExcerptEnd": "“I can’t make her out,” he said; “she’s a Russian, by the look of her; but she’s knocking about in the queerest way. She doesn’t know her mind a bit; she seems to see the storm coming, but can’t decide whether to run up north in the open, or to put in here. Look there again! She is steered mighty strangely, for she doesn’t mind the hand on the wheel; changes about with every puff of wind. We’ll hear more of her before this time to-morrow.”",
+      "viewpoint": "MINA MURRAY’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what MINA MURRAY’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 7,
+      "roman": "VII",
+      "title": "CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST",
+      "wordCount": 5637,
+      "startLine": 2950,
+      "sourceAnchor": "chapter-07",
+      "sourceExcerptStart": "CHAPTER VII",
+      "sourceExcerptEnd": "I think it will be best for her to go to bed tired out physically, so I shall take her for a long walk by the cliffs to Robin Hood’s Bay and back. She ought not to have much inclination for sleep-walking then.",
+      "viewpoint": "CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST",
+      "playableBeatCandidates": [
+        "Establish what CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 8,
+      "roman": "VIII",
+      "title": "MINA MURRAY’S JOURNAL",
+      "wordCount": 6377,
+      "startLine": 3494,
+      "sourceAnchor": "chapter-08",
+      "sourceExcerptStart": "CHAPTER VIII",
+      "sourceExcerptEnd": "So I took the hint, and came too. I was too excited to sleep, but this diary has quieted me, and I feel I shall get some sleep to-night.",
+      "viewpoint": "MINA MURRAY’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what MINA MURRAY’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 9,
+      "roman": "IX",
+      "title": "_Letter, Mina Harker to Lucy Westenra._",
+      "wordCount": 5986,
+      "startLine": 4086,
+      "sourceAnchor": "chapter-09",
+      "sourceExcerptStart": "CHAPTER IX",
+      "sourceExcerptEnd": "“_6 September._--Terrible change for the worse. Come at once; do not lose an hour. I hold over telegram to Holmwood till have seen you.”",
+      "viewpoint": "_Letter, Mina Harker to Lucy Westenra._",
+      "playableBeatCandidates": [
+        "Establish what _Letter, Mina Harker to Lucy Westenra._ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 10,
+      "roman": "X",
+      "title": "_Letter, Dr. Seward to Hon. Arthur Holmwood._",
+      "wordCount": 6024,
+      "startLine": 4660,
+      "sourceAnchor": "chapter-10",
+      "sourceExcerptStart": "CHAPTER X",
+      "sourceExcerptEnd": "He seemed so confident that I, remembering my own confidence two nights before and with the baneful result, felt awe and vague terror. It must have been my weakness that made me hesitate to tell it to my friend, but I felt it all the more, like unshed tears.",
+      "viewpoint": "_Letter, Dr. Seward to Hon. Arthur Holmwood._",
+      "playableBeatCandidates": [
+        "Establish what _Letter, Dr. Seward to Hon. Arthur Holmwood._ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 11,
+      "roman": "XI",
+      "title": "_Lucy Westenra’s Diary._",
+      "wordCount": 5295,
+      "startLine": 5257,
+      "sourceAnchor": "chapter-11",
+      "sourceExcerptStart": "CHAPTER XI",
+      "sourceExcerptEnd": "The air seems full of specks, floating and circling in the draught from the window, and the lights burn blue and dim. What am I to do? God shield me from harm this night! I shall hide this paper in my breast, where they shall find it when they come to lay me out. My dear mother gone! It is time that I go too. Good-bye, dear Arthur, if I should not survive this night. God keep you, dear, and God help me!",
+      "viewpoint": "_Lucy Westenra’s Diary._",
+      "playableBeatCandidates": [
+        "Establish what _Lucy Westenra’s Diary._ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 12,
+      "roman": "XII",
+      "title": "DR. SEWARD’S DIARY",
+      "wordCount": 7392,
+      "startLine": 5770,
+      "sourceAnchor": "chapter-12",
+      "sourceExcerptStart": "CHAPTER XII",
+      "sourceExcerptEnd": "“We can do nothing as yet. Wait and see.”",
+      "viewpoint": "DR. SEWARD’S DIARY",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 13,
+      "roman": "XIII",
+      "title": "DR. SEWARD’S DIARY--_continued_.",
+      "wordCount": 6704,
+      "startLine": 6484,
+      "sourceAnchor": "chapter-13",
+      "sourceExcerptStart": "CHAPTER XIII",
+      "sourceExcerptEnd": "We have just received intelligence that another child, missed last night, was only discovered late in the morning under a furze bush at the Shooter’s Hill side of Hampstead Heath, which is, perhaps, less frequented than the other parts. It has the same tiny wound in the throat as has been noticed in other cases. It was terribly weak, and looked quite emaciated. It too, when partially restored, had the common story to tell of being lured away by the “bloofer lady.”",
+      "viewpoint": "DR. SEWARD’S DIARY--_continued_.",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY--_continued_. knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 14,
+      "roman": "XIV",
+      "title": "MINA HARKER’S JOURNAL",
+      "wordCount": 6513,
+      "startLine": 7143,
+      "sourceAnchor": "chapter-14",
+      "sourceExcerptStart": "CHAPTER XIV",
+      "sourceExcerptEnd": "“They were made by Miss Lucy!”",
+      "viewpoint": "MINA HARKER’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what MINA HARKER’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 15,
+      "roman": "XV",
+      "title": "DR. SEWARD’S DIARY--_continued_.",
+      "wordCount": 5904,
+      "startLine": 7786,
+      "sourceAnchor": "chapter-15",
+      "sourceExcerptStart": "CHAPTER XV",
+      "sourceExcerptEnd": "“Oh, it is hard to think of it, and I cannot understand; but at least I shall go with you and wait.”",
+      "viewpoint": "DR. SEWARD’S DIARY--_continued_.",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY--_continued_. knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 16,
+      "roman": "XVI",
+      "title": "DR. SEWARD’S DIARY--_continued_",
+      "wordCount": 4656,
+      "startLine": 8379,
+      "sourceAnchor": "chapter-16",
+      "sourceExcerptStart": "CHAPTER XVI",
+      "sourceExcerptEnd": " yet; and I shall be ready to all our work show and our plans unfold. Friend John, you come with me home, for I have much to consult about, and you can help me. To-night I leave for Amsterdam, but shall return to-morrow night. And then begins our great quest. But first I shall have much to say, so that you may know what is to do and to dread. Then our promise shall be made to each other anew; for there is a terrible task before us, and once our feet are on the ploughshare we must not draw back.”",
+      "viewpoint": "DR. SEWARD’S DIARY--_continued_",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY--_continued_ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 17,
+      "roman": "XVII",
+      "title": "DR. SEWARD’S DIARY--_continued_",
+      "wordCount": 5674,
+      "startLine": 8817,
+      "sourceAnchor": "chapter-17",
+      "sourceExcerptStart": "CHAPTER XVII",
+      "sourceExcerptEnd": "“Little girl!”--the very words he had used to Lucy, and oh, but he proved himself a friend!",
+      "viewpoint": "DR. SEWARD’S DIARY--_continued_",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY--_continued_ knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 18,
+      "roman": "XVIII",
+      "title": "DR. SEWARD’S DIARY",
+      "wordCount": 7027,
+      "startLine": 9364,
+      "sourceAnchor": "chapter-18",
+      "sourceExcerptStart": "CHAPTER XVIII",
+      "sourceExcerptEnd": "“You will, I trust, Dr. Seward, do me the justice to bear in mind, later on, that I did what I could to convince you to-night.”",
+      "viewpoint": "DR. SEWARD’S DIARY",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 19,
+      "roman": "XIX",
+      "title": "JONATHAN HARKER’S JOURNAL",
+      "wordCount": 5749,
+      "startLine": 10005,
+      "sourceAnchor": "chapter-19",
+      "sourceExcerptStart": "CHAPTER XIX",
+      "sourceExcerptEnd": " Seward to give me a little opiate of some kind, as I had not slept well the night before. He very kindly made me up a sleeping draught, which he gave to me, telling me that it would do me no harm, as it was very mild.... I have taken it, and am waiting for sleep, which still keeps aloof. I hope I have not done wrong, for as sleep begins to flirt with me, a new fear comes: that I may have been foolish in thus depriving myself of the power of waking. I might want it. Here comes sleep. Good-night.",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 20,
+      "roman": "XX",
+      "title": "JONATHAN HARKER’S JOURNAL",
+      "wordCount": 6039,
+      "startLine": 10497,
+      "sourceAnchor": "chapter-20",
+      "sourceExcerptStart": "CHAPTER XX",
+      "sourceExcerptEnd": "The attendant came bursting into my room and told me that Renfield had somehow met with some accident. He had heard him yell; and when he went to him found him lying on his face on the floor, all covered with blood. I must go at once....",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 21,
+      "roman": "XXI",
+      "title": "DR. SEWARD’S DIARY",
+      "wordCount": 6269,
+      "startLine": 11115,
+      "sourceAnchor": "chapter-21",
+      "sourceExcerptStart": "CHAPTER XXI",
+      "sourceExcerptEnd": "Of this I am sure: the sun rises to-day on no more miserable house in all the great round of its daily course.",
+      "viewpoint": "DR. SEWARD’S DIARY",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 22,
+      "roman": "XXII",
+      "title": "JONATHAN HARKER’S JOURNAL",
+      "wordCount": 5517,
+      "startLine": 11678,
+      "sourceAnchor": "chapter-22",
+      "sourceExcerptStart": "CHAPTER XXII",
+      "sourceExcerptEnd": "y water which was reddened as if with blood. Last of all was a little heap of keys of all sorts and sizes, probably those belonging to the other houses. When we had examined this last find, Lord Godalming and Quincey Morris taking accurate notes of the various addresses of the houses in the East and the South, took with them the keys in a great bunch, and set out to destroy the boxes in these places. The rest of us are, with what patience we can, waiting their return--or the coming of the Count.",
+      "viewpoint": "JONATHAN HARKER’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what JONATHAN HARKER’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 23,
+      "roman": "XXIII",
+      "title": "DR. SEWARD’S DIARY",
+      "wordCount": 5752,
+      "startLine": 12174,
+      "sourceAnchor": "chapter-23",
+      "sourceExcerptStart": "CHAPTER XXIII",
+      "sourceExcerptEnd": "I was just in time to catch her as she fell forward in a faint.",
+      "viewpoint": "DR. SEWARD’S DIARY",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 24,
+      "roman": "XXIV",
+      "title": "DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING",
+      "wordCount": 6365,
+      "startLine": 12722,
+      "sourceAnchor": "chapter-24",
+      "sourceExcerptStart": "CHAPTER XXIV",
+      "sourceExcerptEnd": "She is calling to me.",
+      "viewpoint": "DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 25,
+      "roman": "XXV",
+      "title": "DR. SEWARD’S DIARY",
+      "wordCount": 6344,
+      "startLine": 13305,
+      "sourceAnchor": "chapter-25",
+      "sourceExcerptStart": "CHAPTER XXV",
+      "sourceExcerptEnd": "And so I have written it whilst we wait their return, and Mrs. Harker has written with her typewriter all since she brought the MS. to us.",
+      "viewpoint": "DR. SEWARD’S DIARY",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 26,
+      "roman": "XXVI",
+      "title": "DR. SEWARD’S DIARY",
+      "wordCount": 7194,
+      "startLine": 13907,
+      "sourceAnchor": "chapter-26",
+      "sourceExcerptStart": "CHAPTER XXVI",
+      "sourceExcerptEnd": "We shall soon be off. I am afraid to think what may happen to us. We are truly in the hands of God. He alone knows what may be, and I pray Him, with all the strength of my sad and humble soul, that He will watch over my beloved husband; that whatever may happen, Jonathan may know that I loved him and honoured him more than I can say, and that my latest and truest thought will be always for him.",
+      "viewpoint": "DR. SEWARD’S DIARY",
+      "playableBeatCandidates": [
+        "Establish what DR. SEWARD’S DIARY knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    },
+    {
+      "chapter": 27,
+      "roman": "XXVII",
+      "title": "MINA HARKER’S JOURNAL",
+      "wordCount": 8253,
+      "startLine": 14613,
+      "sourceAnchor": "chapter-27",
+      "sourceExcerptStart": "CHAPTER XXVII",
+      "sourceExcerptEnd": "****",
+      "viewpoint": "MINA HARKER’S JOURNAL",
+      "playableBeatCandidates": [
+        "Establish what MINA HARKER’S JOURNAL knows at the chapter opening",
+        "Create pressure around the chapter's change in knowledge or danger",
+        "Offer agency around observation, preparation, trust, or evidence while preserving the canonical anchor"
+      ]
+    }
+  ],
+  "globalContinuity": {
+    "canonicalSpine": [
+      "Jonathan travels east and is received by Dracula",
+      "Jonathan discovers captivity and the supernatural threat",
+      "Mina, Lucy, Seward, Van Helsing and their allies assemble evidence",
+      "The group pursues Dracula across land and sea",
+      "The expedition reaches the castle and resolves the threat"
+    ],
+    "knowledgePolicy": "A character may only act on information available through the current documents, testimony, or witnessed events.",
+    "agencyPolicy": "Choices change knowledge, preparation, relationships, risk, and route emphasis; they do not erase canonical anchor events."
+  },
+  "entityRegistry": {
+    "characters": [
+      "jonathan_harker",
+      "mina_harker",
+      "count_dracula",
+      "lucy_westenra",
+      "abraham_van_helsing",
+      "john_seward",
+      "arthur_holmwood",
+      "quincey_morris"
+    ],
+    "locations": [
+      "golden_krone_inn",
+      "borgo_pass",
+      "castle_dracula",
+      "whitby",
+      "carfax",
+      "london",
+      "exeter",
+      "varna",
+      "galatz",
+      "pursuit_route"
+    ],
+    "motifs": [
+      "thresholds and invitations",
+      "documents and competing records",
+      "blood and transfusion",
+      "religious protections",
+      "wolves and dogs",
+      "boxes of earth",
+      "light and darkness",
+      "knowledge versus disbelief"
+    ]
+  },
+  "reviewFlags": [
+    "The first pass is structurally source-driven; human narrative review is required for every chapter before publication.",
+    "No legacy V1 scene manifest or adapter is imported."
+  ]
+}

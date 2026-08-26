@@ -151,7 +151,10 @@ async function createServer(options = {}) {
   // Personal playtest access is deliberately separate from the public V2 flag.
   // The token is supplied only through deployment environment configuration.
   const personalTestToken = options.storylineV2PersonalTestToken || process.env.STORYLINE_V2_PERSONAL_TEST_TOKEN || null;
-  const personalStorylineV2 = personalTestToken ? createStorylineV2Service() : null;
+  const personalCanaryEnabled = options.storylineV2PersonalCanary === true || process.env.STORYLINE_V2_PERSONAL_CANARY === 'true';
+  const personalStorylineV2 = personalTestToken
+    ? (personalCanaryEnabled ? createStorylineV2CanaryService() : createStorylineV2Service())
+    : null;
   const personalStorylineV2Handlers = createStorylineV2Handlers({
     service: personalStorylineV2 || { adventures: new Map() },
     enabled: !!personalTestToken,

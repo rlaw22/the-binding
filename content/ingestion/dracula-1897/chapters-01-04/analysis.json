@@ -1,0 +1,130 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "scope": {
+    "chapters": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "chapterDossiers": [
+    {
+      "chapter": 1,
+      "viewpoint": "Jonathan Harker journal",
+      "dramaticFunction": "threshold and warning",
+      "canonicalBeats": [
+        "arrival at Bistritz",
+        "Golden Krone welcome",
+        "Count’s letter",
+        "St George’s Eve warning",
+        "protective crucifix",
+        "coach departs"
+      ],
+      "playablePressure": "duty and professional confidence versus local fear",
+      "requiredKnowledge": [],
+      "newKnowledge": [
+        "Dracula awaits Jonathan",
+        "the locals fear the journey",
+        "the crucifix may offer protection"
+      ]
+    },
+    {
+      "chapter": 2,
+      "viewpoint": "Jonathan Harker journal",
+      "dramaticFunction": "isolation and hospitality under suspicion",
+      "canonicalBeats": [
+        "coach through the Borgo Pass",
+        "strange midnight driver",
+        "arrival at castle",
+        "Dracula’s impossible welcome",
+        "Jonathan learns the castle has no servants"
+      ],
+      "playablePressure": "accept hospitality and investigate versus preserve safety",
+      "requiredKnowledge": [
+        "the coach is taking Jonathan east"
+      ],
+      "newKnowledge": [
+        "Dracula controls the threshold",
+        "the castle is isolated",
+        "the host’s abilities are unnatural"
+      ]
+    },
+    {
+      "chapter": 3,
+      "viewpoint": "Jonathan Harker journal",
+      "dramaticFunction": "predator revealed beneath courtesy",
+      "canonicalBeats": [
+        "conversation with Dracula",
+        "wolf story and geography",
+        "Jonathan sees Dracula crawl down the wall",
+        "Jonathan realizes imprisonment"
+      ],
+      "playablePressure": "test the host’s story versus conceal fear",
+      "requiredKnowledge": [
+        "Jonathan is confined at the castle"
+      ],
+      "newKnowledge": [
+        "Dracula is physically impossible",
+        "escape is not freely available"
+      ]
+    },
+    {
+      "chapter": 4,
+      "viewpoint": "Jonathan Harker journal",
+      "dramaticFunction": "captivity and first direct threat",
+      "canonicalBeats": [
+        "letters under compulsion",
+        "women at the castle",
+        "Dracula’s warning",
+        "Jonathan explores locked rooms",
+        "vampire attack interrupted"
+      ],
+      "playablePressure": "obey for survival versus preserve evidence and agency",
+      "requiredKnowledge": [
+        "Jonathan is imprisoned",
+        "Dracula is dangerous"
+      ],
+      "newKnowledge": [
+        "the castle contains other predators",
+        "Jonathan’s letters are controlled",
+        "Dracula protects his secret"
+      ]
+    }
+  ],
+  "entities": {
+    "characters": [
+      "jonathan_harker",
+      "count_dracula",
+      "golden_krone_innkeeper",
+      "old_woman_at_inn",
+      "three_vampire_women"
+    ],
+    "locations": [
+      "golden_krone_inn",
+      "borgo_pass",
+      "castle_dracula"
+    ],
+    "objects": [
+      "protective_crucifix",
+      "dracula_letter",
+      "jonathan_journal",
+      "castle_keys"
+    ],
+    "motifs": [
+      "thresholds and invitations",
+      "documents and competing records",
+      "religious protections",
+      "wolves and dogs",
+      "light and darkness"
+    ]
+  },
+  "continuityRules": [
+    "Jonathan begins as a competent solicitor, not a knowing vampire hunter.",
+    "Local warnings are incomplete but emotionally credible; do not reveal Dracula before Jonathan can observe him.",
+    "The castle’s hospitality must remain usable as a trap, not become arbitrary hostility.",
+    "The player may investigate around canonical events, but cannot erase the canonical arrival, imprisonment, or first supernatural reveal.",
+    "Optional discoveries can improve knowledge and protection but cannot block the core journey."
+  ]
+}

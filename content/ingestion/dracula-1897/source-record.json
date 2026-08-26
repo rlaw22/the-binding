@@ -1,0 +1,230 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "title": "Dracula",
+  "author": "Bram Stoker",
+  "edition": "Project Gutenberg eBook 345",
+  "sourceUrl": "https://www.gutenberg.org/files/345/345-0.txt",
+  "retrievedAt": "2026-08-26",
+  "sha256": "8cf05c0f0ac5b282d84f2fb36dbccd744bdb5bce7b5612438a63b43cbe27b472",
+  "chapterCount": 27,
+  "wordCount": 163104,
+  "chapters": [
+    {
+      "chapter": 1,
+      "roman": "I",
+      "title": "JONATHAN HARKER\u2019S JOURNAL",
+      "wordCount": 5779,
+      "startLine": 5,
+      "sourceAnchor": "chapter-01"
+    },
+    {
+      "chapter": 2,
+      "roman": "II",
+      "title": "JONATHAN HARKER\u2019S JOURNAL--_continued_",
+      "wordCount": 5541,
+      "startLine": 511,
+      "sourceAnchor": "chapter-02"
+    },
+    {
+      "chapter": 3,
+      "roman": "III",
+      "title": "JONATHAN HARKER\u2019S JOURNAL--_continued_",
+      "wordCount": 5760,
+      "startLine": 1013,
+      "sourceAnchor": "chapter-03"
+    },
+    {
+      "chapter": 4,
+      "roman": "IV",
+      "title": "JONATHAN HARKER\u2019S JOURNAL--_continued_",
+      "wordCount": 5892,
+      "startLine": 1512,
+      "sourceAnchor": "chapter-04"
+    },
+    {
+      "chapter": 5,
+      "roman": "V",
+      "title": "_Letter from Miss Mina Murray to Miss Lucy Westenra._",
+      "wordCount": 3656,
+      "startLine": 2082,
+      "sourceAnchor": "chapter-05"
+    },
+    {
+      "chapter": 6,
+      "roman": "VI",
+      "title": "MINA MURRAY\u2019S JOURNAL",
+      "wordCount": 5805,
+      "startLine": 2425,
+      "sourceAnchor": "chapter-06"
+    },
+    {
+      "chapter": 7,
+      "roman": "VII",
+      "title": "CUTTING FROM \u201cTHE DAILYGRAPH,\u201d 8 AUGUST",
+      "wordCount": 5637,
+      "startLine": 2950,
+      "sourceAnchor": "chapter-07"
+    },
+    {
+      "chapter": 8,
+      "roman": "VIII",
+      "title": "MINA MURRAY\u2019S JOURNAL",
+      "wordCount": 6377,
+      "startLine": 3494,
+      "sourceAnchor": "chapter-08"
+    },
+    {
+      "chapter": 9,
+      "roman": "IX",
+      "title": "_Letter, Mina Harker to Lucy Westenra._",
+      "wordCount": 5986,
+      "startLine": 4086,
+      "sourceAnchor": "chapter-09"
+    },
+    {
+      "chapter": 10,
+      "roman": "X",
+      "title": "_Letter, Dr. Seward to Hon. Arthur Holmwood._",
+      "wordCount": 6024,
+      "startLine": 4660,
+      "sourceAnchor": "chapter-10"
+    },
+    {
+      "chapter": 11,
+      "roman": "XI",
+      "title": "_Lucy Westenra\u2019s Diary._",
+      "wordCount": 5295,
+      "startLine": 5257,
+      "sourceAnchor": "chapter-11"
+    },
+    {
+      "chapter": 12,
+      "roman": "XII",
+      "title": "DR. SEWARD\u2019S DIARY",
+      "wordCount": 7392,
+      "startLine": 5770,
+      "sourceAnchor": "chapter-12"
+    },
+    {
+      "chapter": 13,
+      "roman": "XIII",
+      "title": "DR. SEWARD\u2019S DIARY--_continued_.",
+      "wordCount": 6704,
+      "startLine": 6484,
+      "sourceAnchor": "chapter-13"
+    },
+    {
+      "chapter": 14,
+      "roman": "XIV",
+      "title": "MINA HARKER\u2019S JOURNAL",
+      "wordCount": 6513,
+      "startLine": 7143,
+      "sourceAnchor": "chapter-14"
+    },
+    {
+      "chapter": 15,
+      "roman": "XV",
+      "title": "DR. SEWARD\u2019S DIARY--_continued_.",
+      "wordCount": 5904,
+      "startLine": 7786,
+      "sourceAnchor": "chapter-15"
+    },
+    {
+      "chapter": 16,
+      "roman": "XVI",
+      "title": "DR. SEWARD\u2019S DIARY--_continued_",
+      "wordCount": 4656,
+      "startLine": 8379,
+      "sourceAnchor": "chapter-16"
+    },
+    {
+      "chapter": 17,
+      "roman": "XVII",
+      "title": "DR. SEWARD\u2019S DIARY--_continued_",
+      "wordCount": 5674,
+      "startLine": 8817,
+      "sourceAnchor": "chapter-17"
+    },
+    {
+      "chapter": 18,
+      "roman": "XVIII",
+      "title": "DR. SEWARD\u2019S DIARY",
+      "wordCount": 7027,
+      "startLine": 9364,
+      "sourceAnchor": "chapter-18"
+    },
+    {
+      "chapter": 19,
+      "roman": "XIX",
+      "title": "JONATHAN HARKER\u2019S JOURNAL",
+      "wordCount": 5749,
+      "startLine": 10005,
+      "sourceAnchor": "chapter-19"
+    },
+    {
+      "chapter": 20,
+      "roman": "XX",
+      "title": "JONATHAN HARKER\u2019S JOURNAL",
+      "wordCount": 6039,
+      "startLine": 10497,
+      "sourceAnchor": "chapter-20"
+    },
+    {
+      "chapter": 21,
+      "roman": "XXI",
+      "title": "DR. SEWARD\u2019S DIARY",
+      "wordCount": 6269,
+      "startLine": 11115,
+      "sourceAnchor": "chapter-21"
+    },
+    {
+      "chapter": 22,
+      "roman": "XXII",
+      "title": "JONATHAN HARKER\u2019S JOURNAL",
+      "wordCount": 5517,
+      "startLine": 11678,
+      "sourceAnchor": "chapter-22"
+    },
+    {
+      "chapter": 23,
+      "roman": "XXIII",
+      "title": "DR. SEWARD\u2019S DIARY",
+      "wordCount": 5752,
+      "startLine": 12174,
+      "sourceAnchor": "chapter-23"
+    },
+    {
+      "chapter": 24,
+      "roman": "XXIV",
+      "title": "DR. SEWARD\u2019S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING",
+      "wordCount": 6365,
+      "startLine": 12722,
+      "sourceAnchor": "chapter-24"
+    },
+    {
+      "chapter": 25,
+      "roman": "XXV",
+      "title": "DR. SEWARD\u2019S DIARY",
+      "wordCount": 6344,
+      "startLine": 13305,
+      "sourceAnchor": "chapter-25"
+    },
+    {
+      "chapter": 26,
+      "roman": "XXVI",
+      "title": "DR. SEWARD\u2019S DIARY",
+      "wordCount": 7194,
+      "startLine": 13907,
+      "sourceAnchor": "chapter-26"
+    },
+    {
+      "chapter": 27,
+      "roman": "XXVII",
+      "title": "MINA HARKER\u2019S JOURNAL",
+      "wordCount": 8253,
+      "startLine": 14613,
+      "sourceAnchor": "chapter-27"
+    }
+  ]
+}
