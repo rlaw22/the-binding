@@ -156,9 +156,24 @@
       var statusResponse = await fetch('/api/storyline-v2/status', { headers: { 'Accept': 'application/json' } });
       if (!statusResponse.ok) return false;
       var status = await statusResponse.json();
-      if (!status.enabled || !Array.isArray(status.adventures) || status.adventures.indexOf(adventureId) === -1) return false;
+      var base = '/api/storyline-v2';
+      var accessToken = null;
 
-      var client = new root.StorylineV2Client();
+      if (!status.enabled || !Array.isArray(status.adventures) || status.adventures.indexOf(adventureId) === -1) {
+        if (adventureId !== 'dracula') return false;
+        accessToken = window.prompt('Private Storyline V2 access token (kept only in this browser tab):');
+        if (!accessToken) return false;
+        base = '/api/storyline-v2-personal';
+        var personalStatusResponse = await fetch(base + '/status', { headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + accessToken } });
+        if (!personalStatusResponse.ok) {
+          window.alert('That personal access token was not accepted.');
+          return false;
+        }
+        var personalStatus = await personalStatusResponse.json();
+        if (!personalStatus.enabled || !Array.isArray(personalStatus.adventures) || personalStatus.adventures.indexOf(adventureId) === -1) return false;
+      }
+
+      var client = new root.StorylineV2Client({ base: base, accessToken: accessToken });
       var snapshot = await client.start(adventureId, classId, sessionId());
       root.storylineV2Client = client;
       root.storylineV2Active = true;
