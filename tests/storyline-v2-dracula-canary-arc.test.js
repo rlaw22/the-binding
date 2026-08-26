@@ -26,6 +26,19 @@ test('compiles five authored scenes with no chapter-placeholder opening', () => 
   });
 });
 
+test('all 27 chapter scenes are source-authored and publication-clean', () => {
+  const placeholder = /chapter \d+|observe chapter|prepare for chapter|press chapter|follow the events into chapter/i;
+  Object.values(adventure.scenes).forEach(scene => {
+    assert.ok(scene.openingNarration.length > 180, `${scene.sceneId} opening is too short`);
+    assert.ok(!placeholder.test(scene.openingNarration), `${scene.sceneId} retains placeholder opening`);
+    assert.ok(scene.presentNpcs.length > 0, `${scene.sceneId} needs present characters`);
+    assert.strictEqual(scene.actions.length, 4);
+    assert.ok(scene.actions.every(action => action.role && action.replay), `${scene.sceneId} has incomplete agency metadata`);
+    assert.ok(scene.actions.every(action => action.resolution && action.resolution.narration.length > 80), `${scene.sceneId} has weak action narration`);
+  });
+  assert.strictEqual(adventure.warnings.length, 0);
+});
+
 test('starts at the Golden Krone with server catalog and resolves authored state', () => {
   const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
   const start = service.start({ adventureId: adventure.adventureId, sessionId: 'arc-service', classId: 'fighter' });
@@ -53,6 +66,40 @@ test('advances through all five scenes using only V2 catalog actions', () => {
   });
   assert.strictEqual(view.state.sceneId, 'dracula_full_06');
   assert.strictEqual(view.state.flags.met_dracula, true);
+});
+
+test('resolves both authored terminal outcomes without an accidental dead end', () => {
+  const play = (sessionId, selected = {}) => {
+    const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
+    let view = service.start({ adventureId: adventure.adventureId, sessionId, classId: 'fighter' });
+    for (let chapter = 1; chapter <= 26; chapter += 1) {
+      const sceneId = `dracula_full_${String(chapter).padStart(2, '0')}`;
+      assert.strictEqual(view.state.sceneId, sceneId);
+      if (selected[chapter]) {
+        const choice = view.catalog.actions.find(item => item.actionId === selected[chapter]);
+        assert.ok(choice, `missing ${selected[chapter]}`);
+        service.submit({ sessionId, actionId: choice.actionId, catalogVersion: view.catalog.catalogVersion, turnId: `${sessionId}-${chapter}-choice` });
+        view = service.snapshot(sessionId);
+      }
+      const exit = view.catalog.actions.find(item => item.actionId === `${sceneId}__continue`);
+      assert.ok(exit, `missing ${sceneId}__continue`);
+      service.submit({ sessionId, actionId: exit.actionId, catalogVersion: view.catalog.catalogVersion, turnId: `${sessionId}-${chapter}-exit` });
+      view = service.snapshot(sessionId);
+    }
+    const final = view.catalog.actions.find(item => item.actionId === 'dracula_full_27__resolve');
+    assert.ok(final);
+    return service.submit({ sessionId, actionId: final.actionId, catalogVersion: view.catalog.catalogVersion, turnId: `${sessionId}-final` });
+  };
+  const successful = play('full-success', {
+    20: 'dracula_full_20__choose',
+    21: 'dracula_full_21__investigate',
+    26: 'dracula_full_26__choose'
+  });
+  assert.strictEqual(successful.endingId, 'dracula_destroyed');
+  assert.strictEqual(successful.resultType, 'ending');
+  const failed = play('full-failure');
+  assert.strictEqual(failed.endingId, 'mina_lost');
+  assert.strictEqual(failed.resultType, 'ending');
 });
 
 test('rejects stale catalogs and returns the current authoritative catalog', () => {
