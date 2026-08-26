@@ -4,6 +4,7 @@ const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { execFileSync } = require('child_process');
 const { FileSessionRepository } = require('../src/storyline-v2/application/repositories/file-session-repository');
 const { StorylineV2Service } = require('../src/storyline-v2/application/service');
 const { compileAdventure } = require('../src/storyline-v2/domain');
@@ -89,6 +90,59 @@ test('service resumes persisted state through a new service instance', () => {
     const retry = serviceB.submit({ sessionId: 'restart-session', actionId: 'look', catalogVersion: first.catalog.catalogVersion, turnId: 'turn-1' });
     assert.strictEqual(retry.turnId, 'turn-1');
     assert.strictEqual(retry.state.revision, first.state.revision);
+  } finally { cleanup(temp.directory); }
+});
+
+test('shares leases across independent repository instances', () => {
+  const temp = makeTempPath();
+  try {
+    const first = new FileSessionRepository(temp.file);
+    const second = new FileSessionRepository(temp.file);
+    const lease = first.acquireLease('session-1', 'writer-a');
+    assert.throws(() => second.acquireLease('session-1', 'writer-b'), /SESSION_LEASE_CONFLICT/);
+    assert.throws(() => second.save('session-1', { state: { revision: 0 } }, { leaseToken: 'wrong' }), /SESSION_LEASE_CONFLICT/);
+    assert.strictEqual(second.releaseLease('session-1', lease.token), true);
+    assert.doesNotThrow(() => second.acquireLease('session-1', 'writer-b'));
+  } finally { cleanup(temp.directory); }
+});
+
+test('serializes independent revision writers and preserves both successful updates', () => {
+  const temp = makeTempPath();
+  try {
+    const first = new FileSessionRepository(temp.file);
+    first.save('session-1', { state: { revision: 0, writer: 'seed' } });
+    const second = new FileSessionRepository(temp.file);
+    const expectedRevision = first.get('session-1').state.revision;
+    first.save('session-1', { state: { revision: 1, writer: 'first' } }, { expectedRevision });
+    assert.throws(() => second.save('session-1', { state: { revision: 1, writer: 'second' } }, { expectedRevision }), /SESSION_REVISION_CONFLICT/);
+    assert.strictEqual(second.get('session-1').state.writer, 'first');
+  } finally { cleanup(temp.directory); }
+});
+
+test('recovers a stale repository lock', () => {
+  const temp = makeTempPath();
+  let now = 10_000;
+  try {
+    const repository = new FileSessionRepository(temp.file, { clock: () => now, lockTimeoutMs: 100 });
+    fs.writeFileSync(`${temp.file}.lock`, 'crashed writer');
+    const staleTime = new Date(now - 101);
+    fs.utimesSync(`${temp.file}.lock`, staleTime, staleTime);
+    repository.save('session-1', { state: { revision: 0 } });
+    assert.strictEqual(repository.has('session-1'), true);
+  } finally { cleanup(temp.directory); }
+});
+
+test('supports an independent Node process writing the same repository', () => {
+  const temp = makeTempPath();
+  try {
+    const repository = new FileSessionRepository(temp.file);
+    repository.save('parent', { state: { revision: 0 } });
+    execFileSync(process.execPath, ['-e', `
+      const { FileSessionRepository } = require(${JSON.stringify(path.resolve(__dirname, '../src/storyline-v2/application/repositories/file-session-repository'))});
+      const repo = new FileSessionRepository(${JSON.stringify(temp.file)});
+      repo.save('child', { state: { revision: 0 } });
+    `], { stdio: 'pipe' });
+    assert.deepStrictEqual(repository.entries().map(entry => entry.sessionId), ['child', 'parent']);
   } finally { cleanup(temp.directory); }
 });
 
