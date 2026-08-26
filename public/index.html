@@ -379,7 +379,7 @@ body.game-active #auto-rejoin-banner{display:none;}
 #reconnect-banner .reconnect-btn{background:#e74c3c;border:none;color:#fff;padding:8px 16px;border-radius:6px;cursor:pointer;font-size:0.85em;margin-left:10px;}
 
 /* ── Inventory Panel ──────────────────────────────────────────────────────── */
-#inv-toggle{background:none;border:1px solid #C9A84C44;color:#C9A84C;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:0.85em;display:flex;align-items:center;gap:4px;transition:all 0.2s;font-family:Georgia,serif;}
+#inv-toggle{width:44px;height:44px;background:none;border:1px solid #C9A84C44;color:#C9A84C;padding:4px 10px;border-radius:16px;cursor:pointer;font-size:0.85em;display:flex;align-items:center;gap:4px;transition:all 0.2s;font-family:Georgia,serif;}
 #inv-toggle:hover{border-color:#C9A84C;background:#C9A84C11;}
 #inv-toggle .inv-count{font-weight:bold;}
 #inv-panel{position:fixed;top:0;right:-320px;width:300px;height:100%;background:#1A1A2E;border-left:1px solid #C9A84C33;z-index:150;transition:right 0.3s ease;display:flex;flex-direction:column;box-shadow:-4px 0 20px #0008;}
@@ -1951,6 +1951,9 @@ function joinSession(sid, name) {
 }
 
 function showGameUI(character, code, isSpectator) {
+  // Hide the start screen and beta gate on every game start.
+  var accessGate = document.getElementById('gate-screen');
+  if (accessGate) accessGate.style.display = 'none';
   // Hide the start screen (critical for iPad Safari where overflow:hidden prevents scrolling past it)
   var startEl = document.getElementById('start-screen');
   if (startEl) startEl.classList.add('hidden');
@@ -3405,10 +3408,10 @@ function fetchInventory() {
       var toggle = document.getElementById('inv-toggle');
       var count = document.getElementById('inv-count');
       var list = document.getElementById('inv-list');
-      // P0 fix: always show inventory toggle when session is active (even with 0 items).
-      // Previously hid the toggle when empty, which meant the tray was inaccessible.
+      // Keep the inventory control available only when there is something to inspect.
       if (toggle) {
-        toggle.classList.remove('hidden');
+        if (items.length > 0) toggle.classList.remove('hidden');
+        else toggle.classList.add('hidden');
       }
       if (count) count.textContent = items.length;
       if (!list) return;
