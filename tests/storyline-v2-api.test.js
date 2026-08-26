@@ -104,7 +104,10 @@ async function main() {
       payload: { entryId: 'api-journal', text: 'A clue enters the journal.', kind: 'narrative' }
     });
     assert.strictEqual(response.statusCode, 200);
-    assert.strictEqual(JSON.parse(response.payload).state.journal[0].entryId, 'api-journal');
+    const journal = JSON.parse(response.payload).state.journal;
+    assert.strictEqual(journal.length, 2);
+    assert.strictEqual(journal[0].entryId, 'turn:api-turn-1');
+    assert.strictEqual(journal[1].entryId, 'api-journal');
 
     response = await app.inject({
       method: 'POST', url: '/api/storyline-v2/sessions/api-v2-test/bookmarks',
