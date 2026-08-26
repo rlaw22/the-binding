@@ -6,6 +6,7 @@ const { requirementsPass } = require('./requirements');
 const { isPlayable } = require('./session-lifecycle');
 const { markMutation } = require('./session-state');
 const { resolveCheck } = require('./check-resolution');
+const { applyAuthoredLever } = require('./difficulty');
 
 function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, turnId, now }) {
   const state = clone(inputState);
@@ -22,7 +23,13 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
 
   const beforeSceneId = state.sceneId;
   const resolution = action.resolution || {};
-  const check = resolveCheck({ check: resolution.check, state, actionId, turnId });
+  const profile = state.bookSession && state.bookSession.difficultyProfile;
+  const leverId = action.adaptiveLeverId || resolution.adaptiveLeverId;
+  const authoredLever = leverId && adventure.adaptiveDifficulty && (adventure.adaptiveDifficulty.levers || []).find(lever => lever.leverId === leverId);
+  const appliedLever = authoredLever ? applyAuthoredLever(authoredLever, profile ? profile.sessionOffset : 0) : null;
+  const resolvedCheck = resolution.check ? { ...resolution.check } : null;
+  if (appliedLever && appliedLever.kind === 'checkTarget' && resolvedCheck) resolvedCheck.difficulty = appliedLever.resolvedValue;
+  const check = resolveCheck({ check: resolvedCheck, state, actionId, turnId });
   const authored = check ? check.outcome : resolution;
   const stateChanges = { hp: 0, coins: 0, flags: {}, discoveredContentIds: [], itemsAdded: [], itemsRemoved: [] };
   if (action.replay !== 'repeatable') state.consumedActionIds.push(action.actionId);
@@ -86,6 +93,7 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
     actionId, contentId: action.contentId, resultType: authored.resultType || action.type, narrative,
     endingId,
     check,
+    adaptive: appliedLever ? { leverId: appliedLever.leverId, sessionOffset: profile.sessionOffset, resolvedVariant: appliedLever.resolvedValue, manifestVersion: adventure.schemaVersion } : null,
     stateChanges, transition, catalog: buildCatalog(adventure, state)
   };
   if (turnId) state.processedTurns[turnId] = clone(result);

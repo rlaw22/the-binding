@@ -7,6 +7,9 @@
   function StorylineV2Client(options) {
     options = options || {};
     this.base = options.base || '/api/storyline-v2';
+    // Optional ephemeral bearer credential for protected personal/canary surfaces.
+    // Callers supply it at construction time; this adapter never persists it.
+    this.accessToken = options.accessToken || null;
     this.sessionId = null;
     this.snapshot = null;
     this.busy = false;
@@ -15,6 +18,7 @@
   StorylineV2Client.prototype.request = async function (url, init) {
     init = init || {};
     init.headers = Object.assign({ 'Content-Type': 'application/json' }, init.headers || {});
+    if (this.accessToken) init.headers.Authorization = 'Bearer ' + this.accessToken;
     var response = await fetch(this.base + url, init);
     var data = null;
     var contentType = response.headers && typeof response.headers.get === 'function' ? response.headers.get('content-type') : '';
