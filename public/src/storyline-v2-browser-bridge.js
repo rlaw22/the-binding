@@ -116,9 +116,37 @@
       if (scene.openingNarration && scene.openingNarration !== scene.setting) root.addMessage('dm', scene.openingNarration);
       if (Array.isArray(scene.presentNpcs) && scene.presentNpcs.length) root.addMessage('system', 'Present: ' + scene.presentNpcs.join(', '));
     }
+    var actions = document.getElementById('actions');
+    if (actions) actions.classList.remove('hidden');
+    var inputRow = document.getElementById('input-row');
+    if (inputRow) inputRow.style.display = 'flex';
     root.storylineV2Client.renderCatalog(document.getElementById('action-buttons'), function (action) {
       submit(action);
     });
+    var freeInput = document.getElementById('free-input');
+    var sendButton = document.getElementById('send-btn');
+    if (freeInput && sendButton && !freeInput.dataset.storylineV2Bound) {
+      var sendText = function () {
+        var text = freeInput.value.trim();
+        if (!text || submissionInFlight) return;
+        submissionInFlight = true;
+        root.storylineV2Client.submitText(text, 'turn-' + Date.now().toString(36))
+          .then(function (result) {
+            freeInput.value = '';
+            if (result && result.result && result.result.narrative && typeof root.addMessage === 'function') root.addMessage('dm', result.result.narrative);
+            render(root.storylineV2Client.snapshot);
+          })
+          .catch(function (error) {
+            return refreshAfterStale(error).then(function (refreshed) {
+              if (!refreshed && typeof root.addMessage === 'function') root.addMessage('error', error.message || 'Storyline v2 text action failed.');
+            });
+          })
+          .finally(function () { submissionInFlight = false; });
+      };
+      sendButton.addEventListener('click', sendText);
+      freeInput.addEventListener('keydown', function (event) { if (event.key === 'Enter') sendText(); });
+      freeInput.dataset.storylineV2Bound = 'true';
+    }
   }
 
   function refreshAfterStale(error) {

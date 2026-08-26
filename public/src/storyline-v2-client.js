@@ -176,7 +176,7 @@
     var catalog = this.snapshot.catalog;
     (catalog.actions || []).forEach(function (action) {
       var button = document.createElement('button');
-      button.type = 'button'; button.className = 'storyline-v2-action';
+      button.type = 'button'; button.className = 'storyline-v2-action action-btn';
       button.dataset.actionId = action.actionId; button.dataset.actionType = action.type || ''; button.dataset.category = action.category || '';
       button.dataset.catalogVersion = catalog.catalogVersion;
       button.setAttribute('aria-label', (action.label || action.shortLabel || action.actionId) + (action.subtitle ? ' — ' + action.subtitle : ''));
