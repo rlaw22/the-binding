@@ -19,6 +19,25 @@ jobs:
         script: |
           cd /var/www/the-binding
           git pull origin main
-          npm install --production
-          pm2 restart the-binding
+          npm install --omit=dev
+          if pm2 describe the-binding >/dev/null 2>&1; then
+            pm2 restart the-binding
+          else
+            pm2 start server.js --name the-binding
+          fi
+          pm2 save
           echo "✅ Deployed successfully at $(date)"
+
+    - name: Verify public deployment health
+      shell: bash
+      run: |
+        set -euo pipefail
+        health_url="https://thebinding.duckdns.org/api/health"
+        v2_url="https://thebinding.duckdns.org/api/storyline-v2/status"
+        health="$(curl --fail --silent --show-error --retry 5 --retry-delay 5 --retry-connrefused "$health_url")"
+        v2="$(curl --fail --silent --show-error --retry 5 --retry-delay 5 --retry-connrefused "$v2_url")"
+        echo "Health response: $health"
+        echo "V2 status response: $v2"
+        grep -q '"status":"ok"' <<< "$health"
+        grep -q '"enabled":false' <<< "$v2"
+        echo "✅ Public health is OK and Storyline V2 remains disabled"
