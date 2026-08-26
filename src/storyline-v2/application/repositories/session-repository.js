@@ -19,7 +19,12 @@ class InMemorySessionRepository {
     return this.sessions.has(sessionId);
   }
 
-  save(sessionId, value) {
+  save(sessionId, value, options = {}) {
+    const current = this.sessions.get(sessionId);
+    const expectedRevision = options.expectedRevision;
+    if (expectedRevision != null && (!current || current.state.revision !== expectedRevision)) {
+      throw new Error(`SESSION_REVISION_CONFLICT:${sessionId}`);
+    }
     this.sessions.set(sessionId, clone(value));
     return clone(value);
   }

@@ -139,8 +139,9 @@ class StorylineV2Service {
         state: JSON.parse(JSON.stringify(session.state))
       };
     }
+    const expectedRevision = session.state.revision;
     session.state = createSessionState(adventure, resolved.state);
-    this.sessionRepository.save(sessionId, session);
+    this.sessionRepository.save(sessionId, session, { expectedRevision });
     const result = resolved.result;
     const context = { sessionId, adventureId: session.adventureId, manifestVersion: adventure.schemaVersion, sceneId: result.sceneId, actId: session.state.actId };
     this.telemetry.emit({ eventName: 'action_resolved', context, payload: { actionId: result.actionId, contentId: result.contentId, resultType: result.resultType, outcome: result.resultType, turnId: result.turnId }, idempotencyKey: `action_resolved:${sessionId}:${result.turnId || result.responseId}` });
@@ -157,6 +158,7 @@ class StorylineV2Service {
   transition({ sessionId, to }) {
     const session = this.sessionRepository.get(sessionId);
     if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const expectedRevision = session.state.revision;
     const state = transitionSession(session.state, to);
     const adventure = this.getAdventure(session.adventureId);
     const nextState = createSessionState(adventure, {
@@ -164,7 +166,7 @@ class StorylineV2Service {
       revision: state.revision + 1,
       timestamps: { ...state.timestamps, updatedAt: this.clock() }
     });
-    this.sessionRepository.save(sessionId, { ...session, state: nextState });
+    this.sessionRepository.save(sessionId, { ...session, state: nextState }, { expectedRevision });
     const lifecycleEvents = { paused: 'session_paused', active: 'session_resumed', interrupted: 'session_interrupted', awaiting_recovery: 'session_interrupted', completed: 'session_completed', failed: 'session_abandoned' };
     const eventName = lifecycleEvents[to];
     if (eventName) this.telemetry.emit({ eventName, context: { sessionId, adventureId: session.adventureId, manifestVersion: adventure.schemaVersion, sceneId: nextState.sceneId, actId: nextState.actId }, payload: { outcome: to }, idempotencyKey: `lifecycle:${sessionId}:${nextState.revision}:${to}` });
@@ -174,6 +176,7 @@ class StorylineV2Service {
   addBookmark({ sessionId, bookmarkId, label }) {
     const session = this.sessionRepository.get(sessionId);
     if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const expectedRevision = session.state.revision;
     const adventure = this.getAdventure(session.adventureId);
     const state = createSessionState(adventure, {
       ...session.state,
@@ -181,13 +184,14 @@ class StorylineV2Service {
       revision: session.state.revision + 1,
       timestamps: { ...session.state.timestamps, updatedAt: this.clock() }
     });
-    this.sessionRepository.save(sessionId, { ...session, state });
+    this.sessionRepository.save(sessionId, { ...session, state }, { expectedRevision });
     return this.snapshot(sessionId);
   }
 
   removeBookmark({ sessionId, bookmarkId }) {
     const session = this.sessionRepository.get(sessionId);
     if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const expectedRevision = session.state.revision;
     const adventure = this.getAdventure(session.adventureId);
     const state = createSessionState(adventure, {
       ...session.state,
@@ -195,13 +199,14 @@ class StorylineV2Service {
       revision: session.state.revision + 1,
       timestamps: { ...session.state.timestamps, updatedAt: this.clock() }
     });
-    this.sessionRepository.save(sessionId, { ...session, state });
+    this.sessionRepository.save(sessionId, { ...session, state }, { expectedRevision });
     return this.snapshot(sessionId);
   }
 
   appendJournal({ sessionId, entry }) {
     const session = this.sessionRepository.get(sessionId);
     if (!session) throw new Error(`Unknown Storyline session: ${sessionId}`);
+    const expectedRevision = session.state.revision;
     const adventure = this.getAdventure(session.adventureId);
     const state = createSessionState(adventure, {
       ...session.state,
@@ -209,7 +214,7 @@ class StorylineV2Service {
       revision: session.state.revision + 1,
       timestamps: { ...session.state.timestamps, updatedAt: this.clock() }
     });
-    this.sessionRepository.save(sessionId, { ...session, state });
+    this.sessionRepository.save(sessionId, { ...session, state }, { expectedRevision });
     return this.snapshot(sessionId);
   }
 
