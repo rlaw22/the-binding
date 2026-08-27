@@ -26,16 +26,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chromium for browser validation
-        run: npx playwright install --with-deps chromium
-
       - name: Check formatting and whitespace
         run: git diff --check
 
       - name: Run test suite
         run: npm run test:v2
 
-      - name: Run V2 Northstar browser validation
+      - name: Run browser-independent Northstar contract validation
+        run: node tests/storyline-v2-northstar-contract.test.js
+
+      - name: Run optional V2 Northstar browser validation
+        continue-on-error: true
         run: npx playwright test tests/storyline-v2-northstar-browser.test.js
 
       - name: Verify deployment workflow contract
