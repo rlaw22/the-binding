@@ -108,12 +108,18 @@
     var scene = snapshot && snapshot.catalog;
     if (!scene) return;
     renderBookPresentation(snapshot);
-    var narrative = snapshot.state && snapshot.state.sceneId ? scene.sceneId : '';
+    var narrative = snapshot.state && snapshot.state.sceneId ? snapshot.state.sceneId : '';
     if (narrative && typeof root.addMessage === 'function' && (!root._storylineV2Scene || root._storylineV2Scene !== narrative)) {
       root._storylineV2Scene = narrative;
-      if (scene.sceneName) root.addMessage('system', scene.sceneName);
-      if (scene.setting) root.addMessage('dm', scene.setting);
-      if (scene.openingNarration && scene.openingNarration !== scene.setting) root.addMessage('dm', scene.openingNarration);
+      // Scene IDs, slugs, chapter headings, and build labels are authoring
+      // metadata—not player-facing narrative. Render only an authored title
+      // and distinct prose; never fall back to an internal ID.
+      var sceneTitle = scene.sceneName && !/^scene[_ -]/i.test(scene.sceneName) ? scene.sceneName : '';
+      var setting = scene.setting || '';
+      var opening = scene.openingNarration || '';
+      if (sceneTitle) root.addMessage('system', sceneTitle);
+      if (setting && !/^chapter\s+\d+\s*:/i.test(setting) && setting !== sceneTitle) root.addMessage('dm', setting);
+      if (opening && opening !== setting && !/^chapter\s+\d+\s*:/i.test(opening)) root.addMessage('dm', opening);
       if (Array.isArray(scene.presentNpcs) && scene.presentNpcs.length) root.addMessage('system', 'Present: ' + scene.presentNpcs.join(', '));
     }
     var actions = document.getElementById('actions');

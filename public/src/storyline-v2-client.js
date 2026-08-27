@@ -92,10 +92,10 @@
       card.dataset.historyIndex = String(index);
       var heading = document.createElement('h3');
       heading.className = 'storyline-v2-journal-entry-title';
-      heading.textContent = entry.title || entry.eventLabel || ('Turn ' + (entry.turnNumber || index + 1));
+      heading.textContent = entry.title || entry.eventLabel || 'Recorded action';
       var meta = document.createElement('p');
       meta.className = 'storyline-v2-journal-entry-meta';
-      meta.textContent = [entry.sceneName || entry.sceneId, entry.turnNumber ? 'Turn ' + entry.turnNumber : ''].filter(Boolean).join(' · ');
+      meta.textContent = entry.turnNumber ? 'Turn ' + entry.turnNumber : '';
       var body = document.createElement('p');
       body.className = 'storyline-v2-journal-entry-body';
       body.textContent = entry.summary || entry.narrative || '';
