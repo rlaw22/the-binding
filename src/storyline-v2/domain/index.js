@@ -9,5 +9,6 @@ module.exports = {
   ...require('./difficulty'),
   ...require('./transfer'),
   ...require('./session-lifecycle'),
-  ...require('./check-resolution')
+  ...require('./check-resolution'),
+  ...require('./content-quality-gate')
 };

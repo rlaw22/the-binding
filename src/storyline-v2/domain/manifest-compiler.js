@@ -3,6 +3,7 @@
 const { clone, asArray, issue } = require('./collections');
 const { estimateManifestMetrics, auditManifestQuality } = require('./manifest-metrics');
 const { auditAgencyQuality, assertAgencyQuality } = require('./agency-policy');
+const { assertIngestedContent } = require('./content-quality-gate');
 
 const ACTION_TYPES = new Set([
   'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere', 'recovery'
@@ -24,6 +25,9 @@ function compileAdventure(raw) {
   if (!raw.adventureId) errors.push(issue('adventureId', 'Adventure ID is required'));
   if (!raw.title) errors.push(issue('title', 'Adventure title is required'));
   validateAdaptiveDifficulty(raw.adaptiveDifficulty, errors, warnings);
+  if (raw.ingested === true) {
+    try { assertIngestedContent(raw, { strict: true }); } catch (error) { errors.push(...(error.errors || [])); }
+  }
   const agencyAudit = auditAgencyQuality(raw, { strict: raw.publicationMode === 'new-book' || raw.agencyPolicy && raw.agencyPolicy.strict === true });
   if (agencyAudit.errors.length) errors.push(...agencyAudit.errors);
   warnings.push(...agencyAudit.warnings);

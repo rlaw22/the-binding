@@ -49,8 +49,8 @@
           "contentId": "dracula_full_01__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Study the innkeeper's warning",
-          "shortLabel": "Study the warning",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -59,22 +59,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You study the innkeeper's warning and the fear behind it. The road ahead is more dangerous than the map suggests, and the name Dracula is no idle superstition.",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_01__observed"
             ],
             "setFlags": {
               "chapter_1_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_01__prepare",
           "contentId": "dracula_full_01__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for the road to the Borgo Pass",
-          "shortLabel": "Prepare for the road",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -83,19 +86,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You check your provisions, secure your papers, and make ready for the mountain road. Whatever waits beyond the pass, you will not meet it carelessly.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_1_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_01__press",
           "contentId": "dracula_full_01__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Ask why the locals fear Dracula",
-          "shortLabel": "Ask about Dracula",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -104,44 +110,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You ask why the locals fear Dracula. The answer comes in fragments—crossed fingers, averted eyes, and a warning that sounds less like folklore than experience.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_1_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_01__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Take the coach toward the Borgo Pass",
-          "shortLabel": "Take the coach",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. nly, I became conscious of the fact that the driver was in the act of pulling up the horses in the courtyard of a vast ruined castle, from whose tall black windows came no ray of light, and whose broken battlements showed a jagged line against the moonlit sky."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_02",
       "actId": "act_1",
-      "name": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "name": "The Journey — Entry 2",
       "location": {
         "id": "chapter_2",
         "name": "JONATHAN HARKER’S JOURNAL--_continued_"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER II",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 2: JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER II",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_02__observe",
           "contentId": "dracula_full_02__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 2's evidence",
-          "shortLabel": "Observe ch. 2",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -150,22 +162,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER II",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_02__observed"
             ],
             "setFlags": {
               "chapter_2_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_02__prepare",
           "contentId": "dracula_full_02__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 3 danger",
-          "shortLabel": "Prepare ch. 2",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -174,19 +189,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_2_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_02__press",
           "contentId": "dracula_full_02__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 2 for truth",
-          "shortLabel": "Press ch. 2",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -195,44 +213,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_2_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_02__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 3",
-          "shortLabel": "Continue ch. 3",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. The castle is a veritable prison, and I am a prisoner!"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_03",
       "actId": "act_1",
-      "name": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "name": "The Journey — Entry 3",
       "location": {
         "id": "chapter_3",
         "name": "JONATHAN HARKER’S JOURNAL--_continued_"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER III",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 3: JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER III",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_03__observe",
           "contentId": "dracula_full_03__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 3's evidence",
-          "shortLabel": "Observe ch. 3",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -241,22 +265,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER III",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_03__observed"
             ],
             "setFlags": {
               "chapter_3_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_03__prepare",
           "contentId": "dracula_full_03__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 4 danger",
-          "shortLabel": "Prepare ch. 3",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -265,19 +292,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_3_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_03__press",
           "contentId": "dracula_full_03__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 3 for truth",
-          "shortLabel": "Press ch. 3",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -286,44 +316,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_3_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_03__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 4",
-          "shortLabel": "Continue ch. 4",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. Then the horror overcame me, and I sank down unconscious."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_04",
       "actId": "act_1",
-      "name": "JONATHAN HARKER’S JOURNAL--_continued_",
+      "name": "The Journey — Entry 4",
       "location": {
         "id": "chapter_4",
         "name": "JONATHAN HARKER’S JOURNAL--_continued_"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER IV",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 4: JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER IV",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_04__observe",
           "contentId": "dracula_full_04__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 4's evidence",
-          "shortLabel": "Observe ch. 4",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -332,22 +368,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL--_continued_. CHAPTER IV",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_04__observed"
             ],
             "setFlags": {
               "chapter_4_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_04__prepare",
           "contentId": "dracula_full_04__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 5 danger",
-          "shortLabel": "Prepare ch. 4",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -356,19 +395,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_4_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_04__press",
           "contentId": "dracula_full_04__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 4 for truth",
-          "shortLabel": "Press ch. 4",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -377,44 +419,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_4_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_04__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 5",
-          "shortLabel": "Continue ch. 5",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. At least God’s mercy is better than that of these monsters, and the precipice is steep and high. At its foot a man may sleep--as a man. Good-bye, all! Mina!"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_05",
       "actId": "act_1",
-      "name": "_Letter from Miss Mina Murray to Miss Lucy Westenra._",
+      "name": "The Journey — Entry 5",
       "location": {
         "id": "chapter_5",
         "name": "_Letter from Miss Mina Murray to Miss Lucy Westenra._"
       },
-      "setting": "_Letter from Miss Mina Murray to Miss Lucy Westenra._. CHAPTER V",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 5: _Letter from Miss Mina Murray to Miss Lucy Westenra._. CHAPTER V",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_05__observe",
           "contentId": "dracula_full_05__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 5's evidence",
-          "shortLabel": "Observe ch. 5",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -423,22 +471,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to _Letter from Miss Mina Murray to Miss Lucy Westenra._. CHAPTER V",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_05__observed"
             ],
             "setFlags": {
               "chapter_5_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_05__prepare",
           "contentId": "dracula_full_05__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 6 danger",
-          "shortLabel": "Prepare ch. 5",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -447,19 +498,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_5_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_05__press",
           "contentId": "dracula_full_05__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 5 for truth",
-          "shortLabel": "Press ch. 5",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -468,44 +522,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_5_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_05__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 6",
-          "shortLabel": "Continue ch. 6",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “ART.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_06",
       "actId": "act_1",
-      "name": "MINA MURRAY’S JOURNAL",
+      "name": "The Journey — Entry 6",
       "location": {
         "id": "chapter_6",
         "name": "MINA MURRAY’S JOURNAL"
       },
-      "setting": "MINA MURRAY’S JOURNAL. CHAPTER VI",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 6: MINA MURRAY’S JOURNAL. CHAPTER VI",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_06__observe",
           "contentId": "dracula_full_06__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 6's evidence",
-          "shortLabel": "Observe ch. 6",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -514,22 +574,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to MINA MURRAY’S JOURNAL. CHAPTER VI",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_06__observed"
             ],
             "setFlags": {
               "chapter_6_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_06__prepare",
           "contentId": "dracula_full_06__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 7 danger",
-          "shortLabel": "Prepare ch. 6",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -538,19 +601,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_6_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_06__press",
           "contentId": "dracula_full_06__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 6 for truth",
-          "shortLabel": "Press ch. 6",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -559,44 +625,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_6_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_06__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 7",
-          "shortLabel": "Continue ch. 7",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. , but can’t decide whether to run up north in the open, or to put in here. Look there again! She is steered mighty strangely, for she doesn’t mind the hand on the wheel; changes about with every puff of wind. We’ll hear more of her before this time to-morrow.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_07",
       "actId": "act_2",
-      "name": "CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST",
+      "name": "The Journey — Entry 7",
       "location": {
         "id": "chapter_7",
         "name": "CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST"
       },
-      "setting": "CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST. CHAPTER VII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 7: CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST. CHAPTER VII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_07__observe",
           "contentId": "dracula_full_07__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 7's evidence",
-          "shortLabel": "Observe ch. 7",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -605,22 +677,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to CUTTING FROM “THE DAILYGRAPH,” 8 AUGUST. CHAPTER VII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_07__observed"
             ],
             "setFlags": {
               "chapter_7_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_07__prepare",
           "contentId": "dracula_full_07__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 8 danger",
-          "shortLabel": "Prepare ch. 7",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -629,19 +704,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_7_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_07__press",
           "contentId": "dracula_full_07__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 7 for truth",
-          "shortLabel": "Press ch. 7",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -650,44 +728,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_7_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_07__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 8",
-          "shortLabel": "Continue ch. 8",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. I think it will be best for her to go to bed tired out physically, so I shall take her for a long walk by the cliffs to Robin Hood’s Bay and back. She ought not to have much inclination for sleep-walking then."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_08",
       "actId": "act_2",
-      "name": "MINA MURRAY’S JOURNAL",
+      "name": "The Journey — Entry 8",
       "location": {
         "id": "chapter_8",
         "name": "MINA MURRAY’S JOURNAL"
       },
-      "setting": "MINA MURRAY’S JOURNAL. CHAPTER VIII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 8: MINA MURRAY’S JOURNAL. CHAPTER VIII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_08__observe",
           "contentId": "dracula_full_08__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 8's evidence",
-          "shortLabel": "Observe ch. 8",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -696,22 +780,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to MINA MURRAY’S JOURNAL. CHAPTER VIII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_08__observed"
             ],
             "setFlags": {
               "chapter_8_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_08__prepare",
           "contentId": "dracula_full_08__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 9 danger",
-          "shortLabel": "Prepare ch. 8",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -720,19 +807,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_8_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_08__press",
           "contentId": "dracula_full_08__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 8 for truth",
-          "shortLabel": "Press ch. 8",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -741,44 +831,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_8_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_08__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 9",
-          "shortLabel": "Continue ch. 9",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. So I took the hint, and came too. I was too excited to sleep, but this diary has quieted me, and I feel I shall get some sleep to-night."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_09",
       "actId": "act_2",
-      "name": "_Letter, Mina Harker to Lucy Westenra._",
+      "name": "The Journey — Entry 9",
       "location": {
         "id": "chapter_9",
         "name": "_Letter, Mina Harker to Lucy Westenra._"
       },
-      "setting": "_Letter, Mina Harker to Lucy Westenra._. CHAPTER IX",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 9: _Letter, Mina Harker to Lucy Westenra._. CHAPTER IX",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_09__observe",
           "contentId": "dracula_full_09__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 9's evidence",
-          "shortLabel": "Observe ch. 9",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -787,22 +883,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to _Letter, Mina Harker to Lucy Westenra._. CHAPTER IX",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_09__observed"
             ],
             "setFlags": {
               "chapter_9_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_09__prepare",
           "contentId": "dracula_full_09__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 10 danger",
-          "shortLabel": "Prepare ch. 9",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -811,19 +910,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_9_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_09__press",
           "contentId": "dracula_full_09__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 9 for truth",
-          "shortLabel": "Press ch. 9",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -832,44 +934,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_9_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_09__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 10",
-          "shortLabel": "Continue ch. 10",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “_6 September._--Terrible change for the worse. Come at once; do not lose an hour. I hold over telegram to Holmwood till have seen you.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_10",
       "actId": "act_2",
-      "name": "_Letter, Dr. Seward to Hon. Arthur Holmwood._",
+      "name": "The Journey — Entry 10",
       "location": {
         "id": "chapter_10",
         "name": "_Letter, Dr. Seward to Hon. Arthur Holmwood._"
       },
-      "setting": "_Letter, Dr. Seward to Hon. Arthur Holmwood._. CHAPTER X",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 10: _Letter, Dr. Seward to Hon. Arthur Holmwood._. CHAPTER X",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_10__observe",
           "contentId": "dracula_full_10__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 10's evidence",
-          "shortLabel": "Observe ch. 10",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -878,22 +986,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to _Letter, Dr. Seward to Hon. Arthur Holmwood._. CHAPTER X",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_10__observed"
             ],
             "setFlags": {
               "chapter_10_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_10__prepare",
           "contentId": "dracula_full_10__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 11 danger",
-          "shortLabel": "Prepare ch. 10",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -902,19 +1013,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_10_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_10__press",
           "contentId": "dracula_full_10__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 10 for truth",
-          "shortLabel": "Press ch. 10",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -923,44 +1037,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_10_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_10__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 11",
-          "shortLabel": "Continue ch. 11",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. He seemed so confident that I, remembering my own confidence two nights before and with the baneful result, felt awe and vague terror. It must have been my weakness that made me hesitate to tell it to my friend, but I felt it all the more, like unshed tears."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_11",
       "actId": "act_2",
-      "name": "_Lucy Westenra’s Diary._",
+      "name": "The Journey — Entry 11",
       "location": {
         "id": "chapter_11",
         "name": "_Lucy Westenra’s Diary._"
       },
-      "setting": "_Lucy Westenra’s Diary._. CHAPTER XI",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 11: _Lucy Westenra’s Diary._. CHAPTER XI",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_11__observe",
           "contentId": "dracula_full_11__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 11's evidence",
-          "shortLabel": "Observe ch. 11",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -969,22 +1089,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to _Lucy Westenra’s Diary._. CHAPTER XI",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_11__observed"
             ],
             "setFlags": {
               "chapter_11_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_11__prepare",
           "contentId": "dracula_full_11__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 12 danger",
-          "shortLabel": "Prepare ch. 11",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -993,19 +1116,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_11_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_11__press",
           "contentId": "dracula_full_11__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 11 for truth",
-          "shortLabel": "Press ch. 11",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1014,44 +1140,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_11_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_11__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 12",
-          "shortLabel": "Continue ch. 12",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. me from harm this night! I shall hide this paper in my breast, where they shall find it when they come to lay me out. My dear mother gone! It is time that I go too. Good-bye, dear Arthur, if I should not survive this night. God keep you, dear, and God help me!"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_12",
       "actId": "act_2",
-      "name": "DR. SEWARD’S DIARY",
+      "name": "The Journey — Entry 12",
       "location": {
         "id": "chapter_12",
         "name": "DR. SEWARD’S DIARY"
       },
-      "setting": "DR. SEWARD’S DIARY. CHAPTER XII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 12: DR. SEWARD’S DIARY. CHAPTER XII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_12__observe",
           "contentId": "dracula_full_12__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 12's evidence",
-          "shortLabel": "Observe ch. 12",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1060,22 +1192,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY. CHAPTER XII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_12__observed"
             ],
             "setFlags": {
               "chapter_12_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_12__prepare",
           "contentId": "dracula_full_12__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 13 danger",
-          "shortLabel": "Prepare ch. 12",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1084,19 +1219,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_12_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_12__press",
           "contentId": "dracula_full_12__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 12 for truth",
-          "shortLabel": "Press ch. 12",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1105,44 +1243,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_12_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_12__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 13",
-          "shortLabel": "Continue ch. 13",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “We can do nothing as yet. Wait and see.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_13",
       "actId": "act_3",
-      "name": "DR. SEWARD’S DIARY--_continued_.",
+      "name": "The Journey — Entry 13",
       "location": {
         "id": "chapter_13",
         "name": "DR. SEWARD’S DIARY--_continued_."
       },
-      "setting": "DR. SEWARD’S DIARY--_continued_.. CHAPTER XIII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 13: DR. SEWARD’S DIARY--_continued_.. CHAPTER XIII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_13__observe",
           "contentId": "dracula_full_13__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 13's evidence",
-          "shortLabel": "Observe ch. 13",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1151,22 +1295,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY--_continued_.. CHAPTER XIII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_13__observed"
             ],
             "setFlags": {
               "chapter_13_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_13__prepare",
           "contentId": "dracula_full_13__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 14 danger",
-          "shortLabel": "Prepare ch. 13",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1175,19 +1322,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_13_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_13__press",
           "contentId": "dracula_full_13__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 13 for truth",
-          "shortLabel": "Press ch. 13",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1196,44 +1346,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_13_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_13__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 14",
-          "shortLabel": "Continue ch. 14",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. uented than the other parts. It has the same tiny wound in the throat as has been noticed in other cases. It was terribly weak, and looked quite emaciated. It too, when partially restored, had the common story to tell of being lured away by the “bloofer lady.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_14",
       "actId": "act_3",
-      "name": "MINA HARKER’S JOURNAL",
+      "name": "The Journey — Entry 14",
       "location": {
         "id": "chapter_14",
         "name": "MINA HARKER’S JOURNAL"
       },
-      "setting": "MINA HARKER’S JOURNAL. CHAPTER XIV",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 14: MINA HARKER’S JOURNAL. CHAPTER XIV",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_14__observe",
           "contentId": "dracula_full_14__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 14's evidence",
-          "shortLabel": "Observe ch. 14",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1242,22 +1398,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to MINA HARKER’S JOURNAL. CHAPTER XIV",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_14__observed"
             ],
             "setFlags": {
               "chapter_14_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_14__prepare",
           "contentId": "dracula_full_14__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 15 danger",
-          "shortLabel": "Prepare ch. 14",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1266,19 +1425,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_14_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_14__press",
           "contentId": "dracula_full_14__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 14 for truth",
-          "shortLabel": "Press ch. 14",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1287,44 +1449,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_14_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_14__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 15",
-          "shortLabel": "Continue ch. 15",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “They were made by Miss Lucy!”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_15",
       "actId": "act_3",
-      "name": "DR. SEWARD’S DIARY--_continued_.",
+      "name": "The Journey — Entry 15",
       "location": {
         "id": "chapter_15",
         "name": "DR. SEWARD’S DIARY--_continued_."
       },
-      "setting": "DR. SEWARD’S DIARY--_continued_.. CHAPTER XV",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 15: DR. SEWARD’S DIARY--_continued_.. CHAPTER XV",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_15__observe",
           "contentId": "dracula_full_15__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 15's evidence",
-          "shortLabel": "Observe ch. 15",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1333,22 +1501,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY--_continued_.. CHAPTER XV",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_15__observed"
             ],
             "setFlags": {
               "chapter_15_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_15__prepare",
           "contentId": "dracula_full_15__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 16 danger",
-          "shortLabel": "Prepare ch. 15",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1357,19 +1528,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_15_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_15__press",
           "contentId": "dracula_full_15__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 15 for truth",
-          "shortLabel": "Press ch. 15",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1378,44 +1552,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_15_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_15__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 16",
-          "shortLabel": "Continue ch. 16",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “Oh, it is hard to think of it, and I cannot understand; but at least I shall go with you and wait.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_16",
       "actId": "act_3",
-      "name": "DR. SEWARD’S DIARY--_continued_",
+      "name": "The Journey — Entry 16",
       "location": {
         "id": "chapter_16",
         "name": "DR. SEWARD’S DIARY--_continued_"
       },
-      "setting": "DR. SEWARD’S DIARY--_continued_. CHAPTER XVI",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 16: DR. SEWARD’S DIARY--_continued_. CHAPTER XVI",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_16__observe",
           "contentId": "dracula_full_16__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 16's evidence",
-          "shortLabel": "Observe ch. 16",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1424,22 +1604,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY--_continued_. CHAPTER XVI",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_16__observed"
             ],
             "setFlags": {
               "chapter_16_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_16__prepare",
           "contentId": "dracula_full_16__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 17 danger",
-          "shortLabel": "Prepare ch. 16",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1448,19 +1631,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_16_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_16__press",
           "contentId": "dracula_full_16__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 16 for truth",
-          "shortLabel": "Press ch. 16",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1469,44 +1655,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_16_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_16__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 17",
-          "shortLabel": "Continue ch. 17",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. ns our great quest. But first I shall have much to say, so that you may know what is to do and to dread. Then our promise shall be made to each other anew; for there is a terrible task before us, and once our feet are on the ploughshare we must not draw back.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_17",
       "actId": "act_3",
-      "name": "DR. SEWARD’S DIARY--_continued_",
+      "name": "The Journey — Entry 17",
       "location": {
         "id": "chapter_17",
         "name": "DR. SEWARD’S DIARY--_continued_"
       },
-      "setting": "DR. SEWARD’S DIARY--_continued_. CHAPTER XVII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 17: DR. SEWARD’S DIARY--_continued_. CHAPTER XVII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_17__observe",
           "contentId": "dracula_full_17__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 17's evidence",
-          "shortLabel": "Observe ch. 17",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1515,22 +1707,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY--_continued_. CHAPTER XVII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_17__observed"
             ],
             "setFlags": {
               "chapter_17_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_17__prepare",
           "contentId": "dracula_full_17__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 18 danger",
-          "shortLabel": "Prepare ch. 17",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1539,19 +1734,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_17_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_17__press",
           "contentId": "dracula_full_17__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 17 for truth",
-          "shortLabel": "Press ch. 17",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1560,44 +1758,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_17_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_17__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 18",
-          "shortLabel": "Continue ch. 18",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “Little girl!”--the very words he had used to Lucy, and oh, but he proved himself a friend!"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_18",
       "actId": "act_3",
-      "name": "DR. SEWARD’S DIARY",
+      "name": "The Journey — Entry 18",
       "location": {
         "id": "chapter_18",
         "name": "DR. SEWARD’S DIARY"
       },
-      "setting": "DR. SEWARD’S DIARY. CHAPTER XVIII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 18: DR. SEWARD’S DIARY. CHAPTER XVIII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_18__observe",
           "contentId": "dracula_full_18__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 18's evidence",
-          "shortLabel": "Observe ch. 18",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1606,22 +1810,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY. CHAPTER XVIII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_18__observed"
             ],
             "setFlags": {
               "chapter_18_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_18__prepare",
           "contentId": "dracula_full_18__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 19 danger",
-          "shortLabel": "Prepare ch. 18",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1630,19 +1837,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_18_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_18__press",
           "contentId": "dracula_full_18__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 18 for truth",
-          "shortLabel": "Press ch. 18",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1651,44 +1861,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_18_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_18__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 19",
-          "shortLabel": "Continue ch. 19",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. “You will, I trust, Dr. Seward, do me the justice to bear in mind, later on, that I did what I could to convince you to-night.”"
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_19",
       "actId": "act_4",
-      "name": "JONATHAN HARKER’S JOURNAL",
+      "name": "The Journey — Entry 19",
       "location": {
         "id": "chapter_19",
         "name": "JONATHAN HARKER’S JOURNAL"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL. CHAPTER XIX",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 19: JONATHAN HARKER’S JOURNAL. CHAPTER XIX",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_19__observe",
           "contentId": "dracula_full_19__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 19's evidence",
-          "shortLabel": "Observe ch. 19",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1697,22 +1913,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL. CHAPTER XIX",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_19__observed"
             ],
             "setFlags": {
               "chapter_19_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_19__prepare",
           "contentId": "dracula_full_19__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 20 danger",
-          "shortLabel": "Prepare ch. 19",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1721,19 +1940,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_19_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_19__press",
           "contentId": "dracula_full_19__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 19 for truth",
-          "shortLabel": "Press ch. 19",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1742,44 +1964,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_19_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_19__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 20",
-          "shortLabel": "Continue ch. 20",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. nd am waiting for sleep, which still keeps aloof. I hope I have not done wrong, for as sleep begins to flirt with me, a new fear comes: that I may have been foolish in thus depriving myself of the power of waking. I might want it. Here comes sleep. Good-night."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_20",
       "actId": "act_4",
-      "name": "JONATHAN HARKER’S JOURNAL",
+      "name": "The Journey — Entry 20",
       "location": {
         "id": "chapter_20",
         "name": "JONATHAN HARKER’S JOURNAL"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL. CHAPTER XX",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 20: JONATHAN HARKER’S JOURNAL. CHAPTER XX",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_20__observe",
           "contentId": "dracula_full_20__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 20's evidence",
-          "shortLabel": "Observe ch. 20",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1788,22 +2016,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL. CHAPTER XX",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_20__observed"
             ],
             "setFlags": {
               "chapter_20_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_20__prepare",
           "contentId": "dracula_full_20__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 21 danger",
-          "shortLabel": "Prepare ch. 20",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1812,19 +2043,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_20_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_20__press",
           "contentId": "dracula_full_20__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 20 for truth",
-          "shortLabel": "Press ch. 20",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1833,44 +2067,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_20_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_20__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 21",
-          "shortLabel": "Continue ch. 21",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. The attendant came bursting into my room and told me that Renfield had somehow met with some accident. He had heard him yell; and when he went to him found him lying on his face on the floor, all covered with blood. I must go at once...."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_21",
       "actId": "act_4",
-      "name": "DR. SEWARD’S DIARY",
+      "name": "The Journey — Entry 21",
       "location": {
         "id": "chapter_21",
         "name": "DR. SEWARD’S DIARY"
       },
-      "setting": "DR. SEWARD’S DIARY. CHAPTER XXI",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 21: DR. SEWARD’S DIARY. CHAPTER XXI",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_21__observe",
           "contentId": "dracula_full_21__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 21's evidence",
-          "shortLabel": "Observe ch. 21",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1879,22 +2119,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY. CHAPTER XXI",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_21__observed"
             ],
             "setFlags": {
               "chapter_21_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_21__prepare",
           "contentId": "dracula_full_21__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 22 danger",
-          "shortLabel": "Prepare ch. 21",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1903,19 +2146,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_21_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_21__press",
           "contentId": "dracula_full_21__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 21 for truth",
-          "shortLabel": "Press ch. 21",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -1924,44 +2170,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_21_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_21__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 22",
-          "shortLabel": "Continue ch. 22",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. Of this I am sure: the sun rises to-day on no more miserable house in all the great round of its daily course."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_22",
       "actId": "act_4",
-      "name": "JONATHAN HARKER’S JOURNAL",
+      "name": "The Journey — Entry 22",
       "location": {
         "id": "chapter_22",
         "name": "JONATHAN HARKER’S JOURNAL"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL. CHAPTER XXII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 22: JONATHAN HARKER’S JOURNAL. CHAPTER XXII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_22__observe",
           "contentId": "dracula_full_22__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 22's evidence",
-          "shortLabel": "Observe ch. 22",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -1970,22 +2222,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL. CHAPTER XXII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_22__observed"
             ],
             "setFlags": {
               "chapter_22_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_22__prepare",
           "contentId": "dracula_full_22__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 23 danger",
-          "shortLabel": "Prepare ch. 22",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -1994,19 +2249,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_22_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_22__press",
           "contentId": "dracula_full_22__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 22 for truth",
-          "shortLabel": "Press ch. 22",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -2015,44 +2273,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_22_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_22__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 23",
-          "shortLabel": "Continue ch. 23",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. notes of the various addresses of the houses in the East and the South, took with them the keys in a great bunch, and set out to destroy the boxes in these places. The rest of us are, with what patience we can, waiting their return--or the coming of the Count."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_23",
       "actId": "act_4",
-      "name": "DR. SEWARD’S DIARY",
+      "name": "The Journey — Entry 23",
       "location": {
         "id": "chapter_23",
         "name": "DR. SEWARD’S DIARY"
       },
-      "setting": "DR. SEWARD’S DIARY. CHAPTER XXIII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 23: DR. SEWARD’S DIARY. CHAPTER XXIII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_23__observe",
           "contentId": "dracula_full_23__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 23's evidence",
-          "shortLabel": "Observe ch. 23",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -2061,22 +2325,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY. CHAPTER XXIII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_23__observed"
             ],
             "setFlags": {
               "chapter_23_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_23__prepare",
           "contentId": "dracula_full_23__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 24 danger",
-          "shortLabel": "Prepare ch. 23",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -2085,19 +2352,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_23_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_23__press",
           "contentId": "dracula_full_23__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 23 for truth",
-          "shortLabel": "Press ch. 23",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -2106,44 +2376,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_23_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_23__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 24",
-          "shortLabel": "Continue ch. 24",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. I was just in time to catch her as she fell forward in a faint."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_24",
       "actId": "act_4",
-      "name": "DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING",
+      "name": "The Journey — Entry 24",
       "location": {
         "id": "chapter_24",
         "name": "DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING"
       },
-      "setting": "DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING. CHAPTER XXIV",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 24: DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING. CHAPTER XXIV",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_24__observe",
           "contentId": "dracula_full_24__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 24's evidence",
-          "shortLabel": "Observe ch. 24",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -2152,22 +2428,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S PHONOGRAPH DIARY, SPOKEN BY VAN HELSING. CHAPTER XXIV",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_24__observed"
             ],
             "setFlags": {
               "chapter_24_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_24__prepare",
           "contentId": "dracula_full_24__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 25 danger",
-          "shortLabel": "Prepare ch. 24",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -2176,19 +2455,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_24_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_24__press",
           "contentId": "dracula_full_24__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 24 for truth",
-          "shortLabel": "Press ch. 24",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -2197,44 +2479,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_24_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_24__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 25",
-          "shortLabel": "Continue ch. 25",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. She is calling to me."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_25",
       "actId": "act_5",
-      "name": "DR. SEWARD’S DIARY",
+      "name": "The Journey — Entry 25",
       "location": {
         "id": "chapter_25",
         "name": "DR. SEWARD’S DIARY"
       },
-      "setting": "DR. SEWARD’S DIARY. CHAPTER XXV",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 25: DR. SEWARD’S DIARY. CHAPTER XXV",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_25__observe",
           "contentId": "dracula_full_25__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 25's evidence",
-          "shortLabel": "Observe ch. 25",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -2243,22 +2531,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY. CHAPTER XXV",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_25__observed"
             ],
             "setFlags": {
               "chapter_25_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_25__prepare",
           "contentId": "dracula_full_25__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 26 danger",
-          "shortLabel": "Prepare ch. 25",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -2267,19 +2558,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_25_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_25__press",
           "contentId": "dracula_full_25__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 25 for truth",
-          "shortLabel": "Press ch. 25",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -2288,44 +2582,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_25_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_25__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 26",
-          "shortLabel": "Continue ch. 26",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. And so I have written it whilst we wait their return, and Mrs. Harker has written with her typewriter all since she brought the MS. to us."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_26",
       "actId": "act_5",
-      "name": "DR. SEWARD’S DIARY",
+      "name": "The Journey — Entry 26",
       "location": {
         "id": "chapter_26",
         "name": "DR. SEWARD’S DIARY"
       },
-      "setting": "DR. SEWARD’S DIARY. CHAPTER XXVI",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 26: DR. SEWARD’S DIARY. CHAPTER XXVI",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_26__observe",
           "contentId": "dracula_full_26__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 26's evidence",
-          "shortLabel": "Observe ch. 26",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -2334,22 +2634,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to DR. SEWARD’S DIARY. CHAPTER XXVI",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_26__observed"
             ],
             "setFlags": {
               "chapter_26_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_26__prepare",
           "contentId": "dracula_full_26__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 27 danger",
-          "shortLabel": "Prepare ch. 26",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -2358,19 +2661,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_26_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_26__press",
           "contentId": "dracula_full_26__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 26 for truth",
-          "shortLabel": "Press ch. 26",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -2379,44 +2685,50 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_26_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_26__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 27",
-          "shortLabel": "Continue ch. 27",
+          "label": "Commit to the next stage of the journey",
+          "shortLabel": "Continue the journey",
           "resolution": {
             "resultType": "exit",
-            "narration": "The chapter closes on its canonical movement. y Him, with all the strength of my sad and humble soul, that He will watch over my beloved husband; that whatever may happen, Jonathan may know that I loved him and honoured him more than I can say, and that my latest and truest thought will be always for him."
-          }
+            "narration": "You commit to the next stage of the journey, carrying the warning forward rather than waiting for certainty that will not come."
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Leave the present uncertainty behind and accept what waits ahead."
         }
       ]
     },
     {
       "sceneId": "dracula_full_27",
       "actId": "act_5",
-      "name": "MINA HARKER’S JOURNAL",
+      "name": "The Journey — Entry 27",
       "location": {
         "id": "chapter_27",
         "name": "MINA HARKER’S JOURNAL"
       },
-      "setting": "MINA HARKER’S JOURNAL. CHAPTER XXVII",
+      "setting": "A new turn in the journey, with danger pressing closer.",
       "presentNpcs": [],
-      "openingNarration": "Chapter 27: MINA HARKER’S JOURNAL. CHAPTER XXVII",
+      "openingNarration": "The journey turns upon a fresh uncertainty. The record offers no safe distance from what is coming, and the next decision will determine what the traveller understands, prepares for, and risks.",
       "actions": [
         {
           "actionId": "dracula_full_27__observe",
           "contentId": "dracula_full_27__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 27's evidence",
-          "shortLabel": "Observe ch. 27",
+          "label": "Examine the signs around you",
+          "shortLabel": "Examine the signs",
           "keywords": [
             "observe",
             "inspect",
@@ -2425,22 +2737,25 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to MINA HARKER’S JOURNAL. CHAPTER XXVII",
+            "narration": "You examine the signs around you, separating warning from rumour and gaining a clearer sense of the danger at hand.",
             "discover": [
               "dracula_full_27__observed"
             ],
             "setFlags": {
               "chapter_27_observed": true
             }
-          }
+          },
+          "role": "discovery",
+          "replay": "repeatable",
+          "consequenceSummary": "Clarify what the scene reveals before committing to a course of action."
         },
         {
           "actionId": "dracula_full_27__prepare",
           "contentId": "dracula_full_27__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 28 danger",
-          "shortLabel": "Prepare ch. 27",
+          "label": "Make ready for the danger ahead",
+          "shortLabel": "Make ready",
           "keywords": [
             "prepare",
             "ready",
@@ -2449,19 +2764,22 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You make ready for the danger ahead, checking what you can control before the next turn in the journey.",
             "setFlags": {
               "chapter_27_prepared": true
             }
-          }
+          },
+          "role": "preparation",
+          "replay": "repeatable",
+          "consequenceSummary": "Improve your readiness before choosing how to proceed."
         },
         {
           "actionId": "dracula_full_27__press",
           "contentId": "dracula_full_27__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 27 for truth",
-          "shortLabel": "Press ch. 27",
+          "label": "Ask the difficult question",
+          "shortLabel": "Ask the question",
           "keywords": [
             "question",
             "press",
@@ -2470,28 +2788,34 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask the difficult question. The answer is incomplete, but it changes what you know and what you must now consider.",
             "setFlags": {
               "chapter_27_pressed": true
             }
-          }
+          },
+          "role": "alternative",
+          "replay": "consumable",
+          "consequenceSummary": "Press for an answer and accept the risk of what it may reveal."
         },
         {
           "actionId": "dracula_full_27__resolve",
           "type": "exit",
           "category": "exit",
           "label": "Witness the final resolution",
-          "shortLabel": "Resolve",
+          "shortLabel": "Witness the resolution",
           "resolution": {
             "resultType": "exit",
-            "narration": "The pursuit reaches its final threshold. The surviving record closes, but what was learned cannot be unlearned.",
+            "narration": "You witness the final resolution. The scattered warnings, choices, and losses of the journey now gather into one unavoidable truth.",
             "endingRules": [
               {
                 "endingId": "dracula_destroyed",
                 "requires": []
               }
             ]
-          }
+          },
+          "role": "commitment",
+          "replay": "consumable",
+          "consequenceSummary": "Face the consequences of the journey and accept its final revelation."
         }
       ]
     }
@@ -2715,5 +3039,10 @@
       "title": "The Record Closes",
       "narration": "The pursuit is over. Dawn finds the survivors changed, but alive."
     }
-  }
+  },
+  "publicationMode": "new-book",
+  "agencyPolicy": {
+    "strict": true
+  },
+  "ingested": true
 }
