@@ -25,12 +25,19 @@
     snapshot = data;
     var catalog = data.catalog || {};
     var state = data.state || {};
-    $('scene-label').textContent = data.adventureId || 'Dracula';
-    $('scene-progress').textContent = (state.act ? 'Act ' + state.act + ' · ' : '') + (state.sceneId || 'Private canary');
-    $('scene-meta').textContent = catalog.chapterTitle || catalog.actLabel || ('Scene ' + (state.sceneId || ''));
-    $('scene-title').textContent = catalog.sceneName || catalog.title || state.sceneId || 'The book opens';
+    $('scene-label').textContent = 'Dracula';
+    $('scene-progress').textContent = state.act ? 'Act ' + state.act : 'The journey';
+    $('scene-meta').textContent = catalog.chapterTitle || catalog.actLabel || 'The present chapter';
+    $('scene-title').textContent = catalog.sceneName || catalog.title || 'The book opens';
     $('narrative').textContent = '';
-    $('narrative').appendChild(textBlock(catalog.openingNarration || catalog.setting || catalog.description || 'The page is waiting.'));
+    var opening = catalog.openingNarration || catalog.description || '';
+    var setting = catalog.setting || '';
+    // Never present compiler IDs, scene IDs, or a bare chapter heading as
+    // player-facing prose. The canary must supply authored opening text.
+    if (!opening || opening.trim() === setting.trim() || /^Chapter \d+:/i.test(opening.trim())) {
+      opening = 'The page waits for your attention.';
+    }
+    $('narrative').appendChild(textBlock(opening));
     var response = $('response');
     var responseEntries = Array.isArray(state.journal) ? state.journal.filter(function (entry) { return entry && (entry.text || entry.summary || entry.narrative); }).slice(-2) : [];
     response.hidden = responseEntries.length === 0;
@@ -56,7 +63,7 @@
     $('text-intent').value = '';
     var journal = $('journal'); journal.textContent = '';
     var journalEntries = Array.isArray(state.journal) ? state.journal : (state.journal && Array.isArray(state.journal.entries) ? state.journal.entries : []);
-    journalEntries.forEach(function (entry) { var article = document.createElement('article'); var entryText = entry.text || entry.summary || entry.narrative || ''; article.textContent = (entry.title || entry.sceneName || entry.actionId || 'Turn') + (entryText ? ': ' + entryText : ''); journal.appendChild(article); });
+    journalEntries.forEach(function (entry) { var article = document.createElement('article'); var entryText = entry.text || entry.summary || entry.narrative || ''; article.textContent = entryText || 'A turn was recorded.'; journal.appendChild(article); });
   }
   async function submit(actionId) {
     if (busy || !snapshot) return; busy = true; setError('');
