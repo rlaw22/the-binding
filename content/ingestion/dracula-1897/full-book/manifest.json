@@ -35,22 +35,22 @@
     {
       "sceneId": "dracula_full_01",
       "actId": "act_1",
-      "name": "JONATHAN HARKER’S JOURNAL",
+      "name": "The Golden Krone Inn",
       "location": {
-        "id": "chapter_1",
-        "name": "JONATHAN HARKER’S JOURNAL"
+        "id": "bistritz_inn",
+        "name": "The Golden Krone Inn"
       },
-      "setting": "JONATHAN HARKER’S JOURNAL. CHAPTER I",
+      "setting": "Bistritz, Transylvania — evening at the Golden Krone Inn",
       "presentNpcs": [],
-      "openingNarration": "Chapter 1: JONATHAN HARKER’S JOURNAL. CHAPTER I",
+      "openingNarration": "By evening I had reached Bistritz, where the innkeeper received me with a warning he would not explain. My road to the Borgo Pass begins here, but the room is full of uneasy glances, hurried prayers, and one name spoken only when the door is shut: Dracula.",
       "actions": [
         {
           "actionId": "dracula_full_01__observe",
           "contentId": "dracula_full_01__observe",
           "type": "exploration",
           "category": "investigation",
-          "label": "Observe chapter 1's evidence",
-          "shortLabel": "Observe ch. 1",
+          "label": "Study the innkeeper's warning",
+          "shortLabel": "Study the warning",
           "keywords": [
             "observe",
             "inspect",
@@ -59,7 +59,7 @@
           ],
           "resolution": {
             "resultType": "discovery",
-            "narration": "You attend to the details available to JONATHAN HARKER’S JOURNAL. CHAPTER I",
+            "narration": "You study the innkeeper's warning and the fear behind it. The road ahead is more dangerous than the map suggests, and the name Dracula is no idle superstition.",
             "discover": [
               "dracula_full_01__observed"
             ],
@@ -73,8 +73,8 @@
           "contentId": "dracula_full_01__prepare",
           "type": "exploration",
           "category": "preparation",
-          "label": "Prepare for chapter 2 danger",
-          "shortLabel": "Prepare ch. 1",
+          "label": "Prepare for the road to the Borgo Pass",
+          "shortLabel": "Prepare for the road",
           "keywords": [
             "prepare",
             "ready",
@@ -83,7 +83,7 @@
           ],
           "resolution": {
             "resultType": "preparation",
-            "narration": "You turn understanding into preparation. The danger ahead is not removed, but you will meet it with more than guesswork.",
+            "narration": "You check your provisions, secure your papers, and make ready for the mountain road. Whatever waits beyond the pass, you will not meet it carelessly.",
             "setFlags": {
               "chapter_1_prepared": true
             }
@@ -94,8 +94,8 @@
           "contentId": "dracula_full_01__press",
           "type": "exploration",
           "category": "agency",
-          "label": "Press chapter 1 for truth",
-          "shortLabel": "Press ch. 1",
+          "label": "Ask why the locals fear Dracula",
+          "shortLabel": "Ask about Dracula",
           "keywords": [
             "question",
             "press",
@@ -104,7 +104,7 @@
           ],
           "resolution": {
             "resultType": "knowledge",
-            "narration": "You choose the uncomfortable question. The answer is partial, but the relationship, record, or threat changes because you asked.",
+            "narration": "You ask why the locals fear Dracula. The answer comes in fragments—crossed fingers, averted eyes, and a warning that sounds less like folklore than experience.",
             "setFlags": {
               "chapter_1_pressed": true
             }
@@ -114,8 +114,8 @@
           "actionId": "dracula_full_01__continue",
           "type": "exit",
           "category": "exit",
-          "label": "Continue to chapter 2",
-          "shortLabel": "Continue ch. 2",
+          "label": "Take the coach toward the Borgo Pass",
+          "shortLabel": "Take the coach",
           "resolution": {
             "resultType": "exit",
             "narration": "The chapter closes on its canonical movement. nly, I became conscious of the fact that the driver was in the act of pulling up the horses in the courtyard of a vast ruined castle, from whose tall black windows came no ray of light, and whose broken battlements showed a jagged line against the moonlit sky."
