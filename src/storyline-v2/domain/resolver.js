@@ -69,6 +69,7 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   // The domain must not contain adventure-specific scene IDs or flag names.
   let endingId = authored.endingId || null;
   let narrative = authored.narration || action.label;
+  const dramaticBeat = clone(action.dramaturgy || {});
   const endingRule = asArray(authored.endingRules)
     .find(rule => rule && rule.endingId && requirementsPass(rule.requires || [], state));
   if (endingRule) {
@@ -77,8 +78,9 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
     if (ending && ending.narration) narrative = ending.narration;
   }
 
-  // Record the resolved action in the authoritative reading history so the
-  // selected response remains visible after the next snapshot renders.
+  // Every authored resolution is part of the player's reading record. Keep
+  // the selected action and its consequence together so the client can render
+  // the response after receiving the next authoritative snapshot.
   state.journal.push({
     entryId: `turn:${turnId || state.turnNumber + 1}`,
     turnNumber: state.turnNumber + 1,
@@ -103,6 +105,7 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   const result = {
     responseId: `response:${turnId || state.turnNumber}`, turnId: turnId || null, sceneId: state.sceneId, sourceSceneId: beforeSceneId,
     actionId, contentId: action.contentId, resultType: authored.resultType || action.type, narrative,
+    dramaticBeat,
     endingId,
     check,
     adaptive: appliedLever ? { leverId: appliedLever.leverId, sessionOffset: profile.sessionOffset, resolvedVariant: appliedLever.resolvedValue, manifestVersion: adventure.schemaVersion } : null,

@@ -12,7 +12,7 @@ function test(name, fn) {
 const adventure = compileAdventure({
   schemaVersion: '2.0', adventureId: 'history-contract', title: 'History Contract',
   classes: ['scholar'], items: {}, prologue: { startingSceneId: 'study' },
-  scenes: [{ sceneId: 'study', actions: [{ actionId: 'look', label: 'Look', resolution: { resultType: 'atmosphere', narration: 'Dust moves.' } }] }],
+  scenes: [{ sceneId: 'study', actions: [{ actionId: 'look', label: 'Look', replay: 'repeatable', resolution: { resultType: 'atmosphere', narration: 'Dust moves.' } }] }],
   graph: { entry: 'study', edges: [] }
 });
 
@@ -39,11 +39,28 @@ test('removes bookmarks as a revisioned mutation and rejects unknown IDs', () =>
   assert.throws(() => service.removeBookmark({ sessionId: 'history-2', bookmarkId: 'missing' }), /Unknown bookmark/);
 });
 
-test('journal entries are append-only session history and do not alter the folio', () => {
+test('action resolutions and manual entries form append-only session history', () => {
   const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
-  service.start({ adventureId: adventure.adventureId, sessionId: 'history-3' });
-  const snapshot = service.appendJournal({ sessionId: 'history-3', entry: { entryId: 'j1', actionId: 'look', text: 'Dust moves.', kind: 'narrative' } });
-  assert.deepStrictEqual(snapshot.state.journal, [{ entryId: 'j1', actionId: 'look', text: 'Dust moves.', kind: 'narrative', turnNumber: 0, revision: 0, sceneId: 'study' }]);
+  const start = service.start({ adventureId: adventure.adventureId, sessionId: 'history-3' });
+  const afterAction = service.submit({ sessionId: 'history-3', actionId: 'look', catalogVersion: start.catalog.catalogVersion, turnId: 'history-turn-1' });
+  assert.strictEqual(afterAction.state.journal.length, 1);
+  assert.deepStrictEqual(afterAction.state.journal[0], {
+    entryId: 'turn:history-turn-1', actionId: 'look', text: 'Dust moves.', kind: 'action',
+    turnNumber: 1, revision: 0, sceneId: 'study'
+  });
+  const snapshot = service.appendJournal({ sessionId: 'history-3', entry: { entryId: 'j1', actionId: 'look', text: 'A clue enters the journal.', kind: 'narrative' } });
+  assert.strictEqual(snapshot.state.journal.length, 2);
+  assert.strictEqual(snapshot.state.journal[1].entryId, 'j1');
+  assert.strictEqual(snapshot.state.journal[1].revision, 1);
+});
+
+test('optional authored actions remain available while progression remains distinct', () => {
+  const service = new StorylineV2Service({ [adventure.adventureId]: adventure });
+  const start = service.start({ adventureId: adventure.adventureId, sessionId: 'history-5' });
+  const optional = start.catalog.actions.find(action => action.actionId === 'look');
+  assert.ok(optional);
+  const afterAction = service.submit({ sessionId: 'history-5', actionId: optional.actionId, catalogVersion: start.catalog.catalogVersion, turnId: 'history-turn-2' });
+  assert.ok(afterAction.catalog.actions.some(action => action.actionId === 'look'));
 });
 
 test('history snapshots are immutable across repository boundaries', () => {

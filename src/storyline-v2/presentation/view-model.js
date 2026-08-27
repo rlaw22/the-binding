@@ -28,6 +28,7 @@ function createStorylineV2ViewModel(snapshot) {
       name: catalog.sceneName || catalog.sceneId,
       setting: catalog.setting || '',
       openingNarration: catalog.openingNarration || '',
+      dramaturgy: catalog.dramaturgy ? { ...catalog.dramaturgy } : {},
       presentNpcs: Array.isArray(catalog.presentNpcs) ? catalog.presentNpcs.slice() : []
     },
     status: {
@@ -48,6 +49,7 @@ function createStorylineV2ViewModel(snapshot) {
       shortLabel: action.shortLabel || action.label || action.actionId,
       subtitle: action.subtitle || '',
       iconKey: action.iconKey || null,
+      dramaturgy: action.dramaturgy ? { ...action.dramaturgy } : {},
       catalogVersion: action.catalogVersion || catalog.catalogVersion,
       ariaLabel: [action.label || action.actionId, action.subtitle].filter(Boolean).join(' — ')
     })),

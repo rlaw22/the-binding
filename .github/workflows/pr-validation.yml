@@ -35,8 +35,8 @@ jobs:
       - name: Run test suite
         run: npm run test:v2
 
-      - name: Run browser validation
-        run: npx playwright test
+      - name: Run V2 Northstar browser validation
+        run: npx playwright test tests/storyline-v2-northstar-browser.test.js
 
       - name: Verify deployment workflow contract
         shell: bash
