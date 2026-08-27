@@ -3,14 +3,30 @@
 const assert = require('assert');
 const { compileAdventure, auditAgencyQuality } = require('../src/storyline-v2');
 
+const sceneBeat = {
+  situation: 'The road ends at a dark house while night gathers around you.',
+  immediateObjective: 'Decide whether to enter before the last light disappears.',
+  pressure: 'A storm is closing in and someone inside is watching the road.',
+  presentActors: ['keeper'],
+  nextQuestion: 'What will you risk before the house closes its door?'
+};
+const actionBeat = {
+  approach: 'You question the keeper directly instead of entering blind.',
+  stakes: 'The answer may reveal who was here last, but it may cost his trust.',
+  reaction: 'The keeper lowers his voice and glances toward the dark windows.',
+  changedSituation: 'The house is no longer merely abandoned; someone may still be inside.',
+  nextObjective: 'Decide whether to search the cart or cross the threshold.',
+  effectSummary: 'Reveals a warning and changes the available approach.'
+};
+
 function base(overrides = {}) {
   return {
     schemaVersion: '2.0', publicationMode: 'new-book', adventureId: 'agency-fixture', title: 'Agency Fixture',
     prologue: { startingSceneId: 'arrival' }, graph: { entry: 'arrival', edges: [] },
-    scenes: [{ sceneId: 'arrival', name: 'Arrival', openingNarration: 'The road ends at the dark house.', actions: [
-      { actionId: 'question', type: 'exploration', role: 'alternative', replay: 'consumable', label: 'Question the keeper', consequenceSummary: 'Reveals who was here last.', resolution: { narration: 'The keeper lowers his voice.', setFlags: { asked: true } } },
-      { actionId: 'search', type: 'exploration', role: 'discovery', replay: 'consumable', label: 'Search the abandoned cart', consequenceSummary: 'Finds a warning before you enter.', laterBeat: 'threshold', resolution: { narration: 'Under the seat you find a warning.', discover: ['warning'] } },
-      { actionId: 'enter', type: 'exit', role: 'exit', replay: 'consumable', label: 'Enter the house', resolution: { narration: 'You cross the threshold.' } }
+    scenes: [{ sceneId: 'arrival', name: 'Arrival', openingNarration: 'The road ends at the dark house.', dramaturgy: sceneBeat, actions: [
+      { actionId: 'question', type: 'exploration', role: 'alternative', replay: 'consumable', label: 'Question the keeper', consequenceSummary: 'Reveals who was here last.', dramaturgy: actionBeat, resolution: { narration: 'The keeper lowers his voice.', setFlags: { asked: true } } },
+      { actionId: 'search', type: 'exploration', role: 'discovery', replay: 'consumable', label: 'Search the abandoned cart', consequenceSummary: 'Finds a warning before you enter.', laterBeat: 'threshold', dramaturgy: { ...actionBeat, approach: 'You search the abandoned cart for evidence.', reaction: 'A warning is hidden under the seat.' }, resolution: { narration: 'Under the seat you find a warning.', discover: ['warning'] } },
+      { actionId: 'enter', type: 'exit', role: 'exit', replay: 'consumable', label: 'Enter the house', dramaturgy: { ...actionBeat, approach: 'You cross the threshold before the storm arrives.', reaction: 'The door opens onto darkness.', changedSituation: 'The road is behind you and the house has claimed your attention.', nextObjective: 'Find the source of the watchful presence.', convergence: 'threshold', effectSummary: 'Commits the journey to the house.' }, resolution: { narration: 'You cross the threshold.' } }
     ] }],
     ...overrides
   };
@@ -42,6 +58,27 @@ test('warns when a scene drains multiple consumable actions', () => {
   assert.ok(audit.warnings.some(item => item.message.includes('All non-exit actions are consumable')));
 });
 
+test('rejects a new-book scene without a dramatic beat', () => {
+  assert.throws(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], dramaturgy: undefined }] })), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.path.endsWith('.dramaturgy')));
+});
+
+test('rejects generic dramatic fallback text in a new-book action', () => {
+  const generic = { ...actionBeat, changedSituation: 'What was uncertain is now part of the journey.' };
+  assert.throws(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], actions: [{ ...base().scenes[0].actions[0], dramaturgy: generic }, ...base().scenes[0].actions.slice(1)] }] })), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('Template dramatic text')));
+});
+
+test('preserves dramatic beat data through compilation, catalog, resolution, and presentation', () => {
+  const adventure = compileAdventure(base());
+  const state = require('../src/storyline-v2').createState(adventure, { sessionId: 'trace', classId: null });
+  const catalog = require('../src/storyline-v2').buildCatalog(adventure, state);
+  assert.strictEqual(catalog.dramaturgy.nextQuestion, sceneBeat.nextQuestion);
+  assert.strictEqual(catalog.actions[0].dramaturgy.nextObjective, actionBeat.nextObjective);
+  const resolved = require('../src/storyline-v2').resolveTurn({ adventure, state, actionId: 'question', catalogVersion: state.catalogVersion, turnId: 'trace-turn' });
+  assert.strictEqual(resolved.result.dramaticBeat.nextObjective, actionBeat.nextObjective);
+  const { createStorylineV2ResultViewModel } = require('../src/storyline-v2/presentation');
+  assert.strictEqual(createStorylineV2ResultViewModel(resolved.result).dramaticBeat.changedSituation, actionBeat.changedSituation);
+});
+
 test('allows a valid short linear scene with one authored commitment', () => {
-  assert.doesNotThrow(() => compileAdventure(base({ scenes: [{ sceneId: 'arrival', actions: [{ actionId: 'enter', type: 'exit', role: 'exit', replay: 'consumable', label: 'Enter the house', resolution: { narration: 'You enter.' } }] }] })));
+  assert.doesNotThrow(() => compileAdventure(base({ scenes: [{ sceneId: 'arrival', dramaturgy: sceneBeat, actions: [{ actionId: 'enter', type: 'exit', role: 'exit', replay: 'consumable', label: 'Enter the house', dramaturgy: { ...actionBeat, approach: 'You cross the threshold before the storm arrives.', reaction: 'The door opens onto darkness.', changedSituation: 'The road is behind you and the house has claimed your attention.', nextObjective: 'Find the source of the watchful presence.', convergence: 'threshold', effectSummary: 'Commits the journey to the house.' }, resolution: { narration: 'You enter.' } }] }] })));
 });

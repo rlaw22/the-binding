@@ -1,6 +1,6 @@
 'use strict';
 
-const { compileDracula } = require('../adapters/legacy-dracula-adapter');
+const { buildDraculaCanaryManifest } = require('../adapters/native-dracula-canary');
 const { StorylineV2Service } = require('./service');
 const { FileSessionRepository } = require('./repositories/file-session-repository');
 
@@ -10,7 +10,7 @@ const { FileSessionRepository } = require('./repositories/file-session-repositor
  * before a session can start.
  */
 function createStorylineV2Service(options = {}) {
-  const dracula = compileDracula();
+  const dracula = buildDraculaCanaryManifest();
   const resolvedOptions = { ...options };
   if (!resolvedOptions.sessionRepository && process.env.STORYLINE_V2_SESSION_FILE) {
     resolvedOptions.sessionRepository = new FileSessionRepository(process.env.STORYLINE_V2_SESSION_FILE);

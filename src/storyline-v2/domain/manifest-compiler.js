@@ -3,6 +3,7 @@
 const { clone, asArray, issue } = require('./collections');
 const { estimateManifestMetrics, auditManifestQuality } = require('./manifest-metrics');
 const { auditAgencyQuality, assertAgencyQuality } = require('./agency-policy');
+const { auditDramaticContract } = require('./dramatic-contract');
 
 const ACTION_TYPES = new Set([
   'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere', 'recovery'
@@ -27,6 +28,9 @@ function compileAdventure(raw) {
   const agencyAudit = auditAgencyQuality(raw, { strict: raw.publicationMode === 'new-book' || raw.agencyPolicy && raw.agencyPolicy.strict === true });
   if (agencyAudit.errors.length) errors.push(...agencyAudit.errors);
   warnings.push(...agencyAudit.warnings);
+  const dramaticAudit = auditDramaticContract(raw, { strict: raw.publicationMode === 'new-book' });
+  if (dramaticAudit.errors.length) errors.push(...dramaticAudit.errors);
+  warnings.push(...dramaticAudit.warnings);
 
   const classes = asArray(raw.classes);
   const classIds = new Set();
@@ -171,7 +175,8 @@ function normalizeScene(raw) {
     openingNarration: raw.openingNarration || raw.description || '',
     actions,
     completion: clone(raw.completion || {}),
-    agency: clone(raw.agency || raw.agencyPolicy || {})
+    agency: clone(raw.agency || raw.agencyPolicy || {}),
+    dramaturgy: clone(raw.dramaturgy || {})
   };
 }
 
@@ -190,6 +195,7 @@ function normalizeAction(action) {
     role: action.role || action.actionRole || null,
     consequenceSummary: action.consequenceSummary || '',
     laterBeat: action.laterBeat || null,
+    dramaturgy: clone(action.dramaturgy || action.beat || {}),
     keywords: clone(action.keywords || []),
     availability: clone(action.availability || {}),
     requires: clone(action.requires || []),

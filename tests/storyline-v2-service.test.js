@@ -105,8 +105,10 @@ test('factory compiles and registers Dracula without legacy session logic', () =
   const service = createStorylineV2Service();
   const snapshot = service.start({ adventureId: 'dracula', sessionId: 'dracula-service-test', classId: 'cleric' });
   assert.strictEqual(snapshot.adventureId, 'dracula');
-  assert.strictEqual(snapshot.state.sceneId, 'scene_00');
-  assert.ok(snapshot.catalog.actions.some(action => action.type === 'class'));
+  assert.strictEqual(snapshot.state.sceneId, 'dracula_full_01');
+  assert.strictEqual(snapshot.catalog.sceneName, 'The Golden Krone Inn');
+  assert.ok(snapshot.catalog.dramaturgy.immediateObjective);
+  assert.ok(snapshot.catalog.actions.some(action => action.dramaturgy && action.dramaturgy.nextObjective));
 });
 
 test('exports and imports a complete session bundle', () => {

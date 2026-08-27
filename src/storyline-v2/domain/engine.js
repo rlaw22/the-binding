@@ -10,5 +10,6 @@ module.exports = {
   ...require('./history'),
   ...require('./action-catalog'),
   ...require('./resolver'),
-  ...require('./text-intent')
+  ...require('./text-intent'),
+  ...require('./dramatic-contract')
 };

@@ -22,6 +22,14 @@ function action(actionId, type, category, label, shortLabel, keywords, narration
     replay: extra.replay || ((type === 'exit' || extra.role === 'commitment') ? 'consumable' : 'repeatable'),
     consequenceSummary: extra.consequenceSummary || narration,
     laterBeat: extra.laterBeat || null,
+    dramaturgy: extra.dramaturgy || {
+      approach: `You choose to ${label.toLowerCase()}.`,
+      stakes: `What you learn or risk here will shape how safely the journey continues.`,
+      reaction: narration,
+      changedSituation: `The scene has changed: ${narration}`,
+      nextObjective: `Decide what to do next in light of what you have discovered.`,
+      effects: narration
+    },
     resolution: { resultType: extra.resultType || 'discovery', narration,
       ...(extra.discover ? { discover: extra.discover } : {}),
       ...(extra.setFlags ? { setFlags: extra.setFlags } : {}),
@@ -137,6 +145,13 @@ function lateScene(entry) {
   return {
     id, name, location: [`chapter_${chapter}`, name], setting, opening: `${opening} The assembled records do not settle the matter; they place a decision before the traveller, whose next act will determine what is learned, what is lost, and how the pursuit continues.`, npcs,
     agency: { optionalActionsRequired: false, authoredAlternatives: true },
+    dramaturgy: {
+      situation: opening,
+      immediateObjective: `Decide how to act in ${setting.split(',')[0]} before the situation closes around you.`,
+      pressure: `Time, danger, and the people present are narrowing your choices in ${setting.split(',')[0]}.`,
+      presentActors: npcs,
+      nextQuestion: `What will you risk now, and what will you need to learn before leaving ${setting.split(',')[0]}?`
+    },
     actions: [
       ['investigate', 'exploration', 'investigation', investigateLabel, investigateLabel, ['read', 'record', 'trace', 'examine', 'investigate'], investigateNarration, { role: 'discovery', replay: 'consumable', setFlags: investigationFlags }],
       ['choose', 'exploration', 'agency', alternativeLabel, alternativeLabel, ['ask', 'follow', 'trust', 'confront', 'choose'], alternativeNarration, { role: 'alternative', replay: 'consumable', setFlags: choiceFlags }],
@@ -146,7 +161,21 @@ function lateScene(entry) {
   };
 }
 
-function makeAction(sceneId, spec) { const [id, type, category, label, short, keywords, narration, extra] = spec; const resolved = { ...extra }; if (type !== 'exit' && type !== 'threat' || extra && extra.role !== 'commitment') resolved.discover = [`${sceneId}__${id}`]; return action(`${sceneId}__${id}`, type, category, label, short, keywords, narration, resolved); }
+function makeAction(sceneId, spec) {
+  const [id, type, category, label, short, keywords, narration, extra = {}] = spec;
+  const resolved = { ...extra };
+  if (type !== 'exit' && type !== 'threat' || extra.role !== 'commitment') resolved.discover = [`${sceneId}__${id}`];
+  resolved.dramaturgy = extra.dramaturgy || {
+    approach: `You choose to ${label.toLowerCase()}, committing your attention to the immediate problem.`,
+    stakes: `The decision risks time and changes what the people around you will reveal before the journey moves on.`,
+    reaction: narration,
+    changedSituation: `The response leaves you with a concrete consequence: ${narration}`,
+    nextObjective: 'Use this consequence to choose the next deliberate step in the pursuit.',
+    effectSummary: extra.consequenceSummary || narration,
+    ...(type === 'exit' ? { convergence: 'authored-next-beat' } : {})
+  };
+  return action(`${sceneId}__${id}`, type, category, label, short, keywords, narration, resolved);
+}
 function authorDraculaOpening(manifest) {
   const scenes = manifest.scenes;
   manifest.items = { ...manifest.items, iron_lantern: { itemId: 'iron_lantern', name: 'Iron lantern' } };
@@ -154,12 +183,20 @@ function authorDraculaOpening(manifest) {
     const scene = scenes.find(entry => entry.sceneId === authored.id); if (!scene) return;
     scene.name = authored.name; scene.location = { id: authored.location[0], name: authored.location[1] }; scene.setting = authored.setting; scene.openingNarration = authored.opening; scene.presentNpcs = authored.npcs;
     scene.agency = { optionalActionsRequired: false, authoredAlternatives: true };
+    scene.dramaturgy = {
+      situation: authored.opening,
+      immediateObjective: authored.id === 'dracula_full_01' ? 'Decide how to respond before the last coach leaves Bistritz.' : 'Choose how to act while the danger in this place is still changing.',
+      pressure: authored.id === 'dracula_full_01' ? 'Dusk is closing in and the people around you are withholding a warning about the road.' : 'The route forward is becoming more dangerous, and delay will change what remains possible.',
+      presentActors: authored.npcs,
+      nextQuestion: authored.id === 'dracula_full_01' ? 'Whom will you trust, and what will you risk before the coach departs?' : 'What will you risk now that the situation has changed?'
+    };
     scene.actions = authored.actions.map(spec => makeAction(authored.id, spec));
   });
   LATE_ARC.forEach(entry => {
     const authored = lateScene(entry); const scene = scenes.find(candidate => candidate.sceneId === authored.id); if (!scene) return;
     scene.name = authored.name; scene.location = { id: authored.location[0], name: authored.location[1] }; scene.setting = authored.setting; scene.openingNarration = authored.opening; scene.presentNpcs = authored.npcs;
     scene.agency = authored.agency;
+    scene.dramaturgy = authored.dramaturgy;
     scene.actions = authored.actions.map(spec => makeAction(authored.id, spec));
   });
   manifest.publicationMode = 'new-book';

@@ -69,6 +69,7 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   // The domain must not contain adventure-specific scene IDs or flag names.
   let endingId = authored.endingId || null;
   let narrative = authored.narration || action.label;
+  const dramaticBeat = clone(action.dramaturgy || {});
   const endingRule = asArray(authored.endingRules)
     .find(rule => rule && rule.endingId && requirementsPass(rule.requires || [], state));
   if (endingRule) {
@@ -104,6 +105,7 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   const result = {
     responseId: `response:${turnId || state.turnNumber}`, turnId: turnId || null, sceneId: state.sceneId, sourceSceneId: beforeSceneId,
     actionId, contentId: action.contentId, resultType: authored.resultType || action.type, narrative,
+    dramaticBeat,
     endingId,
     check,
     adaptive: appliedLever ? { leverId: appliedLever.leverId, sessionOffset: profile.sessionOffset, resolvedVariant: appliedLever.resolvedValue, manifestVersion: adventure.schemaVersion } : null,

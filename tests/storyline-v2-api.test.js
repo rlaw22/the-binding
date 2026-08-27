@@ -27,7 +27,7 @@ async function main() {
     });
     assert.strictEqual(response.statusCode, 200);
     const start = JSON.parse(response.payload);
-    assert.strictEqual(start.state.sceneId, 'scene_00');
+    assert.strictEqual(start.state.sceneId, 'dracula_full_01');
     assert.ok(start.catalog.actions.length > 0);
 
     const checkResponse = await app.inject({
@@ -36,7 +36,7 @@ async function main() {
     });
     assert.strictEqual(checkResponse.statusCode, 200);
     const checkStart = JSON.parse(checkResponse.payload);
-    const checkAction = checkStart.catalog.actions.find(action => action.actionId === 'scene_00__study_guestbook');
+    const checkAction = checkStart.catalog.actions.find(action => action.actionId === 'dracula_full_01__landlord');
     assert.ok(checkAction);
     response = await app.inject({
       method: 'POST', url: '/api/storyline-v2/sessions/api-check-test/actions',
@@ -44,10 +44,9 @@ async function main() {
     });
     assert.strictEqual(response.statusCode, 200);
     const checkResult = JSON.parse(response.payload);
-    assert.strictEqual(checkResult.resultType, 'check_failure');
-    assert.strictEqual(checkResult.check.ability, 'investigate');
-    assert.strictEqual(checkResult.check.roll, 12);
-    assert.strictEqual(checkResult.check.success, false);
+    assert.strictEqual(checkResult.resultType, 'discovery');
+    assert.ok(checkResult.dramaticBeat.nextObjective);
+    assert.ok(checkResult.dramaticBeat.changedSituation);
 
 
     response = await app.inject({
