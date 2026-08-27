@@ -1,6 +1,6 @@
 'use strict';
 
-const { buildDraculaCanaryManifest } = require('../adapters/native-dracula-canary');
+const { buildDraculaCanaryManifest, buildDraculaBranchingOpeningManifest } = require('../adapters/native-dracula-canary');
 const { StorylineV2Service } = require('./service');
 const { FileSessionRepository } = require('./repositories/file-session-repository');
 
@@ -21,8 +21,10 @@ function createStorylineV2Service(options = {}) {
 module.exports = { createStorylineV2Service };
 
 function createStorylineV2CanaryService(options = {}) {
-  const { buildDraculaCanaryManifest } = require('../adapters/native-dracula-canary');
-  const canary = buildDraculaCanaryManifest();
+  const { buildDraculaCanaryManifest, buildDraculaBranchingOpeningManifest } = require('../adapters/native-dracula-canary');
+  const canary = process.env.STORYLINE_V2_BRANCHING_OPENING === 'true'
+    ? buildDraculaBranchingOpeningManifest()
+    : buildDraculaCanaryManifest();
   const resolvedOptions = { ...options };
   if (!resolvedOptions.sessionRepository && process.env.STORYLINE_V2_SESSION_FILE) {
     resolvedOptions.sessionRepository = new FileSessionRepository(process.env.STORYLINE_V2_SESSION_FILE);

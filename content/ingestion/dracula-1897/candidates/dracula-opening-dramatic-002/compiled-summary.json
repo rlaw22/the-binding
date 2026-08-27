@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "1.0",
+  "candidateId": "dracula-opening-dramatic-002",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "sceneCount": 7,
+  "actionCount": 26,
+  "edgeCount": 8,
+  "nonExitActionCounts": [
+    3,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3
+  ],
+  "rolesByScene": [
+    [
+      "alternative",
+      "discovery",
+      "preparation",
+      "exit",
+      "exit",
+      "exit"
+    ],
+    [
+      "alternative",
+      "discovery",
+      "exit"
+    ],
+    [
+      "alternative",
+      "discovery",
+      "exit"
+    ],
+    [
+      "alternative",
+      "discovery",
+      "exit"
+    ],
+    [
+      "alternative",
+      "discovery",
+      "commitment"
+    ],
+    [
+      "discovery",
+      "preparation",
+      "discovery",
+      "exit"
+    ],
+    [
+      "discovery",
+      "alternative",
+      "preparation",
+      "exit"
+    ]
+  ],
+  "warnings": [],
+  "status": "candidate; not published; human narrative review required"
+}
