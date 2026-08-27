@@ -24,6 +24,7 @@ function createStorylineV2ResultViewModel(result) {
     actionId: result.actionId || null,
     resultType: result.resultType || null,
     narrative: result.narrative || '',
+    dramaticBeat: result.dramaticBeat ? { ...result.dramaticBeat } : {},
     check,
     stateChanges: result.stateChanges ? { ...result.stateChanges } : null,
     transition: result.transition ? { ...result.transition } : null,

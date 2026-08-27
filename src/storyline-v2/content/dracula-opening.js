@@ -1,0 +1,209 @@
+'use strict';
+
+/** Authored first arc for the Dracula V2 canary. */
+
+function roleFor(type, category) {
+  if (type === 'exit' || category === 'exit') return 'exit';
+  if (type === 'recovery') return 'recovery';
+  if (category === 'preparation' || category === 'protection') return 'preparation';
+  if (category === 'social' || category === 'risk') return 'alternative';
+  if (category === 'lore' || category === 'investigation') return 'discovery';
+  return 'alternative';
+}
+
+function action(actionId, type, category, label, shortLabel, keywords, narration, extra = {}) {
+  return {
+    actionId, contentId: actionId, type, category, label, shortLabel, keywords,
+    role: extra.role || roleFor(type, category),
+    // Optional authored choices remain available after resolution so a player
+    // can investigate, prepare, and reconsider without the catalog collapsing
+    // to a single forced continuation. Progression and final commitments are
+    // still consumable by default.
+    replay: extra.replay || ((type === 'exit' || extra.role === 'commitment') ? 'consumable' : 'repeatable'),
+    consequenceSummary: extra.consequenceSummary || narration,
+    laterBeat: extra.laterBeat || null,
+    dramaturgy: extra.dramaturgy || {
+      approach: `You choose to ${label.toLowerCase()}.`,
+      stakes: `What you learn or risk here will shape how safely the journey continues.`,
+      reaction: narration,
+      changedSituation: `The scene has changed: ${narration}`,
+      nextObjective: `Decide what to do next in light of what you have discovered.`,
+      effects: narration
+    },
+    resolution: { resultType: extra.resultType || 'discovery', narration,
+      ...(extra.discover ? { discover: extra.discover } : {}),
+      ...(extra.setFlags ? { setFlags: extra.setFlags } : {}),
+      ...(extra.addItems ? { addItems: extra.addItems } : {}),
+      ...(extra.endingRules ? { endingRules: extra.endingRules } : {}),
+      ...(extra.endingId ? { endingId: extra.endingId } : {}) }
+  };
+}
+
+const ARC = [
+  {
+    id: 'dracula_full_01', name: 'The Golden Krone Inn', location: ['bistritz_golden_krone', 'The Golden Krone Inn, Bistritz'],
+    setting: 'Bistritz, on the eve of the journey through the Borgo Pass.',
+    opening: 'The journey east has carried you beyond familiar roads. At Bistritz, the Golden Krone offers one last pool of lamplight before the coach leaves for the Borgo Pass. The inn is warm, but the welcome is uneasy: the landlord watches the clock, the stable-boy avoids your eyes, and every conversation falls silent when the road is mentioned.\n\nYour instructions are simple—reach Count Dracula’s castle and complete the business entrusted to you. Yet the map, the warnings, and the darkness gathering beyond the windows suggest that the journey has already begun to cost more than time.',
+    npcs: ['golden_krone_landlord', 'stable_boy'],
+    actions: [
+      ['route', 'exploration', 'investigation', 'Study the map and the coach route', 'Study the route', ['map', 'route', 'coach', 'study'], 'The route runs east from Bistritz into the Borgo Pass. The last coach leaves at dusk; you mark the pass and keep the map close.', { setFlags: { route_understood: true } }],
+      ['landlord', 'exploration', 'social', 'Question the landlord about the Borgo Pass', 'Question the landlord', ['ask', 'landlord', 'borgo', 'warnings'], 'The landlord lowers his voice and presses a small crucifix into your palm. The driver will come when the road is darkest. His fear is not theatrical.', { setFlags: { landlord_warning_heard: true }, addItems: ['protective_crucifix'] }],
+      ['stable', 'exploration', 'preparation', 'Inspect the horses and prepare for the night road', 'Prepare the night road', ['stable', 'horses', 'prepare', 'coach'], 'You inspect the harness and secure your belongings. The stable-boy admits the horses have been changed twice today; he refuses to explain why.', { setFlags: { road_prepared: true } }],
+      ['continue', 'exit', 'exit', 'Leave with the coach before the last light fails', 'Take the coach', ['leave', 'coach', 'depart', 'travel'], 'The coach pulls away from the Golden Krone. Bistritz falls behind as the road climbs into the Carpathians and the last lights vanish.', { resultType: 'exit', setFlags: { departed_bistritz: true } }]
+    ]
+  },
+  {
+    id: 'dracula_full_02', name: 'The Coach Ride', location: ['coach_to_borgo', 'The road to the Borgo Pass'],
+    setting: 'A jolting coach carries you east beneath a sky without stars.',
+    opening: 'The coach leaves the settled road behind. Villages thin, the forest closes in, and the driver answers every question with a shake of the reins. Around you, passengers make the sign of the cross whenever wolves cry in the distance. The wheels keep turning toward the pass.',
+    npcs: ['coach_driver', 'fellow_travellers'],
+    actions: [
+      ['question_driver', 'exploration', 'social', 'Ask the driver why the road is feared', 'Question the driver', ['ask', 'driver', 'road', 'fear'], 'The driver’s hands tighten on the reins. He says only that the road belongs to the night after the last village.', { setFlags: { driver_questioned: true } }],
+      ['watch_forest', 'exploration', 'investigation', 'Watch the forest for signs of pursuit', 'Watch the forest', ['watch', 'forest', 'wolves', 'pursuit'], 'Between the trees, pale shapes pace the coach and disappear whenever you turn your head. Something is keeping pace with you.', { setFlags: { wolves_seen: true } }],
+      ['hold_crucifix', 'class', 'protection', 'Keep the landlord’s crucifix ready', 'Keep the crucifix ready', ['crucifix', 'protect', 'prayer', 'ready'], 'The crucifix rests warm against your palm despite the cold. The passengers notice it and draw a little nearer.', { setFlags: { protection_ready: true } }],
+      ['continue', 'exit', 'exit', 'Continue into the Borgo Pass', 'Enter the pass', ['continue', 'pass', 'travel'], 'The coach reaches the foot of the Borgo Pass. The driver stops, and a second vehicle waits where no road should be.', { resultType: 'exit', setFlags: { reached_borgo: true } }]
+    ]
+  },
+  {
+    id: 'dracula_full_03', name: 'The Borgo Pass', location: ['borgo_pass', 'The Borgo Pass'],
+    setting: 'The Borgo Pass, where the ordinary road ends.',
+    opening: 'The first coach turns back. A dark carriage waits in the road, its driver wrapped in a long black coat. The horses stamp and steam, though the air is bitter. No one explains who sent it. The driver opens the door and waits for you to decide whether fear is reason enough to remain behind.',
+    npcs: ['mysterious_driver'],
+    actions: [
+      ['inspect_carriage', 'exploration', 'investigation', 'Inspect the waiting carriage before boarding', 'Inspect the carriage', ['inspect', 'carriage', 'horses', 'driver'], 'The carriage bears no crest, but its fittings are too fine for a common mountain route. The horses have no breath in the cold.', { setFlags: { carriage_examined: true } }],
+      ['question_driver', 'exploration', 'social', 'Demand the driver name his employer', 'Challenge the driver', ['demand', 'question', 'driver', 'employer'], 'The driver turns his face toward you. In the moonlight, his eyes seem red; when you blink, they are ordinary again. “The Count expects you.”', { setFlags: { count_named: true } }],
+      ['board_carriage', 'threat', 'risk', 'Board the carriage and trust the road', 'Board the carriage', ['board', 'carriage', 'trust', 'ride'], 'You climb aboard. The door shuts with a final sound, and the carriage leaps forward without the driver touching the reins.', { setFlags: { carriage_boarded: true } }],
+      ['continue', 'exit', 'exit', 'Ride through the pass toward the castle', 'Ride toward the castle', ['ride', 'continue', 'castle', 'pass'], 'The carriage plunges into the pass. Behind you, the road and the first coach disappear; ahead, blue flames flicker among the trees.', { resultType: 'exit', setFlags: { entered_pass: true } }]
+    ]
+  },
+  {
+    id: 'dracula_full_04', name: 'The Blue Flame', location: ['carpathian_forest', 'The Carpathian forest'],
+    setting: 'A forest road above the Borgo Pass, beneath a cold moon.',
+    opening: 'The carriage moves as though drawn by the darkness itself. Blue flames appear beside the road, burning low among the trees. The driver stops at each one, steps down, and returns without explanation. Beyond the carriage window, wolves gather in the shadows but do not cross the road.',
+    npcs: ['mysterious_driver', 'wolves'],
+    actions: [
+      ['watch_flame', 'exploration', 'lore', 'Watch what the driver does at the blue flame', 'Watch the blue flame', ['watch', 'flame', 'blue', 'driver'], 'At the nearest flame, the driver searches the earth as if following a map written in fire. When he returns, a cold blue reflection remains in his eyes.', { setFlags: { blue_flame_witnessed: true } }],
+      ['protect_passengers', 'threat', 'protection', 'Keep the wolves from the carriage', 'Protect the carriage', ['wolves', 'protect', 'defend', 'passengers'], 'You raise the crucifix toward the window. The wolves recoil together, not in fear but recognition, and the carriage gains a few more yards of road.', { setFlags: { wolves_repulsed: true } }],
+      ['search_carriage', 'exploration', 'investigation', 'Search the carriage for a weapon or escape', 'Search the carriage', ['search', 'weapon', 'escape', 'carriage'], 'Under the seat you find an iron lantern and a broken length of whip. They are poor weapons, but better than empty hands.', { setFlags: { carriage_searched: true }, addItems: ['iron_lantern'] }],
+      ['continue', 'exit', 'exit', 'Follow the carriage to its destination', 'Follow the carriage', ['continue', 'destination', 'castle', 'ride'], 'The final blue flame dies behind you. The forest opens, revealing a vast ruined castle whose black windows hold no light.', { resultType: 'exit', setFlags: { castle_revealed: true } }]
+    ]
+  },
+  {
+    id: 'dracula_full_05', name: 'Castle Dracula', location: ['castle_dracula_gate', 'The gates of Castle Dracula'],
+    setting: 'The gate of a vast ruined castle in the Carpathian mountains.',
+    opening: 'The carriage stops before a gate of ancient stone. The driver is gone. The great doors open inward without a hand upon them, revealing a courtyard drowned in shadow. You have reached Count Dracula’s castle, but there is no servant to receive you and no visible path back to the road.',
+    npcs: ['count_dracula'],
+    actions: [
+      ['examine_gate', 'exploration', 'investigation', 'Examine the gate and search for a way back', 'Examine the gate', ['gate', 'examine', 'escape', 'road'], 'The gate is sealed from within. The stone bears a worn device resembling a dragon, and the hinges show no trace of recent use.', { setFlags: { castle_gate_examined: true } }],
+      ['enter_courtyard', 'threat', 'risk', 'Enter the courtyard and call for your host', 'Enter the courtyard', ['enter', 'courtyard', 'call', 'host'], 'Your voice crosses the courtyard and returns altered by the stone. Somewhere above, a window closes. You step inside, and the doors shut behind you.', { setFlags: { castle_entered: true } }],
+      ['keep_crucifix_ready', 'class', 'protection', 'Keep the crucifix visible as you enter', 'Keep the crucifix ready', ['crucifix', 'enter', 'protect', 'prayer'], 'You keep the crucifix in your hand. The darkness does not retreat, but it seems to hesitate before you cross the threshold.', { setFlags: { castle_protected: true } }],
+      ['continue', 'exit', 'exit', 'Enter the castle and meet Count Dracula', 'Meet the Count', ['continue', 'castle', 'dracula', 'enter'], 'A tall man steps from the shadowed hall and bows with grave courtesy. “Welcome to my house. Come freely and of your own will.”', { resultType: 'exit', setFlags: { met_dracula: true } }]
+    ]
+  }
+];
+
+/* The remaining chapters are authored from Bram Stoker's complete public-domain
+ * text (Project Gutenberg eBook 345). They retain chapter anchors but use
+ * playable beats rather than exposing headings as narration or button labels. */
+const LATE_ARC = [
+  ['06', 'Whitby Abbey and the Demeter', 'Whitby, where Mina and Lucy find a storm-bound coast.', 'The sea has thrown a strange schooner against the harbour. Mina and Lucy watch from the heights as the Demeter arrives without a living crew, while a great dog vanishes into the night.', ['mina_murray', 'lucy_westenra'], 'Read the captain’s log before the tide erases it', 'The log records a crew disappearing one by one and a final entry written in a shaking hand.', 'Trace the missing crew through the harbour witnesses', 'Fishermen remember a dark shape leaping from the wreck, but their accounts end where fear begins.', 'Stay with Lucy on the cliff while the storm breaks', 'You keep Lucy from the exposed edge, but the darkness offshore learns the shape of her solitude.', { setFlags: { demeter_recorded: true } }],
+  ['07', 'The Demeter’s Last Voyage', 'A newspaper office assembling the wreck’s impossible story.', 'The wrecked Demeter becomes a public curiosity. Its cargo is intact, its crew gone, and the only animal seen aboard has disappeared into the town.', ['newspaper_editor', 'harbour_witnesses'], 'Compare the cargo manifest with the captain’s entries', 'The harmless cargo hides one terrible absence: the boxes were delivered, but no one can say where they went.', 'Question the men who saw the black dog', 'Their stories agree on the animal and disagree on everything else; the disagreement itself feels rehearsed.', 'Let the newspaper print the ordinary explanation', 'The town accepts a storm and a runaway dog. The truth gains a day in which to move unseen.', { setFlags: { demeter_manifest_checked: true } }],
+  ['08', 'The Night at Whitby', 'The Westenra house and the churchyard above the sea.', 'Lucy begins to walk in her sleep. Mina finds her in the churchyard beneath the ruined abbey, white against the stones, with a mark at her throat that vanishes in daylight.', ['lucy_westenra', 'mina_murray'], 'Follow Lucy without waking her', 'You find Lucy beneath the ruined arch, her sleep turned toward the sea as though someone there had called her by name.', 'Wake Lucy and bring her home', 'Lucy wakes frightened and remembers nothing. For one night, the bedroom door is locked and the window watched.', 'Trust the sleepwalker’s path and wait in the shadows', 'A second set of footsteps reaches the churchyard before you do. Whatever came for Lucy now knows it has been seen.', { setFlags: { lucy_mark_seen: true } }],
+  ['09', 'Letters and the Sea', 'A coastal house between Mina’s reports and Lucy’s worsening sleep.', 'The letters between Mina and Lucy are cheerful in form and frightened beneath it. Lucy has three suitors; Mina has begun to measure the night by the sound of the window latch.', ['mina_murray', 'lucy_westenra', 'arthur_holmwood'], 'Preserve the letters as a connected account', 'You bind the letters together. Their ordinary affection now forms a record of warnings, absences, and the recurring night visitor.', 'Ask Lucy what she remembers of the scarlet eyes', 'Lucy cannot name a face, only a pressure at the window and a sweetness in the air before sleep takes her.', 'Keep the matter private until help arrives', 'Silence protects Lucy’s reputation, but it leaves the men around her without the pattern you can already see.', { setFlags: { letters_preserved: true } }],
+  ['10', 'Dr. Seward’s First Failure', 'Dr. Seward’s asylum and the quiet machinery of diagnosis.', 'Lucy’s illness brings Dr. Seward into a contest with an enemy no medical chart can name. Renfield’s ravings offer a distorted echo of the same hunger.', ['john_seward', 'renfield', 'lucy_westenra'], 'Compare Lucy’s blood loss with Renfield’s language', 'The cases do not belong together in any textbook, yet both describe a life being measured and consumed.', 'Secure a transfusion for Lucy', 'You arrange immediate aid. It buys Lucy time, but the pallor returns whenever the night is allowed near her.', 'Listen to Renfield through the locked door', 'Renfield speaks of the Master and the coming flies. His madness contains a map, though not one he can explain.', { setFlags: { seward_pattern_found: true } }],
+  ['11', 'Lucy’s Last Sleep', 'The Westenra bedroom during a night of unanswered alarm.', 'Lucy grows weaker despite every remedy. The window opens without a sound, and the room carries the faint scent of earth after rain.', ['lucy_westenra', 'arthur_holmwood', 'john_seward'], 'Reinforce the window and watch until dawn', 'The room becomes a small fortress. At the hour before dawn, something presses against the glass from outside.', 'Call Arthur to Lucy’s bedside', 'Arthur’s presence steadies Lucy, but the unseen visitor retreats only when the first light reaches the curtains.', 'Follow the white mist beyond the garden', 'You lose the trail among the graves and return to find the room colder than before.', { setFlags: { lucy_guard_failed: true } }],
+  ['12', 'The Blood of the Living', 'A hastily guarded sickroom after Lucy’s collapse.', 'Lucy lies near death. Van Helsing arrives with instruments, flowers, and a severity that makes ordinary explanations impossible.', ['lucy_westenra', 'abraham_van_helsing', 'john_seward'], 'Accept Van Helsing’s unusual precautions', 'Van Helsing places garlic around the room and asks no permission from convention. His eyes say the danger is already inside the house.', 'Demand a medical explanation before acting', 'He gives you one: the body is being drained by something that does not need to enter by the door.', 'Leave the window open for fresh air', 'The fresh air carries a colder presence. Van Helsing closes the window and says the next mistake may be fatal.', { setFlags: { van_helsing_trusted: true } }],
+  ['13', 'The Doctor’s Records', 'Seward’s study, where phonograph cylinders preserve the investigation.', 'Seward records every contradiction: Lucy’s repeated decline, Renfield’s obedience, and the arrival of a foreign nobleman whose name appears nowhere in the case file.', ['john_seward', 'abraham_van_helsing'], 'Set the case records in chronological order', 'The dates reveal a pattern of approach, feeding, and retreat. What looked like illness now has a deliberate rhythm.', 'Ask Van Helsing what creature he suspects', 'He refuses the name at first. Then he says “nosferatu” and asks whether you are prepared to believe the evidence.', 'Destroy the records as an act of mercy', 'You spare the household a scandal but erase the sequence that might teach the survivors how the enemy moves.', { setFlags: { case_timeline_built: true } }],
+  ['14', 'Mina in the House of Death', 'A mourning house after Lucy’s death.', 'Lucy is buried, but reports of a beautiful woman in the churchyard begin before the mourning black has faded. Mina sees children with tiny wounds at their throats.', ['mina_harker', 'abraham_van_helsing', 'arthur_holmwood'], 'Record the children’s descriptions exactly', 'Their stories share a white face, a red mouth, and an invitation spoken as if by a loving mother.', 'Examine Lucy’s grave with Van Helsing', 'The coffin is empty. Van Helsing’s silence is more frightening than a body would have been.', 'Comfort the children and dismiss the stories', 'The children are sent home believing they dreamed. The woman in the churchyard is left unchallenged.', { setFlags: { lucy_grave_examined: true } }],
+  ['15', 'The Unclean Tomb', 'The cemetery and the vault where Lucy’s second life begins.', 'The hunters return after dusk with weapons that seem absurd until the tomb opens. Lucy comes back beautiful, hungry, and no longer wholly herself.', ['abraham_van_helsing', 'arthur_holmwood', 'john_seward'], 'Wait for Lucy to return to the tomb', 'The white figure enters carrying a child’s bundle. When she sees the men, grief and hunger pass across the same face.', 'Trust Van Helsing’s method', 'Arthur faces the thing Lucy has become. The blow he must strike is an act of love that leaves no one clean.', 'Refuse to enter the vault', 'You keep your conscience intact, but the undead woman keeps the night road open to the living.', { setFlags: { lucy_released: true } }],
+  ['16', 'The Bloofer Lady', 'London streets and the children’s fearful testimony.', 'The newspapers name the mysterious woman the Bloofer Lady. The hunters understand that Lucy’s death has not ended her reach; it has given it a new shape.', ['john_seward', 'abraham_van_helsing', 'mina_harker'], 'Follow the children’s route through the parks', 'The trail leads from lamplit paths to a locked churchyard gate. The predator chooses places where rescue would look like madness.', 'Use Lucy’s name to draw the visitor out', 'The name makes the mist pause. For one instant, the face in it remembers the woman she was.', 'Protect the newspaper from the story', 'The public hears only a strange rumour, while the hunters lose witnesses who might have recognized the pattern.', { setFlags: { bloofer_route_mapped: true } }],
+  ['17', 'The Papers Are Joined', 'The house where Mina assembles diaries, letters, and phonograph records.', 'Mina gathers every account into one sequence. The scattered voices now point toward Castle Dracula and the boxes carried from the wreck.', ['mina_harker', 'john_seward', 'abraham_van_helsing'], 'Read every record aloud to the group', 'The past becomes evidence rather than memory. Even the silences between entries now indicate the Count’s movements.', 'Mark each box and reported resting place', 'A map of earth-filled boxes appears across London. The Count has built himself a chain of refuges.', 'Keep Mina outside the dangerous work', 'The men spare her the darkest pages, but lose the mind capable of connecting their separate observations.', { setFlags: { papers_unified: true } }],
+  ['18', 'The Enemy Named', 'A locked room where the assembled group confronts the evidence.', 'Van Helsing names Dracula and explains the rules that have governed every encounter: earth, blood, invitation, and the narrow hours before dawn.', ['abraham_van_helsing', 'mina_harker', 'john_seward', 'arthur_holmwood'], 'Accept the rules and prepare the hunt', 'The rules do not make the enemy less terrible; they make terror answerable to preparation.', 'Ask what protects Mina from the mark', 'Van Helsing says protection is possible, not certain. He gives Mina a place in the council rather than hiding the danger from her.', 'Treat the evidence as a shared delusion', 'The group fractures into explanations. The Count needs no stronger weapon than disbelief.', { setFlags: { rules_understood: true } }],
+  ['19', 'The Boxes of Earth', 'A London house and the first abandoned refuge.', 'Jonathan’s recovered journal confirms the face from the castle. The hunters begin finding the boxes of earth that made Dracula’s London campaign possible.', ['jonathan_harker', 'mina_harker', 'john_seward'], 'Search the first house before dawn', 'Dust, straw, and the smell of old soil fill the room. One box is open, but the earth inside is cold and disturbed.', 'Mark the refuge for Van Helsing’s return', 'You leave a sign only the hunters will understand. Somewhere below, a bat strikes the shutters and circles away.', 'Enter the sealed room alone', 'The room is empty except for a trace of red on the floor. You leave before the house can become a second castle.', { setFlags: { refuge_chain_started: true } }],
+  ['20', 'The Route to the West', 'The London docks and the records of Dracula’s cargo.', 'The Count’s remaining boxes are being moved toward the coast. The hunters must turn a mass of shipping records into a route before their enemy reaches a place of safety.', ['john_seward', 'jonathan_harker', 'mina_harker'], 'Follow the cargo papers to Varna', 'The trail crosses railway timetables and river manifests. The Count is retreating east, but the boxes give him many possible roads.', 'Use Mina’s shorthand to compare the routes', 'Mina finds a repeated hand and a gap in the dates. The fastest route passes through Galatz.', 'Destroy the records so no one can follow', 'The papers burn quickly. So does the certainty that the right train can still be caught.', { setFlags: { fast_route: true } }],
+  ['21', 'The House Besieged', 'The Harker house during the Count’s return visit.', 'The door is broken, Mina is marked, and Dracula stands within the circle of lamplight as though the house belongs to him. Jonathan’s journal is open beside the fire.', ['mina_harker', 'jonathan_harker', 'count_dracula'], 'Keep Mina behind the protective circle', 'The circle holds only while every hand remains steady. Dracula smiles at the boundary as if patience were another form of victory.', 'Confront Dracula with the assembled evidence', 'The Count answers the accusation by forcing Mina to drink from him. The hunters arrive to find the old rules shattered into a new horror.', 'Save the journals before pursuing him', 'You preserve the record, but the Count takes the night and leaves Mina bound to his blood.', { setFlags: { protected_mina: true } }],
+  ['22', 'The Pursuit Begins', 'A railway station and the first hours of pursuit.', 'The party divides between trains, roads, and the river. Mina’s connection to Dracula gives her knowledge of his direction, but every insight costs her strength.', ['mina_harker', 'jonathan_harker', 'arthur_holmwood', 'abraham_van_helsing'], 'Trust Mina’s vision of the river', 'The landscape turns in Mina’s mind: water, a road, a cart, and boxes moving away from the setting sun.', 'Send the fastest party ahead', 'The message reaches the riders before the boat is lost. The pursuit narrows to a single dangerous road.', 'Wait for complete certainty', 'The timetable changes while you deliberate. Dracula gains distance and another night beneath his own sky.', { setFlags: { pursuit_formed: true } }],
+  ['23', 'The Czarina Catherine', 'The river route carrying Dracula’s last cargo upstream.', 'The riverboat moves under a pale sky. Somewhere among its crates is the earth Dracula needs, and somewhere behind it the hunters are closing by rail and road.', ['mina_harker', 'john_seward', 'jonathan_harker'], 'Read the river reports against the train schedule', 'The two routes meet at the same village. The Count is no longer choosing safety; he is choosing the shortest road home.', 'Prepare the interception at the bank', 'You hide horses and weapons before the boat is sighted. The river gives no answer, but the ambush has a shape.', 'Board the boat before the landing', 'The crew sees armed strangers and raises the alarm. The cargo continues upriver while the hunters lose the advantage of surprise.', { setFlags: { river_route_read: true } }],
+  ['24', 'Van Helsing’s Phonograph', 'An eastern road where the hunters divide the last known route.', 'Van Helsing dictates the plan into Seward’s phonograph. Mina’s mark is darkening, and the final boxes are travelling toward the Borgo Pass.', ['abraham_van_helsing', 'mina_harker', 'jonathan_harker'], 'Let Van Helsing set the divisions', 'The plan is severe: one party follows the river, one crosses the mountains, and Mina remains at the centre of the knowledge that binds them.', 'Carry the protective symbols openly', 'The peasants recognize the signs and offer directions. Fear has made them observant allies.', 'Hide the signs to avoid delay', 'You travel faster for an hour, then lose the road where every local guide would have known to turn.', { setFlags: { final_plan_set: true } }],
+  ['25', 'The Last Road', 'The mountain road toward the Borgo Pass.', 'Snow closes over the tracks. The Count’s cart is ahead, escorted by men who believe they carry a nobleman’s goods. Behind them, the hunters ride until the horses fail.', ['jonathan_harker', 'arthur_holmwood', 'abraham_van_helsing', 'mina_harker'], 'Keep the pursuit together through the snow', 'The group refuses the comfort of separation. Each mile costs strength, but no one is left without a witness beside them.', 'Cut across the ridge to meet the cart', 'The ridge is shorter and crueler. You reach the road before sunset, with one chance to choose the place of confrontation.', 'Shelter until morning', 'The storm protects the hunters from pursuit, but it protects Dracula’s cart as well. Dawn may find the box beyond reach.', { setFlags: { last_road_reached: true } }],
+  ['26', 'The Gypsies’ Cart', 'A frozen ravine below the Borgo Pass.', 'The Szgany guard the cart and do not understand the terror behind the orders they have been paid to obey. The sun is sinking; the box must be opened before it reaches the castle road.', ['jonathan_harker', 'arthur_holmwood', 'abraham_van_helsing', 'szgany_carriers'], 'Call on the carriers to abandon the Count’s cargo', 'The carriers see the weapons and the desperation in your faces. Gold cannot compete with the certainty that the box is cursed.', 'Ride directly into the escort', 'The cart breaks formation. Jonathan reaches the box while the others hold the road against men who think they are defending a master.', 'Circle the ravine and wait for darkness', 'The escort enters the pass. The last light leaves the road before the hunters can close it.', { setFlags: { fast_route: true } }],
+  ['27', 'The Record Closes', 'The Borgo Pass, at the last red edge of sunset.', 'The cart stops where the mountain road narrows. Mina feels the bond pull toward the box, while Jonathan raises his knife and the others form a line in the snow. The Count’s last refuge is within reach.', ['jonathan_harker', 'mina_harker', 'abraham_van_helsing', 'arthur_holmwood'], 'Protect Mina while the box is opened', 'Mina remains behind the circle of symbols as the lid gives way. The thing inside is not allowed to choose the hour or the witness.', 'Strike before the sun disappears', 'The knife finds the throat before the last red light leaves the peaks. Dracula’s face changes, collapses, and becomes the dust of a long night.', 'Wait for a safer opening', 'The sun goes. The box closes its secret again, and Mina’s bond becomes the price of hesitation.', { role: 'commitment', resultType: 'ending', setFlags: { final_confrontation: true }, endingRules: [{ endingId: 'dracula_destroyed', requires: [{ kind: 'flag', id: 'protected_mina', equals: true }, { kind: 'flag', id: 'fast_route', equals: true }] }, { endingId: 'mina_lost', requires: [] }] }]
+];
+
+function lateScene(entry) {
+  const [chapter, name, setting, opening, npcs, investigateLabel, investigateNarration, alternativeLabel, alternativeNarration, preparationLabel, preparationNarration, flags] = entry;
+  const id = `dracula_full_${chapter}`;
+  const final = chapter === '27';
+  const authoredFlags = flags.setFlags || {};
+  const flag = (suffix) => ({ ...authoredFlags, [`chapter_${chapter}_${suffix}`]: true });
+  const investigationFlags = { ...flag('investigated') };
+  const choiceFlags = { ...flag('chosen') };
+  const preparationFlags = { ...flag('prepared') };
+  if (chapter === '20') choiceFlags.fast_route = true;
+  if (chapter === '21') investigationFlags.protected_mina = true;
+  if (chapter === '26') choiceFlags.fast_route = true;
+  return {
+    id, name, location: [`chapter_${chapter}`, name], setting, opening: `${opening} The assembled records do not settle the matter; they place a decision before the traveller, whose next act will determine what is learned, what is lost, and how the pursuit continues.`, npcs,
+    agency: { optionalActionsRequired: false, authoredAlternatives: true },
+    dramaturgy: {
+      situation: opening,
+      immediateObjective: `Decide how to act in ${setting.split(',')[0]} before the situation closes around you.`,
+      pressure: `Time, danger, and the people present are narrowing your choices in ${setting.split(',')[0]}.`,
+      presentActors: npcs,
+      nextQuestion: `What will you risk now, and what will you need to learn before leaving ${setting.split(',')[0]}?`
+    },
+    actions: [
+      ['investigate', 'exploration', 'investigation', investigateLabel, investigateLabel, ['read', 'record', 'trace', 'examine', 'investigate'], investigateNarration, { role: 'discovery', replay: 'consumable', setFlags: investigationFlags }],
+      ['choose', 'exploration', 'agency', alternativeLabel, alternativeLabel, ['ask', 'follow', 'trust', 'confront', 'choose'], alternativeNarration, { role: 'alternative', replay: 'consumable', setFlags: choiceFlags }],
+      ['prepare', 'exploration', 'preparation', preparationLabel, preparationLabel, ['prepare', 'guard', 'mark', 'route', 'protect'], preparationNarration, { role: 'preparation', replay: 'consumable', setFlags: preparationFlags }],
+      [final ? 'resolve' : 'continue', final ? 'threat' : 'exit', final ? 'commitment' : 'exit', final ? 'Make the final attempt before sunset' : `Follow the events into chapter ${Number(chapter) + 1}`, final ? 'Make the final attempt' : 'Continue the pursuit', final ? ['strike', 'open', 'sunset', 'finish', 'resolve'] : ['continue', 'pursue', 'road', 'next'], final ? opening : `The chapter closes on a decisive movement. The evidence and consequences gathered here carry forward into the next stage of the pursuit.`, { role: final ? 'commitment' : 'exit', replay: 'consumable', resultType: final ? 'ending' : 'exit', ...(final ? flags : {}) }]
+    ]
+  };
+}
+
+function makeAction(sceneId, spec) {
+  const [id, type, category, label, short, keywords, narration, extra = {}] = spec;
+  const resolved = { ...extra };
+  if (type !== 'exit' && type !== 'threat' || extra.role !== 'commitment') resolved.discover = [`${sceneId}__${id}`];
+  resolved.dramaturgy = extra.dramaturgy || {
+    approach: `You choose to ${label.toLowerCase()}, committing your attention to the immediate problem.`,
+    stakes: `The decision risks time and changes what the people around you will reveal before the journey moves on.`,
+    reaction: narration,
+    changedSituation: `The response leaves you with a concrete consequence: ${narration}`,
+    nextObjective: 'Use this consequence to choose the next deliberate step in the pursuit.',
+    effectSummary: extra.consequenceSummary || narration,
+    ...(type === 'exit' ? { convergence: 'authored-next-beat' } : {})
+  };
+  return action(`${sceneId}__${id}`, type, category, label, short, keywords, narration, resolved);
+}
+function authorDraculaOpening(manifest) {
+  const scenes = manifest.scenes;
+  manifest.items = { ...manifest.items, iron_lantern: { itemId: 'iron_lantern', name: 'Iron lantern' } };
+  ARC.forEach(authored => {
+    const scene = scenes.find(entry => entry.sceneId === authored.id); if (!scene) return;
+    scene.name = authored.name; scene.location = { id: authored.location[0], name: authored.location[1] }; scene.setting = authored.setting; scene.openingNarration = authored.opening; scene.presentNpcs = authored.npcs;
+    scene.agency = { optionalActionsRequired: false, authoredAlternatives: true };
+    scene.dramaturgy = {
+      situation: authored.opening,
+      immediateObjective: authored.id === 'dracula_full_01' ? 'Decide how to respond before the last coach leaves Bistritz.' : 'Choose how to act while the danger in this place is still changing.',
+      pressure: authored.id === 'dracula_full_01' ? 'Dusk is closing in and the people around you are withholding a warning about the road.' : 'The route forward is becoming more dangerous, and delay will change what remains possible.',
+      presentActors: authored.npcs,
+      nextQuestion: authored.id === 'dracula_full_01' ? 'Whom will you trust, and what will you risk before the coach departs?' : 'What will you risk now that the situation has changed?'
+    };
+    scene.actions = authored.actions.map(spec => makeAction(authored.id, spec));
+  });
+  LATE_ARC.forEach(entry => {
+    const authored = lateScene(entry); const scene = scenes.find(candidate => candidate.sceneId === authored.id); if (!scene) return;
+    scene.name = authored.name; scene.location = { id: authored.location[0], name: authored.location[1] }; scene.setting = authored.setting; scene.openingNarration = authored.opening; scene.presentNpcs = authored.npcs;
+    scene.agency = authored.agency;
+    scene.dramaturgy = authored.dramaturgy;
+    scene.actions = authored.actions.map(spec => makeAction(authored.id, spec));
+  });
+  manifest.publicationMode = 'new-book';
+  manifest.agencyPolicy = { strict: true, source: 'gutenberg-345' };
+  manifest.endings = { ...manifest.endings, mina_lost: { endingId: 'mina_lost', title: 'The Road Closes', narration: 'The pursuit ends beneath the mountain night. The record survives, but Mina is lost to the darkness.' } };
+  const edges = manifest.graph.edges;
+  for (let i = 0; i < scenes.length - 1; i += 1) { const from = scenes[i].sceneId; const to = scenes[i + 1].sceneId; const edge = edges.find(item => item.from === from && item.to === to); if (edge) edge.trigger.actionId = `${from}__continue`; }
+  return manifest;
+}
+module.exports = { authorDraculaOpening, ARC };

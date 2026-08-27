@@ -4,7 +4,9 @@
 
 **Supersedes**: `narrative-design-spec.md`, `scene-design-framework.md`, `scene-manifest-template.md`, `scene-system-design.md` (narrative sections). Those files remain for historical reference but this document is authoritative.
 
-**Last updated**: 2026-08-19
+**Last updated**: 2026-08-27
+
+> **Mandatory new-book gate:** Every new Storyline book must follow [`DRAMATIC-AUTHORING-CONTRACT.md`](./DRAMATIC-AUTHORING-CONTRACT.md). Structural validity, deterministic state handling, and anti-funnel checks are necessary but not sufficient; scenes and actions must carry authored dramatic situations, pressure, reactions, changed situations, and next objectives through the full pipeline.
 
 ---
 

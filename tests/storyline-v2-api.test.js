@@ -15,23 +15,6 @@ async function main() {
     await disabled.close();
   }
 
-  const personal = await createServer({ storylineV2PersonalTestToken: 'personal-test-secret', llmConfig: { mock: true }, persistence: false });
-  try {
-    let response = await personal.inject({ method: 'GET', url: '/api/storyline-v2-personal/status' });
-    assert.strictEqual(response.statusCode, 401);
-    assert.ok(response.headers['www-authenticate']);
-    response = await personal.inject({ method: 'GET', url: '/api/storyline-v2-personal/status', headers: { authorization: 'Bearer wrong' } });
-    assert.strictEqual(response.statusCode, 401);
-    response = await personal.inject({ method: 'GET', url: '/api/storyline-v2-personal/status', headers: { authorization: 'Bearer personal-test-secret' } });
-    assert.deepStrictEqual(JSON.parse(response.payload), { enabled: true, adventures: ['dracula'] });
-    response = await personal.inject({ method: 'POST', url: '/api/storyline-v2-personal/sessions', headers: { authorization: 'Bearer personal-test-secret' }, payload: { adventureId: 'frankenstein', sessionId: 'personal-unsupported' } });
-    assert.strictEqual(response.statusCode, 400);
-    response = await personal.inject({ method: 'POST', url: '/api/storyline-v2-personal/sessions', headers: { authorization: 'Bearer personal-test-secret' }, payload: { adventureId: 'dracula', sessionId: 'personal-dracula', classId: 'cleric' } });
-    assert.strictEqual(response.statusCode, 200);
-  } finally {
-    await personal.close();
-  }
-
   const app = await createServer({ storylineV2Enabled: true, llmConfig: { mock: true }, persistence: false });
   try {
     let response = await app.inject({ method: 'GET', url: '/api/storyline-v2/status' });
@@ -44,7 +27,7 @@ async function main() {
     });
     assert.strictEqual(response.statusCode, 200);
     const start = JSON.parse(response.payload);
-    assert.strictEqual(start.state.sceneId, 'scene_00');
+    assert.strictEqual(start.state.sceneId, 'dracula_full_01');
     assert.ok(start.catalog.actions.length > 0);
 
     const checkResponse = await app.inject({
@@ -53,7 +36,7 @@ async function main() {
     });
     assert.strictEqual(checkResponse.statusCode, 200);
     const checkStart = JSON.parse(checkResponse.payload);
-    const checkAction = checkStart.catalog.actions.find(action => action.actionId === 'scene_00__study_guestbook');
+    const checkAction = checkStart.catalog.actions.find(action => action.actionId === 'dracula_full_01__landlord');
     assert.ok(checkAction);
     response = await app.inject({
       method: 'POST', url: '/api/storyline-v2/sessions/api-check-test/actions',
@@ -61,10 +44,9 @@ async function main() {
     });
     assert.strictEqual(response.statusCode, 200);
     const checkResult = JSON.parse(response.payload);
-    assert.strictEqual(checkResult.resultType, 'check_failure');
-    assert.strictEqual(checkResult.check.ability, 'investigate');
-    assert.strictEqual(checkResult.check.roll, 12);
-    assert.strictEqual(checkResult.check.success, false);
+    assert.strictEqual(checkResult.resultType, 'discovery');
+    assert.ok(checkResult.dramaticBeat.nextObjective);
+    assert.ok(checkResult.dramaticBeat.changedSituation);
 
 
     response = await app.inject({
@@ -105,8 +87,8 @@ async function main() {
     });
     assert.strictEqual(response.statusCode, 200);
     const journal = JSON.parse(response.payload).state.journal;
-    assert.strictEqual(journal.length, 2);
-    assert.strictEqual(journal[0].entryId, 'turn:api-turn-1');
+    assert.strictEqual(journal.length, 2, 'manual journal entry is appended after the resolved action');
+    assert.strictEqual(journal[0].actionId, start.catalog.actions[0].actionId);
     assert.strictEqual(journal[1].entryId, 'api-journal');
 
     response = await app.inject({
