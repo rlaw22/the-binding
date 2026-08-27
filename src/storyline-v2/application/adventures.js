@@ -19,3 +19,15 @@ function createStorylineV2Service(options = {}) {
 }
 
 module.exports = { createStorylineV2Service };
+
+function createStorylineV2CanaryService(options = {}) {
+  const { buildDraculaCanaryManifest } = require('../adapters/native-dracula-canary');
+  const canary = buildDraculaCanaryManifest();
+  const resolvedOptions = { ...options };
+  if (!resolvedOptions.sessionRepository && process.env.STORYLINE_V2_SESSION_FILE) {
+    resolvedOptions.sessionRepository = new FileSessionRepository(process.env.STORYLINE_V2_SESSION_FILE);
+  }
+  return new StorylineV2Service({ [canary.adventureId]: canary }, resolvedOptions);
+}
+
+module.exports.createStorylineV2CanaryService = createStorylineV2CanaryService;

@@ -1,0 +1,10 @@
+{
+  "schemaVersion": "1.0",
+  "adventureId": "dracula-full-canary",
+  "sceneCount": 27,
+  "actionCount": 108,
+  "edgeCount": 26,
+  "entry": "dracula_full_01",
+  "warnings": [],
+  "reviewStatus": "development-canary; human narrative review required"
+}

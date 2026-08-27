@@ -1,5 +1,7 @@
 'use strict';
 
+const crypto = require('crypto');
+
 /**
  * Storyline v2 transport handlers.
  *
@@ -7,7 +9,30 @@
  * domain/application outcomes to HTTP-shaped responses. They do not own
  * story state, persistence, or browser behavior.
  */
-function createStorylineV2Handlers({ service, enabled = true }) {
+function createStorylineV2Handlers({ service, enabled = true, bearerToken = undefined }) {
+  function authorized(request) {
+    if (!bearerToken) return false;
+    const header = request && request.headers && request.headers.authorization;
+    const prefix = 'Bearer ';
+    if (typeof header !== 'string' || !header.startsWith(prefix)) return false;
+    const presented = Buffer.from(header.slice(prefix.length), 'utf8');
+    const expected = Buffer.from(bearerToken, 'utf8');
+    return presented.length === expected.length && crypto.timingSafeEqual(presented, expected);
+  }
+
+  function guard(request, reply) {
+    if (authorized(request)) return true;
+    reply.header('WWW-Authenticate', 'Bearer realm="storyline-v2-personal"');
+    reply.status(401).send({ error: 'Personal Storyline v2 access is unauthorized' });
+    return false;
+  }
+
+  function protectedHandler(handler) {
+    return async (request, reply) => {
+      if (!guard(request, reply)) return;
+      return handler(request, reply);
+    };
+  }
   function disabled(reply) {
     return reply.status(404).send({ error: 'Storyline v2 is disabled' });
   }
@@ -21,7 +46,7 @@ function createStorylineV2Handlers({ service, enabled = true }) {
     return result.error === 'STALE_CATALOG' ? 409 : 422;
   }
 
-  return {
+  const handlers = {
     status: async () => ({
       enabled,
       adventures: enabled ? Array.from(service.adventures.keys()) : []
@@ -115,6 +140,9 @@ function createStorylineV2Handlers({ service, enabled = true }) {
       }
     }
   };
+
+  if (bearerToken === undefined) return handlers;
+  return Object.fromEntries(Object.entries(handlers).map(([name, handler]) => [name, protectedHandler(handler)]));
 }
 
 module.exports = { createStorylineV2Handlers };

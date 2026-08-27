@@ -108,17 +108,51 @@
     var scene = snapshot && snapshot.catalog;
     if (!scene) return;
     renderBookPresentation(snapshot);
-    var narrative = snapshot.state && snapshot.state.sceneId ? scene.sceneId : '';
+    var narrative = snapshot.state && snapshot.state.sceneId ? snapshot.state.sceneId : '';
     if (narrative && typeof root.addMessage === 'function' && (!root._storylineV2Scene || root._storylineV2Scene !== narrative)) {
       root._storylineV2Scene = narrative;
-      if (scene.sceneName) root.addMessage('system', scene.sceneName);
-      if (scene.setting) root.addMessage('dm', scene.setting);
-      if (scene.openingNarration && scene.openingNarration !== scene.setting) root.addMessage('dm', scene.openingNarration);
+      // Scene IDs, slugs, chapter headings, and build labels are authoring
+      // metadata—not player-facing narrative. Render only an authored title
+      // and distinct prose; never fall back to an internal ID.
+      var sceneTitle = scene.sceneName && !/^scene[_ -]/i.test(scene.sceneName) ? scene.sceneName : '';
+      var setting = scene.setting || '';
+      var opening = scene.openingNarration || '';
+      if (sceneTitle) root.addMessage('system', sceneTitle);
+      if (setting && !/^chapter\s+\d+\s*:/i.test(setting) && setting !== sceneTitle) root.addMessage('dm', setting);
+      if (opening && opening !== setting && !/^chapter\s+\d+\s*:/i.test(opening)) root.addMessage('dm', opening);
       if (Array.isArray(scene.presentNpcs) && scene.presentNpcs.length) root.addMessage('system', 'Present: ' + scene.presentNpcs.join(', '));
     }
+    var actions = document.getElementById('actions');
+    if (actions) actions.classList.remove('hidden');
+    var inputRow = document.getElementById('input-row');
+    if (inputRow) inputRow.style.display = 'flex';
     root.storylineV2Client.renderCatalog(document.getElementById('action-buttons'), function (action) {
       submit(action);
     });
+    var freeInput = document.getElementById('free-input');
+    var sendButton = document.getElementById('send-btn');
+    if (freeInput && sendButton && !freeInput.dataset.storylineV2Bound) {
+      var sendText = function () {
+        var text = freeInput.value.trim();
+        if (!text || submissionInFlight) return;
+        submissionInFlight = true;
+        root.storylineV2Client.submitText(text, 'turn-' + Date.now().toString(36))
+          .then(function (result) {
+            freeInput.value = '';
+            if (result && result.result && result.result.narrative && typeof root.addMessage === 'function') root.addMessage('dm', result.result.narrative);
+            render(root.storylineV2Client.snapshot);
+          })
+          .catch(function (error) {
+            return refreshAfterStale(error).then(function (refreshed) {
+              if (!refreshed && typeof root.addMessage === 'function') root.addMessage('error', error.message || 'Storyline v2 text action failed.');
+            });
+          })
+          .finally(function () { submissionInFlight = false; });
+      };
+      sendButton.addEventListener('click', sendText);
+      freeInput.addEventListener('keydown', function (event) { if (event.key === 'Enter') sendText(); });
+      freeInput.dataset.storylineV2Bound = 'true';
+    }
   }
 
   function refreshAfterStale(error) {
@@ -156,9 +190,24 @@
       var statusResponse = await fetch('/api/storyline-v2/status', { headers: { 'Accept': 'application/json' } });
       if (!statusResponse.ok) return false;
       var status = await statusResponse.json();
-      if (!status.enabled || !Array.isArray(status.adventures) || status.adventures.indexOf(adventureId) === -1) return false;
+      var base = '/api/storyline-v2';
+      var accessToken = null;
 
-      var client = new root.StorylineV2Client();
+      if (!status.enabled || !Array.isArray(status.adventures) || status.adventures.indexOf(adventureId) === -1) {
+        if (adventureId !== 'dracula') return false;
+        accessToken = window.prompt('Private Storyline V2 access token (kept only in this browser tab):');
+        if (!accessToken) return false;
+        base = '/api/storyline-v2-personal';
+        var personalStatusResponse = await fetch(base + '/status', { headers: { 'Accept': 'application/json', 'Authorization': 'Bearer ' + accessToken } });
+        if (!personalStatusResponse.ok) {
+          window.alert('That personal access token was not accepted.');
+          return false;
+        }
+        var personalStatus = await personalStatusResponse.json();
+        if (!personalStatus.enabled || !Array.isArray(personalStatus.adventures) || personalStatus.adventures.indexOf(adventureId) === -1) return false;
+      }
+
+      var client = new root.StorylineV2Client({ base: base, accessToken: accessToken });
       var snapshot = await client.start(adventureId, classId, sessionId());
       root.storylineV2Client = client;
       root.storylineV2Active = true;

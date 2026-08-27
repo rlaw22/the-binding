@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "scope": {
+    "chapters": [
+      1,
+      27
+    ]
+  },
+  "objective": "Author a narrative-first, deterministic V2 adaptation from the whole novel while preserving viewpoint, knowledge timing, canonical anchors, and meaningful agency.",
+  "authoringLoop": [
+    "read chapter dossier and source excerpts",
+    "map canonical beat and knowledge delta",
+    "author pressure and bounded actions",
+    "audit continuity and unsupported inventions",
+    "compile and simulate"
+  ],
+  "promptPackets": [
+    {
+      "id": "chapter-to-scene",
+      "instruction": "Use only supplied source excerpts, chapter dossier, entity registry, and continuity policy. Author playable pressure without revealing information before the viewpoint can know it."
+    },
+    {
+      "id": "continuity-audit",
+      "instruction": "Reject unsupported entities, premature revelations, erased canonical anchors, arbitrary escapes, and choices with no consequence."
+    }
+  ],
+  "publicationGate": "This generated pass is a development canary, not final prose approval."
+}

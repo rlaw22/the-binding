@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "scope": {
+    "chapters": [
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "title": "Dracula — The Threshold East",
+  "objective": "Turn the first four chapters into a compact playable slice that preserves the epistolary uncertainty while giving Jonathan meaningful choices around preparation, observation, trust, and evidence.",
+  "playerPromise": "You are a capable solicitor entering a country that knows more about your destination than you do. Your choices determine what you notice and what protection or evidence you carry into captivity.",
+  "canonicalAnchors": [
+    "arrival at Bistritz",
+    "Golden Krone welcome",
+    "Count’s letter",
+    "St George’s Eve warning",
+    "protective crucifix",
+    "coach departs",
+    "coach through the Borgo Pass",
+    "strange midnight driver",
+    "arrival at castle",
+    "Dracula’s impossible welcome",
+    "Jonathan learns the castle has no servants",
+    "conversation with Dracula",
+    "wolf story and geography",
+    "Jonathan sees Dracula crawl down the wall",
+    "Jonathan realizes imprisonment",
+    "letters under compulsion",
+    "women at the castle",
+    "Dracula’s warning",
+    "Jonathan explores locked rooms",
+    "vampire attack interrupted"
+  ],
+  "decisionDesign": [
+    {
+      "id": "prepare_at_inn",
+      "pressure": "duty versus local warning",
+      "choices": [
+        "accept the crucifix",
+        "study the warnings",
+        "leave without delay"
+      ],
+      "consequence": "protection or knowledge changes; departure remains canonical"
+    },
+    {
+      "id": "read_the_host",
+      "pressure": "courtesy versus suspicion",
+      "choices": [
+        "question Dracula",
+        "map the castle",
+        "observe silently"
+      ],
+      "consequence": "knowledge flags and evidence differ; imprisonment remains canonical"
+    },
+    {
+      "id": "preserve_evidence",
+      "pressure": "survival versus truth",
+      "choices": [
+        "write honestly",
+        "comply with controlled letters",
+        "search for another exit"
+      ],
+      "consequence": "journal evidence and danger differ; first supernatural confrontation remains canonical"
+    }
+  ],
+  "responsePattern": "Every action yields a bounded authored response with visible consequence, followed by a clear next decision. No invented locations, NPCs, or escape routes outside the source-derived slice.",
+  "promptPackets": [
+    {
+      "id": "scene-authoring",
+      "inputs": [
+        "chapter dossiers",
+        "entity registry",
+        "continuity rules",
+        "decision design"
+      ],
+      "instruction": "Author scene text and legal actions only from the supplied source facts; preserve canonical anchors and expose pressure without resolving mysteries early."
+    },
+    {
+      "id": "continuity-audit",
+      "inputs": [
+        "chapter dossiers",
+        "manifest draft"
+      ],
+      "instruction": "Check viewpoint, knowledge timing, location continuity, canonical anchors, and unsupported entities before compilation."
+    }
+  ]
+}

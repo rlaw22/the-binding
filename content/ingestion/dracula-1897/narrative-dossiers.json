@@ -1,0 +1,109 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "characters": [
+    {
+      "id": "jonathan_harker",
+      "name": "Jonathan Harker",
+      "role": "protagonist",
+      "knowledgeArc": "professional confidence to imprisoned witness and survivor"
+    },
+    {
+      "id": "mina_harker",
+      "name": "Mina Harker",
+      "role": "protagonist/organizer",
+      "knowledgeArc": "observant correspondent to strategic coordinator and resilient survivor"
+    },
+    {
+      "id": "count_dracula",
+      "name": "Count Dracula",
+      "role": "antagonist",
+      "knowledgeArc": "courteous host masking predation; escalating strategic threat"
+    },
+    {
+      "id": "lucy_wWestenra",
+      "name": "Lucy Westenra",
+      "role": "victim/relationship anchor",
+      "knowledgeArc": "social intimacy, illness, transformation, and tragic loss"
+    },
+    {
+      "id": "abraham_van_helsing",
+      "name": "Professor Abraham Van Helsing",
+      "role": "mentor/investigator",
+      "knowledgeArc": "expert interpreter and forceful leader against the supernatural threat"
+    },
+    {
+      "id": "john_seward",
+      "name": "Dr. John Seward",
+      "role": "investigator/chronicler",
+      "knowledgeArc": "empirical observer forced to integrate impossible evidence"
+    },
+    {
+      "id": "arthur_holmwood",
+      "name": "Arthur Holmwood",
+      "role": "ally",
+      "knowledgeArc": "grief, loyalty, and commitment to the hunt"
+    },
+    {
+      "id": "quincey_morris",
+      "name": "Quincey Morris",
+      "role": "ally",
+      "knowledgeArc": "practical courage and sacrificial commitment"
+    }
+  ],
+  "locations": [
+    {
+      "id": "golden_krone_inn",
+      "name": "Golden Krone Hotel",
+      "function": "threshold; warnings and protective gift"
+    },
+    {
+      "id": "borgo_pass",
+      "name": "Borgo Pass",
+      "function": "threshold; isolation and supernatural transit"
+    },
+    {
+      "id": "castle_dracula",
+      "name": "Castle Dracula",
+      "function": "captivity; discovery and predation"
+    },
+    {
+      "id": "whitby",
+      "name": "Whitby",
+      "function": "arrival of the Demeter and Lucy’s deterioration"
+    },
+    {
+      "id": "carfax",
+      "name": "Carfax Abbey",
+      "function": "Dracula’s London base and strategic target"
+    },
+    {
+      "id": "london",
+      "name": "London",
+      "function": "investigation, social life, and pursuit"
+    },
+    {
+      "id": "exeter",
+      "name": "Exeter",
+      "function": "Mina and Jonathan’s recovery and records"
+    }
+  ],
+  "motifs": [
+    "thresholds and invitations",
+    "documents and competing records",
+    "blood and transfusion",
+    "religious protections",
+    "wolves and dogs",
+    "boxes of earth",
+    "light and darkness",
+    "knowledge versus disbelief"
+  ],
+  "authoringRules": [
+    "preserve epistolary viewpoint and uncertainty",
+    "make each playable choice express pressure or knowledge tradeoff",
+    "show consequences in state, relationships, access, or information",
+    "keep canonical anchor events intact while allowing authored agency around them",
+    "use companions as reacting agents, not decoration",
+    "missed optional discoveries remain silent and never block essential progression"
+  ]
+}

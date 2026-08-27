@@ -38,7 +38,7 @@ const Inventory = require('../inventory/inventory');
 const { listStorylineItems, addStorylineItem } = require('../story/storyline-inventory');
 const { validateEquipmentSlot, getInventoryWeight, getEncumbranceStatus, getCapacity, tradeItem, getShoppeCatalog, buyItem, sellItem, hagglePrice, getShoppeRecommendations, getShoppeTransactionLog } = require('../inventory/inventory');
 const { GameMode, getModeConfig, getModeMeta, getUIConfig, listModes, isValidMode } = require('../game-mode');
-const { createStorylineV2Service } = require('../storyline-v2/adventures');
+const { createStorylineV2Service, createStorylineV2CanaryService } = require('../storyline-v2/adventures');
 const { createStorylineV2Handlers } = require('../storyline-v2/transport/handlers');
 const { createDigitalDMSession, getDigitalDMInfo, isDigitalDM } = require('../campaign/digital-dm');
 const { listDigitalDMScenarios, getDigitalDMScenario, getScenarioWorldSeed } = require('../campaign/digital-dm-scenarios');
@@ -148,6 +148,18 @@ async function createServer(options = {}) {
     service: storylineV2 || { adventures: new Map() },
     enabled: storylineV2Enabled
   });
+  // Personal playtest access is deliberately separate from the public V2 flag.
+  // The token is supplied only through deployment environment configuration.
+  const personalTestToken = options.storylineV2PersonalTestToken || process.env.STORYLINE_V2_PERSONAL_TEST_TOKEN || null;
+  const personalCanaryEnabled = options.storylineV2PersonalCanary === true || process.env.STORYLINE_V2_PERSONAL_CANARY === 'true';
+  const personalStorylineV2 = personalTestToken
+    ? (personalCanaryEnabled ? createStorylineV2CanaryService() : createStorylineV2Service())
+    : null;
+  const personalStorylineV2Handlers = createStorylineV2Handlers({
+    service: personalStorylineV2 || { adventures: new Map() },
+    enabled: !!personalTestToken,
+    bearerToken: personalTestToken || ''
+  });
 
   // Voice / TTS service — additive, gracefully disabled if no API key
   const voiceService = createVoiceService();
@@ -164,6 +176,15 @@ async function createServer(options = {}) {
   app.post('/api/storyline-v2/sessions/:id/bookmarks', storylineV2Handlers.bookmark);
   app.post('/api/storyline-v2/sessions/:id/journal', storylineV2Handlers.journal);
   app.post('/api/storyline-v2/sessions/:id/actions', storylineV2Handlers.submit);
+
+  // Protected personal canary surface. Public Storyline V2 remains unchanged.
+  app.get('/api/storyline-v2-personal/status', personalStorylineV2Handlers.status);
+  app.post('/api/storyline-v2-personal/sessions', personalStorylineV2Handlers.start);
+  app.get('/api/storyline-v2-personal/sessions/:id', personalStorylineV2Handlers.snapshot);
+  app.post('/api/storyline-v2-personal/sessions/:id/transition', personalStorylineV2Handlers.transition);
+  app.post('/api/storyline-v2-personal/sessions/:id/bookmarks', personalStorylineV2Handlers.bookmark);
+  app.post('/api/storyline-v2-personal/sessions/:id/journal', personalStorylineV2Handlers.journal);
+  app.post('/api/storyline-v2-personal/sessions/:id/actions', personalStorylineV2Handlers.submit);
 
   app.get('/api/adventures', async () => {
     return listAdventures();

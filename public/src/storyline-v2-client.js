@@ -7,6 +7,9 @@
   function StorylineV2Client(options) {
     options = options || {};
     this.base = options.base || '/api/storyline-v2';
+    // Optional ephemeral bearer credential for protected personal/canary surfaces.
+    // Callers supply it at construction time; this adapter never persists it.
+    this.accessToken = options.accessToken || null;
     this.sessionId = null;
     this.snapshot = null;
     this.busy = false;
@@ -15,6 +18,7 @@
   StorylineV2Client.prototype.request = async function (url, init) {
     init = init || {};
     init.headers = Object.assign({ 'Content-Type': 'application/json' }, init.headers || {});
+    if (this.accessToken) init.headers.Authorization = 'Bearer ' + this.accessToken;
     var response = await fetch(this.base + url, init);
     var data = null;
     var contentType = response.headers && typeof response.headers.get === 'function' ? response.headers.get('content-type') : '';
@@ -88,10 +92,10 @@
       card.dataset.historyIndex = String(index);
       var heading = document.createElement('h3');
       heading.className = 'storyline-v2-journal-entry-title';
-      heading.textContent = entry.title || entry.eventLabel || ('Turn ' + (entry.turnNumber || index + 1));
+      heading.textContent = entry.title || entry.eventLabel || 'Recorded action';
       var meta = document.createElement('p');
       meta.className = 'storyline-v2-journal-entry-meta';
-      meta.textContent = [entry.sceneName || entry.sceneId, entry.turnNumber ? 'Turn ' + entry.turnNumber : ''].filter(Boolean).join(' · ');
+      meta.textContent = entry.turnNumber ? 'Turn ' + entry.turnNumber : '';
       var body = document.createElement('p');
       body.className = 'storyline-v2-journal-entry-body';
       body.textContent = entry.summary || entry.narrative || '';
@@ -172,7 +176,7 @@
     var catalog = this.snapshot.catalog;
     (catalog.actions || []).forEach(function (action) {
       var button = document.createElement('button');
-      button.type = 'button'; button.className = 'storyline-v2-action';
+      button.type = 'button'; button.className = 'storyline-v2-action action-btn';
       button.dataset.actionId = action.actionId; button.dataset.actionType = action.type || ''; button.dataset.category = action.category || '';
       button.dataset.catalogVersion = catalog.catalogVersion;
       button.setAttribute('aria-label', (action.label || action.shortLabel || action.actionId) + (action.subtitle ? ' — ' + action.subtitle : ''));

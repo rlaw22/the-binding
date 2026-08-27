@@ -38,6 +38,7 @@ function actionFromContent(content, sceneId) {
     label: content.label,
     shortLabel: content.label,
     keywords: content.keywords || [],
+    replay: 'repeatable',
     resolution: {
       resultType: itemId ? 'acquisition' : (content.discovery ? 'discovery' : 'atmosphere'),
       narration: content.discovery || `You ${String(content.label || '').toLowerCase()}.`,
@@ -56,6 +57,7 @@ function actionFromBadChoice(scene) {
     category: 'risk',
     label: badChoice.label,
     shortLabel: badChoice.label,
+    replay: 'repeatable',
     resolution: {
       resultType: 'bad_choice',
       narration: badChoice.consequence || badChoice.label,
@@ -105,6 +107,7 @@ function classAction(sceneId, classId, label, narration, flagId) {
     shortLabel: label,
     availability: { classes: [classId] },
     keywords: [classId, label],
+    replay: 'repeatable',
     resolution: {
       resultType: 'class_action',
       narration,
@@ -146,6 +149,7 @@ function authoredBranchActions(scene) {
       label: 'Hold the safe house and protect Mina',
       shortLabel: 'Protect Mina',
       keywords: ['hold', 'defend', 'protect', 'mina', 'safe house'],
+      replay: 'consumable',
       resolution: {
         resultType: 'branch',
         narration: 'You hold the line until dawn. The assault costs you time, but Mina is not abandoned, and the group escapes together.',
@@ -161,6 +165,7 @@ function authoredBranchActions(scene) {
       label: 'Trust Van Helsing and prepare the mercy ritual',
       shortLabel: 'Prepare mercy ritual',
       keywords: ['trust', 'van helsing', 'mercy', 'ritual', 'lucy'],
+      replay: 'consumable',
       resolution: {
         resultType: 'branch',
         narration: 'You accept the terrible truth and help Van Helsing prepare the ritual that may free Lucy’s soul.',
@@ -176,6 +181,7 @@ function authoredBranchActions(scene) {
       label: 'Charter the fastest route to Varna',
       shortLabel: 'Charter fast route',
       keywords: ['charter', 'fast', 'route', 'varna', 'ship'],
+      replay: 'consumable',
       resolution: {
         resultType: 'branch',
         narration: 'You spend the available funds to secure the fastest passage east. The pursuit gains precious hours.',
