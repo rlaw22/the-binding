@@ -1,0 +1,1426 @@
+{
+  "schemaVersion": "2.0",
+  "adventureId": "dracula-opening-dramatic-002",
+  "title": "Dracula: The Threshold East — Branching Opening Candidate",
+  "publicationMode": "new-book",
+  "source": {
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "sourceId": "dracula-1897-gutenberg-345",
+    "generation": "dracula-opening-dramatic-rebuild-002-branch-slice",
+    "parentCandidate": "dracula-opening-dramatic-001"
+  },
+  "narrativePolicy": {
+    "sourceFidelity": "high",
+    "playerAgency": "guided",
+    "endingPolicy": "authored",
+    "allowOptionalBranches": true
+  },
+  "agencyPolicy": {
+    "strict": true
+  },
+  "prologue": {
+    "text": "A solicitor travels east on business, carrying a letter from a count he has never met.",
+    "startingSceneId": "dracula_opening_01"
+  },
+  "classes": [
+    "fighter",
+    "cleric",
+    "mage",
+    "rogue"
+  ],
+  "items": {
+    "protective_crucifix": {
+      "itemId": "protective_crucifix",
+      "name": "Protective crucifix"
+    },
+    "iron_lantern": {
+      "itemId": "iron_lantern",
+      "name": "Iron lantern"
+    }
+  },
+  "threats": {},
+  "scenes": [
+    {
+      "sceneId": "dracula_opening_01",
+      "actId": "act_1",
+      "name": "Golden Krone",
+      "location": {
+        "id": "beat_01_golden_krone",
+        "name": "Golden Krone"
+      },
+      "setting": "At the Golden Krone in Bistritz, Jonathan has one evening before the coach leaves east. The landlord watches the clock, an old woman grips a crucifix, and conversation stops whenever Castle Dracula is mentioned.",
+      "presentNpcs": [
+        "golden_krone_landlord",
+        "old_woman_at_inn",
+        "stable_boy"
+      ],
+      "openingNarration": "At the Golden Krone in Bistritz, Jonathan has one evening before the coach leaves east. The landlord watches the clock, an old woman grips a crucifix, and conversation stops whenever Castle Dracula is mentioned.\n\nThe coach will leave before the last light fails; local fear is urgent but incomplete, and professional duty argues against delay.",
+      "dramaturgy": {
+        "situation": "At the Golden Krone in Bistritz, Jonathan has one evening before the coach leaves east. The landlord watches the clock, an old woman grips a crucifix, and conversation stops whenever Castle Dracula is mentioned.",
+        "immediateObjective": "Decide what to trust and what protection or evidence to carry onto the night road.",
+        "pressure": "The coach will leave before the last light fails; local fear is urgent but incomplete, and professional duty argues against delay.",
+        "presentActors": [
+          {
+            "id": "golden_krone_landlord",
+            "stance": "Wants Jonathan gone safely but fears naming the Count aloud."
+          },
+          {
+            "id": "old_woman_at_inn",
+            "stance": "Believes the journey is dangerous and presses a crucifix on Jonathan despite his reluctance."
+          },
+          {
+            "id": "stable_boy",
+            "stance": "Knows the horses have been changed and avoids explaining why."
+          }
+        ],
+        "nextQuestion": "Whom will Jonathan trust before the coach takes him beyond the last ordinary road?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "arrival at Bistritz",
+          "Golden Krone welcome",
+          "St George’s Eve warning",
+          "protective crucifix",
+          "coach departs"
+        ],
+        "beatId": "beat_01_golden_krone"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_01__question_landlord",
+          "contentId": "dracula_opening_01__question_landlord",
+          "type": "exploration",
+          "category": "alternative",
+          "label": "Question the landlord privately about the Borgo Pass.",
+          "shortLabel": "Question the landlord privately about the Borgo Pass.",
+          "keywords": [
+            "question",
+            "the",
+            "landlord",
+            "privately",
+            "about",
+            "the",
+            "borgo",
+            "pass"
+          ],
+          "role": "alternative",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Question the landlord privately about the Borgo Pass.",
+            "stakes": "Jonathan may gain a credible warning but make the innkeeper more afraid to help him.",
+            "reaction": "The landlord lowers his voice, refuses to say the Count’s name, and presses a crucifix into Jonathan’s palm.",
+            "changedSituation": "Jonathan now carries protection and knows the fear is shared by someone with local knowledge.",
+            "nextObjective": "Decide whether to investigate the stable or leave while the coach still waits.",
+            "effectSummary": "Sets authored flag landlord_warning_heard."
+          },
+          "resolution": {
+            "resultType": "alternative",
+            "narration": "The landlord lowers his voice, refuses to say the Count’s name, and presses a crucifix into Jonathan’s palm.",
+            "setFlags": {
+              "landlord_warning_heard": true
+            },
+            "addItems": [
+              "protective_crucifix"
+            ]
+          }
+        },
+        {
+          "actionId": "dracula_opening_01__inspect_stable",
+          "contentId": "dracula_opening_01__inspect_stable",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Inspect the coach harness and ask the stable boy what changed.",
+          "shortLabel": "Inspect the coach harness and ask the stable boy what changed.",
+          "keywords": [
+            "inspect",
+            "the",
+            "coach",
+            "harness",
+            "and",
+            "ask",
+            "the",
+            "stable",
+            "boy",
+            "what",
+            "changed"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Inspect the coach harness and ask the stable boy what changed.",
+            "stakes": "Time is spent on practical evidence instead of reassurance, and the boy may refuse to speak.",
+            "reaction": "The boy reveals that the horses were changed twice and will not meet Jonathan’s eyes when the pass is mentioned.",
+            "changedSituation": "The road ahead has a physical warning: even the animals have been prepared for something the people will not name.",
+            "nextObjective": "Choose whether duty outweighs the evidence of danger.",
+            "effectSummary": "Sets authored flag road_prepared."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "The boy reveals that the horses were changed twice and will not meet Jonathan’s eyes when the pass is mentioned.",
+            "setFlags": {
+              "road_prepared": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_01__accept_crucifix",
+          "contentId": "dracula_opening_01__accept_crucifix",
+          "type": "exploration",
+          "category": "preparation",
+          "label": "Accept the old woman’s crucifix without pretending to understand her fear.",
+          "shortLabel": "Accept the old woman’s crucifix without pretending to understand her fear.",
+          "keywords": [
+            "accept",
+            "the",
+            "old",
+            "woman",
+            "s",
+            "crucifix",
+            "without",
+            "pretending",
+            "to",
+            "understand",
+            "her",
+            "fear"
+          ],
+          "role": "preparation",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Accept the old woman’s crucifix without pretending to understand her fear.",
+            "stakes": "Jonathan carries an unfamiliar protection and admits that local testimony has unsettled his confidence.",
+            "reaction": "The woman kisses the crucifix and whispers a blessing; the landlord looks relieved, then immediately checks the clock.",
+            "changedSituation": "Jonathan has gained protection, but the coach’s departure is now imminent.",
+            "nextObjective": "Board now, or spend the remaining minutes asking one question that may change the journey.",
+            "effectSummary": "Sets authored flag protected_by_crucifix."
+          },
+          "resolution": {
+            "resultType": "preparation",
+            "narration": "The woman kisses the crucifix and whispers a blessing; the landlord looks relieved, then immediately checks the clock.",
+            "setFlags": {
+              "protected_by_crucifix": true
+            },
+            "addItems": [
+              "protective_crucifix"
+            ]
+          }
+        },
+        {
+          "actionId": "dracula_opening_01__trust_warning",
+          "contentId": "dracula_opening_01__trust_warning",
+          "type": "exit",
+          "category": "exit",
+          "label": "Trust the landlord’s warning and board with the crucifix hidden beneath your coat.",
+          "shortLabel": "Trust the landlord’s warning and board with the crucifix hidden beneath your coat.",
+          "keywords": [
+            "trust",
+            "the",
+            "landlord",
+            "s",
+            "warning",
+            "and",
+            "board",
+            "with",
+            "the",
+            "crucifix",
+            "hidden",
+            "beneath",
+            "your",
+            "coat"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_02_protected_coach",
+          "dramaturgy": {
+            "approach": "Trust the landlord’s warning and board with the crucifix hidden beneath your coat.",
+            "stakes": "Jonathan accepts local testimony over professional confidence; protection may preserve him, but the driver may notice he is no longer ignorant.",
+            "reaction": "The landlord sees the crucifix disappear beneath Jonathan’s coat and gives one relieved nod. Outside, the coachman calls again—not impatiently now, but as if someone has told him the decision is made.",
+            "changedSituation": "Jonathan leaves Bistritz protected and warned, while the people who helped him remain behind with the knowledge that he believed them.",
+            "nextObjective": "Read the road from behind the crucifix and determine what the ordinary coach is carrying him toward.",
+            "effectSummary": "Sets authored flag trusted_local_warning.",
+            "convergence": "beat_02_protected_coach"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The landlord sees the crucifix disappear beneath Jonathan’s coat and gives one relieved nod. Outside, the coachman calls again—not impatiently now, but as if someone has told him the decision is made.",
+            "setFlags": {
+              "trusted_local_warning": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_01__investigate_then_board",
+          "contentId": "dracula_opening_01__investigate_then_board",
+          "type": "exit",
+          "category": "exit",
+          "label": "Investigate the stable before boarding, carrying evidence rather than reassurance onto the road.",
+          "shortLabel": "Investigate the stable before boarding, carrying evidence rather than reassurance onto the road.",
+          "keywords": [
+            "investigate",
+            "the",
+            "stable",
+            "before",
+            "boarding",
+            "carrying",
+            "evidence",
+            "rather",
+            "than",
+            "reassurance",
+            "onto",
+            "the",
+            "road"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_03_evidence_coach",
+          "dramaturgy": {
+            "approach": "Investigate the stable before boarding, carrying evidence rather than reassurance onto the road.",
+            "stakes": "Jonathan spends the last safe minutes seeking facts; he may learn what changed the horses, but the coach will leave before he can ask for comfort.",
+            "reaction": "The stable boy finally points to a cut in the harness leather and says the previous driver refused the pass. Jonathan boards with the evidence folded in his pocket, too late to make the warning public.",
+            "changedSituation": "Jonathan leaves with a physical clue and an unanswered question: who changed the horses, and why was the first driver afraid?",
+            "nextObjective": "Compare the coach’s behavior with the stable boy’s evidence before the road removes every witness.",
+            "effectSummary": "Sets authored flag evidence_route.",
+            "convergence": "beat_03_evidence_coach"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The stable boy finally points to a cut in the harness leather and says the previous driver refused the pass. Jonathan boards with the evidence folded in his pocket, too late to make the warning public.",
+            "setFlags": {
+              "evidence_route": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_01__dismiss_warning",
+          "contentId": "dracula_opening_01__dismiss_warning",
+          "type": "exit",
+          "category": "exit",
+          "label": "Dismiss the warnings as village superstition and board without accepting protection.",
+          "shortLabel": "Dismiss the warnings as village superstition and board without accepting protection.",
+          "keywords": [
+            "dismiss",
+            "the",
+            "warnings",
+            "as",
+            "village",
+            "superstition",
+            "and",
+            "board",
+            "without",
+            "accepting",
+            "protection"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_04_exposed_coach",
+          "dramaturgy": {
+            "approach": "Dismiss the warnings as village superstition and board without accepting protection.",
+            "stakes": "Jonathan preserves his professional certainty, but enters the night without the object or local trust that might have changed what the road permits.",
+            "reaction": "The old woman withdraws the crucifix. The landlord stops watching Jonathan and watches the coach instead; when the wheels move, no one offers a farewell.",
+            "changedSituation": "Jonathan leaves Bistritz exposed, carrying only the letter and his confidence that ordinary explanations will hold.",
+            "nextObjective": "Find the first fact on the road that refuses an ordinary explanation.",
+            "effectSummary": "Sets authored flag exposed_route.",
+            "convergence": "beat_04_exposed_coach"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The old woman withdraws the crucifix. The landlord stops watching Jonathan and watches the coach instead; when the wheels move, no one offers a farewell.",
+            "setFlags": {
+              "exposed_route": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_02",
+      "actId": "act_1",
+      "name": "Protected Coach",
+      "location": {
+        "id": "beat_02_protected_coach",
+        "name": "Protected Coach"
+      },
+      "setting": "The ordinary coach carries Jonathan east under the protection the inn supplied. The passengers notice the crucifix beneath his coat, and their fear gives way to the fragile relief of a shared safeguard.",
+      "presentNpcs": [
+        "coach_passengers",
+        "coachman"
+      ],
+      "openingNarration": "The ordinary coach carries Jonathan east under the protection the inn supplied. The passengers notice the crucifix beneath his coat, and their fear gives way to the fragile relief of a shared safeguard.\n\nThe coach is leaving the last settled road; reassurance has bought cooperation, but the coming transfer will test whether protection is enough.",
+      "dramaturgy": {
+        "situation": "The ordinary coach carries Jonathan east under the protection the inn supplied. The passengers notice the crucifix beneath his coat, and their fear gives way to the fragile relief of a shared safeguard.",
+        "immediateObjective": "Use the passengers’ trust to learn what the coachman will not say before the road changes hands.",
+        "pressure": "The coach is leaving the last settled road; reassurance has bought cooperation, but the coming transfer will test whether protection is enough.",
+        "presentActors": [
+          {
+            "id": "coach_passengers",
+            "stance": "Recognize the crucifix and want Jonathan to keep it visible without naming what they fear."
+          },
+          {
+            "id": "coachman",
+            "stance": "Follows the route but refuses to discuss the midnight transfer."
+          }
+        ],
+        "nextQuestion": "Will Jonathan rely on the protection he accepted, or expose what the passengers are trying not to say?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "coach departs Bistritz",
+          "protective crucifix",
+          "ordinary coach enters the pass"
+        ],
+        "beatId": "beat_02_protected_coach"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_02__keep_crucifix_visible",
+          "contentId": "dracula_opening_02__keep_crucifix_visible",
+          "type": "exploration",
+          "category": "alternative",
+          "label": "Keep the crucifix visible and ask the passengers what they expect at midnight.",
+          "shortLabel": "Keep the crucifix visible and ask the passengers what they expect at midnight.",
+          "keywords": [
+            "keep",
+            "the",
+            "crucifix",
+            "visible",
+            "and",
+            "ask",
+            "the",
+            "passengers",
+            "what",
+            "they",
+            "expect",
+            "at",
+            "midnight"
+          ],
+          "role": "alternative",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Keep the crucifix visible and ask the passengers what they expect at midnight.",
+            "stakes": "Jonathan may turn private fear into shared warning, but the coachman will know the passengers have spoken.",
+            "reaction": "The oldest passenger touches the crucifix without taking it. He whispers that the second carriage must never be invited inside your thoughts, then grips the seat as the road drops.",
+            "changedSituation": "Jonathan has a warning from the people who have made this journey before, and the coachman now knows he has heard it.",
+            "nextObjective": "Decide whether to confront the coachman before the transfer or wait until the road forces the question.",
+            "effectSummary": "Sets authored flag passenger_warning_heard."
+          },
+          "resolution": {
+            "resultType": "alternative",
+            "narration": "The oldest passenger touches the crucifix without taking it. He whispers that the second carriage must never be invited inside your thoughts, then grips the seat as the road drops.",
+            "setFlags": {
+              "passenger_warning_heard": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_02__study_coachman",
+          "contentId": "dracula_opening_02__study_coachman",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Study the coachman’s hands and the horses’ response whenever the pass is mentioned.",
+          "shortLabel": "Study the coachman’s hands and the horses’ response whenever the pass is mentioned.",
+          "keywords": [
+            "study",
+            "the",
+            "coachman",
+            "s",
+            "hands",
+            "and",
+            "the",
+            "horses",
+            "response",
+            "whenever",
+            "the",
+            "pass",
+            "is",
+            "mentioned"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Study the coachman’s hands and the horses’ response whenever the pass is mentioned.",
+            "stakes": "Observation may reveal a pattern, but Jonathan gives up the chance to comfort the passengers before the transfer.",
+            "reaction": "The coachman never looks toward the pass. The horses begin to sweat whenever he names the next village, though the air has turned cold.",
+            "changedSituation": "The road’s danger has a physical rhythm, and Jonathan can no longer dismiss the warnings as one woman’s superstition.",
+            "nextObjective": "Hold the evidence in mind when the second carriage appears without an explanation.",
+            "effectSummary": "Sets authored flag coachman_avoided_pass."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "The coachman never looks toward the pass. The horses begin to sweat whenever he names the next village, though the air has turned cold.",
+            "setFlags": {
+              "coachman_avoided_pass": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_02__protected_transfer",
+          "contentId": "dracula_opening_02__protected_transfer",
+          "type": "exit",
+          "category": "exit",
+          "label": "Accept the midnight transfer with the crucifix ready and the passengers behind you.",
+          "shortLabel": "Accept the midnight transfer with the crucifix ready and the passengers behind you.",
+          "keywords": [
+            "accept",
+            "the",
+            "midnight",
+            "transfer",
+            "with",
+            "the",
+            "crucifix",
+            "ready",
+            "and",
+            "the",
+            "passengers",
+            "behind",
+            "you"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_02_coach_ride",
+          "dramaturgy": {
+            "approach": "Accept the midnight transfer with the crucifix ready and the passengers behind you.",
+            "stakes": "Jonathan keeps the group together and carries protection into the unknown carriage, but allows its driver to control the route.",
+            "reaction": "The second driver sees the crucifix before he sees Jonathan’s face. He smiles without welcome, and the passengers refuse to watch the carriage depart.",
+            "changedSituation": "Jonathan enters the mountain route protected but marked; the driver knows the inn did not send him east unprepared.",
+            "nextObjective": "Learn what the driver serves before the blue flames begin to burn beside the road.",
+            "effectSummary": "Sets authored flag protected_transfer.",
+            "convergence": "beat_02_coach_ride"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The second driver sees the crucifix before he sees Jonathan’s face. He smiles without welcome, and the passengers refuse to watch the carriage depart.",
+            "setFlags": {
+              "protected_transfer": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_03",
+      "actId": "act_1",
+      "name": "Evidence Coach",
+      "location": {
+        "id": "beat_03_evidence_coach",
+        "name": "Evidence Coach"
+      },
+      "setting": "Jonathan rides east with the cut harness leather hidden in his pocket. The coachman insists the horses are sound, but every passenger watches the evidence as though it might explain why the first driver refused the pass.",
+      "presentNpcs": [
+        "coachman",
+        "coach_passengers"
+      ],
+      "openingNarration": "Jonathan rides east with the cut harness leather hidden in his pocket. The coachman insists the horses are sound, but every passenger watches the evidence as though it might explain why the first driver refused the pass.\n\nThe coach is approaching the transfer point; once the second carriage takes the route, the physical evidence may be useless unless Jonathan makes someone acknowledge it.",
+      "dramaturgy": {
+        "situation": "Jonathan rides east with the cut harness leather hidden in his pocket. The coachman insists the horses are sound, but every passenger watches the evidence as though it might explain why the first driver refused the pass.",
+        "immediateObjective": "Turn the stable boy’s clue into a question someone on the road must answer.",
+        "pressure": "The coach is approaching the transfer point; once the second carriage takes the route, the physical evidence may be useless unless Jonathan makes someone acknowledge it.",
+        "presentActors": [
+          {
+            "id": "coachman",
+            "stance": "Wants the journey completed and treats the damaged harness as an inconvenience."
+          },
+          {
+            "id": "coach_passengers",
+            "stance": "Will confirm what they saw only if Jonathan risks asking first."
+          }
+        ],
+        "nextQuestion": "Will Jonathan make the danger public, or keep the clue private and preserve a narrow chance of cooperation?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "coach departs Bistritz",
+          "changed harness",
+          "ordinary coach enters the pass"
+        ],
+        "beatId": "beat_03_evidence_coach"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_03__show_harness",
+          "contentId": "dracula_opening_03__show_harness",
+          "type": "exploration",
+          "category": "alternative",
+          "label": "Show the cut harness to the coachman and demand to know who changed it.",
+          "shortLabel": "Show the cut harness to the coachman and demand to know who changed it.",
+          "keywords": [
+            "show",
+            "the",
+            "cut",
+            "harness",
+            "to",
+            "the",
+            "coachman",
+            "and",
+            "demand",
+            "to",
+            "know",
+            "who",
+            "changed",
+            "it"
+          ],
+          "role": "alternative",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Show the cut harness to the coachman and demand to know who changed it.",
+            "stakes": "A public accusation may force an answer, but can turn the passengers and driver against Jonathan before the transfer.",
+            "reaction": "The coachman snatches the leather, then admits the cut was made after the previous driver refused to continue. No one asks what made him refuse.",
+            "changedSituation": "The coach’s official story has broken; everyone now knows the journey began with a missing explanation.",
+            "nextObjective": "Decide whether to use the admission to delay the transfer or follow the route while the truth is exposed.",
+            "effectSummary": "Sets authored flag harness_admitted."
+          },
+          "resolution": {
+            "resultType": "alternative",
+            "narration": "The coachman snatches the leather, then admits the cut was made after the previous driver refused to continue. No one asks what made him refuse.",
+            "setFlags": {
+              "harness_admitted": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_03__compare_passengers",
+          "contentId": "dracula_opening_03__compare_passengers",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Compare the passengers’ accounts before showing anyone the harness.",
+          "shortLabel": "Compare the passengers’ accounts before showing anyone the harness.",
+          "keywords": [
+            "compare",
+            "the",
+            "passengers",
+            "accounts",
+            "before",
+            "showing",
+            "anyone",
+            "the",
+            "harness"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Compare the passengers’ accounts before showing anyone the harness.",
+            "stakes": "Private testimony may reveal the pattern, but Jonathan risks losing the only moment to challenge the coachman openly.",
+            "reaction": "Three accounts agree on one detail: the horses were changed after sunset, and no one saw the replacement team arrive.",
+            "changedSituation": "The evidence is now corroborated, but the people who supplied it want Jonathan to stop asking questions.",
+            "nextObjective": "Carry the corroborated warning into the transfer and decide whether knowledge is protection enough.",
+            "effectSummary": "Sets authored flag passenger_accounts_match."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "Three accounts agree on one detail: the horses were changed after sunset, and no one saw the replacement team arrive.",
+            "setFlags": {
+              "passenger_accounts_match": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_03__evidence_transfer",
+          "contentId": "dracula_opening_03__evidence_transfer",
+          "type": "exit",
+          "category": "exit",
+          "label": "Board the second carriage with the harness evidence concealed under your papers.",
+          "shortLabel": "Board the second carriage with the harness evidence concealed under your papers.",
+          "keywords": [
+            "board",
+            "the",
+            "second",
+            "carriage",
+            "with",
+            "the",
+            "harness",
+            "evidence",
+            "concealed",
+            "under",
+            "your",
+            "papers"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_02_coach_ride",
+          "dramaturgy": {
+            "approach": "Board the second carriage with the harness evidence concealed under your papers.",
+            "stakes": "Jonathan preserves the route and keeps a clue the driver does not know about, but enters without the protection the inn offered.",
+            "reaction": "The driver searches Jonathan’s face, not his luggage. The carriage moves before the first coach has fully stopped, and the cut leather presses against the letter in his pocket.",
+            "changedSituation": "Jonathan is committed to the pass with evidence hidden close to the Count’s business and no promise that either will survive the night.",
+            "nextObjective": "Find a safe moment to compare the driver’s route with the harness clue.",
+            "effectSummary": "Sets authored flag evidence_transfer.",
+            "convergence": "beat_02_coach_ride"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The driver searches Jonathan’s face, not his luggage. The carriage moves before the first coach has fully stopped, and the cut leather presses against the letter in his pocket.",
+            "setFlags": {
+              "evidence_transfer": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_04",
+      "actId": "act_1",
+      "name": "Exposed Coach",
+      "location": {
+        "id": "beat_04_exposed_coach",
+        "name": "Exposed Coach"
+      },
+      "setting": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach’s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.",
+      "presentNpcs": [
+        "coachman",
+        "coach_passengers"
+      ],
+      "openingNarration": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach’s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.\n\nWithout local protection or trust, Jonathan has no one to confirm what he sees; the midnight transfer is approaching, and the coachman has stopped answering questions.",
+      "dramaturgy": {
+        "situation": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach’s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.",
+        "immediateObjective": "Preserve control of the journey long enough to identify the first impossible event.",
+        "pressure": "Without local protection or trust, Jonathan has no one to confirm what he sees; the midnight transfer is approaching, and the coachman has stopped answering questions.",
+        "presentActors": [
+          {
+            "id": "coachman",
+            "stance": "Treats Jonathan’s isolation as permission to carry him onward without explanation."
+          },
+          {
+            "id": "coach_passengers",
+            "stance": "Avoids the exposed traveller and refuses to share the protection they believe he rejected."
+          }
+        ],
+        "nextQuestion": "What will Jonathan risk when the road asks him to surrender the last ordinary choice?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "coach departs Bistritz",
+          "dismissed warning",
+          "ordinary coach enters the pass"
+        ],
+        "beatId": "beat_04_exposed_coach"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_04__confront_silence",
+          "contentId": "dracula_opening_04__confront_silence",
+          "type": "exploration",
+          "category": "alternative",
+          "label": "Confront the coachman’s silence before the coach reaches the transfer point.",
+          "shortLabel": "Confront the coachman’s silence before the coach reaches the transfer point.",
+          "keywords": [
+            "confront",
+            "the",
+            "coachman",
+            "s",
+            "silence",
+            "before",
+            "the",
+            "coach",
+            "reaches",
+            "the",
+            "transfer",
+            "point"
+          ],
+          "role": "alternative",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Confront the coachman’s silence before the coach reaches the transfer point.",
+            "stakes": "A demand may restore a measure of control, but the isolated passengers may leave Jonathan alone with the answer.",
+            "reaction": "The coachman finally turns. He says the road is safe for those who do not ask it to explain itself, then stops the coach where no station stands.",
+            "changedSituation": "The journey has become an arrangement Jonathan never consented to, and the driver has made silence part of its terms.",
+            "nextObjective": "Decide whether to step down into the dark or remain aboard the vehicle that has stopped answering.",
+            "effectSummary": "Sets authored flag driver_confronted."
+          },
+          "resolution": {
+            "resultType": "alternative",
+            "narration": "The coachman finally turns. He says the road is safe for those who do not ask it to explain itself, then stops the coach where no station stands.",
+            "setFlags": {
+              "driver_confronted": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_04__read_letter",
+          "contentId": "dracula_opening_04__read_letter",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Read the Count’s letter again and search it for an instruction you missed.",
+          "shortLabel": "Read the Count’s letter again and search it for an instruction you missed.",
+          "keywords": [
+            "read",
+            "the",
+            "count",
+            "s",
+            "letter",
+            "again",
+            "and",
+            "search",
+            "it",
+            "for",
+            "an",
+            "instruction",
+            "you",
+            "missed"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Read the Count’s letter again and search it for an instruction you missed.",
+            "stakes": "The letter may restore professional purpose, but studying it means surrendering attention while the coach leaves the settled road.",
+            "reaction": "The formal invitation contains no route beyond the pass. In the margin, Jonathan finds a smear of dark earth that was not there when he left the inn.",
+            "changedSituation": "The business letter now carries a physical contradiction, but no explanation or protection.",
+            "nextObjective": "Keep the letter hidden and decide what to do when the second carriage arrives.",
+            "effectSummary": "Sets authored flag letter_soiled."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "The formal invitation contains no route beyond the pass. In the margin, Jonathan finds a smear of dark earth that was not there when he left the inn.",
+            "setFlags": {
+              "letter_soiled": true
+            }
+          }
+        },
+        {
+          "actionId": "dracula_opening_04__exposed_transfer",
+          "contentId": "dracula_opening_04__exposed_transfer",
+          "type": "exit",
+          "category": "exit",
+          "label": "Board the second carriage without protest and keep your hands empty.",
+          "shortLabel": "Board the second carriage without protest and keep your hands empty.",
+          "keywords": [
+            "board",
+            "the",
+            "second",
+            "carriage",
+            "without",
+            "protest",
+            "and",
+            "keep",
+            "your",
+            "hands",
+            "empty"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_02_coach_ride",
+          "dramaturgy": {
+            "approach": "Board the second carriage without protest and keep your hands empty.",
+            "stakes": "Jonathan preserves the only visible route forward, but surrenders every signal that he expects danger or intends resistance.",
+            "reaction": "The driver opens the door before Jonathan reaches it. Inside, the passengers’ space is already cold, and the door closes on the last ordinary sound.",
+            "changedSituation": "Jonathan enters the pass exposed and unreadable to no one but himself; the driver has taken the initiative completely.",
+            "nextObjective": "Find a way to recover leverage before the road’s blue flames reveal why the carriage was waiting.",
+            "effectSummary": "Sets authored flag exposed_transfer.",
+            "convergence": "beat_02_coach_ride"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The driver opens the door before Jonathan reaches it. Inside, the passengers’ space is already cold, and the door closes on the last ordinary sound.",
+            "setFlags": {
+              "exposed_transfer": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_05",
+      "actId": "act_1",
+      "name": "Coach Ride",
+      "location": {
+        "id": "beat_02_coach_ride",
+        "name": "Coach Ride"
+      },
+      "setting": "The ordinary coach leaves the settled road. Passengers cross themselves when wolves cry, and a second carriage waits at midnight where no connection should exist.",
+      "presentNpcs": [
+        "coach_passengers",
+        "mysterious_driver"
+      ],
+      "openingNarration": "The ordinary coach leaves the settled road. Passengers cross themselves when wolves cry, and a second carriage waits at midnight where no connection should exist.\n\nThe first coach is turning back, the night is closing in, and refusing the second carriage means facing the mountain road without a safe alternative.",
+      "dramaturgy": {
+        "situation": "The ordinary coach leaves the settled road. Passengers cross themselves when wolves cry, and a second carriage waits at midnight where no connection should exist.",
+        "immediateObjective": "Decide whether to observe, question, or resist the transfer to the unknown carriage.",
+        "pressure": "The first coach is turning back, the night is closing in, and refusing the second carriage means facing the mountain road without a safe alternative.",
+        "presentActors": [
+          {
+            "id": "coach_passengers",
+            "stance": "Want no attention and treat the transfer as a thing already decided."
+          },
+          {
+            "id": "mysterious_driver",
+            "stance": "Offers certainty without explanation and waits for Jonathan to surrender the choice himself."
+          }
+        ],
+        "nextQuestion": "Is the unknown carriage safer because it is controlled, or more dangerous for exactly the same reason?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "coach through the Borgo Pass",
+          "strange midnight driver"
+        ],
+        "beatId": "beat_02_coach_ride"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_05__question_driver",
+          "contentId": "dracula_opening_05__question_driver",
+          "type": "exploration",
+          "category": "alternative",
+          "label": "Ask the driver who sent him and why the road has been abandoned.",
+          "shortLabel": "Ask the driver who sent him and why the road has been abandoned.",
+          "keywords": [
+            "ask",
+            "the",
+            "driver",
+            "who",
+            "sent",
+            "him",
+            "and",
+            "why",
+            "the",
+            "road",
+            "has",
+            "been",
+            "abandoned"
+          ],
+          "role": "alternative",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Ask the driver who sent him and why the road has been abandoned.",
+            "stakes": "A direct question may expose the driver’s authority, but may also mark Jonathan as resistant.",
+            "reaction": "The driver turns just enough for Jonathan to glimpse red in his eyes and says, “The Count expects you.”",
+            "changedSituation": "The journey is no longer an ordinary transfer; the destination’s host is directing the road personally.",
+            "nextObjective": "Board with that knowledge, or use the passengers’ fear to delay the departure.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "alternative",
+            "narration": "The driver turns just enough for Jonathan to glimpse red in his eyes and says, “The Count expects you.”"
+          }
+        },
+        {
+          "actionId": "dracula_opening_05__watch_passengers",
+          "contentId": "dracula_opening_05__watch_passengers",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Watch the passengers rather than the driver as the first coach turns back.",
+          "shortLabel": "Watch the passengers rather than the driver as the first coach turns back.",
+          "keywords": [
+            "watch",
+            "the",
+            "passengers",
+            "rather",
+            "than",
+            "the",
+            "driver",
+            "as",
+            "the",
+            "first",
+            "coach",
+            "turns",
+            "back"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Watch the passengers rather than the driver as the first coach turns back.",
+            "stakes": "Jonathan gains social evidence but loses the chance to inspect the second carriage before boarding.",
+            "reaction": "Every passenger makes the sign of the cross; one catches Jonathan looking and silently shakes his head.",
+            "changedSituation": "The warning has become collective behavior, not a single frightened person’s superstition.",
+            "nextObjective": "Choose whether to trust the passengers’ fear or the written obligation waiting at the castle.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "Every passenger makes the sign of the cross; one catches Jonathan looking and silently shakes his head."
+          }
+        },
+        {
+          "actionId": "dracula_opening_05__board_second_carriage",
+          "contentId": "dracula_opening_05__board_second_carriage",
+          "type": "threat",
+          "category": "commitment",
+          "label": "Board the second carriage and keep the crucifix ready.",
+          "shortLabel": "Board the second carriage and keep the crucifix ready.",
+          "keywords": [
+            "board",
+            "the",
+            "second",
+            "carriage",
+            "and",
+            "keep",
+            "the",
+            "crucifix",
+            "ready"
+          ],
+          "role": "commitment",
+          "replay": "consumable",
+          "routeTo": "beat_03_borgo_pass",
+          "dramaturgy": {
+            "approach": "Board the second carriage and keep the crucifix ready.",
+            "stakes": "Jonathan preserves his route to the castle but gives the unknown driver control of the night.",
+            "reaction": "The door shuts with a final sound. The carriage moves before the driver touches the reins, and the horses breathe no steam.",
+            "changedSituation": "Jonathan is committed to the pass with a driver whose command of the road is unnatural.",
+            "nextObjective": "Find out what the driver is stopping for when the blue flames appear.",
+            "effectSummary": "Sets authored flag carriage_boarded.",
+            "convergence": "borgo-pass"
+          },
+          "resolution": {
+            "resultType": "threat",
+            "narration": "The door shuts with a final sound. The carriage moves before the driver touches the reins, and the horses breathe no steam.",
+            "setFlags": {
+              "carriage_boarded": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_06",
+      "actId": "act_1",
+      "name": "Borgo Pass",
+      "location": {
+        "id": "beat_03_borgo_pass",
+        "name": "Borgo Pass"
+      },
+      "setting": "Blue flames burn beside the mountain road. The driver stops at each one while wolves gather beyond the carriage windows and the route disappears behind snow and trees.",
+      "presentNpcs": [
+        "mysterious_driver",
+        "wolves"
+      ],
+      "openingNarration": "Blue flames burn beside the mountain road. The driver stops at each one while wolves gather beyond the carriage windows and the route disappears behind snow and trees.\n\nThe driver will not explain the flames, the wolves are keeping pace, and the carriage is carrying Jonathan toward a threshold he cannot inspect from outside.",
+      "dramaturgy": {
+        "situation": "Blue flames burn beside the mountain road. The driver stops at each one while wolves gather beyond the carriage windows and the route disappears behind snow and trees.",
+        "immediateObjective": "Decide what to observe and what to protect before the carriage reaches the castle.",
+        "pressure": "The driver will not explain the flames, the wolves are keeping pace, and the carriage is carrying Jonathan toward a threshold he cannot inspect from outside.",
+        "presentActors": [
+          {
+            "id": "mysterious_driver",
+            "stance": "Treats the blue flames as waymarks and Jonathan as cargo entrusted to the road."
+          },
+          {
+            "id": "wolves",
+            "stance": "Follow the carriage without attacking, as if waiting for permission."
+          }
+        ],
+        "nextQuestion": "What is the driver finding in the blue fire, and what will Jonathan know before the castle closes behind him?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "blue flames",
+          "arrival at castle"
+        ],
+        "beatId": "beat_03_borgo_pass"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_06__watch_flame",
+          "contentId": "dracula_opening_06__watch_flame",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Watch what the driver does at the nearest blue flame.",
+          "shortLabel": "Watch what the driver does at the nearest blue flame.",
+          "keywords": [
+            "watch",
+            "what",
+            "the",
+            "driver",
+            "does",
+            "at",
+            "the",
+            "nearest",
+            "blue",
+            "flame"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Watch what the driver does at the nearest blue flame.",
+            "stakes": "Jonathan may learn the road’s secret but must remain still while the driver leaves him alone in the dark.",
+            "reaction": "The driver searches the earth as though following a map written in fire; when he returns, a cold blue reflection remains in his eyes.",
+            "changedSituation": "The flames are no longer distant folklore; they are marks the driver understands and Jonathan does not.",
+            "nextObjective": "Keep watching, or prepare for the wolves that have begun to gather beside the road.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "The driver searches the earth as though following a map written in fire; when he returns, a cold blue reflection remains in his eyes."
+          }
+        },
+        {
+          "actionId": "dracula_opening_06__raise_crucifix",
+          "contentId": "dracula_opening_06__raise_crucifix",
+          "type": "exploration",
+          "category": "preparation",
+          "label": "Raise the crucifix when the wolves press near the window.",
+          "shortLabel": "Raise the crucifix when the wolves press near the window.",
+          "keywords": [
+            "raise",
+            "the",
+            "crucifix",
+            "when",
+            "the",
+            "wolves",
+            "press",
+            "near",
+            "the",
+            "window"
+          ],
+          "role": "preparation",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Raise the crucifix when the wolves press near the window.",
+            "stakes": "Jonathan tests the protection publicly and may reveal to the driver that the innkeeper warned him.",
+            "reaction": "The wolves recoil together—not in fear, but recognition—and the driver’s eyes find the crucifix in Jonathan’s hand.",
+            "changedSituation": "The protection has drawn the driver’s attention as well as repelled the animals.",
+            "nextObjective": "Decide whether to conceal the crucifix before the carriage reaches its destination.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "preparation",
+            "narration": "The wolves recoil together—not in fear, but recognition—and the driver’s eyes find the crucifix in Jonathan’s hand."
+          }
+        },
+        {
+          "actionId": "dracula_opening_06__search_carriage",
+          "contentId": "dracula_opening_06__search_carriage",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Search under the seat for something that could serve as a weapon or signal.",
+          "shortLabel": "Search under the seat for something that could serve as a weapon or signal.",
+          "keywords": [
+            "search",
+            "under",
+            "the",
+            "seat",
+            "for",
+            "something",
+            "that",
+            "could",
+            "serve",
+            "as",
+            "a",
+            "weapon",
+            "or",
+            "signal"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Search under the seat for something that could serve as a weapon or signal.",
+            "stakes": "Jonathan risks being seen searching while the driver is away, but empty hands may be worse at the castle.",
+            "reaction": "He finds an iron lantern and a broken whip: poor weapons, but evidence that another traveller prepared for this road.",
+            "changedSituation": "Jonathan has a fragile means of resistance and proof that the journey has frightened others before him.",
+            "nextObjective": "Keep the evidence hidden, or use it to force a final answer from the driver.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "He finds an iron lantern and a broken whip: poor weapons, but evidence that another traveller prepared for this road."
+          }
+        },
+        {
+          "actionId": "dracula_opening_06__follow_to_castle",
+          "contentId": "dracula_opening_06__follow_to_castle",
+          "type": "exit",
+          "category": "exit",
+          "label": "Remain aboard and follow the carriage to its destination.",
+          "shortLabel": "Remain aboard and follow the carriage to its destination.",
+          "keywords": [
+            "remain",
+            "aboard",
+            "and",
+            "follow",
+            "the",
+            "carriage",
+            "to",
+            "its",
+            "destination"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "routeTo": "beat_04_castle_threshold",
+          "dramaturgy": {
+            "approach": "Remain aboard and follow the carriage to its destination.",
+            "stakes": "Jonathan accepts the only route forward and gives up the last ordinary chance to turn back.",
+            "reaction": "The final flame dies. The trees open onto a vast castle whose black windows hold no light.",
+            "changedSituation": "The castle is before him; the road behind has vanished into the pass.",
+            "nextObjective": "Enter the unlit threshold and determine whether the welcome is a refuge or a trap.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route.",
+            "convergence": "castle-arrival"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The final flame dies. The trees open onto a vast castle whose black windows hold no light."
+          }
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_07",
+      "actId": "act_1",
+      "name": "Castle Threshold",
+      "location": {
+        "id": "beat_04_castle_threshold",
+        "name": "Castle Threshold"
+      },
+      "setting": "The carriage stops at Castle Dracula. The driver has vanished, the gates open without a hand, and a tall host waits alone in a hall too large and too silent to be a functioning household.",
+      "presentNpcs": [
+        "count_dracula"
+      ],
+      "openingNarration": "The carriage stops at Castle Dracula. The driver has vanished, the gates open without a hand, and a tall host waits alone in a hall too large and too silent to be a functioning household.\n\nThe gate seals the road behind Jonathan, the host knows his business in detail, and no servant appears to make the welcome ordinary.",
+      "dramaturgy": {
+        "situation": "The carriage stops at Castle Dracula. The driver has vanished, the gates open without a hand, and a tall host waits alone in a hall too large and too silent to be a functioning household.",
+        "immediateObjective": "Enter on your own terms if possible, while learning whether the host’s courtesy conceals a loss of control.",
+        "pressure": "The gate seals the road behind Jonathan, the host knows his business in detail, and no servant appears to make the welcome ordinary.",
+        "presentActors": [
+          {
+            "id": "count_dracula",
+            "stance": "Presents perfect courtesy while controlling every threshold and testing what Jonathan believes."
+          }
+        ],
+        "nextQuestion": "Can Jonathan remain a guest while the host controls the house, the road, and the terms of every answer?"
+      },
+      "sourceTrace": {
+        "anchors": [
+          "Dracula’s impossible welcome",
+          "castle has no servants",
+          "conversation with Dracula"
+        ],
+        "beatId": "beat_04_castle_threshold"
+      },
+      "agency": {
+        "optionalActionsRequired": false,
+        "authoredAlternatives": true
+      },
+      "actions": [
+        {
+          "actionId": "dracula_opening_07__inspect_gate",
+          "contentId": "dracula_opening_07__inspect_gate",
+          "type": "exploration",
+          "category": "discovery",
+          "label": "Inspect the gate and courtyard before answering the welcome.",
+          "shortLabel": "Inspect the gate and courtyard before answering the welcome.",
+          "keywords": [
+            "inspect",
+            "the",
+            "gate",
+            "and",
+            "courtyard",
+            "before",
+            "answering",
+            "the",
+            "welcome"
+          ],
+          "role": "discovery",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Inspect the gate and courtyard before answering the welcome.",
+            "stakes": "Jonathan delays the social ritual and may reveal that he is already looking for escape.",
+            "reaction": "The gate is sealed from within; the worn dragon device is the only sign that the castle has remembered other visitors.",
+            "changedSituation": "The route back is closed before Jonathan has crossed the threshold.",
+            "nextObjective": "Enter while keeping the host’s attention on the formal business.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "discovery",
+            "narration": "The gate is sealed from within; the worn dragon device is the only sign that the castle has remembered other visitors."
+          }
+        },
+        {
+          "actionId": "dracula_opening_07__greet_count",
+          "contentId": "dracula_opening_07__greet_count",
+          "type": "exploration",
+          "category": "alternative",
+          "label": "Return the Count’s greeting and ask directly where the servants are.",
+          "shortLabel": "Return the Count’s greeting and ask directly where the servants are.",
+          "keywords": [
+            "return",
+            "the",
+            "count",
+            "s",
+            "greeting",
+            "and",
+            "ask",
+            "directly",
+            "where",
+            "the",
+            "servants",
+            "are"
+          ],
+          "role": "alternative",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Return the Count’s greeting and ask directly where the servants are.",
+            "stakes": "Courtesy may preserve access to the host, but the question challenges the fiction that this is an ordinary household.",
+            "reaction": "Dracula smiles and says the servants are unnecessary. His answer is gracious; the silence behind it is not.",
+            "changedSituation": "Jonathan is admitted as a guest in a house where the host alone controls food, fire, doors, and information.",
+            "nextObjective": "Observe the host’s habits during the first meal without letting suspicion become an accusation.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "alternative",
+            "narration": "Dracula smiles and says the servants are unnecessary. His answer is gracious; the silence behind it is not."
+          }
+        },
+        {
+          "actionId": "dracula_opening_07__keep_crucifix_ready",
+          "contentId": "dracula_opening_07__keep_crucifix_ready",
+          "type": "exploration",
+          "category": "preparation",
+          "label": "Keep the crucifix visible as you cross the threshold.",
+          "shortLabel": "Keep the crucifix visible as you cross the threshold.",
+          "keywords": [
+            "keep",
+            "the",
+            "crucifix",
+            "visible",
+            "as",
+            "you",
+            "cross",
+            "the",
+            "threshold"
+          ],
+          "role": "preparation",
+          "replay": "repeatable",
+          "dramaturgy": {
+            "approach": "Keep the crucifix visible as you cross the threshold.",
+            "stakes": "Jonathan tests the old woman’s protection in front of the host and risks showing that the warnings reached him.",
+            "reaction": "Dracula’s gaze pauses on the crucifix for one measured second before courtesy returns to his face.",
+            "changedSituation": "The host knows Jonathan has been warned, even if neither man names the warning.",
+            "nextObjective": "Decide whether to conceal the source of your unease or make the host explain himself.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route."
+          },
+          "resolution": {
+            "resultType": "preparation",
+            "narration": "Dracula’s gaze pauses on the crucifix for one measured second before courtesy returns to his face."
+          }
+        },
+        {
+          "actionId": "dracula_opening_07__enter_castle",
+          "contentId": "dracula_opening_07__enter_castle",
+          "type": "exit",
+          "category": "exit",
+          "label": "Enter and accept the Count’s hospitality while the doors remain open.",
+          "shortLabel": "Enter and accept the Count’s hospitality while the doors remain open.",
+          "keywords": [
+            "enter",
+            "and",
+            "accept",
+            "the",
+            "count",
+            "s",
+            "hospitality",
+            "while",
+            "the",
+            "doors",
+            "remain",
+            "open"
+          ],
+          "role": "exit",
+          "replay": "consumable",
+          "dramaturgy": {
+            "approach": "Enter and accept the Count’s hospitality while the doors remain open.",
+            "stakes": "Jonathan preserves the business that brought him east, but commits himself to a house that has already begun to close around him.",
+            "reaction": "The doors shut behind him. Dracula welcomes him in flawless English, and the echo finds no answering servant.",
+            "changedSituation": "Jonathan is inside Castle Dracula, dependent on the host for every ordinary movement.",
+            "nextObjective": "Find the first fact the host cannot control: a door, a reflection, a sound, or a contradiction.",
+            "effectSummary": "Changes the immediate dramatic situation without erasing the canonical route.",
+            "convergence": "castle-interior"
+          },
+          "resolution": {
+            "resultType": "exit",
+            "narration": "The doors shut behind him. Dracula welcomes him in flawless English, and the echo finds no answering servant."
+          }
+        }
+      ]
+    }
+  ],
+  "graph": {
+    "entry": "dracula_opening_01",
+    "edges": [
+      {
+        "edgeId": "dracula_opening_01__trust_warning_to_dracula_opening_02",
+        "from": "dracula_opening_01",
+        "to": "dracula_opening_02",
+        "trigger": {
+          "actionId": "dracula_opening_01__trust_warning"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_01__investigate_then_board_to_dracula_opening_03",
+        "from": "dracula_opening_01",
+        "to": "dracula_opening_03",
+        "trigger": {
+          "actionId": "dracula_opening_01__investigate_then_board"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_01__dismiss_warning_to_dracula_opening_04",
+        "from": "dracula_opening_01",
+        "to": "dracula_opening_04",
+        "trigger": {
+          "actionId": "dracula_opening_01__dismiss_warning"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_02__protected_transfer_to_dracula_opening_05",
+        "from": "dracula_opening_02",
+        "to": "dracula_opening_05",
+        "trigger": {
+          "actionId": "dracula_opening_02__protected_transfer"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_03__evidence_transfer_to_dracula_opening_05",
+        "from": "dracula_opening_03",
+        "to": "dracula_opening_05",
+        "trigger": {
+          "actionId": "dracula_opening_03__evidence_transfer"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_04__exposed_transfer_to_dracula_opening_05",
+        "from": "dracula_opening_04",
+        "to": "dracula_opening_05",
+        "trigger": {
+          "actionId": "dracula_opening_04__exposed_transfer"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_05__board_second_carriage_to_dracula_opening_06",
+        "from": "dracula_opening_05",
+        "to": "dracula_opening_06",
+        "trigger": {
+          "actionId": "dracula_opening_05__board_second_carriage"
+        }
+      },
+      {
+        "edgeId": "dracula_opening_06__follow_to_castle_to_dracula_opening_07",
+        "from": "dracula_opening_06",
+        "to": "dracula_opening_07",
+        "trigger": {
+          "actionId": "dracula_opening_06__follow_to_castle"
+        }
+      }
+    ]
+  },
+  "endings": {}
+}
