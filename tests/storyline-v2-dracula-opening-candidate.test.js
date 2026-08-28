@@ -12,6 +12,10 @@ const {
 
 const manifestPath = path.join(__dirname, '..', 'content/ingestion/dracula-1897/candidates/dracula-opening-dramatic-002/manifest.json');
 const adventure = compileAdventure(JSON.parse(fs.readFileSync(manifestPath, 'utf8')));
+const opening = adventure.scenes.dracula_opening_01;
+assert.ok(opening.openingNarration.includes('extends it toward him with both hands'), 'the crucifix offer must be established in the opening');
+assert.ok(opening.openingNarration.includes('stable yard'), 'the opening must spatially establish the stable yard');
+assert.ok(opening.openingNarration.includes('Yellow lamplight'), 'the opening must establish sensory atmosphere');
 
 function resolveOpening(actionId, turnId) {
   const state = createState(adventure, { classId: 'rogue' });

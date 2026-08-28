@@ -58,7 +58,7 @@
         "old_woman_at_inn",
         "stable_boy"
       ],
-      "openingNarration": "At the Golden Krone in Bistritz, Jonathan has one evening before the coach leaves east. The landlord watches the clock, an old woman grips a crucifix, and conversation stops whenever Castle Dracula is mentioned.\n\nThe coach will leave before the last light fails; local fear is urgent but incomplete, and professional duty argues against delay.",
+      "openingNarration": "At the Golden Krone in Bistritz, Jonathan sits near the inn’s leaded front window with his travelling case between his boots. Yellow lamplight trembles across smoke-dark beams and wet coats steaming by the hearth; beyond the door, the stable yard is blue with the last of the evening and harness rings knock softly as the coach is made ready. The smell of horse, damp wool, and boiled cabbage hangs beneath the woodsmoke.\n\nThe landlord keeps one eye on the clock and one on the road. A stable boy carries a lantern through the yard without looking up. At a nearby table, an old woman has been watching Jonathan in silence. When someone murmurs the name of Castle Dracula, the room seems to contract around it: a spoon stops against a bowl, a chair scrapes once, and then no one speaks.\n\nAt last the woman crosses to Jonathan. Her hand closes around the little crucifix at her throat; she says something too low to hear, then extends it toward him with both hands. The gesture is unmistakable: she is offering him protection for the road. The coach will leave before the last light fails, and Jonathan must decide what to accept, what to investigate, and whom to trust before the inn empties into the dark.",
       "threads": [
         {
           "threadId": "thread_question_landlord",
