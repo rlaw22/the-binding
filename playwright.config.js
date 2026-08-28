@@ -12,7 +12,7 @@ const { defineConfig, devices } = require('@playwright/test');
 
 module.exports = defineConfig({
   testDir: './tests',
-  testMatch: '**/uxui-*.test.js',
+  testMatch: ['**/uxui-*.test.js', '**/storyline-v2-northstar-browser.test.js'],
   fullyParallel: false,
   forbidOnly: true,
   retries: 0,

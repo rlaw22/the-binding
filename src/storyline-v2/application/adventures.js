@@ -21,10 +21,12 @@ function createStorylineV2Service(options = {}) {
 module.exports = { createStorylineV2Service };
 
 function createStorylineV2CanaryService(options = {}) {
-  const { buildDraculaCanaryManifest, buildDraculaBranchingOpeningManifest } = require('../adapters/native-dracula-canary');
-  const canary = process.env.STORYLINE_V2_BRANCHING_OPENING === 'true'
-    ? buildDraculaBranchingOpeningManifest()
-    : buildDraculaCanaryManifest();
+  const { buildDraculaBranchingOpeningManifest } = require('../adapters/native-dracula-canary');
+  // The protected personal canary exists to validate the improved authored
+  // experience. Keep the public V2 service on its separate native path, but
+  // never let the personal canary silently fall back to the weaker sequential
+  // opening.
+  const canary = buildDraculaBranchingOpeningManifest();
   const resolvedOptions = { ...options };
   if (!resolvedOptions.sessionRepository && process.env.STORYLINE_V2_SESSION_FILE) {
     resolvedOptions.sessionRepository = new FileSessionRepository(process.env.STORYLINE_V2_SESSION_FILE);
