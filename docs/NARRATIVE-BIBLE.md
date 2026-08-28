@@ -542,3 +542,18 @@ These are documented deviations between the rules and current content. They shou
 ### Code Inconsistency (to fix separately)
 
 9. **`buildSuggestionPrompt()` requests "Generate 4 specific actions"** while the authoritative `SYSTEM_PROMPT` says "provide as many as the scene supports." The system prompt is correct; `buildSuggestionPrompt()` should be updated to match.
+
+## Stateful spaces, affordances, and local threads
+
+A playable scene is a place containing several authored possibilities, not a disposable branch corridor. Authors must explicitly declare the scene's persistent core affordances and local dramatic threads. A player may follow one thread and then return to the wider space while other plausible affordances remain available.
+
+Use these categories:
+
+- **Core:** grounded in the current space and persistent while plausible, such as looking around, speaking with a present person, or examining an established object.
+- **Contextual:** created by the active exchange or branch.
+- **Discovery:** a bounded one-time clue, observation, or object that may transform into a follow-up.
+- **State-dependent:** an action whose wording/result changes with knowledge, trust, inventory, urgency, or prior action.
+- **Atmosphere:** safe contextual interaction with no progression effect.
+- **Exit/commitment:** movement or an irreversible decision that advances the story.
+
+Every affordance needs a stable identity, an established target, a lifecycle/closure rule, and continuation behavior. `Look around` should have bounded authored results that change with state; it must not repeatedly generate identical discoveries or invent new mechanics. The action catalog contains only meaningful current possibilities, from one to six actions, with no padding. Canonical events remain protected while local thread order may change knowledge, relationships, resources, danger, and interpretation.

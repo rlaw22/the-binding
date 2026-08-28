@@ -5,6 +5,7 @@ const { asArray, issue } = require('./collections');
 const STRUCTURAL = /\b(?:chapter|section|part|act)\s*(?:[ivxlcdm]+|\d+)?\b/i;
 const GENERIC_ONLY = /^(?:observe|prepare|continue|resolve|proceed|look around|move forward|press onward|investigate|explore|do something|make a choice)$/i;
 const ID_LABEL = /^(?:scene|chapter|act|action|resolve|continue|observe|prepare|press)[\w\s-]*$/i;
+const SOURCE_CLASSES = new Set(['canonical_event', 'decision', 'discovery', 'atmosphere', 'connective_tissue', 'non_playable']);
 
 function text(value) { return typeof value === 'string' ? value.trim() : ''; }
 function comparable(value) { return text(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
@@ -30,7 +31,9 @@ function auditIngestedContent(raw, options = {}) {
   const strict = options.strict === true || options.ingested === true || raw && (raw.publicationMode === 'new-book' || raw.source && /^whole-book/i.test(raw.source.generation || ''));
   if (!strict) return { errors, warnings, report: { scenesChecked: 0, actionsChecked: 0 } };
   const headings = sourceHeadings(raw);
+  const classificationRequired = raw && raw.ingestionPolicy && raw.ingestionPolicy.sourceClassification === 'required';
   let actionsChecked = 0;
+  const classificationCounts = Object.fromEntries([...SOURCE_CLASSES].map(sourceClass => [sourceClass, 0]));
   scenes.forEach((scene, si) => {
     const path = `scenes[${si}]`;
     const opening = text(scene && scene.openingNarration);
@@ -45,7 +48,7 @@ function auditIngestedContent(raw, options = {}) {
     ];
     const player = actions.filter(a => a && a.type !== 'atmosphere');
     const nonExit = player.filter(a => a.type !== 'exit');
-    const exits = player.filter(a => a.type === 'exit');
+    const exits = player.filter(a => a.type === 'exit' || text(a && a.routeTo));
     if (!exits.length && !scene.terminal) errors.push(issue(path, 'Ingested scene requires an authored route-forward action'));
     if (player.length <= 1 && !scene.terminal) errors.push(issue(path, 'Ingested scene cannot present only a forced exit'));
     actions.forEach((action, ai) => {
@@ -55,6 +58,13 @@ function auditIngestedContent(raw, options = {}) {
       const short = text(action && action.shortLabel);
       const narration = text(action && action.resolution && action.resolution.narration);
       const role = action && (action.role || action.actionRole);
+      const sourceClass = text(action && action.sourceClass);
+      if (sourceClass) {
+        if (!SOURCE_CLASSES.has(sourceClass)) errors.push(issue(`${ap}.sourceClass`, `Unsupported source classification: ${sourceClass}`));
+        else classificationCounts[sourceClass] += 1;
+      } else if (classificationRequired) {
+        errors.push(issue(`${ap}.sourceClass`, 'Playable ingested actions require an explicit source classification'));
+      }
       if (!label || !short) errors.push(issue(ap, 'Ingested actions require authored label and shortLabel'));
       if (!role) errors.push(issue(ap, 'Ingested actions require an explicit agency role'));
       if (!action || !action.replay) errors.push(issue(ap, 'Ingested actions require explicit replay semantics'));
@@ -70,7 +80,7 @@ function auditIngestedContent(raw, options = {}) {
       errors.push(issue(path, 'Scene requires at least one meaningful non-exit agency role'));
     }
   });
-  return { errors, warnings, report: { scenesChecked: scenes.length, actionsChecked } };
+  return { errors, warnings, report: { scenesChecked: scenes.length, actionsChecked, classificationCounts } };
 }
 
 function assertIngestedContent(raw, options = {}) {

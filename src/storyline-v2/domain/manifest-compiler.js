@@ -5,6 +5,31 @@ const { estimateManifestMetrics, auditManifestQuality } = require('./manifest-me
 const { auditAgencyQuality, assertAgencyQuality } = require('./agency-policy');
 const { auditDramaticContract } = require('./dramatic-contract');
 
+const AFFORDANCE_KINDS = new Set(['core', 'contextual', 'discovery', 'state_dependent', 'atmosphere', 'exit']);
+const THREAD_STATUSES = new Set(['dormant', 'active', 'resolved', 'closed']);
+const AFFORDANCE_CLOSURES = new Set(['authored_resolution', 'movement_or_commitment', 'time', 'world_state', 'impossible']);
+const AFFORDANCE_RETURNS = new Set(['resurface_while_plausible', 'consumed_or_transformed', 'closed', 'never']);
+const REPLAY_POLICIES = new Set(['repeatable', 'consumable']);
+
+function validateAuthoringQuality(scene, errors, path, strict) {
+  const affordances = new Map(asArray(scene.affordances).map(item => [item.affordanceId, item]));
+  asArray(scene.affordances).forEach((affordance, index) => {
+    const affordancePath = `${path}.affordances[${index}]`;
+    if (strict && !affordance.closure) errors.push(issue(`${affordancePath}.closure`, 'Authored affordance closure is required'));
+    if (strict && !affordance.returnBehavior) errors.push(issue(`${affordancePath}.returnBehavior`, 'Authored affordance returnBehavior is required'));
+    if (affordance.closure && !AFFORDANCE_CLOSURES.has(affordance.closure)) errors.push(issue(`${affordancePath}.closure`, `Unsupported affordance closure: ${affordance.closure}`));
+    if (affordance.returnBehavior && !AFFORDANCE_RETURNS.has(affordance.returnBehavior)) errors.push(issue(`${affordancePath}.returnBehavior`, `Unsupported affordance returnBehavior: ${affordance.returnBehavior}`));
+  });
+  scene.actions.forEach((action, index) => {
+    const actionPath = `${path}.actions[${index}]`;
+    if (strict && action.affordanceId && !affordances.has(action.affordanceId)) errors.push(issue(`${actionPath}.affordanceId`, 'Action must reference an established affordance'));
+    if (action.replay && !REPLAY_POLICIES.has(action.replay)) errors.push(issue(`${actionPath}.replay`, `Unsupported replay policy: ${action.replay}`));
+    if (action.replay === 'repeatable' && strict && (!action.resurface || action.resurface.whilePlausible !== true || !Number.isInteger(action.resurface.maxAuthoredRevisits) || action.resurface.maxAuthoredRevisits < 1)) {
+      errors.push(issue(`${actionPath}.resurface`, 'Repeatable authored actions require bounded whilePlausible resurfacing'));
+    }
+  });
+}
+
 const ACTION_TYPES = new Set([
   'exploration', 'collectible', 'class', 'threat', 'bad_choice', 'exit', 'atmosphere', 'recovery'
 ]);
@@ -60,6 +85,12 @@ function compileAdventure(raw) {
     }
     if (!rawScene.name && !rawScene.sceneName) warnings.push(issue(path, 'Scene has no display name'));
     const scene = normalizeScene(rawScene);
+    validateSceneAffordances(scene, errors, path);
+    validateEstablishedTargets(scene, errors, path, raw.publicationMode === 'new-book' || raw.agencyPolicy && raw.agencyPolicy.strict === true);
+    // Apply the stateful-space authoring gate to manifests that opt into the
+    // explicit affordance contract. Transitional manifests remain compilable
+    // until their ingestion artifacts are regenerated.
+    validateAuthoringQuality(scene, errors, path, (raw.publicationMode === 'new-book' || (raw.agencyPolicy && raw.agencyPolicy.strict === true)) && scene.affordances.length > 0);
     sceneMap[scene.sceneId] = scene;
 
     scene.actions.forEach((action, actionIndex) => {
@@ -80,6 +111,8 @@ function compileAdventure(raw) {
       }
       validateRequirements(action.availability && action.availability.requires, classIds, itemIds, actionIds, errors, `${actionPath}.availability.requires`);
       validateRequirements(action.requires, classIds, itemIds, actionIds, errors, `${actionPath}.requires`);
+      validateThreadRequirements(action.availability && action.availability.requires, scene.threads, errors, `${actionPath}.availability.requires`);
+      validateThreadRequirements(action.requires, scene.threads, errors, `${actionPath}.requires`);
       validateCheck(action.resolution && action.resolution.check, itemIds, errors, `${actionPath}.resolution.check`);
     });
   });
@@ -172,6 +205,9 @@ function normalizeScene(raw) {
     location: clone(raw.location || {}),
     setting: raw.setting || raw.description || '',
     presentNpcs: clone(raw.presentNpcs || []),
+    establishedEntities: clone(raw.establishedEntities || []),
+    threads: clone(raw.threads || []),
+    affordances: clone(raw.affordances || []),
     openingNarration: raw.openingNarration || raw.description || '',
     actions,
     completion: clone(raw.completion || {}),
@@ -192,16 +228,71 @@ function normalizeAction(action) {
     subtitle: action.subtitle || action.description || '',
     iconKey: action.iconKey || null,
     adaptiveLeverId: action.adaptiveLeverId || null,
+    affordanceId: action.affordanceId || null,
+    affordanceKind: action.affordanceKind || null,
+    persistent: action.persistent === true,
+    threadId: action.threadId || null,
+    threadEffects: clone(action.threadEffects || {}),
+    resurface: clone(action.resurface || null),
+    examinationVariants: clone(action.examinationVariants || []),
     role: action.role || action.actionRole || null,
+    sourceClass: action.sourceClass || null,
     consequenceSummary: action.consequenceSummary || '',
     laterBeat: action.laterBeat || null,
     dramaturgy: clone(action.dramaturgy || action.beat || {}),
+    targets: clone(action.targets || []),
     keywords: clone(action.keywords || []),
     availability: clone(action.availability || {}),
     requires: clone(action.requires || []),
     resolution,
     replay: action.replay || 'consumable'
   };
+}
+
+
+function validateEstablishedTargets(scene, errors, path, strict) {
+  const declared = new Set();
+  asArray(scene.establishedEntities).forEach((entity, index) => {
+    const id = typeof entity === 'string' ? entity : entity && (entity.entityId || entity.id);
+    if (!id) errors.push(issue(`${path}.establishedEntities[${index}]`, 'Established entity requires an id'));
+    else if (declared.has(id)) errors.push(issue(`${path}.establishedEntities[${index}]`, `Duplicate established entity: ${id}`));
+    else declared.add(id);
+  });
+  if (!strict) return;
+  const locationId = scene.location && (scene.location.id || scene.location.locationId);
+  if (locationId) declared.add(locationId);
+  scene.actions.forEach((action, index) => {
+    asArray(action.targets).forEach((target, targetIndex) => {
+      const id = typeof target === 'string' ? target : target && (target.entityId || target.id);
+      if (!id) errors.push(issue(`${path}.actions[${index}].targets[${targetIndex}]`, 'Action target requires an id'));
+      else if (!declared.has(id)) errors.push(issue(`${path}.actions[${index}].targets[${targetIndex}]`, `Action target is not established in the scene: ${id}`));
+    });
+  });
+}
+
+function validateSceneAffordances(scene, errors, path) {
+  const threadIds = new Set();
+  asArray(scene.threads).forEach((thread, index) => {
+    if (!thread || !thread.threadId || threadIds.has(thread.threadId)) {
+      errors.push(issue(`${path}.threads[${index}]`, 'Unique threadId is required'));
+      return;
+    }
+    threadIds.add(thread.threadId);
+    if (thread.status && !THREAD_STATUSES.has(thread.status)) errors.push(issue(`${path}.threads[${index}].status`, `Unsupported thread status: ${thread.status}`));
+  });
+  const affordanceIds = new Set();
+  asArray(scene.affordances).forEach((affordance, index) => {
+    const affordancePath = `${path}.affordances[${index}]`;
+    if (!affordance || !affordance.affordanceId || affordanceIds.has(affordance.affordanceId)) errors.push(issue(affordancePath, 'Unique affordanceId is required'));
+    else affordanceIds.add(affordance.affordanceId);
+    if (affordance && affordance.kind && !AFFORDANCE_KINDS.has(affordance.kind)) errors.push(issue(`${affordancePath}.kind`, `Unsupported affordance kind: ${affordance.kind}`));
+    if (affordance && affordance.threadId && !threadIds.has(affordance.threadId)) errors.push(issue(`${affordancePath}.threadId`, `Unknown thread: ${affordance.threadId}`));
+  });
+  scene.actions.forEach((action, index) => {
+    if (action.affordanceId && !affordanceIds.has(action.affordanceId)) errors.push(issue(`${path}.actions[${index}].affordanceId`, `Unknown affordance: ${action.affordanceId}`));
+    if (action.threadId && !threadIds.has(action.threadId)) errors.push(issue(`${path}.actions[${index}].threadId`, `Unknown thread: ${action.threadId}`));
+    if (action.affordanceKind && !AFFORDANCE_KINDS.has(action.affordanceKind)) errors.push(issue(`${path}.actions[${index}].affordanceKind`, `Unsupported affordance kind: ${action.affordanceKind}`));
+  });
 }
 
 function validateAdaptiveDifficulty(policy, errors, warnings) {
@@ -233,6 +324,13 @@ function validateAdaptiveDifficulty(policy, errors, warnings) {
     });
   });
   if (policy.enabled && (!policy.disclosure || policy.disclosure.adaptiveChallenge !== true)) warnings.push(issue(`${path}.disclosure`, 'Enabled adaptive difficulty should disclose adaptive challenge'));
+}
+
+function validateThreadRequirements(requirements, threads, errors, path) {
+  const threadIds = new Set(asArray(threads).map(thread => thread && thread.threadId));
+  asArray(requirements).forEach((req, i) => {
+    if (req && req.kind === 'thread' && !threadIds.has(req.id)) errors.push(issue(`${path}[${i}]`, `Unknown thread: ${req.id}`));
+  });
 }
 
 function validateActionRequirements(requirements, actionIds, errors, path) {
@@ -270,6 +368,7 @@ function validateRequirements(requirements, classIds, itemIds, actionIds, errors
     if (!req || !req.kind) return errors.push(issue(`${path}[${i}]`, 'Requirement kind is required'));
     if (req.kind === 'class' && !classIds.has(req.id)) errors.push(issue(`${path}[${i}]`, `Unknown class: ${req.id}`));
     if (req.kind === 'item' && !itemIds.has(req.id)) errors.push(issue(`${path}[${i}]`, `Unknown item: ${req.id}`));
+    if (req.kind === 'thread' && (!req.id || typeof req.id !== 'string')) errors.push(issue(`${path}[${i}]`, 'Thread requirement ID is required'));
     if (req.kind === 'action' && actionIds.size && !actionIds.has(req.id)) {
       // Cross-action references may point forward; defer this check to runtime/compiler pass.
     }
@@ -281,4 +380,4 @@ function validateRequirements(requirements, classIds, itemIds, actionIds, errors
 // explicit compatibility alias for existing callers during extraction.
 const compileManifest = compileAdventure;
 
-module.exports = { ACTION_TYPES, compileManifest, compileAdventure };
+module.exports = { ACTION_TYPES, AFFORDANCE_KINDS, THREAD_STATUSES, compileManifest, compileAdventure };

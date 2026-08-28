@@ -82,3 +82,34 @@ test('preserves dramatic beat data through compilation, catalog, resolution, and
 test('allows a valid short linear scene with one authored commitment', () => {
   assert.doesNotThrow(() => compileAdventure(base({ scenes: [{ sceneId: 'arrival', dramaturgy: sceneBeat, actions: [{ actionId: 'enter', type: 'exit', role: 'exit', replay: 'consumable', label: 'Enter the house', dramaturgy: { ...actionBeat, approach: 'You cross the threshold before the storm arrives.', reaction: 'The door opens onto darkness.', changedSituation: 'The road is behind you and the house has claimed your attention.', nextObjective: 'Find the source of the watchful presence.', convergence: 'threshold', effectSummary: 'Commits the journey to the house.' }, resolution: { narration: 'You enter.' } }] }] })));
 });
+
+test('rejects generic standalone action labels instead of padding a catalog', () => {
+  assert.throws(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], actions: [{ ...base().scenes[0].actions[0], label: 'Continue' }, ...base().scenes[0].actions.slice(1)] }] })), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('Generic or Template-style')));
+});
+
+test('rejects duplicate non-exit labels that disguise padded choices', () => {
+  const actions = base().scenes[0].actions;
+  assert.throws(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], actions: [actions[0], { ...actions[1], label: actions[0].label }] }] })), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('Duplicate action labels')));
+});
+
+test('rejects meaningful alternatives with no distinct immediate or named later consequence', () => {
+  const actions = base().scenes[0].actions;
+  const same = { ...actions[1], consequenceSummary: actions[0].consequenceSummary, laterBeat: undefined, dramaturgy: actions[0].dramaturgy, resolution: { ...actions[1].resolution, setFlags: { asked: true }, discover: undefined } };
+  assert.throws(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], actions: [actions[0], same, actions[2]] }] })), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('different immediate or named later consequences')));
+});
+
+test('rejects actions that target an unestablished entity', () => {
+  const actions = base().scenes[0].actions;
+  assert.throws(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], establishedEntities: ['keeper'], actions: [{ ...actions[0], targets: ['unknown-stranger'] }, actions[1], actions[2]] }] })), error => error.code === 'MANIFEST_INVALID' && error.errors.some(item => item.message.includes('not established in the scene')));
+});
+
+test('accepts actions targeting an established actor or current location', () => {
+  const actions = base().scenes[0].actions;
+  assert.doesNotThrow(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], location: { id: 'arrival' }, establishedEntities: ['keeper'], actions: [{ ...actions[0], targets: ['keeper'] }, { ...actions[1], targets: ['arrival'] }, actions[2]] }] })));
+});
+
+test('permits meaningful alternatives that converge later when their consequences differ', () => {
+  const actions = base().scenes[0].actions;
+  const alternative = { ...actions[1], laterBeat: 'threshold', dramaturgy: { ...actions[0].dramaturgy, changedSituation: 'The warning gives you leverage when the housekeeper opens the door.', nextObjective: 'Use the warning before crossing the threshold.' }, resolution: { narration: 'The warning changes your approach.', setFlags: { warned: true } } };
+  assert.doesNotThrow(() => compileAdventure(base({ scenes: [{ ...base().scenes[0], actions: [actions[0], alternative, actions[2]] }] })));
+});

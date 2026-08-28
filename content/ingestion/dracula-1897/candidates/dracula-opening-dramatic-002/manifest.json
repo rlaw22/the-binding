@@ -19,6 +19,9 @@
   "agencyPolicy": {
     "strict": true
   },
+  "ingestionPolicy": {
+    "sourceClassification": "required"
+  },
   "prologue": {
     "text": "A solicitor travels east on business, carrying a letter from a count he has never met.",
     "startingSceneId": "dracula_opening_01"
@@ -56,6 +59,88 @@
         "stable_boy"
       ],
       "openingNarration": "At the Golden Krone in Bistritz, Jonathan has one evening before the coach leaves east. The landlord watches the clock, an old woman grips a crucifix, and conversation stops whenever Castle Dracula is mentioned.\n\nThe coach will leave before the last light fails; local fear is urgent but incomplete, and professional duty argues against delay.",
+      "threads": [
+        {
+          "threadId": "thread_question_landlord",
+          "status": "dormant",
+          "sourceOpportunityId": "question_landlord"
+        },
+        {
+          "threadId": "thread_inspect_stable",
+          "status": "dormant",
+          "sourceOpportunityId": "inspect_stable"
+        },
+        {
+          "threadId": "thread_accept_crucifix",
+          "status": "dormant",
+          "sourceOpportunityId": "accept_crucifix"
+        },
+        {
+          "threadId": "thread_trust_warning",
+          "status": "dormant",
+          "sourceOpportunityId": "trust_warning"
+        },
+        {
+          "threadId": "thread_investigate_then_board",
+          "status": "dormant",
+          "sourceOpportunityId": "investigate_then_board"
+        },
+        {
+          "threadId": "thread_dismiss_warning",
+          "status": "dormant",
+          "sourceOpportunityId": "dismiss_warning"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "question_landlord",
+          "kind": "contextual",
+          "threadId": "thread_question_landlord",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "inspect_stable",
+          "kind": "discovery",
+          "threadId": "thread_inspect_stable",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "accept_crucifix",
+          "kind": "contextual",
+          "threadId": "thread_accept_crucifix",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "trust_warning",
+          "kind": "exit",
+          "threadId": "thread_trust_warning",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        },
+        {
+          "affordanceId": "investigate_then_board",
+          "kind": "exit",
+          "threadId": "thread_investigate_then_board",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        },
+        {
+          "affordanceId": "dismiss_warning",
+          "kind": "exit",
+          "threadId": "thread_dismiss_warning",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "At the Golden Krone in Bistritz, Jonathan has one evening before the coach leaves east. The landlord watches the clock, an old woman grips a crucifix, and conversation stops whenever Castle Dracula is mentioned.",
         "immediateObjective": "Decide what to trust and what protection or evidence to carry onto the night road.",
@@ -90,6 +175,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "decision": 5,
+        "discovery": 1
+      },
       "actions": [
         {
           "actionId": "dracula_opening_01__question_landlord",
@@ -109,7 +198,42 @@
             "pass"
           ],
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "question_landlord",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_question_landlord",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [
+            {
+              "maxVisit": 1,
+              "narration": "The landlord lowers his voice, refuses to say the Count’s name, and presses a crucifix into Jonathan’s palm.",
+              "setFlags": {
+                "landlord_warning_heard": true
+              }
+            },
+            {
+              "requires": [
+                {
+                  "kind": "flag",
+                  "id": "road_prepared",
+                  "equals": true
+                }
+              ],
+              "maxVisit": 2,
+              "narration": "When Jonathan mentions the changed horses, the landlord’s refusal becomes an admission: the danger is not a tale attached to the pass, but a preparation made for it. He presses the crucifix into Jonathan’s hand without another word.",
+              "setFlags": {
+                "landlord_warning_heard": true
+              }
+            }
+          ],
           "dramaturgy": {
             "approach": "Question the landlord privately about the Borgo Pass.",
             "stakes": "Jonathan may gain a credible warning but make the innkeeper more afraid to help him.",
@@ -150,7 +274,42 @@
             "changed"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "inspect_stable",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_inspect_stable",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [
+            {
+              "maxVisit": 1,
+              "narration": "The boy reveals that the horses were changed twice and will not meet Jonathan’s eyes when the pass is mentioned.",
+              "setFlags": {
+                "road_prepared": true
+              }
+            },
+            {
+              "requires": [
+                {
+                  "kind": "flag",
+                  "id": "landlord_warning_heard",
+                  "equals": true
+                }
+              ],
+              "maxVisit": 2,
+              "narration": "With the landlord’s warning in mind, the changed harness no longer looks like an isolated repair. Someone prepared these horses for a road the innkeeper will not name.",
+              "setFlags": {
+                "road_prepared": true
+              }
+            }
+          ],
           "dramaturgy": {
             "approach": "Inspect the coach harness and ask the stable boy what changed.",
             "stakes": "Time is spent on practical evidence instead of reassurance, and the boy may refuse to speak.",
@@ -189,7 +348,20 @@
             "fear"
           ],
           "role": "preparation",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "accept_crucifix",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_accept_crucifix",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Accept the old woman’s crucifix without pretending to understand her fear.",
             "stakes": "Jonathan carries an unfamiliar protection and admits that local testimony has unsettled his confidence.",
@@ -233,7 +405,17 @@
             "coat"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "trust_warning",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_trust_warning",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_02_protected_coach",
           "dramaturgy": {
             "approach": "Trust the landlord’s warning and board with the crucifix hidden beneath your coat.",
@@ -275,7 +457,17 @@
             "road"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "investigate_then_board",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_investigate_then_board",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_03_evidence_coach",
           "dramaturgy": {
             "approach": "Investigate the stable before boarding, carrying evidence rather than reassurance onto the road.",
@@ -315,7 +507,17 @@
             "protection"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "dismiss_warning",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_dismiss_warning",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_04_exposed_coach",
           "dramaturgy": {
             "approach": "Dismiss the warnings as village superstition and board without accepting protection.",
@@ -350,6 +552,49 @@
         "coachman"
       ],
       "openingNarration": "The ordinary coach carries Jonathan east under the protection the inn supplied. The passengers notice the crucifix beneath his coat, and their fear gives way to the fragile relief of a shared safeguard.\n\nThe coach is leaving the last settled road; reassurance has bought cooperation, but the coming transfer will test whether protection is enough.",
+      "threads": [
+        {
+          "threadId": "thread_keep_crucifix_visible",
+          "status": "dormant",
+          "sourceOpportunityId": "keep_crucifix_visible"
+        },
+        {
+          "threadId": "thread_study_coachman",
+          "status": "dormant",
+          "sourceOpportunityId": "study_coachman"
+        },
+        {
+          "threadId": "thread_protected_transfer",
+          "status": "dormant",
+          "sourceOpportunityId": "protected_transfer"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "keep_crucifix_visible",
+          "kind": "contextual",
+          "threadId": "thread_keep_crucifix_visible",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "study_coachman",
+          "kind": "discovery",
+          "threadId": "thread_study_coachman",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "protected_transfer",
+          "kind": "exit",
+          "threadId": "thread_protected_transfer",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "The ordinary coach carries Jonathan east under the protection the inn supplied. The passengers notice the crucifix beneath his coat, and their fear gives way to the fragile relief of a shared safeguard.",
         "immediateObjective": "Use the passengers’ trust to learn what the coachman will not say before the road changes hands.",
@@ -378,6 +623,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "decision": 2,
+        "discovery": 1
+      },
       "actions": [
         {
           "actionId": "dracula_opening_02__keep_crucifix_visible",
@@ -402,7 +651,20 @@
             "midnight"
           ],
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "keep_crucifix_visible",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_keep_crucifix_visible",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Keep the crucifix visible and ask the passengers what they expect at midnight.",
             "stakes": "Jonathan may turn private fear into shared warning, but the coachman will know the passengers have spoken.",
@@ -443,7 +705,20 @@
             "mentioned"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "study_coachman",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_study_coachman",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Study the coachman’s hands and the horses’ response whenever the pass is mentioned.",
             "stakes": "Observation may reveal a pattern, but Jonathan gives up the chance to comfort the passengers before the transfer.",
@@ -483,7 +758,17 @@
             "you"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "protected_transfer",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_protected_transfer",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_02_coach_ride",
           "dramaturgy": {
             "approach": "Accept the midnight transfer with the crucifix ready and the passengers behind you.",
@@ -518,6 +803,49 @@
         "coach_passengers"
       ],
       "openingNarration": "Jonathan rides east with the cut harness leather hidden in his pocket. The coachman insists the horses are sound, but every passenger watches the evidence as though it might explain why the first driver refused the pass.\n\nThe coach is approaching the transfer point; once the second carriage takes the route, the physical evidence may be useless unless Jonathan makes someone acknowledge it.",
+      "threads": [
+        {
+          "threadId": "thread_show_harness",
+          "status": "dormant",
+          "sourceOpportunityId": "show_harness"
+        },
+        {
+          "threadId": "thread_compare_passengers",
+          "status": "dormant",
+          "sourceOpportunityId": "compare_passengers"
+        },
+        {
+          "threadId": "thread_evidence_transfer",
+          "status": "dormant",
+          "sourceOpportunityId": "evidence_transfer"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "show_harness",
+          "kind": "contextual",
+          "threadId": "thread_show_harness",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "compare_passengers",
+          "kind": "discovery",
+          "threadId": "thread_compare_passengers",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "evidence_transfer",
+          "kind": "exit",
+          "threadId": "thread_evidence_transfer",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "Jonathan rides east with the cut harness leather hidden in his pocket. The coachman insists the horses are sound, but every passenger watches the evidence as though it might explain why the first driver refused the pass.",
         "immediateObjective": "Turn the stable boy’s clue into a question someone on the road must answer.",
@@ -546,6 +874,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "decision": 2,
+        "discovery": 1
+      },
       "actions": [
         {
           "actionId": "dracula_opening_03__show_harness",
@@ -571,7 +903,20 @@
             "it"
           ],
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "show_harness",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_show_harness",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Show the cut harness to the coachman and demand to know who changed it.",
             "stakes": "A public accusation may force an answer, but can turn the passengers and driver against Jonathan before the transfer.",
@@ -607,7 +952,20 @@
             "harness"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "compare_passengers",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_compare_passengers",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Compare the passengers’ accounts before showing anyone the harness.",
             "stakes": "Private testimony may reveal the pattern, but Jonathan risks losing the only moment to challenge the coachman openly.",
@@ -646,7 +1004,17 @@
             "papers"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "evidence_transfer",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_evidence_transfer",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_02_coach_ride",
           "dramaturgy": {
             "approach": "Board the second carriage with the harness evidence concealed under your papers.",
@@ -681,6 +1049,49 @@
         "coach_passengers"
       ],
       "openingNarration": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach’s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.\n\nWithout local protection or trust, Jonathan has no one to confirm what he sees; the midnight transfer is approaching, and the coachman has stopped answering questions.",
+      "threads": [
+        {
+          "threadId": "thread_confront_silence",
+          "status": "dormant",
+          "sourceOpportunityId": "confront_silence"
+        },
+        {
+          "threadId": "thread_read_letter",
+          "status": "dormant",
+          "sourceOpportunityId": "read_letter"
+        },
+        {
+          "threadId": "thread_exposed_transfer",
+          "status": "dormant",
+          "sourceOpportunityId": "exposed_transfer"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "confront_silence",
+          "kind": "contextual",
+          "threadId": "thread_confront_silence",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "read_letter",
+          "kind": "discovery",
+          "threadId": "thread_read_letter",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "exposed_transfer",
+          "kind": "exit",
+          "threadId": "thread_exposed_transfer",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach’s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.",
         "immediateObjective": "Preserve control of the journey long enough to identify the first impossible event.",
@@ -709,6 +1120,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "decision": 2,
+        "discovery": 1
+      },
       "actions": [
         {
           "actionId": "dracula_opening_04__confront_silence",
@@ -732,7 +1147,20 @@
             "point"
           ],
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "confront_silence",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_confront_silence",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Confront the coachman’s silence before the coach reaches the transfer point.",
             "stakes": "A demand may restore a measure of control, but the isolated passengers may leave Jonathan alone with the answer.",
@@ -773,7 +1201,20 @@
             "missed"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "read_letter",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_read_letter",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Read the Count’s letter again and search it for an instruction you missed.",
             "stakes": "The letter may restore professional purpose, but studying it means surrendering attention while the coach leaves the settled road.",
@@ -811,7 +1252,17 @@
             "empty"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "exposed_transfer",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_exposed_transfer",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_02_coach_ride",
           "dramaturgy": {
             "approach": "Board the second carriage without protest and keep your hands empty.",
@@ -846,6 +1297,49 @@
         "mysterious_driver"
       ],
       "openingNarration": "The ordinary coach leaves the settled road. Passengers cross themselves when wolves cry, and a second carriage waits at midnight where no connection should exist.\n\nThe first coach is turning back, the night is closing in, and refusing the second carriage means facing the mountain road without a safe alternative.",
+      "threads": [
+        {
+          "threadId": "thread_question_driver",
+          "status": "dormant",
+          "sourceOpportunityId": "question_driver"
+        },
+        {
+          "threadId": "thread_watch_passengers",
+          "status": "dormant",
+          "sourceOpportunityId": "watch_passengers"
+        },
+        {
+          "threadId": "thread_board_second_carriage",
+          "status": "dormant",
+          "sourceOpportunityId": "board_second_carriage"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "question_driver",
+          "kind": "contextual",
+          "threadId": "thread_question_driver",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "watch_passengers",
+          "kind": "discovery",
+          "threadId": "thread_watch_passengers",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "board_second_carriage",
+          "kind": "state_dependent",
+          "threadId": "thread_board_second_carriage",
+          "persistent": false,
+          "closure": "authored_resolution",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "The ordinary coach leaves the settled road. Passengers cross themselves when wolves cry, and a second carriage waits at midnight where no connection should exist.",
         "immediateObjective": "Decide whether to observe, question, or resist the transfer to the unknown carriage.",
@@ -873,6 +1367,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "decision": 2,
+        "discovery": 1
+      },
       "actions": [
         {
           "actionId": "dracula_opening_05__question_driver",
@@ -897,7 +1395,20 @@
             "abandoned"
           ],
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "question_driver",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_question_driver",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Ask the driver who sent him and why the road has been abandoned.",
             "stakes": "A direct question may expose the driver’s authority, but may also mark Jonathan as resistant.",
@@ -934,7 +1445,20 @@
             "back"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "watch_passengers",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_watch_passengers",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Watch the passengers rather than the driver as the first coach turns back.",
             "stakes": "Jonathan gains social evidence but loses the chance to inspect the second carriage before boarding.",
@@ -967,7 +1491,17 @@
             "ready"
           ],
           "role": "commitment",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "board_second_carriage",
+          "affordanceKind": "state_dependent",
+          "persistent": false,
+          "threadId": "thread_board_second_carriage",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_03_borgo_pass",
           "dramaturgy": {
             "approach": "Board the second carriage and keep the crucifix ready.",
@@ -1002,6 +1536,62 @@
         "wolves"
       ],
       "openingNarration": "Blue flames burn beside the mountain road. The driver stops at each one while wolves gather beyond the carriage windows and the route disappears behind snow and trees.\n\nThe driver will not explain the flames, the wolves are keeping pace, and the carriage is carrying Jonathan toward a threshold he cannot inspect from outside.",
+      "threads": [
+        {
+          "threadId": "thread_watch_flame",
+          "status": "dormant",
+          "sourceOpportunityId": "watch_flame"
+        },
+        {
+          "threadId": "thread_raise_crucifix",
+          "status": "dormant",
+          "sourceOpportunityId": "raise_crucifix"
+        },
+        {
+          "threadId": "thread_search_carriage",
+          "status": "dormant",
+          "sourceOpportunityId": "search_carriage"
+        },
+        {
+          "threadId": "thread_follow_to_castle",
+          "status": "dormant",
+          "sourceOpportunityId": "follow_to_castle"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "watch_flame",
+          "kind": "discovery",
+          "threadId": "thread_watch_flame",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "raise_crucifix",
+          "kind": "contextual",
+          "threadId": "thread_raise_crucifix",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "search_carriage",
+          "kind": "discovery",
+          "threadId": "thread_search_carriage",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "follow_to_castle",
+          "kind": "exit",
+          "threadId": "thread_follow_to_castle",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "Blue flames burn beside the mountain road. The driver stops at each one while wolves gather beyond the carriage windows and the route disappears behind snow and trees.",
         "immediateObjective": "Decide what to observe and what to protect before the carriage reaches the castle.",
@@ -1029,6 +1619,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "discovery": 2,
+        "decision": 2
+      },
       "actions": [
         {
           "actionId": "dracula_opening_06__watch_flame",
@@ -1050,7 +1644,20 @@
             "flame"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "watch_flame",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_watch_flame",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Watch what the driver does at the nearest blue flame.",
             "stakes": "Jonathan may learn the road’s secret but must remain still while the driver leaves him alone in the dark.",
@@ -1084,7 +1691,20 @@
             "window"
           ],
           "role": "preparation",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "raise_crucifix",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_raise_crucifix",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Raise the crucifix when the wolves press near the window.",
             "stakes": "Jonathan tests the protection publicly and may reveal to the driver that the innkeeper warned him.",
@@ -1122,7 +1742,20 @@
             "signal"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "search_carriage",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_search_carriage",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Search under the seat for something that could serve as a weapon or signal.",
             "stakes": "Jonathan risks being seen searching while the driver is away, but empty hands may be worse at the castle.",
@@ -1155,7 +1788,17 @@
             "destination"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "follow_to_castle",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_follow_to_castle",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "routeTo": "beat_04_castle_threshold",
           "dramaturgy": {
             "approach": "Remain aboard and follow the carriage to its destination.",
@@ -1186,6 +1829,62 @@
         "count_dracula"
       ],
       "openingNarration": "The carriage stops at Castle Dracula. The driver has vanished, the gates open without a hand, and a tall host waits alone in a hall too large and too silent to be a functioning household.\n\nThe gate seals the road behind Jonathan, the host knows his business in detail, and no servant appears to make the welcome ordinary.",
+      "threads": [
+        {
+          "threadId": "thread_inspect_gate",
+          "status": "dormant",
+          "sourceOpportunityId": "inspect_gate"
+        },
+        {
+          "threadId": "thread_greet_count",
+          "status": "dormant",
+          "sourceOpportunityId": "greet_count"
+        },
+        {
+          "threadId": "thread_keep_crucifix_ready",
+          "status": "dormant",
+          "sourceOpportunityId": "keep_crucifix_ready"
+        },
+        {
+          "threadId": "thread_enter_castle",
+          "status": "dormant",
+          "sourceOpportunityId": "enter_castle"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "inspect_gate",
+          "kind": "discovery",
+          "threadId": "thread_inspect_gate",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "greet_count",
+          "kind": "contextual",
+          "threadId": "thread_greet_count",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "keep_crucifix_ready",
+          "kind": "contextual",
+          "threadId": "thread_keep_crucifix_ready",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "enter_castle",
+          "kind": "exit",
+          "threadId": "thread_enter_castle",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ],
       "dramaturgy": {
         "situation": "The carriage stops at Castle Dracula. The driver has vanished, the gates open without a hand, and a tall host waits alone in a hall too large and too silent to be a functioning household.",
         "immediateObjective": "Enter on your own terms if possible, while learning whether the host’s courtesy conceals a loss of control.",
@@ -1210,6 +1909,10 @@
         "optionalActionsRequired": false,
         "authoredAlternatives": true
       },
+      "sourceClassCounts": {
+        "discovery": 1,
+        "decision": 3
+      },
       "actions": [
         {
           "actionId": "dracula_opening_07__inspect_gate",
@@ -1230,7 +1933,20 @@
             "welcome"
           ],
           "role": "discovery",
+          "sourceClass": "discovery",
           "replay": "repeatable",
+          "affordanceId": "inspect_gate",
+          "affordanceKind": "discovery",
+          "persistent": true,
+          "threadId": "thread_inspect_gate",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Inspect the gate and courtyard before answering the welcome.",
             "stakes": "Jonathan delays the social ritual and may reveal that he is already looking for escape.",
@@ -1266,7 +1982,20 @@
             "are"
           ],
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "greet_count",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_greet_count",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Return the Count’s greeting and ask directly where the servants are.",
             "stakes": "Courtesy may preserve access to the host, but the question challenges the fiction that this is an ordinary household.",
@@ -1299,7 +2028,20 @@
             "threshold"
           ],
           "role": "preparation",
+          "sourceClass": "decision",
           "replay": "repeatable",
+          "affordanceId": "keep_crucifix_ready",
+          "affordanceKind": "contextual",
+          "persistent": true,
+          "threadId": "thread_keep_crucifix_ready",
+          "threadEffects": {
+            "activate": true
+          },
+          "resurface": {
+            "whilePlausible": true,
+            "maxAuthoredRevisits": 2
+          },
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Keep the crucifix visible as you cross the threshold.",
             "stakes": "Jonathan tests the old woman’s protection in front of the host and risks showing that the warnings reached him.",
@@ -1335,7 +2077,17 @@
             "open"
           ],
           "role": "exit",
+          "sourceClass": "decision",
           "replay": "consumable",
+          "affordanceId": "enter_castle",
+          "affordanceKind": "exit",
+          "persistent": false,
+          "threadId": "thread_enter_castle",
+          "threadEffects": {
+            "resolve": true
+          },
+          "resurface": null,
+          "examinationVariants": [],
           "dramaturgy": {
             "approach": "Enter and accept the Count’s hospitality while the doors remain open.",
             "stakes": "Jonathan preserves the business that brought him east, but commits himself to a house that has already begun to close around him.",

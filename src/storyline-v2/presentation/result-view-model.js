@@ -25,6 +25,12 @@ function createStorylineV2ResultViewModel(result) {
     resultType: result.resultType || null,
     narrative: result.narrative || '',
     dramaticBeat: result.dramaticBeat ? { ...result.dramaticBeat } : {},
+    continuity: {
+      reaction: result.dramaticBeat && result.dramaticBeat.reaction || '',
+      changedSituation: result.dramaticBeat && result.dramaticBeat.changedSituation || '',
+      nextObjective: result.dramaticBeat && result.dramaticBeat.nextObjective || '',
+      nextQuestion: result.dramaticBeat && result.dramaticBeat.nextQuestion || ''
+    },
     check,
     stateChanges: result.stateChanges ? { ...result.stateChanges } : null,
     transition: result.transition ? { ...result.transition } : null,

@@ -77,3 +77,19 @@ The compiler rejects missing or template-shaped dramatic fields. Tests must cove
 - The deterministic domain engine owns legality, state mutation, checks, transitions, idempotency, and endings.
 - Presentation owns layout and accessibility; it must not invent missing drama.
 - Bounded language models may interpret constrained intent or narrate within authored bounds, but they cannot invent legal actions, plot facts, actors, locations, or consequences.
+
+## Stateful scene affordances and local threads
+
+A scene is an established space containing a bounded set of authored affordances and local dramatic threads. It is not only a branch node or a list of disposable buttons.
+
+A new-book scene may declare:
+
+- `threads`: named local dramatic threads with authored starting status;
+- `affordances`: named opportunities grounded in the established space;
+- action `affordanceId`, `affordanceKind`, `threadId`, `persistent`, `threadEffects`, and optional `resurface` metadata.
+
+Affordance kinds are `core`, `contextual`, `discovery`, `state_dependent`, `atmosphere`, and `exit`. Core affordances can remain legal after an unrelated local action resolves. One-time discoveries and commitments normally become consumed; repeatable observation or conversation may remain available. An affordance may be dormant, active, resolved, temporarily unavailable, reopened, closed, or impossible only through authored state, requirements, time, movement, or consequence.
+
+After a local action resolves, the next catalog is derived from the same current space plus the changed canonical state. Authors must state what remains unresolved and what closes each thread. A persistent affordance must not be an infinite clue generator: repeated examination uses bounded authored variants or reaches a natural confirmation/closure result.
+
+The player-facing catalog contains only the currently legal authored actions and may contain one through six primary actions. Six is a ceiling, not a target. Never add filler to reach a count.

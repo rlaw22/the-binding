@@ -2,6 +2,7 @@
 
 const assert = require('assert');
 const { createServer } = require('../src/api/server');
+const { createStorylineV2ViewModel, createStorylineV2ResultViewModel } = require('../src/storyline-v2/presentation');
 
 async function main() {
   const disabled = await createServer({ llmConfig: { mock: true }, persistence: false });
@@ -29,6 +30,15 @@ async function main() {
     const start = JSON.parse(response.payload);
     assert.strictEqual(start.state.sceneId, 'dracula_full_01');
     assert.ok(start.catalog.actions.length > 0);
+    const startView = createStorylineV2ViewModel(start);
+    assert.strictEqual(startView.scene.sceneId, start.catalog.sceneId);
+    assert.strictEqual(startView.catalogVersion, start.catalog.catalogVersion);
+    assert.strictEqual(startView.textInput.catalogVersion, start.catalog.catalogVersion);
+    assert.deepStrictEqual(
+      startView.textInput.legalActions.map(action => action.actionId),
+      start.catalog.actions.map(action => action.actionId)
+    );
+    assert.ok(startView.textInput.enabled);
 
     const checkResponse = await app.inject({
       method: 'POST', url: '/api/storyline-v2/sessions',
@@ -47,6 +57,20 @@ async function main() {
     assert.strictEqual(checkResult.resultType, 'discovery');
     assert.ok(checkResult.dramaticBeat.nextObjective);
     assert.ok(checkResult.dramaticBeat.changedSituation);
+    const checkResultView = createStorylineV2ResultViewModel(checkResult);
+    assert.strictEqual(checkResultView.continuity.nextObjective, checkResult.dramaticBeat.nextObjective);
+    assert.strictEqual(checkResultView.continuity.changedSituation, checkResult.dramaticBeat.changedSituation);
+    const checkAfterView = createStorylineV2ViewModel({
+      adventureId: checkStart.adventureId,
+      state: checkResult.state,
+      catalog: checkResult.catalog
+    });
+    assert.strictEqual(checkAfterView.catalogVersion, checkResult.catalog.catalogVersion);
+    assert.ok(checkAfterView.textInput.enabled);
+    assert.deepStrictEqual(
+      checkAfterView.textInput.legalActions.map(action => action.actionId),
+      checkResult.catalog.actions.map(action => action.actionId)
+    );
 
 
     response = await app.inject({

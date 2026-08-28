@@ -5,6 +5,7 @@ const { buildCatalog } = require('./action-catalog');
 const { requirementsPass } = require('./requirements');
 const { isPlayable } = require('./session-lifecycle');
 const { markMutation } = require('./session-state');
+const { initializeSceneThreads } = require('./state-model');
 const { resolveCheck } = require('./check-resolution');
 const { applyAuthoredLever } = require('./difficulty');
 
@@ -22,7 +23,11 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   if (!action || !catalog.actions.some(candidate => candidate.actionId === actionId)) return rejected(adventure, 'ACTION_UNAVAILABLE', 'That action is no longer available.', state);
 
   const beforeSceneId = state.sceneId;
-  const resolution = action.resolution || {};
+  const visitCount = (state.actionVisitCounts && state.actionVisitCounts[action.actionId]) || 0;
+  const authoredVariant = (action.examinationVariants || []).find(variant => requirementsPass(variant.requires || [], state) && visitCount < (variant.maxVisit || Number.MAX_SAFE_INTEGER));
+  const resolution = authoredVariant ? { ...(action.resolution || {}), ...authoredVariant, narration: authoredVariant.narration || (action.resolution || {}).narration } : (action.resolution || {});
+  if (!state.actionVisitCounts) state.actionVisitCounts = {};
+  state.actionVisitCounts[action.actionId] = visitCount + 1;
   const profile = state.bookSession && state.bookSession.difficultyProfile;
   const leverId = action.adaptiveLeverId || resolution.adaptiveLeverId;
   const authoredLever = leverId && adventure.adaptiveDifficulty && (adventure.adaptiveDifficulty.levers || []).find(lever => lever.leverId === leverId);
@@ -32,7 +37,9 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   const check = resolveCheck({ check: resolvedCheck, state, actionId, turnId });
   const authored = check ? check.outcome : resolution;
   const stateChanges = { hp: 0, coins: 0, flags: {}, discoveredContentIds: [], itemsAdded: [], itemsRemoved: [] };
-  if (action.replay !== 'repeatable') state.consumedActionIds.push(action.actionId);
+  const affordance = (scene.affordances || []).find(item => item.affordanceId === action.affordanceId);
+  if (action.replay !== 'repeatable' && !(affordance && affordance.persistent)) state.consumedActionIds.push(action.actionId);
+  applyThreadEffects(state, action.threadEffects, action.threadId);
   asArray(authored.discover).forEach(id => {
     if (!state.discoveredContentIds.includes(id)) { state.discoveredContentIds.push(id); stateChanges.discoveredContentIds.push(id); }
   });
@@ -95,7 +102,9 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   const edge = (adventure.graph.edges || []).find(candidate => candidate.from === beforeSceneId && candidate.trigger && candidate.trigger.actionId === actionId && requirementsPass(candidate.trigger.requires || [], state));
   if (edge) {
     state.completedSceneIds.push(beforeSceneId);
+    closeSceneThreads(state, scene);
     state.sceneId = edge.to; state.actId = adventure.scenes[edge.to].actId;
+    state.localThreads = initializeSceneThreads(adventure.scenes[edge.to], state.localThreads);
     transition = { edgeId: edge.edgeId, sourceSceneId: beforeSceneId, destinationSceneId: edge.to };
   }
   state.turnNumber += 1; state.catalogVersion = `${state.sceneId}:${state.turnNumber}`;
@@ -113,6 +122,35 @@ function resolveTurn({ adventure, state: inputState, actionId, catalogVersion, t
   };
   if (turnId) state.processedTurns[turnId] = clone(result);
   return { state, result };
+}
+
+
+function closeSceneThreads(state, scene) {
+  if (!state.localThreads || !scene) return;
+  // Movement is an authored boundary: unresolved local questions cannot remain
+  // actionable in the departed space, but their closed status remains in the
+  // canonical snapshot for history, audit, and future authored reopening.
+  (scene.threads || []).forEach(thread => {
+    const local = state.localThreads[thread.threadId];
+    if (local && local.status !== 'resolved' && local.status !== 'closed') local.status = 'closed';
+  });
+}
+
+function applyThreadEffects(state, effects = {}, fallbackThreadId = null) {
+  if (!state.localThreads || typeof state.localThreads !== 'object') state.localThreads = {};
+  const thread = fallbackThreadId && (state.localThreads[fallbackThreadId] || (state.localThreads[fallbackThreadId] = { status: 'dormant', progress: {} }));
+  if (thread && effects.activate) thread.status = 'active';
+  if (thread && effects.resolve) thread.status = 'resolved';
+  if (thread && effects.close) thread.status = 'closed';
+  if (thread && effects.reopen) thread.status = 'active';
+  Object.entries(effects.statuses || {}).forEach(([id, status]) => {
+    if (!state.localThreads[id]) state.localThreads[id] = { status: 'dormant', progress: {} };
+    state.localThreads[id].status = status;
+  });
+  Object.entries(effects.progress || {}).forEach(([id, progress]) => {
+    if (!state.localThreads[id]) state.localThreads[id] = { status: 'dormant', progress: {} };
+    state.localThreads[id].progress = { ...state.localThreads[id].progress, ...progress };
+  });
 }
 
 function rejected(adventure, code, narrative, state) {

@@ -6,7 +6,7 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { compileAdventure } = require('../src/storyline-v2/domain');
+const { compileAdventure, auditIngestedContent } = require('../src/storyline-v2/domain');
 
 const root = path.join(__dirname, '..');
 const base = path.join(root, 'content/ingestion/dracula-1897');
@@ -18,6 +18,27 @@ function actionType(role) {
   if (role === 'exit') return 'exit';
   if (role === 'commitment') return 'threat';
   return 'exploration';
+}
+
+const SOURCE_CLASSES = new Set(['canonical_event', 'decision', 'discovery', 'atmosphere', 'connective_tissue', 'non_playable']);
+
+function sourceClassFor(opportunity) {
+  if (!SOURCE_CLASSES.has(opportunity.sourceClass)) {
+    throw new Error(`Opportunity ${opportunity.id} requires a supported source-authored sourceClass`);
+  }
+  return opportunity.sourceClass;
+}
+
+function affordanceFrom(opportunity) {
+  const kindByRole = { discovery: 'discovery', preparation: 'contextual', alternative: 'contextual', exit: 'exit', commitment: 'state_dependent', atmosphere: 'atmosphere' };
+  return {
+    affordanceId: opportunity.id,
+    kind: kindByRole[opportunity.role] || 'contextual',
+    threadId: `thread_${opportunity.id}`,
+    persistent: opportunity.replay === 'repeatable',
+    closure: opportunity.role === 'exit' ? 'movement_or_commitment' : 'authored_resolution',
+    returnBehavior: opportunity.replay === 'repeatable' ? 'resurface_while_plausible' : 'consumed_or_transformed'
+  };
 }
 
 function actionFrom(sceneId, opportunity) {
@@ -38,7 +59,15 @@ function actionFrom(sceneId, opportunity) {
     shortLabel: opportunity.approach,
     keywords: opportunity.approach.toLowerCase().split(/[^a-z0-9']+/).filter(Boolean),
     role: opportunity.role,
+    sourceClass: sourceClassFor(opportunity),
     replay: opportunity.replay,
+    affordanceId: opportunity.id,
+    affordanceKind: affordanceFrom(opportunity).kind,
+    persistent: affordanceFrom(opportunity).persistent,
+    threadId: `thread_${opportunity.id}`,
+    threadEffects: { ...(opportunity.role === 'exit' ? { resolve: true } : { activate: true }) },
+    resurface: opportunity.replay === 'repeatable' ? { whilePlausible: true, maxAuthoredRevisits: 2 } : null,
+    examinationVariants: opportunity.examinationVariants || [],
     ...(opportunity.routeTo ? { routeTo: opportunity.routeTo } : {}),
     dramaturgy: {
       approach: opportunity.approach,
@@ -63,6 +92,8 @@ const scenes = beats.scenes.map((beat, index) => {
     setting: beat.situation,
     presentNpcs: beat.presentActors.map(actor => actor.id),
     openingNarration: `${beat.situation}\n\n${beat.pressure}`,
+    threads: beat.opportunities.map(opportunity => ({ threadId: `thread_${opportunity.id}`, status: 'dormant', sourceOpportunityId: opportunity.id })),
+    affordances: beat.opportunities.map(affordanceFrom),
     dramaturgy: {
       situation: beat.situation,
       immediateObjective: beat.immediateObjective,
@@ -72,6 +103,11 @@ const scenes = beats.scenes.map((beat, index) => {
     },
     sourceTrace: { anchors: beat.sourceAnchors, beatId: beat.id },
     agency: { optionalActionsRequired: false, authoredAlternatives: true },
+    sourceClassCounts: beat.opportunities.reduce((counts, opportunity) => {
+      const sourceClass = sourceClassFor(opportunity);
+      counts[sourceClass] = (counts[sourceClass] || 0) + 1;
+      return counts;
+    }, {}),
     actions: beat.opportunities.map(opportunity => actionFrom(sceneId, opportunity))
   };
 });
@@ -97,6 +133,7 @@ const manifest = {
   },
   narrativePolicy: { sourceFidelity: 'high', playerAgency: 'guided', endingPolicy: 'authored', allowOptionalBranches: true },
   agencyPolicy: { strict: true },
+  ingestionPolicy: { sourceClassification: 'required' },
   prologue: { text: 'A solicitor travels east on business, carrying a letter from a count he has never met.', startingSceneId: scenes[0].sceneId },
   classes: ['fighter', 'cleric', 'mage', 'rogue'],
   items: { protective_crucifix: { itemId: 'protective_crucifix', name: 'Protective crucifix' }, iron_lantern: { itemId: 'iron_lantern', name: 'Iron lantern' } },
@@ -104,6 +141,10 @@ const manifest = {
 };
 
 const compiled = compileAdventure(manifest);
+const qualityAudit = auditIngestedContent(manifest, { strict: true });
+if (qualityAudit.errors.length) {
+  throw new Error(`Opening ingestion quality gate failed: ${qualityAudit.errors.map(error => error.message).join('; ')}`);
+}
 const summary = {
   schemaVersion: '1.0', candidateId: manifest.adventureId, sourceId: beats.sourceId,
   sceneCount: scenes.length,
@@ -112,6 +153,7 @@ const summary = {
   nonExitActionCounts: scenes.map(scene => scene.actions.filter(action => action.type !== 'exit').length),
   rolesByScene: scenes.map(scene => scene.actions.map(action => action.role)),
   warnings: compiled.warnings,
+  classificationCounts: qualityAudit.report.classificationCounts,
   status: 'candidate; not published; human narrative review required'
 };
 
@@ -119,4 +161,5 @@ fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(path.join(outDir, 'manifest.json'), `${JSON.stringify(manifest, null, 2)}\n`);
 fs.writeFileSync(path.join(outDir, 'compiled-summary.json'), `${JSON.stringify(summary, null, 2)}\n`);
 fs.writeFileSync(path.join(outDir, 'source-beat-map.json'), `${JSON.stringify(beats, null, 2)}\n`);
+fs.writeFileSync(path.join(outDir, 'authoring-packet.json'), `${JSON.stringify({ schemaVersion: '1.0', sourceId: beats.sourceId, scenes: scenes.map(scene => ({ sceneId: scene.sceneId, sourceTrace: scene.sourceTrace, threads: scene.threads, affordances: scene.affordances })) }, null, 2)}\n`);
 console.log(`Generated ${manifest.adventureId}: ${summary.sceneCount} scenes, ${summary.actionCount} actions, ${summary.edgeCount} edges`);

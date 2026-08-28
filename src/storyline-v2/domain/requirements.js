@@ -9,12 +9,14 @@ function requirementsPass(requirements, state) {
     if (req.kind === 'flag') return state.flags[req.id] === req.equals;
     if (req.kind === 'discovery') return state.discoveredContentIds.includes(req.id);
     if (req.kind === 'action') return state.consumedActionIds.includes(req.id);
+    if (req.kind === 'thread') return Boolean(state.localThreads && state.localThreads[req.id] && (!req.status || state.localThreads[req.id].status === req.status));
     return false;
   });
 }
 
-function actionAvailable(action, state) {
-  if (state.consumedActionIds.includes(action.actionId) && action.replay !== 'repeatable') return false;
+function actionAvailable(action, state, options = {}) {
+  if (!options.allowConsumed && state.consumedActionIds.includes(action.actionId) && action.replay !== 'repeatable') return false;
+  if (action.replay === 'repeatable' && action.resurface && Number.isInteger(action.resurface.maxAuthoredRevisits) && (state.actionVisitCounts?.[action.actionId] || 0) >= action.resurface.maxAuthoredRevisits) return false;
   if (state.lifecycle === 'awaiting_recovery' && action.type !== 'recovery') return false;
   if (state.lifecycle !== 'awaiting_recovery' && action.type === 'recovery') return false;
   const availability = action.availability || {};

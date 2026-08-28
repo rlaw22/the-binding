@@ -19,6 +19,7 @@ function createSessionState(adventure, options = {}) {
   if (!state.timestamps || !state.timestamps.createdAt || !state.timestamps.updatedAt) {
     throw new Error('Invalid Storyline v2 session state: timestamps are required');
   }
+  if (!state.localThreads || typeof state.localThreads !== 'object' || Array.isArray(state.localThreads)) state.localThreads = {};
   if (!state.processedTurns || typeof state.processedTurns !== 'object' || Array.isArray(state.processedTurns)) {
     throw new Error('Invalid Storyline v2 session state: processed turns are required');
   }

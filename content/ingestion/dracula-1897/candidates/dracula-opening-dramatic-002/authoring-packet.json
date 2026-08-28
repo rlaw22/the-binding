@@ -1,0 +1,449 @@
+{
+  "schemaVersion": "1.0",
+  "sourceId": "dracula-1897-gutenberg-345",
+  "scenes": [
+    {
+      "sceneId": "dracula_opening_01",
+      "sourceTrace": {
+        "anchors": [
+          "arrival at Bistritz",
+          "Golden Krone welcome",
+          "St George’s Eve warning",
+          "protective crucifix",
+          "coach departs"
+        ],
+        "beatId": "beat_01_golden_krone"
+      },
+      "threads": [
+        {
+          "threadId": "thread_question_landlord",
+          "status": "dormant",
+          "sourceOpportunityId": "question_landlord"
+        },
+        {
+          "threadId": "thread_inspect_stable",
+          "status": "dormant",
+          "sourceOpportunityId": "inspect_stable"
+        },
+        {
+          "threadId": "thread_accept_crucifix",
+          "status": "dormant",
+          "sourceOpportunityId": "accept_crucifix"
+        },
+        {
+          "threadId": "thread_trust_warning",
+          "status": "dormant",
+          "sourceOpportunityId": "trust_warning"
+        },
+        {
+          "threadId": "thread_investigate_then_board",
+          "status": "dormant",
+          "sourceOpportunityId": "investigate_then_board"
+        },
+        {
+          "threadId": "thread_dismiss_warning",
+          "status": "dormant",
+          "sourceOpportunityId": "dismiss_warning"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "question_landlord",
+          "kind": "contextual",
+          "threadId": "thread_question_landlord",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "inspect_stable",
+          "kind": "discovery",
+          "threadId": "thread_inspect_stable",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "accept_crucifix",
+          "kind": "contextual",
+          "threadId": "thread_accept_crucifix",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "trust_warning",
+          "kind": "exit",
+          "threadId": "thread_trust_warning",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        },
+        {
+          "affordanceId": "investigate_then_board",
+          "kind": "exit",
+          "threadId": "thread_investigate_then_board",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        },
+        {
+          "affordanceId": "dismiss_warning",
+          "kind": "exit",
+          "threadId": "thread_dismiss_warning",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_02",
+      "sourceTrace": {
+        "anchors": [
+          "coach departs Bistritz",
+          "protective crucifix",
+          "ordinary coach enters the pass"
+        ],
+        "beatId": "beat_02_protected_coach"
+      },
+      "threads": [
+        {
+          "threadId": "thread_keep_crucifix_visible",
+          "status": "dormant",
+          "sourceOpportunityId": "keep_crucifix_visible"
+        },
+        {
+          "threadId": "thread_study_coachman",
+          "status": "dormant",
+          "sourceOpportunityId": "study_coachman"
+        },
+        {
+          "threadId": "thread_protected_transfer",
+          "status": "dormant",
+          "sourceOpportunityId": "protected_transfer"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "keep_crucifix_visible",
+          "kind": "contextual",
+          "threadId": "thread_keep_crucifix_visible",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "study_coachman",
+          "kind": "discovery",
+          "threadId": "thread_study_coachman",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "protected_transfer",
+          "kind": "exit",
+          "threadId": "thread_protected_transfer",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_03",
+      "sourceTrace": {
+        "anchors": [
+          "coach departs Bistritz",
+          "changed harness",
+          "ordinary coach enters the pass"
+        ],
+        "beatId": "beat_03_evidence_coach"
+      },
+      "threads": [
+        {
+          "threadId": "thread_show_harness",
+          "status": "dormant",
+          "sourceOpportunityId": "show_harness"
+        },
+        {
+          "threadId": "thread_compare_passengers",
+          "status": "dormant",
+          "sourceOpportunityId": "compare_passengers"
+        },
+        {
+          "threadId": "thread_evidence_transfer",
+          "status": "dormant",
+          "sourceOpportunityId": "evidence_transfer"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "show_harness",
+          "kind": "contextual",
+          "threadId": "thread_show_harness",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "compare_passengers",
+          "kind": "discovery",
+          "threadId": "thread_compare_passengers",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "evidence_transfer",
+          "kind": "exit",
+          "threadId": "thread_evidence_transfer",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_04",
+      "sourceTrace": {
+        "anchors": [
+          "coach departs Bistritz",
+          "dismissed warning",
+          "ordinary coach enters the pass"
+        ],
+        "beatId": "beat_04_exposed_coach"
+      },
+      "threads": [
+        {
+          "threadId": "thread_confront_silence",
+          "status": "dormant",
+          "sourceOpportunityId": "confront_silence"
+        },
+        {
+          "threadId": "thread_read_letter",
+          "status": "dormant",
+          "sourceOpportunityId": "read_letter"
+        },
+        {
+          "threadId": "thread_exposed_transfer",
+          "status": "dormant",
+          "sourceOpportunityId": "exposed_transfer"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "confront_silence",
+          "kind": "contextual",
+          "threadId": "thread_confront_silence",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "read_letter",
+          "kind": "discovery",
+          "threadId": "thread_read_letter",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "exposed_transfer",
+          "kind": "exit",
+          "threadId": "thread_exposed_transfer",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_05",
+      "sourceTrace": {
+        "anchors": [
+          "coach through the Borgo Pass",
+          "strange midnight driver"
+        ],
+        "beatId": "beat_02_coach_ride"
+      },
+      "threads": [
+        {
+          "threadId": "thread_question_driver",
+          "status": "dormant",
+          "sourceOpportunityId": "question_driver"
+        },
+        {
+          "threadId": "thread_watch_passengers",
+          "status": "dormant",
+          "sourceOpportunityId": "watch_passengers"
+        },
+        {
+          "threadId": "thread_board_second_carriage",
+          "status": "dormant",
+          "sourceOpportunityId": "board_second_carriage"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "question_driver",
+          "kind": "contextual",
+          "threadId": "thread_question_driver",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "watch_passengers",
+          "kind": "discovery",
+          "threadId": "thread_watch_passengers",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "board_second_carriage",
+          "kind": "state_dependent",
+          "threadId": "thread_board_second_carriage",
+          "persistent": false,
+          "closure": "authored_resolution",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_06",
+      "sourceTrace": {
+        "anchors": [
+          "blue flames",
+          "arrival at castle"
+        ],
+        "beatId": "beat_03_borgo_pass"
+      },
+      "threads": [
+        {
+          "threadId": "thread_watch_flame",
+          "status": "dormant",
+          "sourceOpportunityId": "watch_flame"
+        },
+        {
+          "threadId": "thread_raise_crucifix",
+          "status": "dormant",
+          "sourceOpportunityId": "raise_crucifix"
+        },
+        {
+          "threadId": "thread_search_carriage",
+          "status": "dormant",
+          "sourceOpportunityId": "search_carriage"
+        },
+        {
+          "threadId": "thread_follow_to_castle",
+          "status": "dormant",
+          "sourceOpportunityId": "follow_to_castle"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "watch_flame",
+          "kind": "discovery",
+          "threadId": "thread_watch_flame",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "raise_crucifix",
+          "kind": "contextual",
+          "threadId": "thread_raise_crucifix",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "search_carriage",
+          "kind": "discovery",
+          "threadId": "thread_search_carriage",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "follow_to_castle",
+          "kind": "exit",
+          "threadId": "thread_follow_to_castle",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    },
+    {
+      "sceneId": "dracula_opening_07",
+      "sourceTrace": {
+        "anchors": [
+          "Dracula’s impossible welcome",
+          "castle has no servants",
+          "conversation with Dracula"
+        ],
+        "beatId": "beat_04_castle_threshold"
+      },
+      "threads": [
+        {
+          "threadId": "thread_inspect_gate",
+          "status": "dormant",
+          "sourceOpportunityId": "inspect_gate"
+        },
+        {
+          "threadId": "thread_greet_count",
+          "status": "dormant",
+          "sourceOpportunityId": "greet_count"
+        },
+        {
+          "threadId": "thread_keep_crucifix_ready",
+          "status": "dormant",
+          "sourceOpportunityId": "keep_crucifix_ready"
+        },
+        {
+          "threadId": "thread_enter_castle",
+          "status": "dormant",
+          "sourceOpportunityId": "enter_castle"
+        }
+      ],
+      "affordances": [
+        {
+          "affordanceId": "inspect_gate",
+          "kind": "discovery",
+          "threadId": "thread_inspect_gate",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "greet_count",
+          "kind": "contextual",
+          "threadId": "thread_greet_count",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "keep_crucifix_ready",
+          "kind": "contextual",
+          "threadId": "thread_keep_crucifix_ready",
+          "persistent": true,
+          "closure": "authored_resolution",
+          "returnBehavior": "resurface_while_plausible"
+        },
+        {
+          "affordanceId": "enter_castle",
+          "kind": "exit",
+          "threadId": "thread_enter_castle",
+          "persistent": false,
+          "closure": "movement_or_commitment",
+          "returnBehavior": "consumed_or_transformed"
+        }
+      ]
+    }
+  ]
+}

@@ -57,5 +57,13 @@
     ]
   ],
   "warnings": [],
+  "classificationCounts": {
+    "canonical_event": 0,
+    "decision": 18,
+    "discovery": 8,
+    "atmosphere": 0,
+    "connective_tissue": 0,
+    "non_playable": 0
+  },
   "status": "candidate; not published; human narrative review required"
 }

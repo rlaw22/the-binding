@@ -6,6 +6,24 @@ const ACTION_ROLES = new Set([
   'alternative', 'discovery', 'preparation', 'commitment', 'exit', 'atmosphere', 'recovery'
 ]);
 const GENERIC_LABEL = /\b(observe|prepare|press|continue|resolve)\b.*\b(chapter|scene|danger|evidence|truth)\b/i;
+const GENERIC_ONLY = /^(?:observe|prepare|continue|proceed|look around|move forward|press onward|investigate|explore|do something|make a choice|resolve)$/i;
+const MEANINGFUL_ROLES = new Set(['alternative', 'discovery', 'preparation', 'commitment']);
+
+function text(value) { return typeof value === 'string' ? value.trim() : ''; }
+function comparable(value) { return text(value).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+function outcomeSignature(action) {
+  const beat = action && (action.dramaturgy || action.beat) || {};
+  const resolution = action && action.resolution || {};
+  const flags = resolution.setFlags && Object.keys(resolution.setFlags).sort().map(key => `${key}:${String(resolution.setFlags[key])}`).join(',');
+  const discoveries = Array.isArray(resolution.discover) ? resolution.discover.slice().sort().join(',') : '';
+  return [
+    text(action && action.consequenceSummary), text(action && action.laterBeat),
+    text(beat.changedSituation), text(beat.nextObjective), text(beat.convergence), flags, discoveries
+  ].join('|');
+}
+function hasNamedOutcome(action) {
+  return outcomeSignature(action).replace(/\|/g, '').length > 0;
+}
 
 function auditAgencyQuality(raw, options = {}) {
   const errors = [];
@@ -34,8 +52,26 @@ function auditAgencyQuality(raw, options = {}) {
       if (role === 'exit' && action.type !== 'exit') errors.push(issue(actionPath, 'Agency role exit requires action type exit'));
       if (role === 'recovery' && action.type !== 'recovery') errors.push(issue(actionPath, 'Agency role recovery requires action type recovery'));
       const label = String(action && (action.label || action.name || '')).trim();
-      if (strict && GENERIC_LABEL.test(label)) errors.push(issue(actionPath, 'Template-style action label is not publishable'));
+      if (strict && (GENERIC_LABEL.test(label) || GENERIC_ONLY.test(label))) errors.push(issue(actionPath, 'Generic or Template-style action label is not publishable'));
     });
+
+    if (strict) {
+      const labels = new Map();
+      nonExit.forEach((action, index) => {
+        const label = comparable(action && (action.label || action.name));
+        if (!label) return;
+        if (labels.has(label)) errors.push(issue(`${path}.actions[${index}]`, 'Duplicate action labels create padded or indistinguishable choices'));
+        else labels.set(label, index);
+      });
+      const meaningful = nonExit.filter(action => MEANINGFUL_ROLES.has(action.role || action.actionRole));
+      if (meaningful.length > 1) {
+        const signatures = meaningful.map(outcomeSignature);
+        const allSame = signatures.every(signature => signature === signatures[0]);
+        if (allSame || meaningful.some(action => !hasNamedOutcome(action))) {
+          errors.push(issue(path, 'Meaningful alternatives must declare different immediate or named later consequences'));
+        }
+      }
+    }
 
     if (strict && playerActions.length > 1 && nonExit.length === 0) {
       errors.push(issue(path, 'Scene cannot present only exits as its agency contract'));

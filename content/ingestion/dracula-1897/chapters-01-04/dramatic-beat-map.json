@@ -10,7 +10,7 @@
       "sourceAnchors": [
         "arrival at Bistritz",
         "Golden Krone welcome",
-        "St George’s Eve warning",
+        "St George\u2019s Eve warning",
         "protective crucifix",
         "coach departs"
       ],
@@ -37,48 +37,98 @@
           "id": "question_landlord",
           "approach": "Question the landlord privately about the Borgo Pass.",
           "stakes": "Jonathan may gain a credible warning but make the innkeeper more afraid to help him.",
-          "reaction": "The landlord lowers his voice, refuses to say the Count’s name, and presses a crucifix into Jonathan’s palm.",
+          "reaction": "The landlord lowers his voice, refuses to say the Count\u2019s name, and presses a crucifix into Jonathan\u2019s palm.",
           "changedSituation": "Jonathan now carries protection and knows the fear is shared by someone with local knowledge.",
           "nextObjective": "Decide whether to investigate the stable or leave while the coach still waits.",
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
           "flag": "landlord_warning_heard",
-          "item": "protective_crucifix"
+          "item": "protective_crucifix",
+          "examinationVariants": [
+            {
+              "maxVisit": 1,
+              "narration": "The landlord lowers his voice, refuses to say the Count\u2019s name, and presses a crucifix into Jonathan\u2019s palm.",
+              "setFlags": {
+                "landlord_warning_heard": true
+              }
+            },
+            {
+              "requires": [
+                {
+                  "kind": "flag",
+                  "id": "road_prepared",
+                  "equals": true
+                }
+              ],
+              "maxVisit": 2,
+              "narration": "When Jonathan mentions the changed horses, the landlord\u2019s refusal becomes an admission: the danger is not a tale attached to the pass, but a preparation made for it. He presses the crucifix into Jonathan\u2019s hand without another word.",
+              "setFlags": {
+                "landlord_warning_heard": true
+              }
+            }
+          ]
         },
         {
           "id": "inspect_stable",
           "approach": "Inspect the coach harness and ask the stable boy what changed.",
           "stakes": "Time is spent on practical evidence instead of reassurance, and the boy may refuse to speak.",
-          "reaction": "The boy reveals that the horses were changed twice and will not meet Jonathan’s eyes when the pass is mentioned.",
+          "reaction": "The boy reveals that the horses were changed twice and will not meet Jonathan\u2019s eyes when the pass is mentioned.",
           "changedSituation": "The road ahead has a physical warning: even the animals have been prepared for something the people will not name.",
           "nextObjective": "Choose whether duty outweighs the evidence of danger.",
           "role": "discovery",
           "replay": "repeatable",
-          "flag": "road_prepared"
+          "flag": "road_prepared",
+          "sourceClass": "discovery",
+          "examinationVariants": [
+            {
+              "maxVisit": 1,
+              "narration": "The boy reveals that the horses were changed twice and will not meet Jonathan\u2019s eyes when the pass is mentioned.",
+              "setFlags": {
+                "road_prepared": true
+              }
+            },
+            {
+              "requires": [
+                {
+                  "kind": "flag",
+                  "id": "landlord_warning_heard",
+                  "equals": true
+                }
+              ],
+              "maxVisit": 2,
+              "narration": "With the landlord\u2019s warning in mind, the changed harness no longer looks like an isolated repair. Someone prepared these horses for a road the innkeeper will not name.",
+              "setFlags": {
+                "road_prepared": true
+              }
+            }
+          ]
         },
         {
           "id": "accept_crucifix",
-          "approach": "Accept the old woman’s crucifix without pretending to understand her fear.",
+          "approach": "Accept the old woman\u2019s crucifix without pretending to understand her fear.",
           "stakes": "Jonathan carries an unfamiliar protection and admits that local testimony has unsettled his confidence.",
           "reaction": "The woman kisses the crucifix and whispers a blessing; the landlord looks relieved, then immediately checks the clock.",
-          "changedSituation": "Jonathan has gained protection, but the coach’s departure is now imminent.",
+          "changedSituation": "Jonathan has gained protection, but the coach\u2019s departure is now imminent.",
           "nextObjective": "Board now, or spend the remaining minutes asking one question that may change the journey.",
           "role": "preparation",
           "replay": "repeatable",
           "flag": "protected_by_crucifix",
-          "item": "protective_crucifix"
+          "item": "protective_crucifix",
+          "sourceClass": "decision"
         },
         {
           "id": "trust_warning",
-          "approach": "Trust the landlord’s warning and board with the crucifix hidden beneath your coat.",
+          "approach": "Trust the landlord\u2019s warning and board with the crucifix hidden beneath your coat.",
           "stakes": "Jonathan accepts local testimony over professional confidence; protection may preserve him, but the driver may notice he is no longer ignorant.",
-          "reaction": "The landlord sees the crucifix disappear beneath Jonathan’s coat and gives one relieved nod. Outside, the coachman calls again—not impatiently now, but as if someone has told him the decision is made.",
+          "reaction": "The landlord sees the crucifix disappear beneath Jonathan\u2019s coat and gives one relieved nod. Outside, the coachman calls again\u2014not impatiently now, but as if someone has told him the decision is made.",
           "changedSituation": "Jonathan leaves Bistritz protected and warned, while the people who helped him remain behind with the knowledge that he believed them.",
           "nextObjective": "Read the road from behind the crucifix and determine what the ordinary coach is carrying him toward.",
           "role": "exit",
           "replay": "consumable",
           "flag": "trusted_local_warning",
-          "routeTo": "beat_02_protected_coach"
+          "routeTo": "beat_02_protected_coach",
+          "sourceClass": "decision"
         },
         {
           "id": "investigate_then_board",
@@ -86,11 +136,12 @@
           "stakes": "Jonathan spends the last safe minutes seeking facts; he may learn what changed the horses, but the coach will leave before he can ask for comfort.",
           "reaction": "The stable boy finally points to a cut in the harness leather and says the previous driver refused the pass. Jonathan boards with the evidence folded in his pocket, too late to make the warning public.",
           "changedSituation": "Jonathan leaves with a physical clue and an unanswered question: who changed the horses, and why was the first driver afraid?",
-          "nextObjective": "Compare the coach’s behavior with the stable boy’s evidence before the road removes every witness.",
+          "nextObjective": "Compare the coach\u2019s behavior with the stable boy\u2019s evidence before the road removes every witness.",
           "role": "exit",
           "replay": "consumable",
           "flag": "evidence_route",
-          "routeTo": "beat_03_evidence_coach"
+          "routeTo": "beat_03_evidence_coach",
+          "sourceClass": "decision"
         },
         {
           "id": "dismiss_warning",
@@ -102,7 +153,8 @@
           "role": "exit",
           "replay": "consumable",
           "flag": "exposed_route",
-          "routeTo": "beat_04_exposed_coach"
+          "routeTo": "beat_04_exposed_coach",
+          "sourceClass": "decision"
         }
       ]
     },
@@ -114,7 +166,7 @@
         "ordinary coach enters the pass"
       ],
       "situation": "The ordinary coach carries Jonathan east under the protection the inn supplied. The passengers notice the crucifix beneath his coat, and their fear gives way to the fragile relief of a shared safeguard.",
-      "immediateObjective": "Use the passengers’ trust to learn what the coachman will not say before the road changes hands.",
+      "immediateObjective": "Use the passengers\u2019 trust to learn what the coachman will not say before the road changes hands.",
       "pressure": "The coach is leaving the last settled road; reassurance has bought cooperation, but the coming transfer will test whether protection is enough.",
       "presentActors": [
         {
@@ -136,31 +188,34 @@
           "changedSituation": "Jonathan has a warning from the people who have made this journey before, and the coachman now knows he has heard it.",
           "nextObjective": "Decide whether to confront the coachman before the transfer or wait until the road forces the question.",
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
           "flag": "passenger_warning_heard"
         },
         {
           "id": "study_coachman",
-          "approach": "Study the coachman’s hands and the horses’ response whenever the pass is mentioned.",
+          "approach": "Study the coachman\u2019s hands and the horses\u2019 response whenever the pass is mentioned.",
           "stakes": "Observation may reveal a pattern, but Jonathan gives up the chance to comfort the passengers before the transfer.",
           "reaction": "The coachman never looks toward the pass. The horses begin to sweat whenever he names the next village, though the air has turned cold.",
-          "changedSituation": "The road’s danger has a physical rhythm, and Jonathan can no longer dismiss the warnings as one woman’s superstition.",
+          "changedSituation": "The road\u2019s danger has a physical rhythm, and Jonathan can no longer dismiss the warnings as one woman\u2019s superstition.",
           "nextObjective": "Hold the evidence in mind when the second carriage appears without an explanation.",
           "role": "discovery",
           "replay": "repeatable",
-          "flag": "coachman_avoided_pass"
+          "flag": "coachman_avoided_pass",
+          "sourceClass": "discovery"
         },
         {
           "id": "protected_transfer",
           "approach": "Accept the midnight transfer with the crucifix ready and the passengers behind you.",
           "stakes": "Jonathan keeps the group together and carries protection into the unknown carriage, but allows its driver to control the route.",
-          "reaction": "The second driver sees the crucifix before he sees Jonathan’s face. He smiles without welcome, and the passengers refuse to watch the carriage depart.",
+          "reaction": "The second driver sees the crucifix before he sees Jonathan\u2019s face. He smiles without welcome, and the passengers refuse to watch the carriage depart.",
           "changedSituation": "Jonathan enters the mountain route protected but marked; the driver knows the inn did not send him east unprepared.",
           "nextObjective": "Learn what the driver serves before the blue flames begin to burn beside the road.",
           "role": "exit",
           "replay": "consumable",
           "flag": "protected_transfer",
-          "routeTo": "beat_02_coach_ride"
+          "routeTo": "beat_02_coach_ride",
+          "sourceClass": "decision"
         }
       ]
     },
@@ -172,7 +227,7 @@
         "ordinary coach enters the pass"
       ],
       "situation": "Jonathan rides east with the cut harness leather hidden in his pocket. The coachman insists the horses are sound, but every passenger watches the evidence as though it might explain why the first driver refused the pass.",
-      "immediateObjective": "Turn the stable boy’s clue into a question someone on the road must answer.",
+      "immediateObjective": "Turn the stable boy\u2019s clue into a question someone on the road must answer.",
       "pressure": "The coach is approaching the transfer point; once the second carriage takes the route, the physical evidence may be useless unless Jonathan makes someone acknowledge it.",
       "presentActors": [
         {
@@ -191,34 +246,37 @@
           "approach": "Show the cut harness to the coachman and demand to know who changed it.",
           "stakes": "A public accusation may force an answer, but can turn the passengers and driver against Jonathan before the transfer.",
           "reaction": "The coachman snatches the leather, then admits the cut was made after the previous driver refused to continue. No one asks what made him refuse.",
-          "changedSituation": "The coach’s official story has broken; everyone now knows the journey began with a missing explanation.",
+          "changedSituation": "The coach\u2019s official story has broken; everyone now knows the journey began with a missing explanation.",
           "nextObjective": "Decide whether to use the admission to delay the transfer or follow the route while the truth is exposed.",
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
           "flag": "harness_admitted"
         },
         {
           "id": "compare_passengers",
-          "approach": "Compare the passengers’ accounts before showing anyone the harness.",
+          "approach": "Compare the passengers\u2019 accounts before showing anyone the harness.",
           "stakes": "Private testimony may reveal the pattern, but Jonathan risks losing the only moment to challenge the coachman openly.",
           "reaction": "Three accounts agree on one detail: the horses were changed after sunset, and no one saw the replacement team arrive.",
           "changedSituation": "The evidence is now corroborated, but the people who supplied it want Jonathan to stop asking questions.",
           "nextObjective": "Carry the corroborated warning into the transfer and decide whether knowledge is protection enough.",
           "role": "discovery",
           "replay": "repeatable",
-          "flag": "passenger_accounts_match"
+          "flag": "passenger_accounts_match",
+          "sourceClass": "discovery"
         },
         {
           "id": "evidence_transfer",
           "approach": "Board the second carriage with the harness evidence concealed under your papers.",
           "stakes": "Jonathan preserves the route and keeps a clue the driver does not know about, but enters without the protection the inn offered.",
-          "reaction": "The driver searches Jonathan’s face, not his luggage. The carriage moves before the first coach has fully stopped, and the cut leather presses against the letter in his pocket.",
-          "changedSituation": "Jonathan is committed to the pass with evidence hidden close to the Count’s business and no promise that either will survive the night.",
-          "nextObjective": "Find a safe moment to compare the driver’s route with the harness clue.",
+          "reaction": "The driver searches Jonathan\u2019s face, not his luggage. The carriage moves before the first coach has fully stopped, and the cut leather presses against the letter in his pocket.",
+          "changedSituation": "Jonathan is committed to the pass with evidence hidden close to the Count\u2019s business and no promise that either will survive the night.",
+          "nextObjective": "Find a safe moment to compare the driver\u2019s route with the harness clue.",
           "role": "exit",
           "replay": "consumable",
           "flag": "evidence_transfer",
-          "routeTo": "beat_02_coach_ride"
+          "routeTo": "beat_02_coach_ride",
+          "sourceClass": "decision"
         }
       ]
     },
@@ -229,13 +287,13 @@
         "dismissed warning",
         "ordinary coach enters the pass"
       ],
-      "situation": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach’s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.",
+      "situation": "Jonathan leaves Bistritz without the crucifix and without the confidence of the people who tried to warn him. The coach\u2019s ordinary comforts fade one by one as the passengers stop speaking and the road climbs into darkness.",
       "immediateObjective": "Preserve control of the journey long enough to identify the first impossible event.",
       "pressure": "Without local protection or trust, Jonathan has no one to confirm what he sees; the midnight transfer is approaching, and the coachman has stopped answering questions.",
       "presentActors": [
         {
           "id": "coachman",
-          "stance": "Treats Jonathan’s isolation as permission to carry him onward without explanation."
+          "stance": "Treats Jonathan\u2019s isolation as permission to carry him onward without explanation."
         },
         {
           "id": "coach_passengers",
@@ -246,37 +304,40 @@
       "opportunities": [
         {
           "id": "confront_silence",
-          "approach": "Confront the coachman’s silence before the coach reaches the transfer point.",
+          "approach": "Confront the coachman\u2019s silence before the coach reaches the transfer point.",
           "stakes": "A demand may restore a measure of control, but the isolated passengers may leave Jonathan alone with the answer.",
           "reaction": "The coachman finally turns. He says the road is safe for those who do not ask it to explain itself, then stops the coach where no station stands.",
           "changedSituation": "The journey has become an arrangement Jonathan never consented to, and the driver has made silence part of its terms.",
           "nextObjective": "Decide whether to step down into the dark or remain aboard the vehicle that has stopped answering.",
           "role": "alternative",
+          "sourceClass": "decision",
           "replay": "repeatable",
           "flag": "driver_confronted"
         },
         {
           "id": "read_letter",
-          "approach": "Read the Count’s letter again and search it for an instruction you missed.",
+          "approach": "Read the Count\u2019s letter again and search it for an instruction you missed.",
           "stakes": "The letter may restore professional purpose, but studying it means surrendering attention while the coach leaves the settled road.",
           "reaction": "The formal invitation contains no route beyond the pass. In the margin, Jonathan finds a smear of dark earth that was not there when he left the inn.",
           "changedSituation": "The business letter now carries a physical contradiction, but no explanation or protection.",
           "nextObjective": "Keep the letter hidden and decide what to do when the second carriage arrives.",
           "role": "discovery",
           "replay": "repeatable",
-          "flag": "letter_soiled"
+          "flag": "letter_soiled",
+          "sourceClass": "discovery"
         },
         {
           "id": "exposed_transfer",
           "approach": "Board the second carriage without protest and keep your hands empty.",
           "stakes": "Jonathan preserves the only visible route forward, but surrenders every signal that he expects danger or intends resistance.",
-          "reaction": "The driver opens the door before Jonathan reaches it. Inside, the passengers’ space is already cold, and the door closes on the last ordinary sound.",
+          "reaction": "The driver opens the door before Jonathan reaches it. Inside, the passengers\u2019 space is already cold, and the door closes on the last ordinary sound.",
           "changedSituation": "Jonathan enters the pass exposed and unreadable to no one but himself; the driver has taken the initiative completely.",
-          "nextObjective": "Find a way to recover leverage before the road’s blue flames reveal why the carriage was waiting.",
+          "nextObjective": "Find a way to recover leverage before the road\u2019s blue flames reveal why the carriage was waiting.",
           "role": "exit",
           "replay": "consumable",
           "flag": "exposed_transfer",
-          "routeTo": "beat_02_coach_ride"
+          "routeTo": "beat_02_coach_ride",
+          "sourceClass": "decision"
         }
       ]
     },
@@ -304,22 +365,24 @@
         {
           "id": "question_driver",
           "approach": "Ask the driver who sent him and why the road has been abandoned.",
-          "stakes": "A direct question may expose the driver’s authority, but may also mark Jonathan as resistant.",
-          "reaction": "The driver turns just enough for Jonathan to glimpse red in his eyes and says, “The Count expects you.”",
-          "changedSituation": "The journey is no longer an ordinary transfer; the destination’s host is directing the road personally.",
-          "nextObjective": "Board with that knowledge, or use the passengers’ fear to delay the departure.",
+          "stakes": "A direct question may expose the driver\u2019s authority, but may also mark Jonathan as resistant.",
+          "reaction": "The driver turns just enough for Jonathan to glimpse red in his eyes and says, \u201cThe Count expects you.\u201d",
+          "changedSituation": "The journey is no longer an ordinary transfer; the destination\u2019s host is directing the road personally.",
+          "nextObjective": "Board with that knowledge, or use the passengers\u2019 fear to delay the departure.",
           "role": "alternative",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "decision"
         },
         {
           "id": "watch_passengers",
           "approach": "Watch the passengers rather than the driver as the first coach turns back.",
           "stakes": "Jonathan gains social evidence but loses the chance to inspect the second carriage before boarding.",
           "reaction": "Every passenger makes the sign of the cross; one catches Jonathan looking and silently shakes his head.",
-          "changedSituation": "The warning has become collective behavior, not a single frightened person’s superstition.",
-          "nextObjective": "Choose whether to trust the passengers’ fear or the written obligation waiting at the castle.",
+          "changedSituation": "The warning has become collective behavior, not a single frightened person\u2019s superstition.",
+          "nextObjective": "Choose whether to trust the passengers\u2019 fear or the written obligation waiting at the castle.",
           "role": "discovery",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "discovery"
         },
         {
           "id": "board_second_carriage",
@@ -332,7 +395,8 @@
           "replay": "consumable",
           "flag": "carriage_boarded",
           "convergence": "borgo-pass",
-          "routeTo": "beat_03_borgo_pass"
+          "routeTo": "beat_03_borgo_pass",
+          "sourceClass": "decision"
         }
       ]
     },
@@ -360,22 +424,24 @@
         {
           "id": "watch_flame",
           "approach": "Watch what the driver does at the nearest blue flame.",
-          "stakes": "Jonathan may learn the road’s secret but must remain still while the driver leaves him alone in the dark.",
+          "stakes": "Jonathan may learn the road\u2019s secret but must remain still while the driver leaves him alone in the dark.",
           "reaction": "The driver searches the earth as though following a map written in fire; when he returns, a cold blue reflection remains in his eyes.",
           "changedSituation": "The flames are no longer distant folklore; they are marks the driver understands and Jonathan does not.",
           "nextObjective": "Keep watching, or prepare for the wolves that have begun to gather beside the road.",
           "role": "discovery",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "discovery"
         },
         {
           "id": "raise_crucifix",
           "approach": "Raise the crucifix when the wolves press near the window.",
           "stakes": "Jonathan tests the protection publicly and may reveal to the driver that the innkeeper warned him.",
-          "reaction": "The wolves recoil together—not in fear, but recognition—and the driver’s eyes find the crucifix in Jonathan’s hand.",
-          "changedSituation": "The protection has drawn the driver’s attention as well as repelled the animals.",
+          "reaction": "The wolves recoil together\u2014not in fear, but recognition\u2014and the driver\u2019s eyes find the crucifix in Jonathan\u2019s hand.",
+          "changedSituation": "The protection has drawn the driver\u2019s attention as well as repelled the animals.",
           "nextObjective": "Decide whether to conceal the crucifix before the carriage reaches its destination.",
           "role": "preparation",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "decision"
         },
         {
           "id": "search_carriage",
@@ -385,7 +451,8 @@
           "changedSituation": "Jonathan has a fragile means of resistance and proof that the journey has frightened others before him.",
           "nextObjective": "Keep the evidence hidden, or use it to force a final answer from the driver.",
           "role": "discovery",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "discovery"
         },
         {
           "id": "follow_to_castle",
@@ -397,19 +464,20 @@
           "role": "exit",
           "replay": "consumable",
           "convergence": "castle-arrival",
-          "routeTo": "beat_04_castle_threshold"
+          "routeTo": "beat_04_castle_threshold",
+          "sourceClass": "decision"
         }
       ]
     },
     {
       "id": "beat_04_castle_threshold",
       "sourceAnchors": [
-        "Dracula’s impossible welcome",
+        "Dracula\u2019s impossible welcome",
         "castle has no servants",
         "conversation with Dracula"
       ],
       "situation": "The carriage stops at Castle Dracula. The driver has vanished, the gates open without a hand, and a tall host waits alone in a hall too large and too silent to be a functioning household.",
-      "immediateObjective": "Enter on your own terms if possible, while learning whether the host’s courtesy conceals a loss of control.",
+      "immediateObjective": "Enter on your own terms if possible, while learning whether the host\u2019s courtesy conceals a loss of control.",
       "pressure": "The gate seals the road behind Jonathan, the host knows his business in detail, and no servant appears to make the welcome ordinary.",
       "presentActors": [
         {
@@ -425,40 +493,44 @@
           "stakes": "Jonathan delays the social ritual and may reveal that he is already looking for escape.",
           "reaction": "The gate is sealed from within; the worn dragon device is the only sign that the castle has remembered other visitors.",
           "changedSituation": "The route back is closed before Jonathan has crossed the threshold.",
-          "nextObjective": "Enter while keeping the host’s attention on the formal business.",
+          "nextObjective": "Enter while keeping the host\u2019s attention on the formal business.",
           "role": "discovery",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "discovery"
         },
         {
           "id": "greet_count",
-          "approach": "Return the Count’s greeting and ask directly where the servants are.",
+          "approach": "Return the Count\u2019s greeting and ask directly where the servants are.",
           "stakes": "Courtesy may preserve access to the host, but the question challenges the fiction that this is an ordinary household.",
           "reaction": "Dracula smiles and says the servants are unnecessary. His answer is gracious; the silence behind it is not.",
           "changedSituation": "Jonathan is admitted as a guest in a house where the host alone controls food, fire, doors, and information.",
-          "nextObjective": "Observe the host’s habits during the first meal without letting suspicion become an accusation.",
+          "nextObjective": "Observe the host\u2019s habits during the first meal without letting suspicion become an accusation.",
           "role": "alternative",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "decision"
         },
         {
           "id": "keep_crucifix_ready",
           "approach": "Keep the crucifix visible as you cross the threshold.",
-          "stakes": "Jonathan tests the old woman’s protection in front of the host and risks showing that the warnings reached him.",
-          "reaction": "Dracula’s gaze pauses on the crucifix for one measured second before courtesy returns to his face.",
+          "stakes": "Jonathan tests the old woman\u2019s protection in front of the host and risks showing that the warnings reached him.",
+          "reaction": "Dracula\u2019s gaze pauses on the crucifix for one measured second before courtesy returns to his face.",
           "changedSituation": "The host knows Jonathan has been warned, even if neither man names the warning.",
           "nextObjective": "Decide whether to conceal the source of your unease or make the host explain himself.",
           "role": "preparation",
-          "replay": "repeatable"
+          "replay": "repeatable",
+          "sourceClass": "decision"
         },
         {
           "id": "enter_castle",
-          "approach": "Enter and accept the Count’s hospitality while the doors remain open.",
+          "approach": "Enter and accept the Count\u2019s hospitality while the doors remain open.",
           "stakes": "Jonathan preserves the business that brought him east, but commits himself to a house that has already begun to close around him.",
           "reaction": "The doors shut behind him. Dracula welcomes him in flawless English, and the echo finds no answering servant.",
           "changedSituation": "Jonathan is inside Castle Dracula, dependent on the host for every ordinary movement.",
           "nextObjective": "Find the first fact the host cannot control: a door, a reflection, a sound, or a contradiction.",
           "role": "exit",
           "replay": "consumable",
-          "convergence": "castle-interior"
+          "convergence": "castle-interior",
+          "sourceClass": "decision"
         }
       ]
     }

@@ -20,6 +20,11 @@ function createStorylineV2ViewModel(snapshot) {
   const bookmarks = Array.isArray(state.bookmarks)
     ? state.bookmarks.slice(0, 2).map(bookmark => ({ ...bookmark }))
     : [];
+  const textInputActions = actions.map(action => ({
+    actionId: action.actionId,
+    label: action.label || action.actionId,
+    shortLabel: action.shortLabel || action.label || action.actionId
+  }));
 
   return {
     adventureId: snapshot.adventureId || state.adventureId,
@@ -29,7 +34,11 @@ function createStorylineV2ViewModel(snapshot) {
       setting: catalog.setting || '',
       openingNarration: catalog.openingNarration || '',
       dramaturgy: catalog.dramaturgy ? { ...catalog.dramaturgy } : {},
-      presentNpcs: Array.isArray(catalog.presentNpcs) ? catalog.presentNpcs.slice() : []
+      presentNpcs: Array.isArray(catalog.presentNpcs) ? catalog.presentNpcs.slice() : [],
+      threads: Array.isArray(catalog.threads) ? catalog.threads.map(thread => ({ ...thread })) : [],
+      unresolvedThreads: Array.isArray(catalog.threads)
+        ? catalog.threads.filter(thread => !['resolved', 'closed', 'impossible'].includes(thread.status)).map(thread => ({ ...thread }))
+        : []
     },
     status: {
       mode: state.mode || 'storyline',
@@ -41,6 +50,13 @@ function createStorylineV2ViewModel(snapshot) {
       inventory: Array.isArray(state.inventory) ? state.inventory.slice() : [],
       terminal: Boolean(state.endingId || state.completed)
     },
+    textInput: {
+      enabled: actions.length > 0 && !Boolean(state.endingId || state.completed),
+      label: 'Or describe what you do',
+      hint: 'Describe one of the available actions in your own words.',
+      catalogVersion: catalog.catalogVersion,
+      legalActions: textInputActions
+    },
     actions: actions.map(action => ({
       actionId: action.actionId,
       type: action.type || 'exploration',
@@ -50,6 +66,8 @@ function createStorylineV2ViewModel(snapshot) {
       subtitle: action.subtitle || '',
       iconKey: action.iconKey || null,
       dramaturgy: action.dramaturgy ? { ...action.dramaturgy } : {},
+      consequenceSummary: action.consequenceSummary || '',
+      laterBeat: action.laterBeat || null,
       catalogVersion: action.catalogVersion || catalog.catalogVersion,
       ariaLabel: [action.label || action.actionId, action.subtitle].filter(Boolean).join(' — ')
     })),
